@@ -17,7 +17,8 @@ button{cursor:pointer}button:hover{background:var(--hi);color:#0f380f}
 #count{font:400 16px "PKMN",monospace;min-width:7ch;text-align:right}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px;padding:16px;max-width:1200px;margin:auto}
 .card{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px 6px;background:var(--card);border:2px solid var(--line);border-radius:0;opacity:.5;filter:grayscale(1)}
-.card[hidden]{display:none}
+.cell{position:relative;display:flex}.cell>.card{flex:1}.cell[hidden]{display:none} /* search hides the whole cell; its display:flex would beat the default [hidden] rule */
+.where{position:absolute;top:2px;left:2px;z-index:1;width:22px;height:22px;padding:0;line-height:1;font:400 12px "PKMN",monospace}
 .card.on{opacity:1;filter:none;background:var(--hi);color:#0f380f;border-color:#0f380f}
 .card.on::after{content:"✓";position:absolute;top:2px;right:5px;font-weight:700}
 .card img{width:80px;height:80px;image-rendering:pixelated;object-fit:contain}
@@ -36,3 +37,11 @@ fieldset:has(:disabled){opacity:.45}
 dialog{background:var(--bg);color:var(--ink);border:3px solid var(--line);padding:16px;max-width:min(96vw,560px);max-height:92vh}
 dialog::backdrop{background:rgba(0,0,0,.6)}dialog h2{margin:0 0 10px;font:400 18px "PKMN",monospace}
 dialog .row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:0 0 10px}dialog fieldset{border:0;padding:0}
+#where{overflow:auto;width:min(96vw,640px)}
+#where-note{margin:0 0 10px;font-size:13px}#where-body p{margin:0 0 10px}
+#where details{border:2px solid var(--line);background:var(--card);margin:0 0 8px}
+#where summary{cursor:pointer;padding:6px 8px;font-weight:600}#where summary small{font-weight:400;opacity:.8;margin-left:6px}
+#where ul{list-style:none;margin:0;padding:0 8px 6px}
+#where li{display:flex;flex-wrap:wrap;gap:2px 12px;padding:4px 0;border-top:1px dashed var(--mid)}
+#where li strong{flex:0 0 min(100%,22ch)}#where li.evo strong{font-style:italic}
+#where code{font-size:12px}

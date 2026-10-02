@@ -14,6 +14,7 @@ const FONTS = {
 // so layout lives here instead). app.js merges each entry into its game object, so the rest of the
 // code reads game.card and game.diploma.
 //
+//   sources:  keys of the games whose Pokémon can reach this game (itself first); used by the "where to find" panel
 //   card:     { gender, name, prog, dir?, color?, shadow? }
 //       gender  false if the card art has no Boy/Girl variants
 //       name    [font, size, x, y]                       where the trainer name goes
@@ -52,22 +53,33 @@ const GAME_CFG = (() => {
     frlg:    { dir: "Gen3/FireRed-LeafGreen", prefix: "FireRed-LeafGreen", choices: RN, name: ["frlg", 10, 140, 18] },
   };
 
+  // Which games can send Pokémon into each game, the game itself first. The "where to find" panel
+  // shows locations from all of them.
+  //   Same generation:  trading.
+  //   Gen 1 <-> Gen 2:  Time Capsule (going back to Gen 1 only works for Gen 1 species that know no Gen 2 moves).
+  //   Gen 3 -> Gen 4:   Pal Park, one-way: Gen 4 games can't send Pokémon back to Gen 3.
+  //   Gen 3 can't receive from Gen 1/2, and Gen 1/2 can't receive from Gen 3/4.
+  const gen1 = ["red", "blue", "yellow"], gen2 = ["gold", "silver", "crystal"];
+  const gen3 = ["ruby", "sapphire", "emerald", "fire-red", "leaf-green"];
+  const gen4 = ["diamond", "pearl", "platinum", "heart-gold", "soul-silver"];
+  const from = (key, ...groups) => [key, ...groups.flat().filter(k => k !== key)];
+
   return {
-    red:           { card: { ...card.rby, dir: "Red" },  diploma: dip.rb },   // Red/Blue cards live in per-game folders
-    blue:          { card: { ...card.rby, dir: "Blue" }, diploma: dip.rb },
-    yellow:        { card: card.rby,                     diploma: dip.yellow },
-    gold:          { card: card.gs,                      diploma: dip.gs },
-    silver:        { card: card.gs,                      diploma: dip.gs },
-    crystal:       { card: { ...card.gs, gender: true }, diploma: dip.crystal },
-    ruby:          { card: card.rs,                      diploma: dip.rs },
-    sapphire:      { card: card.rs,                      diploma: dip.rs },
-    emerald:       { card: card.emerald,                 diploma: dip.emerald },
-    "fire-red":    { card: card.frlg,                    diploma: dip.frlg },
-    "leaf-green":  { card: card.frlg,                    diploma: dip.frlg },
-    diamond:       { card: card.gen4 },
-    pearl:         { card: card.gen4 },
-    platinum:      { card: card.gen4 },
-    "heart-gold":  { card: card.gen4 },
-    "soul-silver": { card: card.gen4 },
+    red:           { card: { ...card.rby, dir: "Red" },  diploma: dip.rb,      sources: from("red", gen1, gen2) },   // Red/Blue cards live in per-game folders
+    blue:          { card: { ...card.rby, dir: "Blue" }, diploma: dip.rb,      sources: from("blue", gen1, gen2) },
+    yellow:        { card: card.rby,                     diploma: dip.yellow,  sources: from("yellow", gen1, gen2) },
+    gold:          { card: card.gs,                      diploma: dip.gs,      sources: from("gold", gen2, gen1) },
+    silver:        { card: card.gs,                      diploma: dip.gs,      sources: from("silver", gen2, gen1) },
+    crystal:       { card: { ...card.gs, gender: true }, diploma: dip.crystal, sources: from("crystal", gen2, gen1) },
+    ruby:          { card: card.rs,                      diploma: dip.rs,      sources: from("ruby", gen3) },
+    sapphire:      { card: card.rs,                      diploma: dip.rs,      sources: from("sapphire", gen3) },
+    emerald:       { card: card.emerald,                 diploma: dip.emerald, sources: from("emerald", gen3) },
+    "fire-red":    { card: card.frlg,                    diploma: dip.frlg,    sources: from("fire-red", gen3) },
+    "leaf-green":  { card: card.frlg,                    diploma: dip.frlg,    sources: from("leaf-green", gen3) },
+    diamond:       { card: card.gen4, sources: from("diamond", gen4, gen3) },
+    pearl:         { card: card.gen4, sources: from("pearl", gen4, gen3) },
+    platinum:      { card: card.gen4, sources: from("platinum", gen4, gen3) },
+    "heart-gold":  { card: card.gen4, sources: from("heart-gold", gen4, gen3) },
+    "soul-silver": { card: card.gen4, sources: from("soul-silver", gen4, gen3) },
   };
 })();

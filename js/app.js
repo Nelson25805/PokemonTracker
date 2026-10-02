@@ -15,8 +15,9 @@
     $("#grid").textContent = "Couldn't load data. If you opened index.html directly, serve the folder instead (python3 -m http.server).";
     return;
   }
-  // The per-game card and diploma layout lives in config.js (GAME_CFG); attach it to each game.
+  // The per-game card/diploma layout and link-up sources live in config.js (GAME_CFG); attach them to each game.
   games = games.map(g => ({ ...g, ...GAME_CFG[g.key] }));
+  Where.init({ games, mons });
 
   // ---- selectors: everything the view needs is derived from state ----
   const gameOf = s => games.find(g => g.key === s.last.game) || games[0];
@@ -43,9 +44,10 @@
   function renderGrid(s) {
     const g = gameOf(s), got = caughtSet(s, g), dir = spriteDir(s, g);
     $("#grid").innerHTML = mons.slice(0, g.count)
-      .map(m => `<button class="card${got.has(m.n) ? " on" : ""}" data-n="${m.n}" data-name="${m.name.toLowerCase()}" aria-pressed="${got.has(m.n)}">
+      .map(m => `<div class="cell"><button class="card${got.has(m.n) ? " on" : ""}" data-n="${m.n}" data-name="${m.name.toLowerCase()}" aria-pressed="${got.has(m.n)}" aria-keyshortcuts="I">
         <img loading="lazy" alt="" src="${spriteSrc(dir, m.n)}">
-        <span class="n">#${String(m.n).padStart(3, "0")}</span><span class="nm">${m.name}</span></button>`).join("");
+        <span class="n">#${String(m.n).padStart(3, "0")}</span><span class="nm">${m.name}</span></button>
+        <button class="where" tabindex="-1" data-n="${m.n}" aria-label="Where to find ${m.name}" title="Where to find (or press I on a card)">?</button></div>`).join("");
     cardEls = [...document.querySelectorAll("#grid .card")];
     applyFilter(); // keep any search text applied after a game switch
   }
@@ -53,7 +55,7 @@
   // Search text is view-only (not saved): hide the cards that don't match.
   function applyFilter() {
     const q = $("#search").value.trim().toLowerCase();
-    for (const el of cardEls) el.hidden = !!q && !(el.dataset.name.includes(q) || el.dataset.n.includes(q));
+    for (const el of cardEls) el.parentElement.hidden = !!q && !(el.dataset.name.includes(q) || el.dataset.n.includes(q));
   }
 
   // Same game, other sprite folder (shiny toggled): point each existing card at its new sprite.
@@ -107,9 +109,17 @@
   $("#trainer").addEventListener("input", e => Store.set({ name: e.target.value }));
 
   $("#grid").addEventListener("click", e => {
+    const s = Store.get(), where = e.target.closest(".where");
+    if (where) return Where.open(gameOf(s), Number(where.dataset.n));
     const card = e.target.closest(".card"); if (!card) return;
-    const s = Store.get();
     Store.toggle(listKey(s), gameOf(s).key, Number(card.dataset.n));
+  });
+  // The "?" buttons are skipped by Tab (493 extra stops), so keyboard users press I on a card instead.
+  $("#grid").addEventListener("keydown", e => {
+    if (e.key.toLowerCase() !== "i" || e.ctrlKey || e.metaKey || e.altKey) return;
+    const card = e.target.closest(".card"); if (!card) return;
+    e.preventDefault();
+    Where.open(gameOf(Store.get()), Number(card.dataset.n));
   });
 
   $("#export").addEventListener("click", () => Persist.exportFile(Store.get()));
