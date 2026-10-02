@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pokédex Tracker</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+  <h1>Pokédex Tracker</h1>
+  <div class="controls">
+    <label>Game <select id="game"></select></label>
+    <label class="check"><input type="checkbox" id="shiny"> Shiny</label>
+    <input type="search" id="search" placeholder="Search name or number" aria-label="Search">
+    <input type="text" id="trainer" maxlength="10" placeholder="Trainer name" aria-label="Trainer name">
+  </div>
+  <div class="progress" aria-live="polite">
+    <div class="bar"><div id="fill"></div></div>
+    <span id="count"></span>
+  </div>
+</header>
+
+<section class="trainer" aria-label="Trainer card">
+  <canvas id="card" width="240" height="160" role="img" aria-label="Trainer card"></canvas>
+  <div class="side">
+    <fieldset><legend>Trainer</legend>
+      <label><input type="radio" name="gender" value="Boy"> Boy</label>
+      <label><input type="radio" name="gender" value="Girl"> Girl</label>
+    </fieldset>
+    <button id="diploma" disabled>Save diploma</button>
+    <p id="hint"></p>
+  </div>
+</section>
+
+<main><div id="grid" class="grid"></div></main>
+
+<footer>
+  <button id="export">Export progress</button>
+  <button id="import">Import progress</button>
+  <input type="file" id="file" accept="application/json" hidden>
+  <p>Progress is saved in this browser only. Use Export to back it up or move devices.
+  Fan project, not affiliated with Nintendo, Game Freak or The Pokémon Company.</p>
+</footer>
+<dialog id="dip" aria-label="Diploma">
+  <h2>Your diploma</h2>
+  <div class="row"><fieldset id="choices"></fieldset></div>
+  <div class="row"><label>Name <input id="dname" maxlength="10"></label></div>
+  <div class="row" id="timeRow" hidden>
+    <label>Hour <input id="hh" inputmode="numeric" maxlength="2" size="2"></label>
+    <label>Minute <input id="mm" inputmode="numeric" maxlength="2" size="2"></label>
+  </div>
+  <canvas id="dip-canvas" width="160" height="144"></canvas>
+  <div class="row">
+    <label>Size <select id="scale"><option value="1">1× (original)</option><option value="2">2×</option><option value="4" selected>4×</option><option value="8">8×</option></select></label>
+    <button id="dsave">Save PNG</button><button id="dclose">Close</button>
+  </div>
+</dialog>
+<script src="js/config.js"></script>
+<script src="js/cards.js"></script>
+<script src="js/store.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+[
+ {
+  "key": "red",
+  "name": "Red",
+  "gen": 1,
+  "count": 151,
+  "sprites": "Red-Blue",
+  "shiny": false
+ },
+ {
+  "key": "blue",
+  "name": "Blue",
+  "gen": 1,
+  "count": 151,
+  "sprites": "Red-Blue",
+  "shiny": false
+ },
+ {
+  "key": "yellow",
+  "name": "Yellow",
+  "gen": 1,
+  "count": 151,
+  "sprites": "Yellow",
+  "shiny": false
+ },
+ {
+  "key": "gold",
+  "name": "Gold",
+  "gen": 2,
+  "count": 251,
+  "sprites": "Gold",
+  "shiny": true
+ },
+ {
+  "key": "silver",
+  "name": "Silver",
+  "gen": 2,
+  "count": 251,
+  "sprites": "Silver",
+  "shiny": true
+ },
+ {
+  "key": "crystal",
+  "name": "Crystal",
+  "gen": 2,
+  "count": 251,
+  "sprites": "Crystal",
+  "shiny": true
+ },
+ {
+  "key": "ruby",
+  "name": "Ruby",
+  "gen": 3,
+  "count": 386,
+  "sprites": "Ruby-Sapphire",
+  "shiny": true
+ },
+ {
+  "key": "sapphire",
+  "name": "Sapphire",
+  "gen": 3,
+  "count": 386,
+  "sprites": "Ruby-Sapphire",
+  "shiny": true
+ },
+ {
+  "key": "emerald",
+  "name": "Emerald",
+  "gen": 3,
+  "count": 386,
+  "sprites": "Emerald",
+  "shiny": true
+ },
+ {
+  "key": "fire-red",
+  "name": "Fire Red",
+  "gen": 3,
+  "count": 386,
+  "sprites": "FireRed-LeafGreen",
+  "shiny": true
+ },
+ {
+  "key": "leaf-green",
+  "name": "Leaf Green",
+  "gen": 3,
+  "count": 386,
+  "sprites": "FireRed-LeafGreen",
+  "shiny": true
+ },
+ {
+  "key": "diamond",
+  "name": "Diamond",
+  "gen": 4,
+  "count": 493,
+  "sprites": "Diamond-Pearl",
+  "shiny": true
+ },
+ {
+  "key": "pearl",
+  "name": "Pearl",
+  "gen": 4,
+  "count": 493,
+  "sprites": "Diamond-Pearl",
+  "shiny": true
+ },
+ {
+  "key": "platinum",
+  "name": "Platinum",
+  "gen": 4,
+  "count": 493,
+  "sprites": "Platinum",
+  "shiny": true
+ },
+ {
+  "key": "heart-gold",
+  "name": "Heart Gold",
+  "gen": 4,
+  "count": 493,
+  "sprites": "HeartGold-SoulSilver",
+  "shiny": true
+ },
+ {
+  "key": "soul-silver",
+  "name": "Soul Silver",
+  "gen": 4,
+  "count": 493,
+  "sprites": "HeartGold-SoulSilver",
+  "shiny": true
+ }
+]
