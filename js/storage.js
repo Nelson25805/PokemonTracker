@@ -34,6 +34,7 @@ const Persist = (() => {
       } catch { /* storage unavailable: skip */ }
     },
     async readFile(file) {
+      if (file.size > 2e6) throw new Error("too big");                 // a real export is well under 100 KB
       const raw = JSON.parse(await file.text());
       if (Store.isNewer(raw)) throw Object.assign(new Error("newer version"), { code: "newer" });
       const d = Store.migrate(raw);                                     // check the shape after upgrading, so it is the current one

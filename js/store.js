@@ -9,6 +9,7 @@
 //   Store.migrate(data)              upgrade old saved/imported data to the current VERSION (pure; normalize calls it)
 //   Store.isOutdated(raw) / isNewer(raw)   is this save older / newer than this build understands?
 //   Store.VERSION                    the schema version this build writes
+//   Store.sanitize(data, games)      strict check for imported data -> { state, dropped }; see below
 //
 // CHANGING THE SAVE FORMAT LATER (e.g. adding notes):
 //   1. Raise VERSION by one.
@@ -62,6 +63,31 @@ const Store = (() => {
     };
   }
 
+  // Strict clean-up for data from outside (imported files). `games` is the games.json list
+  // ({ key, count, shiny }). Keeps only: known game keys, whole numbers from 1 to that game's count
+  // (no duplicates, sorted), shiny lists only for games that have shiny sprites, a name of up to 10
+  // printable characters, and gender Boy/Girl. Returns the cleaned state and how many entries it dropped.
+  // Fields it doesn't know about pass through untouched. When you add a new saved field, add its check here.
+  function sanitize(data, games) {
+    const d = normalize(data), byKey = new Map(games.map(g => [g.key, g]));
+    let dropped = 0;
+    const lists = (src, kind) => {
+      const out = {};
+      for (const key of Object.keys(src)) {
+        const g = byKey.get(key), raw = src[key];
+        if (!g || !Array.isArray(raw) || (kind === "shiny" && !g.shiny)) { dropped += Array.isArray(raw) ? raw.length : 1; continue; }
+        const ok = new Set(raw.filter(n => Number.isInteger(n) && n >= 1 && n <= g.count));
+        dropped += raw.length - ok.size;
+        out[key] = [...ok].sort((a, b) => a - b);
+      }
+      return out;
+    };
+    const name = typeof d.name === "string" ? d.name.replace(/[\u0000-\u001f\u007f]/g, "").slice(0, 10) : "";
+    if (name !== d.name) dropped++;
+    const caught = lists(d.caught, "caught"), shiny = lists(d.shiny, "shiny");   // run these first: they update `dropped`
+    return { dropped, state: { ...d, name, gender: d.gender === "Girl" ? "Girl" : "Boy", caught, shiny } };
+  }
+
   let state = blank();
   const subs = new Set();
 
@@ -77,6 +103,7 @@ const Store = (() => {
     isOutdated: raw => isObj(raw) && versionOf(raw) < VERSION,
     isNewer: raw => isObj(raw) && versionOf(raw) > VERSION,
     normalize,
+    sanitize,
     init(raw) { state = normalize(raw); },           // load without notifying (nobody is subscribed yet)
     get: () => state,
     set(patch) {

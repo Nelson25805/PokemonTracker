@@ -154,9 +154,11 @@
                                  : "That file doesn't look like a Pokédex Tracker export.");
       return;
     }
-    if (!confirm("Replace the progress saved in this browser with the imported file?")) return;
+    const { state: clean, dropped } = Store.sanitize(data, games);   // known games, whole numbers within each game's range
+    const note = dropped ? `${dropped} invalid entr${dropped === 1 ? "y" : "ies"} in the file will be skipped.\n\n` : "";
+    if (!confirm(note + "Replace the progress saved in this browser with the imported file?")) return;
     // Keep the game you're looking at; start on the normal (non-shiny) list.
-    Store.replace({ ...data, last: { game: gameOf(Store.get()).key, shiny: false, dex: Store.get().last.dex } });
+    Store.replace({ ...clean, last: { game: gameOf(Store.get()).key, shiny: false, dex: Store.get().last.dex } });
   });
 
   // ---- start up ----
