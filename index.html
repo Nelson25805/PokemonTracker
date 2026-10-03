@@ -12,34 +12,65 @@
 <meta name="theme-color" content="#173a17" media="(prefers-color-scheme: dark)">
 </head>
 <body>
-<header>
-  <h1>Pokédex Tracker</h1>
-  <div class="controls">
+<h1 class="site">Pokédex Tracker</h1>
+<header id="top">
+  <div class="hrow">
+    <input type="search" id="search" placeholder="Search name or number" aria-label="Search">
+    <button type="button" id="optbtn" aria-expanded="false" aria-controls="opts">Options</button>
+  </div>
+  <div class="controls" id="opts">
     <label>Game <select id="game"></select></label>
     <label>Dex <select id="dex"><option value="national">National</option><option value="regional">Regional</option></select></label>
     <label class="check"><input type="checkbox" id="shiny"> Shiny</label>
-    <input type="search" id="search" placeholder="Search name or number" aria-label="Search">
     <input type="text" id="trainer" maxlength="10" placeholder="Trainer name" aria-label="Trainer name">
   </div>
   <div class="progress" aria-live="polite">
+    <span id="gname"></span>
     <div class="bar"><div id="fill"></div></div>
     <span id="count"></span>
   </div>
 </header>
 
-<section class="trainer" aria-label="Trainer card">
-  <canvas id="card" width="240" height="160" role="img" aria-label="Trainer card"></canvas>
-  <div class="side">
-    <fieldset><legend>Trainer</legend>
-      <label><input type="radio" name="gender" value="Boy"> Boy</label>
-      <label><input type="radio" name="gender" value="Girl"> Girl</label>
-    </fieldset>
-    <button id="diploma" disabled>Save diploma</button>
-    <p id="hint"></p>
+<details class="trainer" id="trainerbox">
+  <summary>Trainer card <span id="tsum"></span></summary>
+  <div class="trainer-body">
+    <canvas id="card" width="240" height="160" role="img" aria-label="Trainer card"></canvas>
+    <div class="side">
+      <fieldset><legend>Trainer</legend>
+        <label><input type="radio" name="gender" value="Boy"> Boy</label>
+        <label><input type="radio" name="gender" value="Girl"> Girl</label>
+      </fieldset>
+      <button id="diploma" disabled>Save diploma</button>
+      <p id="hint"></p>
+    </div>
   </div>
+</details>
+
+<section class="tools" aria-label="Filter and bulk actions">
+  <div class="seg" id="filter" role="group" aria-label="Show">
+    <button type="button" data-filter="all" aria-pressed="true">All</button>
+    <button type="button" data-filter="missing" aria-pressed="false">Missing</button>
+    <button type="button" data-filter="caught" aria-pressed="false">Caught</button>
+  </div>
+  <button type="button" id="select" aria-pressed="false" title="Pick several Pokémon, then mark or unmark them together (Shift+click picks a range)">Select</button>
+  <button type="button" id="markvis">Mark all visible</button>
+  <button type="button" id="clearall">Clear all</button>
+  <button type="button" id="undo" disabled>Undo</button>
+  <span id="shown"></span>
 </section>
 
 <main><div id="grid" class="grid"></div></main>
+
+<div id="selbar" role="region" aria-label="Selection" hidden>
+  <p id="selhint"></p>
+  <span id="selcount" aria-live="polite"></span>
+  <button type="button" id="selrange" aria-pressed="false" title="Then pick the last card of a range">Range</button>
+  <button type="button" id="selmark" title="Mark selected as caught">Mark</button>
+  <button type="button" id="selunmark" title="Unmark selected">Unmark</button>
+  <button type="button" id="selall" title="Select all visible">Select all</button>
+  <button type="button" id="selnone" title="Clear selection">Clear</button>
+  <button type="button" id="seldone" title="Leave select mode">Done</button>
+</div>
 
 <footer>
   <button id="export">Export progress</button>

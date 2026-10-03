@@ -5,6 +5,8 @@
 (async function main() {
   const $ = s => document.querySelector(s);
   let games = [], mons = [], monByN = new Map(), regional = null, cardEls = []; // cardEls: the grid's buttons, built once per game
+  // View-only state (not saved, like the search box): the Show filter, select mode, and the last bulk action for Undo.
+  const view = { filter: "all", select: false, range: false, selected: new Set(), anchor: null, undo: null };
 
   const saved = Persist.load();
   if (Store.isOutdated(saved)) Persist.backup(saved);   // keep the old-format save once, then Store.init migrates it
@@ -52,6 +54,8 @@
     $("#dex").options[1].textContent = reg ? `Regional (${g.region.name})` : "Regional";
     $("#dex").value = reg && s.last.dex === "regional" ? "regional" : "national";
     if ($("#trainer").value !== s.name) $("#trainer").value = s.name; // don't rewrite while typing
+    $("#gname").textContent = g.name + (shinyOn(s, g) ? " ★" : "") + (dexList(s, g) ? ` · ${g.region.name}` : ""); // shown on phones, where the Options panel is closed
+    $("#trainerbox").open = !!s.last.cardOpen;
   }
 
   // The grid is built once per game: every card, with the sprite folder baked in. After that nothing
@@ -70,13 +74,23 @@
         <span class="n">#${String(pos).padStart(3, "0")}</span><span class="nm">${m.name}</span></button>
         <button class="where" tabindex="-1" data-n="${m.n}" aria-label="Where to find ${m.name}" title="Where to find (or press I on a card)">?</button></div>`).join("");
     cardEls = [...document.querySelectorAll("#grid .card")];
-    applyFilter(); // keep any search text applied after a game switch
+    view.selected.clear(); view.anchor = null; // a new set of cards: nothing is selected yet
+    applyFilter(); // keep any search text and Show filter applied after a game switch
   }
 
-  // Search text is view-only (not saved): hide the cards that don't match.
+  // Search text and the Show filter are view-only (not saved): hide the cards that don't match both.
+  // Cards that get hidden are also dropped from the selection, so bulk actions only ever touch what you can see.
+  const isShown = el => !el.parentElement.hidden;
   function applyFilter() {
-    const q = $("#search").value.trim().toLowerCase();
-    for (const el of cardEls) el.parentElement.hidden = !!q && !(el.dataset.name.includes(q) || el.dataset.n.includes(q) || el.dataset.pos.includes(q));
+    const q = $("#search").value.trim().toLowerCase(), got = caughtSet(Store.get());
+    for (const el of cardEls) {
+      const n = Number(el.dataset.n);
+      const textOk = !q || el.dataset.name.includes(q) || el.dataset.n.includes(q) || el.dataset.pos.includes(q);
+      const stateOk = view.filter === "all" || (view.filter === "caught") === got.has(n);
+      el.parentElement.hidden = !(textOk && stateOk);
+      if (!(textOk && stateOk)) view.selected.delete(n);
+    }
+    paintSelection();
   }
 
   // Same game, other sprite folder (shiny toggled): point each existing card at its new sprite.
@@ -88,17 +102,47 @@
   // Caught-state changed: update which cards are lit.
   function renderMarks(s) {
     const got = caughtSet(s);
+    for (const el of cardEls) el.classList.toggle("on", got.has(Number(el.dataset.n)));
+    applyFilter(); // Missing / Caught views change when a mark does (this also refreshes aria-pressed and the toolbar)
+  }
+
+  // Selection highlight + aria-pressed (which means "selected" in select mode, "caught" otherwise) + toolbar.
+  function paintSelection() {
+    const got = caughtSet(Store.get());
     for (const el of cardEls) {
-      const on = got.has(Number(el.dataset.n));
-      el.classList.toggle("on", on);
-      el.setAttribute("aria-pressed", on);
+      const n = Number(el.dataset.n), sel = view.selected.has(n);
+      el.classList.toggle("sel", sel);
+      el.setAttribute("aria-pressed", view.select ? sel : got.has(n));
     }
+    renderTools();
+  }
+
+  const sameList = (a, b) => a.length === b.length && a.every((n, i) => n === b[i]);
+  function renderTools() {
+    const s = Store.get(), g = gameOf(s), shown = cardEls.filter(isShown).length, u = view.undo;
+    $("#shown").textContent = `Showing ${shown} of ${cardEls.length}`;
+    $("#markvis").disabled = !shown;
+    $("#clearall").disabled = !viewCaught(s, g).size;
+    $("#undo").disabled = !(u && sameList(s[u.kind][u.key] || [], u.after)); // only while nothing else has changed the list
+    $("#undo").title = u ? `Undo: ${u.label}` : "";
+    $("#selcount").textContent = `${view.selected.size} selected`;
+    for (const id of ["#selmark", "#selunmark", "#selnone"]) $(id).disabled = !view.selected.size;
+    $("#selall").disabled = !shown;
+    $("#selrange").disabled = view.anchor === null;
+    $("#selrange").setAttribute("aria-pressed", view.range);
+    // Tell people how to select more than one at a time (Shift isn't available on touch screens).
+    const touch = !!(window.matchMedia && matchMedia("(pointer: coarse)").matches);
+    $("#selhint").textContent = view.range ? "Now tap the last Pokémon of the range."
+      : !view.selected.size ? (touch ? "Tap Pokémon to pick them." : "Click Pokémon to pick them.")
+      : touch ? "Tap Range, then another Pokémon, to pick everything in between."
+      : "Shift+click another Pokémon (or press Range) to pick everything in between.";
   }
 
   function renderProgress(s) {
     const n = viewCaught(s).size, total = dexTotal(s);
     $("#count").textContent = `${n} / ${total}`;
     $("#fill").style.width = `${(n / total) * 100}%`;
+    $("#tsum").textContent = `${n} / ${total}` + (n === total && gameOf(s).diploma ? " · Diploma ready!" : "");
   }
 
   const renderTrainer = s => Cards.update(viewGame(s), viewCaught(s), s);
@@ -124,7 +168,15 @@
     Store.set({ last: { ...s.last, game: g.key, shiny: shinyOn(s, g) } }); // games without shiny sprites turn the toggle off
   }
 
-  $("#game").addEventListener("change", e => selectGame(e.target.value));
+  // Narrow screens keep game / dex / shiny / trainer behind an Options button so the sticky header stays short.
+  const setOptions = open => { $("#top").classList.toggle("open", open); $("#optbtn").setAttribute("aria-expanded", open); $("#optbtn").textContent = open ? "Close" : "Options"; };
+  $("#optbtn").addEventListener("click", () => setOptions(!$("#top").classList.contains("open")));
+  $("#trainerbox").addEventListener("toggle", e => {                      // remember whether the trainer card is open
+    const last = Store.get().last;
+    if (!!last.cardOpen !== e.target.open) Store.set({ last: { ...last, cardOpen: e.target.open } });
+  });
+
+  $("#game").addEventListener("change", e => { selectGame(e.target.value); setOptions(false); });
   $("#shiny").addEventListener("change", e => Store.set({ last: { ...Store.get().last, shiny: e.target.checked } }));
   $("#dex").addEventListener("change", e => Store.set({ last: { ...Store.get().last, dex: e.target.value } }));
   $("#search").addEventListener("input", applyFilter);                     // search text is view-only, not saved
@@ -134,6 +186,7 @@
     const s = Store.get(), where = e.target.closest(".where");
     if (where) return Where.open(gameOf(s), Number(where.dataset.n));
     const card = e.target.closest(".card"); if (!card) return;
+    if (view.select) return pick(card, e.shiftKey);
     Store.toggle(listKey(s), gameOf(s).key, Number(card.dataset.n));
   });
   // The "?" buttons are skipped by Tab (493 extra stops), so keyboard users press I on a card instead.
@@ -158,8 +211,70 @@
     const note = dropped ? `${dropped} invalid entr${dropped === 1 ? "y" : "ies"} in the file will be skipped.\n\n` : "";
     if (!confirm(note + "Replace the progress saved in this browser with the imported file?")) return;
     // Keep the game you're looking at; start on the normal (non-shiny) list.
-    Store.replace({ ...clean, last: { game: gameOf(Store.get()).key, shiny: false, dex: Store.get().last.dex } });
+    Store.replace({ ...clean, last: { ...Store.get().last, game: gameOf(Store.get()).key, shiny: false } });
   });
+
+  // ---- filters and bulk actions ----
+  const shownNs = () => cardEls.filter(isShown).map(el => Number(el.dataset.n));
+
+  // Add or remove many Pokémon in one update (so one save, one redraw), and remember how to undo it.
+  function applyBulk(ns, on, label) {
+    const s = Store.get(), kind = listKey(s), key = gameOf(s).key, before = s[kind][key] || [];
+    const after = new Set(before);
+    for (const n of ns) on ? after.add(n) : after.delete(n);
+    if (after.size === before.length) return;                          // nothing would change
+    const sorted = [...after].sort((a, b) => a - b);
+    view.undo = { kind, key, before, after: sorted, label: `${label} (${Math.abs(after.size - before.length)})` };
+    Store.setList(kind, key, sorted);
+    renderTools();
+  }
+
+  $("#filter").addEventListener("click", e => {
+    const b = e.target.closest("button[data-filter]"); if (!b) return;
+    view.filter = b.dataset.filter;
+    document.querySelectorAll("#filter button").forEach(x => x.setAttribute("aria-pressed", x === b));
+    applyFilter();
+  });
+
+  $("#markvis").addEventListener("click", () => applyBulk(shownNs(), true, "mark all visible"));
+  $("#clearall").addEventListener("click", () => {
+    const s = Store.get(), g = gameOf(s), n = viewCaught(s, g).size; if (!n) return;
+    const list = dexList(s, g), dex = list ? `Regional (${g.region.name})` : "National";
+    if (!confirm(`Clear all ${n} caught Pokémon in ${g.name}${shinyOn(s, g) ? " (shiny)" : ""}, ${dex} Pokédex?\n\nYou can press Undo right afterwards.`)) return;
+    applyBulk(list || Array.from({ length: g.count }, (_, i) => i + 1), false, "clear all");
+  });
+  $("#undo").addEventListener("click", () => {
+    const u = view.undo; if (!u) return;
+    view.undo = null; Store.setList(u.kind, u.key, u.before); renderTools();
+  });
+
+  // Select mode: clicks pick cards instead of marking them; Shift+click picks a range of the visible cards.
+  function setSelect(on) {
+    view.select = on; view.anchor = null; view.range = false; if (!on) view.selected.clear();
+    document.body.classList.toggle("selecting", on);
+    $("#selbar").hidden = !on;
+    $("#select").setAttribute("aria-pressed", on);
+    paintSelection();
+  }
+  function pick(card, range) {
+    range = range || view.range; view.range = false;                  // the Range button works like holding Shift, once
+    const n = Number(card.dataset.n), vis = cardEls.filter(isShown);
+    const a = vis.findIndex(el => Number(el.dataset.n) === view.anchor), b = vis.indexOf(card);
+    if (range && a >= 0 && b >= 0) {
+      for (const el of vis.slice(Math.min(a, b), Math.max(a, b) + 1)) view.selected.add(Number(el.dataset.n));
+    } else view.selected.has(n) ? view.selected.delete(n) : view.selected.add(n);
+    view.anchor = n;
+    paintSelection();
+  }
+  const finishSelection = (on, label) => { applyBulk([...view.selected], on, label); view.selected.clear(); view.anchor = null; view.range = false; paintSelection(); };
+  $("#select").addEventListener("click", () => setSelect(!view.select));
+  $("#seldone").addEventListener("click", () => setSelect(false));
+  $("#selmark").addEventListener("click", () => finishSelection(true, "mark selected"));
+  $("#selunmark").addEventListener("click", () => finishSelection(false, "unmark selected"));
+  $("#selall").addEventListener("click", () => { shownNs().forEach(n => view.selected.add(n)); paintSelection(); });
+  $("#selnone").addEventListener("click", () => { view.selected.clear(); view.anchor = null; view.range = false; paintSelection(); });
+  $("#selrange").addEventListener("click", () => { if (view.anchor !== null) { view.range = !view.range; paintSelection(); } });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && view.select && !document.querySelector("dialog[open]")) setSelect(false); });
 
   // ---- start up ----
   $("#game").innerHTML = games.map(g => `<option value="${g.key}">${g.name}</option>`).join("");

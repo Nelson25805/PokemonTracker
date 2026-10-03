@@ -5,13 +5,14 @@
 @media (prefers-color-scheme:dark){:root{--bg:#0f2a0f;--panel:#173a17;--ink:#c9e27a;--mid:#8bac0f;--hi:#9bbc0f;--card:#1d461d;--line:#8bac0f}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,sans-serif}
-header{position:sticky;top:0;z-index:2;background:var(--panel);border-bottom:3px solid var(--line);padding:12px 16px}
-h1{margin:0 0 10px;font:400 22px/1 "PKMN",monospace;letter-spacing:.04em}
-.controls{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+header{position:sticky;top:0;z-index:2;background:var(--panel);border-bottom:3px solid var(--line);padding:8px 16px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+h1{margin:0;padding:12px 16px 8px;font:400 22px/1 "PKMN",monospace;letter-spacing:.04em} /* outside the sticky header, so it scrolls away */
+.hrow,.controls{display:contents} /* wide screens: everything sits in one wrapping row */
+#optbtn,#gname{display:none}
 select,input[type=search],input[type=text],button{font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:0;padding:6px 8px}
 button{cursor:pointer}button:hover{background:var(--hi);color:#0f380f}
 .check{display:flex;align-items:center;gap:6px}.check:has(:disabled){opacity:.45}
-.progress{display:flex;align-items:center;gap:12px;margin-top:10px}
+.progress{flex:1 1 260px;display:flex;align-items:center;gap:12px}
 .bar{flex:1;height:14px;border:2px solid var(--line);background:var(--card)}
 #fill{height:100%;width:0;background:var(--ink);transition:width .2s}
 #count{font:400 16px "PKMN",monospace;min-width:7ch;text-align:right}
@@ -27,7 +28,10 @@ button{cursor:pointer}button:hover{background:var(--hi);color:#0f380f}
 footer{padding:0 16px 32px;max-width:1200px;margin:auto}footer p{font-size:12px;opacity:.8;max-width:70ch}
 footer button{margin-right:8px}
 @media (prefers-reduced-motion:reduce){#fill{transition:none}}
-.trainer{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;padding:16px;max-width:1200px;margin:auto}
+.trainer{max-width:1200px;margin:8px auto 0;padding:0 16px}
+.trainer summary{cursor:pointer;padding:8px 10px;border:2px solid var(--line);background:var(--card);font-weight:600}
+.trainer summary span{font-weight:400;opacity:.85;margin-left:8px}
+.trainer-body{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;padding:12px 0 4px}
 canvas{max-width:100%;height:auto;border:3px solid var(--line);background:var(--card)}canvas.px{image-rendering:pixelated}
 .side{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
 fieldset{border:2px solid var(--line);margin:0;padding:6px 10px;display:flex;gap:12px}legend{padding:0 4px}
@@ -45,3 +49,46 @@ dialog .row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:
 #where li{display:flex;flex-wrap:wrap;gap:2px 12px;padding:4px 0;border-top:1px dashed var(--mid)}
 #where li strong{flex:0 0 min(100%,22ch)}#where li.evo strong{font-style:italic}
 #where code{font-size:12px}
+
+/* filters + bulk actions */
+button:disabled{opacity:.45;cursor:not-allowed}button:disabled:hover{background:var(--card);color:var(--ink)}
+.tools{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;padding:8px 16px 0;max-width:1200px;margin:auto}
+.seg{display:flex}.seg button{border-right-width:0}.seg button:last-child{border-right-width:2px}
+.seg button[aria-pressed=true],#select[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+#shown{font-size:13px;opacity:.85;margin-left:auto}
+.card.sel{opacity:1;filter:none;box-shadow:inset 0 0 0 3px var(--ink)}
+.card.sel::before{content:"■";position:absolute;bottom:2px;right:5px;font-size:12px}
+body.selecting .grid{-webkit-user-select:none;user-select:none}
+body.selecting footer{padding-bottom:110px}
+#selhint{flex:1 1 100%;margin:0;font-size:13px}
+#selbar{position:fixed;left:0;right:0;bottom:0;z-index:3;display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;background:var(--panel);border-top:3px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+#selbar[hidden]{display:none}
+#selcount{font:400 14px "PKMN",monospace;min-width:11ch}
+#selrange[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+
+/* phones and narrow windows: a compact sticky header (search + progress), the rest behind "Options" */
+@media (max-width:759px){
+  h1{font-size:16px;padding:8px 12px 6px}
+  header{padding:6px 10px;gap:6px 8px}
+  .hrow{display:flex;flex:1 1 100%;gap:8px;align-items:center}
+  .hrow #search{flex:1;min-width:0}
+  #optbtn{display:block;flex:none}
+  .controls{display:none;flex:1 1 100%;flex-wrap:wrap;gap:8px 12px;align-items:center}
+  header.open .controls{display:flex}
+  .progress{flex:1 1 100%;gap:8px}
+  #gname{display:block;flex:0 1 auto;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+  .bar{height:10px}
+  #count{font-size:13px;min-width:0}
+  input,select{font-size:16px} /* 16px stops iOS from zooming the page when a field is focused */
+  .trainer,.tools{padding-left:10px;padding-right:10px}
+  .grid{padding:6px}
+  #shown{margin-left:0;flex-basis:100%}
+  #selbar{padding-left:10px;padding-right:10px}
+  #selbar button{padding:6px 8px;font-size:14px}
+}
+/* touch screens: bigger tap targets */
+@media (pointer:coarse){
+  select,input,button{min-height:40px}
+  .card,.where{min-height:0}
+  .where{width:30px;height:30px}
+}

@@ -5,6 +5,7 @@
 //   Store.set({ name: "Ash" })       shallow-merge top-level keys; subscribers are told once per call
 //   Store.replace(data)              swap in a whole state (import); missing fields get defaults
 //   Store.toggle(kind, gameKey, n)   flip Pokémon n in state.caught / state.shiny for one game
+//   Store.setList(kind, gameKey, ns) replace one game's whole caught/shiny list (bulk actions, undo)
 //   Store.subscribe(fn)              fn(state, prev) runs after every change; returns an unsubscribe function
 //   Store.migrate(data)              upgrade old saved/imported data to the current VERSION (pure; normalize calls it)
 //   Store.isOutdated(raw) / isNewer(raw)   is this save older / newer than this build understands?
@@ -21,7 +22,7 @@
 // (state.caught !== prev.caught) instead of re-rendering everything.
 //
 // Shape (kept identical to the old exports, so existing backup files still import):
-//   { version, name, gender, caught: {gameKey: [n…]}, shiny: {gameKey: [n…]}, last: {game, shiny} }
+//   { version, name, gender, caught: {gameKey: [n…]}, shiny: {gameKey: [n…]}, last: {game, shiny, dex, cardOpen} }
 const Store = (() => {
   const isObj = x => x !== null && typeof x === "object" && !Array.isArray(x);
   const VERSION = 1;
@@ -50,7 +51,7 @@ const Store = (() => {
     return d;
   }
 
-  const blank = () => ({ version: VERSION, name: "", gender: "Boy", caught: {}, shiny: {}, last: { game: "red", shiny: false, dex: "national" } });
+  const blank = () => ({ version: VERSION, name: "", gender: "Boy", caught: {}, shiny: {}, last: { game: "red", shiny: false, dex: "national", cardOpen: false } });
 
   // Fill in anything missing from saved/imported data so the rest of the app can trust the shape.
   function normalize(data) {
@@ -115,6 +116,9 @@ const Store = (() => {
       const list = new Set(state[kind][gameKey] || []);
       list.has(n) ? list.delete(n) : list.add(n);
       this.set({ [kind]: { ...state[kind], [gameKey]: [...list].sort((a, b) => a - b) } });
+    },
+    setList(kind, gameKey, ns) {
+      this.set({ [kind]: { ...state[kind], [gameKey]: [...new Set(ns)].sort((a, b) => a - b) } });
     },
     subscribe(fn) { subs.add(fn); return () => subs.delete(fn); },
   };
