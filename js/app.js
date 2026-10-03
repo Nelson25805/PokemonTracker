@@ -64,7 +64,7 @@
     const rows = (list ? list.map((n, i) => [monByN.get(n), i + 1]) : mons.slice(0, g.count).map(m => [m, m.n])).filter(([m]) => m);
     $("#grid").innerHTML = rows
       .map(([m, pos]) => `<div class="cell"><button class="card${got.has(m.n) ? " on" : ""}" data-n="${m.n}" data-pos="${pos}" data-name="${m.name.toLowerCase()}" aria-pressed="${got.has(m.n)}" aria-keyshortcuts="I">
-        <img loading="lazy" alt="" src="${spriteSrc(dir, m.n)}">
+        <img loading="lazy" decoding="async" alt="" src="${spriteSrc(dir, m.n)}">
         <span class="n">#${String(pos).padStart(3, "0")}</span><span class="nm">${m.name}</span></button>
         <button class="where" tabindex="-1" data-n="${m.n}" aria-label="Where to find ${m.name}" title="Where to find (or press I on a card)">?</button></div>`).join("");
     cardEls = [...document.querySelectorAll("#grid .card")];
