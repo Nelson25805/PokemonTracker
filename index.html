@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pokédex Tracker</title>
 <link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="theme-color" content="#b2c66f" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#173a17" media="(prefers-color-scheme: dark)">
 </head>
 <body>
 <header>
@@ -40,7 +45,7 @@
   <button id="export">Export progress</button>
   <button id="import">Import progress</button>
   <input type="file" id="file" accept="application/json" hidden>
-  <p>Progress is saved in this browser only. Use Export to back it up or move devices.
+  <p>Progress is saved in this browser only. Use Export to back it up or move devices. If you add this page to your home screen, the installed app keeps its own separate copy of your progress, so Export from the browser and Import there once.
   Fan project, not affiliated with Nintendo, Game Freak or The Pokémon Company.</p>
 </footer>
 <dialog id="dip" aria-label="Diploma">
@@ -69,5 +74,18 @@
 <script src="js/storage.js"></script>
 <script src="js/where.js"></script>
 <script src="js/app.js"></script>
+<script>
+// Offline support (sw.js). On localhost the worker is switched off so edits show up straight away;
+// add ?sw to the address to test it locally.
+if ("serviceWorker" in navigator) {
+  const local = ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname);
+  if (local && !location.search.includes("sw")) {
+    navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
+    if (window.caches) caches.keys().then(ks => ks.forEach(k => caches.delete(k)));
+  } else {
+    addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  }
+}
+</script>
 </body>
 </html>
