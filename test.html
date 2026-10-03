@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Card render check</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body{padding:16px;max-width:1400px;margin:auto}
+  h1{margin-bottom:6px}
+  .bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:10px 0}
+  #summary{font-weight:600;margin:8px 0 16px}
+  section{margin:0 0 22px}
+  section h2{font:400 16px "PKMN",monospace;margin:0 0 8px}
+  .tiles{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-start}
+  .tile{border:3px solid var(--line);background:var(--panel);padding:6px;max-width:100%;overflow:auto}
+  .tile canvas{display:block;border:0}
+  .tile small{display:block;margin-top:4px;font-size:12px}
+  .tile.same{border-color:#2e7d32}
+  .tile.changed{border-color:#c62828;background:#f8d7da;color:#5a0d12}
+  .tile.new{border-color:#e68a00}
+  .tile.err{border-color:#c62828;border-style:dashed}
+  .help{font-size:13px;max-width:90ch}
+</style>
+</head>
+<body>
+<h1>Card render check</h1>
+<p class="help">Draws every game's trainer card and diploma with a sample name. Open it after changing <code>config.js</code>
+or <code>cards.js</code>. Tiles are compared with <code>tests/baselines.json</code>:
+<b>same</b> (green), <b>changed</b> (red: look at it, then decide if it's what you meant), <b>new</b> (orange: no baseline yet),
+<b>error</b> (missing artwork). Baselines are exact pixel hashes, so save and compare in the same browser.</p>
+<div class="bar">
+  <label>Game <select id="only"><option value="all">All games</option></select></label>
+  <label>Name <input id="name" maxlength="10" value="ASH"></label>
+  <label class="check"><input type="checkbox" id="wide"> Widest name (WWWWWWWWWW)</label>
+  <label>Zoom <select id="zoom"><option value="fit">Fit</option><option value="1">1×</option><option value="2">2×</option><option value="3">3×</option></select></label>
+  <button id="save">Save baselines</button>
+</div>
+<div id="summary" aria-live="polite"></div>
+<div id="out"></div>
+
+<script src="js/config.js"></script>
+<script src="js/cards.js"></script>
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const DEFAULT = "ASH", WIDE = "WWWWWWWWWW";
+let games = [], baseline = {}, results = {}, mode = null, run = 0;
+
+const el = (tag, text, cls) => { const e = document.createElement(tag); if (text) e.textContent = text; if (cls) e.className = cls; return e; };
+
+// Exact pixel fingerprint of a canvas (FNV-1a over the RGBA bytes, plus its size).
+function hash(c) {
+  const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+  let h = 2166136261;
+  for (let i = 0; i < d.length; i++) { h ^= d[i]; h = Math.imul(h, 16777619); }
+  return `${(h >>> 0).toString(16)}-${c.width}x${c.height}`;
+}
+
+// Everything worth drawing for one game: cards at 0 / half / full progress (different badge art) for each
+// gender the card supports, and every diploma variant.
+function casesFor(g, name, wide) {
+  const out = [];
+  if (g.card) {
+    for (const gender of g.card.gender ? ["Boy", "Girl"] : ["Boy"]) {
+      for (const caught of [...new Set([0, Math.floor(g.count / 2), g.count])]) {
+        out.push({ id: `${g.key}/card/${gender}/${caught}`, label: `Card · ${g.card.gender ? gender + " · " : ""}${caught} / ${g.count}`,
+                   draw: () => Cards.trainer(g, caught, { name, gender }) });
+      }
+    }
+  }
+  if (g.diploma) {
+    for (const choice of g.diploma.choices) {
+      const printer = choice === "Printer";
+      const o = { choice, name, hour: printer ? (wide ? "88" : "12") : "", minute: printer ? (wide ? "88" : "34") : "" };
+      out.push({ id: `${g.key}/diploma/${choice}`, label: `Diploma · ${choice}`, draw: () => Cards.diploma(g, o) });
+      if (g.key === "yellow" && printer) {
+        out.push({ id: `${g.key}/diploma/PrinterMissingMew`, label: "Diploma · Printer (missing Mew)", draw: () => Cards.diploma(g, { ...o, missingMew: true }) });
+      }
+    }
+  }
+  return out;
+}
+
+function show(cv, zoom) {
+  cv.classList.add("px");
+  if (zoom === "fit") { const s = Math.floor(320 / cv.width); cv.style.width = (s >= 1 ? cv.width * s : 320) + "px"; }
+  else cv.style.width = cv.width * Number(zoom) + "px";
+}
+
+async function render() {
+  const my = ++run, zoom = $("#zoom").value, only = $("#only").value, wide = $("#wide").checked;
+  $("#name").disabled = wide;
+  const name = wide ? WIDE : $("#name").value;
+  mode = wide ? "wide" : name === DEFAULT ? "normal" : null;     // only the two standard names are comparable
+  results = {};
+  const out = $("#out"), count = { same: 0, changed: 0, new: 0, err: 0 };
+  const summary = () => {
+    $("#summary").textContent = (mode ? "" : "Custom name: tiles are not compared with the baseline.  ")
+      + `${count.same} same · ${count.changed} changed · ${count.new} new · ${count.err} errors`;
+  };
+  out.textContent = ""; summary();
+  await Promise.all(Object.values(FONTS).map(f => document.fonts.load(`16px "${f.css}"`)));
+  if (my !== run) return;
+
+  for (const g of games) {
+    if (only !== "all" && g.key !== only) continue;
+    const sec = el("section"), tiles = el("div", "", "tiles");
+    sec.append(el("h2", g.name), tiles); out.append(sec);
+    for (const t of casesFor(g, name, wide)) {
+      const tile = el("div", "", "tile"), cap = el("small", t.label);
+      tiles.append(tile);
+      try {
+        const c = await t.draw();
+        if (my !== run) return;
+        if (!c) throw new Error("artwork not found");
+        const h = hash(c); results[t.id] = h;
+        let status = "";
+        if (mode) {
+          const b = baseline[`${mode}/${t.id}`];
+          status = b === undefined ? "new" : b === h ? "same" : "changed";
+          count[status]++; tile.classList.add(status);
+          cap.textContent = `${t.label} · ${status}`;
+        }
+        show(c, zoom);
+        tile.append(c, cap);
+      } catch (e) {
+        if (my !== run) return;
+        count.err++; tile.classList.add("err");
+        cap.textContent = `${t.label} · error: ${e && e.message || e}`;
+        tile.append(cap);
+      }
+      summary();
+    }
+  }
+}
+
+// Merge the fingerprints currently on screen into the baseline and download it.
+function save() {
+  if (!mode) { alert("Use the default name (ASH) or the widest-name option to save baselines."); return; }
+  const merged = { ...baseline };
+  for (const [id, h] of Object.entries(results)) merged[`${mode}/${id}`] = h;
+  const sorted = Object.fromEntries(Object.keys(merged).sort().map(k => [k, merged[k]]));
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(sorted, null, 1)], { type: "application/json" }));
+  a.download = "baselines.json"; a.click(); URL.revokeObjectURL(a.href);
+  baseline = sorted; render();
+  alert("Saved baselines.json. Put it in tests/ and commit it.");
+}
+
+(async function start() {
+  try {
+    const [list, base] = await Promise.all([
+      fetch("data/games.json").then(r => r.json()),
+      fetch("tests/baselines.json").then(r => (r.ok ? r.json() : {})).catch(() => ({})),
+    ]);
+    games = list.map(g => ({ ...g, ...GAME_CFG[g.key], region: REGIONAL[g.key] }));
+    baseline = base;
+  } catch {
+    $("#out").textContent = "Couldn't load data. Serve the folder (python3 -m http.server) instead of opening the file directly.";
+    return;
+  }
+  $("#only").insertAdjacentHTML("beforeend", games.map(g => `<option value="${g.key}">${g.name}</option>`).join(""));
+  let timer;
+  $("#name").addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(render, 250); });
+  for (const id of ["#wide", "#zoom", "#only"]) $(id).addEventListener("change", render);
+  $("#save").addEventListener("click", save);
+  render();
+})();
+</script>
+</body>
+</html>

@@ -189,5 +189,6 @@ const Cards = (() => {
     $("#choices").addEventListener("change", redraw);
     ["#dname", "#hh", "#mm"].forEach(s => $(s).addEventListener("input", e => { if (s !== "#dname") e.target.value = e.target.value.replace(/\D/g, ""); redraw(); }));
   }
-  return { init, update, pixelText, outlined };
+  // trainer / diploma are exported so test.html can render every game's artwork without the main page.
+  return { init, update, pixelText, outlined, trainer, diploma };
 })();
