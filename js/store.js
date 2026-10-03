@@ -14,7 +14,7 @@
 //   { version, name, gender, caught: {gameKey: [n…]}, shiny: {gameKey: [n…]}, last: {game, shiny} }
 const Store = (() => {
   const isObj = x => x !== null && typeof x === "object" && !Array.isArray(x);
-  const blank = () => ({ version: 1, name: "", gender: "Boy", caught: {}, shiny: {}, last: { game: "red", shiny: false } });
+  const blank = () => ({ version: 1, name: "", gender: "Boy", caught: {}, shiny: {}, last: { game: "red", shiny: false, dex: "national" } });
 
   // Fill in anything missing from saved/imported data so the rest of the app can trust the shape.
   function normalize(data) {

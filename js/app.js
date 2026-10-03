@@ -4,7 +4,7 @@
 // only the static game and Pokémon lists it loads once.
 (async function main() {
   const $ = s => document.querySelector(s);
-  let games = [], mons = [], cardEls = []; // cardEls: the grid's buttons, built once per game
+  let games = [], mons = [], monByN = new Map(), regional = null, cardEls = []; // cardEls: the grid's buttons, built once per game
 
   Store.init(Persist.load());
   Cards.init(Store);
@@ -16,7 +16,10 @@
     return;
   }
   // The per-game card/diploma layout and link-up sources live in config.js (GAME_CFG); attach them to each game.
-  games = games.map(g => ({ ...g, ...GAME_CFG[g.key] }));
+  games = games.map(g => ({ ...g, ...GAME_CFG[g.key], region: REGIONAL[g.key] }));
+  monByN = new Map(mons.map(m => [m.n, m]));
+  // Regional Pokédex lists (built by build_regional.py). Optional: without the file the Dex dropdown stays disabled.
+  regional = await fetch("data/regional.json").then(r => (r.ok ? r.json() : null)).then(d => d && d.dex).catch(() => null);
   Where.init({ games, mons });
 
   // ---- selectors: everything the view needs is derived from state ----
@@ -25,12 +28,27 @@
   const listKey = (s, g = gameOf(s)) => (shinyOn(s, g) ? "shiny" : "caught");
   const caughtSet = (s, g = gameOf(s)) => new Set(s[listKey(s, g)][g.key] || []);
 
+  // Regional lists are arrays of national numbers in regional order. A game only offers the regional
+  // view when its list actually differs from the national one (so Red/Blue/Yellow don't).
+  const regList = g => (regional && g.region && regional[g.region.dex]) || null;
+  const hasRegional = g => { const l = regList(g); return !!l && !(l.length === g.count && l.every((n, i) => n === i + 1)); };
+  const dexList = (s, g = gameOf(s)) => (s.last.dex === "regional" && hasRegional(g) ? regList(g) : null);
+  const dexTotal = (s, g = gameOf(s)) => (dexList(s, g) ? dexList(s, g).length : g.count);
+  const viewCaught = (s, g = gameOf(s)) => {
+    const all = caughtSet(s, g), list = dexList(s, g);
+    return list ? new Set(list.filter(n => all.has(n))) : all;
+  };
+  const viewGame = (s, g = gameOf(s)) => ({ ...g, count: dexTotal(s, g) }); // trainer card + diploma see the visible dex
+
   // ---- renderers: each draws one part of the page from a state snapshot ----
   function renderControls(s) {
-    const g = gameOf(s);
+    const g = gameOf(s), reg = hasRegional(g);
     $("#game").value = g.key;
     $("#shiny").disabled = !g.shiny;
     $("#shiny").checked = shinyOn(s, g);
+    $("#dex").disabled = !reg;
+    $("#dex").options[1].textContent = reg ? `Regional (${g.region.name})` : "Regional";
+    $("#dex").value = reg && s.last.dex === "regional" ? "regional" : "national";
     if ($("#trainer").value !== s.name) $("#trainer").value = s.name; // don't rewrite while typing
   }
 
@@ -42,11 +60,12 @@
   const spriteSrc = (dir, n) => `assets/sprites/${dir}/${n}.png`;
 
   function renderGrid(s) {
-    const g = gameOf(s), got = caughtSet(s, g), dir = spriteDir(s, g);
-    $("#grid").innerHTML = mons.slice(0, g.count)
-      .map(m => `<div class="cell"><button class="card${got.has(m.n) ? " on" : ""}" data-n="${m.n}" data-name="${m.name.toLowerCase()}" aria-pressed="${got.has(m.n)}" aria-keyshortcuts="I">
+    const g = gameOf(s), got = caughtSet(s, g), dir = spriteDir(s, g), list = dexList(s, g);
+    const rows = (list ? list.map((n, i) => [monByN.get(n), i + 1]) : mons.slice(0, g.count).map(m => [m, m.n])).filter(([m]) => m);
+    $("#grid").innerHTML = rows
+      .map(([m, pos]) => `<div class="cell"><button class="card${got.has(m.n) ? " on" : ""}" data-n="${m.n}" data-pos="${pos}" data-name="${m.name.toLowerCase()}" aria-pressed="${got.has(m.n)}" aria-keyshortcuts="I">
         <img loading="lazy" alt="" src="${spriteSrc(dir, m.n)}">
-        <span class="n">#${String(m.n).padStart(3, "0")}</span><span class="nm">${m.name}</span></button>
+        <span class="n">#${String(pos).padStart(3, "0")}</span><span class="nm">${m.name}</span></button>
         <button class="where" tabindex="-1" data-n="${m.n}" aria-label="Where to find ${m.name}" title="Where to find (or press I on a card)">?</button></div>`).join("");
     cardEls = [...document.querySelectorAll("#grid .card")];
     applyFilter(); // keep any search text applied after a game switch
@@ -55,7 +74,7 @@
   // Search text is view-only (not saved): hide the cards that don't match.
   function applyFilter() {
     const q = $("#search").value.trim().toLowerCase();
-    for (const el of cardEls) el.parentElement.hidden = !!q && !(el.dataset.name.includes(q) || el.dataset.n.includes(q));
+    for (const el of cardEls) el.parentElement.hidden = !!q && !(el.dataset.name.includes(q) || el.dataset.n.includes(q) || el.dataset.pos.includes(q));
   }
 
   // Same game, other sprite folder (shiny toggled): point each existing card at its new sprite.
@@ -75,12 +94,12 @@
   }
 
   function renderProgress(s) {
-    const g = gameOf(s), n = caughtSet(s, g).size;
-    $("#count").textContent = `${n} / ${g.count}`;
-    $("#fill").style.width = `${(n / g.count) * 100}%`;
+    const n = viewCaught(s).size, total = dexTotal(s);
+    $("#count").textContent = `${n} / ${total}`;
+    $("#fill").style.width = `${(n / total) * 100}%`;
   }
 
-  const renderTrainer = s => Cards.update(gameOf(s), caughtSet(s), s);
+  const renderTrainer = s => Cards.update(viewGame(s), viewCaught(s), s);
 
   const renderAll = s => { renderControls(s); renderGrid(s); renderProgress(s); renderTrainer(s); };
 
@@ -88,7 +107,7 @@
   const changed = (s, p, ...keys) => keys.some(k => s[k] !== p[k]);
   function onChange(s, p) {
     if (changed(s, p, "last", "name")) renderControls(s);
-    if (s.last.game !== p.last.game) renderGrid(s);                        // different game: build its cards
+    if (s.last.game !== p.last.game || s.last.dex !== p.last.dex) renderGrid(s); // different game or dex: build its cards
     else {
       if (s.last.shiny !== p.last.shiny) renderSprites(s);                 // same cards, other sprite folder
       if (changed(s, p, "last", "caught", "shiny")) renderMarks(s);        // which cards are lit
@@ -100,11 +119,12 @@
   // ---- actions: DOM events -> Store updates (the only place the view writes state) ----
   function selectGame(key) {
     const s = Store.get(), g = games.find(x => x.key === key) || games[0];
-    Store.set({ last: { game: g.key, shiny: shinyOn(s, g) } }); // games without shiny sprites turn the toggle off
+    Store.set({ last: { ...s.last, game: g.key, shiny: shinyOn(s, g) } }); // games without shiny sprites turn the toggle off
   }
 
   $("#game").addEventListener("change", e => selectGame(e.target.value));
   $("#shiny").addEventListener("change", e => Store.set({ last: { ...Store.get().last, shiny: e.target.checked } }));
+  $("#dex").addEventListener("change", e => Store.set({ last: { ...Store.get().last, dex: e.target.value } }));
   $("#search").addEventListener("input", applyFilter);                     // search text is view-only, not saved
   $("#trainer").addEventListener("input", e => Store.set({ name: e.target.value }));
 
@@ -130,7 +150,7 @@
     try { data = await Persist.readFile(f); } catch { alert("That file doesn't look like a Pokédex Tracker export."); return; }
     if (!confirm("Replace the progress saved in this browser with the imported file?")) return;
     // Keep the game you're looking at; start on the normal (non-shiny) list.
-    Store.replace({ ...data, last: { game: gameOf(Store.get()).key, shiny: false } });
+    Store.replace({ ...data, last: { game: gameOf(Store.get()).key, shiny: false, dex: Store.get().last.dex } });
   });
 
   // ---- start up ----

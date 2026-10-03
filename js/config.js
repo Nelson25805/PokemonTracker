@@ -83,3 +83,16 @@ const GAME_CFG = (() => {
     "soul-silver": { card: card.gen4, sources: from("soul-silver", gen4, gen3) },
   };
 })();
+
+// Which regional Pokédex each game uses (keys match data/regional.json) and its display name.
+// Built by build_regional.py. Red/Blue/Yellow's Kanto list equals the national list, so the Dex
+// dropdown disables itself for them.
+const REGIONAL = {
+  red: { dex: "kanto", name: "Kanto" }, blue: { dex: "kanto", name: "Kanto" }, yellow: { dex: "kanto", name: "Kanto" },
+  gold: { dex: "original-johto", name: "Johto" }, silver: { dex: "original-johto", name: "Johto" }, crystal: { dex: "original-johto", name: "Johto" },
+  ruby: { dex: "hoenn", name: "Hoenn" }, sapphire: { dex: "hoenn", name: "Hoenn" }, emerald: { dex: "hoenn", name: "Hoenn" },
+  "fire-red": { dex: "kanto", name: "Kanto" }, "leaf-green": { dex: "kanto", name: "Kanto" },
+  diamond: { dex: "original-sinnoh", name: "Sinnoh" }, pearl: { dex: "original-sinnoh", name: "Sinnoh" },
+  platinum: { dex: "extended-sinnoh", name: "Sinnoh" },
+  "heart-gold": { dex: "updated-johto", name: "Johto" }, "soul-silver": { dex: "updated-johto", name: "Johto" },
+};
