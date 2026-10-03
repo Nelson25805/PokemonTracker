@@ -5,7 +5,9 @@
 //   Persist.load()            saved state from this browser, or null
 //   Persist.save(state)       write state to this browser (silently skipped in private mode)
 //   Persist.exportFile(state) download a backup .json
-//   Persist.readFile(file)    parse a backup .json; throws if it isn't one
+//   Persist.readFile(file)    parse a backup .json and migrate it to the current version;
+//                             throws if it isn't one (err.code === "newer" if made by a newer build)
+//   Persist.backup(raw)       keep a copy of an old-format save before it is migrated
 //
 // A cloud-sync backend would be another object with the same shape; wiring it up is one line:
 //   Store.subscribe(state => Cloud.push(state))
@@ -25,8 +27,16 @@ const Persist = (() => {
       a.href = URL.createObjectURL(new Blob([JSON.stringify(state, null, 1)], { type: "application/json" }));
       a.download = "pokedex-progress.json"; a.click(); URL.revokeObjectURL(a.href);
     },
+    backup(raw) {
+      try {
+        const k = `${KEY}.backup.v${Number.isInteger(raw?.version) ? raw.version : 1}`;
+        if (localStorage.getItem(k) === null) localStorage.setItem(k, JSON.stringify(raw)); // keep the first copy only
+      } catch { /* storage unavailable: skip */ }
+    },
     async readFile(file) {
-      const d = JSON.parse(await file.text());
+      const raw = JSON.parse(await file.text());
+      if (Store.isNewer(raw)) throw Object.assign(new Error("newer version"), { code: "newer" });
+      const d = Store.migrate(raw);                                     // check the shape after upgrading, so it is the current one
       if (!isObj(d) || !isObj(d.caught) || !isObj(d.shiny)) throw new Error("bad shape");
       return d;
     },

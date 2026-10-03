@@ -6,7 +6,9 @@
   const $ = s => document.querySelector(s);
   let games = [], mons = [], monByN = new Map(), regional = null, cardEls = []; // cardEls: the grid's buttons, built once per game
 
-  Store.init(Persist.load());
+  const saved = Persist.load();
+  if (Store.isOutdated(saved)) Persist.backup(saved);   // keep the old-format save once, then Store.init migrates it
+  Store.init(saved);
   Cards.init(Store);
 
   try {
@@ -147,7 +149,11 @@
   $("#file").addEventListener("change", async e => {
     const f = e.target.files[0]; e.target.value = ""; if (!f) return;
     let data;
-    try { data = await Persist.readFile(f); } catch { alert("That file doesn't look like a Pokédex Tracker export."); return; }
+    try { data = await Persist.readFile(f); } catch (err) {
+      alert(err.code === "newer" ? "That backup was made by a newer version of the tracker. Update this page first, then import it."
+                                 : "That file doesn't look like a Pokédex Tracker export.");
+      return;
+    }
     if (!confirm("Replace the progress saved in this browser with the imported file?")) return;
     // Keep the game you're looking at; start on the normal (non-shiny) list.
     Store.replace({ ...data, last: { game: gameOf(Store.get()).key, shiny: false, dex: Store.get().last.dex } });
