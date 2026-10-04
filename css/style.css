@@ -1,8 +1,53 @@
 @font-face{font-family:"PKMN";src:url("../assets/fonts/pkmn-rbygsc.ttf");font-display:swap}
 @font-face{font-family:"PokeRS";src:url("../assets/fonts/pokemon-rs.ttf");font-display:swap}
 @font-face{font-family:"PokeFRLG";src:url("../assets/fonts/pokemon-frlg.ttf");font-display:swap}
-:root{--bg:#c7d98a;--panel:#b2c66f;--ink:#0f380f;--mid:#306230;--hi:#9bbc0f;--card:#d9e8a4;--line:#0f380f}
-@media (prefers-color-scheme:dark){:root{--bg:#0f2a0f;--panel:#173a17;--ink:#c9e27a;--mid:#8bac0f;--hi:#9bbc0f;--card:#1d461d;--line:#8bac0f}}
+:root{--bg:#c7d98a;--panel:#b2c66f;--ink:#0f380f;--mid:#306230;--hi:#9bbc0f;--card:#d9e8a4;--line:#0f380f;--on-hi:#0f380f;color-scheme:light}
+/* Themes (js/theme.js sets data-theme / data-mode on <html>).
+   Variables: --bg page, --panel header, --ink text+borders, --mid focus rings, --hi caught cards / hover,
+   --card cards+inputs, --line borders, --on-hi text drawn on --hi.
+   Every theme has light + dark palettes; Classic green is the base set above. */
+@media (prefers-color-scheme:dark){:root:not([data-mode=light]):not([data-theme]){--bg:#0f2a0f;--panel:#173a17;--ink:#c9e27a;--mid:#8bac0f;--hi:#9bbc0f;--card:#1d461d;--line:#8bac0f;--on-hi:#0f380f;color-scheme:dark}}
+:root:not([data-theme])[data-mode=dark]{--bg:#0f2a0f;--panel:#173a17;--ink:#c9e27a;--mid:#8bac0f;--hi:#9bbc0f;--card:#1d461d;--line:#8bac0f;--on-hi:#0f380f;color-scheme:dark}
+:root:not([data-theme])[data-mode=light]{--bg:#c7d98a;--panel:#b2c66f;--ink:#0f380f;--mid:#306230;--hi:#9bbc0f;--card:#d9e8a4;--line:#0f380f;--on-hi:#0f380f;color-scheme:light}
+
+/* Game Boy palettes and one theme per game. Every theme has a light and a dark palette; js/theme.js sets
+   data-mode to "light" or "dark" (Auto resolves to the device setting), so each theme only needs two rules. */
+:root[data-theme=pocket]{--bg:#cfcfc8;--panel:#b4b4ae;--ink:#202020;--mid:#585858;--hi:#f0f0ea;--card:#dcdcd6;--line:#202020;--on-hi:#202020;color-scheme:light}
+:root[data-theme=pocket][data-mode=dark]{--bg:#171716;--panel:#2f2f2d;--ink:#e6e6e5;--mid:#b1b1aa;--hi:#b9b9a2;--card:#41413f;--line:#a0a09c;--on-hi:#26260d;color-scheme:dark}
+:root[data-theme=color]{--bg:#e8defa;--panel:#b9a3ec;--ink:#1c1038;--mid:#5b3fb0;--hi:#d6c2ff;--card:#f4eefd;--line:#1c1038;--on-hi:#1c1038;color-scheme:light}
+:root[data-theme=color][data-mode=dark]{--bg:#3f2f6b;--panel:#2f2354;--ink:#f0e9ff;--mid:#b9a6e8;--hi:#c9b3ff;--card:#4f3d83;--line:#cbb8ff;--on-hi:#241540;color-scheme:dark}
+:root[data-theme=red]{--bg:#fbeceb;--panel:#e4574f;--ink:#140303;--mid:#8f1d17;--hi:#ffe27a;--card:#fffafa;--line:#140303;--on-hi:#140303;color-scheme:light}
+:root[data-theme=red][data-mode=dark]{--bg:#1f100f;--panel:#3e1f1d;--ink:#f4d9d7;--mid:#de827c;--hi:#e7ce74;--card:#532f2d;--line:#c17f7b;--on-hi:#26210d;color-scheme:dark}
+:root[data-theme=blue]{--bg:#e3eefc;--panel:#6fa3e8;--ink:#071530;--mid:#1f4e9c;--hi:#fff3b0;--card:#f4f8ff;--line:#071530;--on-hi:#071530;color-scheme:light}
+:root[data-theme=blue][data-mode=dark]{--bg:#0f161f;--panel:#1d2c3e;--ink:#d7e3f4;--mid:#7ca7de;--hi:#e7d574;--card:#2d3d53;--line:#7b99c1;--on-hi:#26220d;color-scheme:dark}
+:root[data-theme=yellow]{--bg:#fdf4c4;--panel:#f5d33a;--ink:#2a2000;--mid:#8a6d00;--hi:#ff9a8a;--card:#fffbe3;--line:#2a2000;--on-hi:#2a0a05;color-scheme:light}
+:root[data-theme=yellow][data-mode=dark]{--bg:#1f1c0f;--panel:#3e381d;--ink:#f4efd7;--mid:#decd7c;--hi:#e78474;--card:#534c2d;--line:#c1b47b;--on-hi:#26100d;color-scheme:dark}
+:root[data-theme=gold]{--bg:#f3e6b8;--panel:#d9b34a;--ink:#2e2203;--mid:#8a6a14;--hi:#fff0a0;--card:#fbf3d6;--line:#2e2203;--on-hi:#2e2203;color-scheme:light}
+:root[data-theme=gold][data-mode=dark]{--bg:#1f1a0f;--panel:#3e361d;--ink:#f3ecd8;--mid:#dec47c;--hi:#e7d474;--card:#53492d;--line:#c1ae7b;--on-hi:#26220d;color-scheme:dark}
+:root[data-theme=silver]{--bg:#e4e7ec;--panel:#aab4c4;--ink:#161c28;--mid:#55627a;--hi:#ffffff;--card:#f1f3f6;--line:#161c28;--on-hi:#161c28;color-scheme:light}
+:root[data-theme=silver][data-mode=dark]{--bg:#151619;--panel:#292d33;--ink:#e2e5e9;--mid:#9faabc;--hi:#97a8c4;--card:#3a3e46;--line:#949ca9;--on-hi:#0d1726;color-scheme:dark}
+:root[data-theme=crystal]{--bg:#d7f0f4;--panel:#6cc7d8;--ink:#06222b;--mid:#1d7288;--hi:#c9b8ff;--card:#eaf9fb;--line:#06222b;--on-hi:#1a1040;color-scheme:light}
+:root[data-theme=crystal][data-mode=dark]{--bg:#101c1e;--panel:#1e393e;--ink:#daeef1;--mid:#7ecedd;--hi:#9074e7;--card:#2d4c52;--line:#7cb5c0;--on-hi:#130d26;color-scheme:dark}
+:root[data-theme=ruby]{--bg:#f1d4cf;--panel:#d9665c;--ink:#240606;--mid:#8c2a24;--hi:#ffe9c4;--card:#fbe9e6;--line:#240606;--on-hi:#240606;color-scheme:light}
+:root[data-theme=ruby][data-mode=dark]{--bg:#1f110f;--panel:#3e201d;--ink:#f2dbd9;--mid:#de847c;--hi:#e7bc74;--card:#53302d;--line:#c1817b;--on-hi:#261d0d;color-scheme:dark}
+:root[data-theme=sapphire]{--bg:#d4e3f7;--panel:#4f86d6;--ink:#04122e;--mid:#1f4a9a;--hi:#9fe3ff;--card:#e8f1fc;--line:#04122e;--on-hi:#04122e;color-scheme:light}
+:root[data-theme=sapphire][data-mode=dark]{--bg:#0f161f;--panel:#1d2b3e;--ink:#d9e3f2;--mid:#7ca4de;--hi:#74c5e7;--card:#2d3c53;--line:#7b98c1;--on-hi:#0d1f26;color-scheme:dark}
+:root[data-theme=emerald]{--bg:#d3efdc;--panel:#4fb783;--ink:#04281a;--mid:#1c7a52;--hi:#f6f0a8;--card:#e7f7ec;--line:#04281a;--on-hi:#04281a;color-scheme:light}
+:root[data-theme=emerald][data-mode=dark]{--bg:#121c17;--panel:#22392e;--ink:#ddeee6;--mid:#8bd0ad;--hi:#e7de74;--card:#324d40;--line:#86b69e;--on-hi:#26240d;color-scheme:dark}
+:root[data-theme=fire-red]{--bg:#fbe3d0;--panel:#ee7a3c;--ink:#260c02;--mid:#a3340c;--hi:#ffd27a;--card:#fff1e6;--line:#260c02;--on-hi:#260c02;color-scheme:light}
+:root[data-theme=fire-red][data-mode=dark]{--bg:#1f150f;--panel:#3e291d;--ink:#f4e1d7;--mid:#de9f7c;--hi:#e7c074;--card:#533a2d;--line:#c1947b;--on-hi:#261e0d;color-scheme:dark}
+:root[data-theme=leaf-green]{--bg:#e0f3d2;--panel:#7cc45a;--ink:#0b2204;--mid:#2f7a1a;--hi:#f2f09a;--card:#f0fae8;--line:#0b2204;--on-hi:#0b2204;color-scheme:light}
+:root[data-theme=leaf-green][data-mode=dark]{--bg:#151d11;--panel:#293b21;--ink:#e2efdc;--mid:#a0d487;--hi:#e7e474;--card:#3a4f31;--line:#94ba83;--on-hi:#26260d;color-scheme:dark}
+:root[data-theme=diamond]{--bg:#dfe6fb;--panel:#8aa2e6;--ink:#0b1230;--mid:#3c4fa8;--hi:#ffffff;--card:#eff2fd;--line:#0b1230;--on-hi:#0b1230;color-scheme:light}
+:root[data-theme=diamond][data-mode=dark]{--bg:#0f131f;--panel:#1d263e;--ink:#d8dff3;--mid:#7c96de;--hi:#859ad6;--card:#2d3753;--line:#7b8dc1;--on-hi:#0d1326;color-scheme:dark}
+:root[data-theme=pearl]{--bg:#f6e3ee;--panel:#e59bbd;--ink:#2d0a1c;--mid:#9c3a68;--hi:#ffffff;--card:#fbeff5;--line:#2d0a1c;--on-hi:#2d0a1c;color-scheme:light}
+:root[data-theme=pearl][data-mode=dark]{--bg:#1e1016;--panel:#3e1e2d;--ink:#f1dae5;--mid:#dd7daa;--hi:#d685aa;--card:#522d3e;--line:#c07c9b;--on-hi:#260d18;color-scheme:dark}
+:root[data-theme=platinum]{--bg:#e6e9ee;--panel:#aab4c2;--ink:#131820;--mid:#b8650a;--hi:#f6b756;--card:#f3f5f8;--line:#131820;--on-hi:#1a1206;color-scheme:light}
+:root[data-theme=platinum][data-mode=dark]{--bg:#1d232c;--panel:#2b3440;--ink:#e3e8ef;--mid:#f0a23a;--hi:#f0a23a;--card:#364252;--line:#8fa0b5;--on-hi:#1a1206;color-scheme:dark}
+:root[data-theme=heart-gold]{--bg:#f7ecd2;--panel:#d6a63a;--ink:#2a1a02;--mid:#9c2f1a;--hi:#e5654a;--card:#fcf5e4;--line:#2a1a02;--on-hi:#1d0802;color-scheme:light}
+:root[data-theme=heart-gold][data-mode=dark]{--bg:#1f1a0f;--panel:#3e341d;--ink:#f3ebd8;--mid:#dec07c;--hi:#e78874;--card:#53472d;--line:#c1ac7b;--on-hi:#26110d;color-scheme:dark}
+:root[data-theme=soul-silver]{--bg:#dce8f7;--panel:#7e9fcc;--ink:#07121f;--mid:#2a5a9e;--hi:#cfe0f5;--card:#eaf1fa;--line:#07121f;--on-hi:#07121f;color-scheme:light}
+:root[data-theme=soul-silver][data-mode=dark]{--bg:#14202e;--panel:#22344b;--ink:#e6eef7;--mid:#9ec3ee;--hi:#c6d6e8;--card:#2d435f;--line:#9db4cf;--on-hi:#0f1a28;color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,sans-serif}
 header{position:sticky;top:0;z-index:2;background:var(--panel);border-bottom:3px solid var(--line);padding:8px 16px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
@@ -10,7 +55,7 @@ h1{margin:0;padding:12px 16px 8px;font:400 22px/1 "PKMN",monospace;letter-spacin
 .hrow,.controls{display:contents} /* wide screens: everything sits in one wrapping row */
 #optbtn,#gname{display:none}
 select,input[type=search],input[type=text],button{font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:0;padding:6px 8px}
-button{cursor:pointer}button:hover{background:var(--hi);color:#0f380f}
+button{cursor:pointer}button:hover{background:var(--hi);color:var(--on-hi)}
 .check{display:flex;align-items:center;gap:6px}.check:has(:disabled){opacity:.45}
 .progress{flex:1 1 260px;display:flex;align-items:center;gap:12px}
 .bar{flex:1;height:14px;border:2px solid var(--line);background:var(--card)}
@@ -20,7 +65,7 @@ button{cursor:pointer}button:hover{background:var(--hi);color:#0f380f}
 .card{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px 6px;background:var(--card);border:2px solid var(--line);border-radius:0;opacity:.5;filter:grayscale(1)}
 .cell{position:relative;display:flex;padding:5px;content-visibility:auto;contain-intrinsic-size:auto 150px} /* off-screen cells skip layout/paint but stay in the DOM; padding replaces the grid gap so focus outlines are not clipped */.cell>.card{flex:1}.cell[hidden]{display:none} /* search hides the whole cell; its display:flex would beat the default [hidden] rule */
 .where{position:absolute;top:7px;left:7px;z-index:1;width:22px;height:22px;padding:0;line-height:1;font:400 12px "PKMN",monospace}
-.card.on{opacity:1;filter:none;background:var(--hi);color:#0f380f;border-color:#0f380f}
+.card.on{opacity:1;filter:none;background:var(--hi);color:var(--on-hi);border-color:var(--on-hi)}
 .card.on::after{content:"✓";position:absolute;top:2px;right:5px;font-weight:700}
 .card img{width:80px;height:80px;image-rendering:pixelated;object-fit:contain}
 .card .n{font:400 12px "PKMN",monospace}.card .nm{font-size:12px;text-align:center;overflow-wrap:anywhere}
