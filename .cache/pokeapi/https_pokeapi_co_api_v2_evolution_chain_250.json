@@ -1,1 +1,0 @@
-{"id": 250, "baby_trigger_item": null, "chain": {"is_baby": false, "species": {"name": "phione", "url": "https://pokeapi.co/api/v2/pokemon-species/489/"}, "evolution_details": [], "evolves_to": [{"is_baby": false, "species": {"name": "manaphy", "url": "https://pokeapi.co/api/v2/pokemon-species/490/"}, "evolution_details": [], "evolves_to": []}]}}
