@@ -1,0 +1,1819 @@
+{
+ "version": 1,
+
+ "generated": "2026-10-05",
+ "source": "Bulbapedia (https://bulbapedia.bulbagarden.net), CC BY-NC-SA 2.5",
+ "items": {
+  "Thunder Stone": {
+   "where": [
+    {
+     "g": [
+      "red",
+      "blue",
+      "yellow"
+     ],
+     "t": [
+      "Celadon Department Store"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Sea Cottage (from Bill's grandfather)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Mystery Gift"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "crystal"
+     ],
+     "t": [
+      "Route 38 (gift from Lass Dana)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "New Mauville"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Route 124 (trade for Yellow Shard with Treasure Hunter)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Power Plant (×2)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Celadon Department Store"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Sunyshore City"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Underground"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Solaceon Ruins",
+      "Route 229"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Sea Cottage (from Bill's grandfather)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Route 38 (gift from Lass Dana)",
+      "Bug-Catching Contest first prize (post-National Pokédex)",
+      "Pokéathlon Dome (2500 Pts.)WeThSa"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "Fire Stone": {
+   "where": [
+    {
+     "g": [
+      "red",
+      "blue",
+      "yellow"
+     ],
+     "t": [
+      "Celadon Department Store"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Sea Cottage (from Bill's grandfather)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Mystery Gift"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "crystal"
+     ],
+     "t": [
+      "Route 36 (gift from Schoolboy Alan)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Fiery Path"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Route 124 (trade for Red Shard with Treasure Hunter)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Mt. Ember (×2)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Celadon Department Store"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Fuego Ironworks (×2, ×1)",
+      "Transfer from My Pokémon Ranch (held by Hayley's Vulpix)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Underground"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Solaceon Ruins",
+      "Stark Mountain"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Sea Cottage (from Bill's grandfather)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Route 36 (gift from School Kid Alan)",
+      "Bug-Catching Contest first prize (post-National Pokédex)",
+      "Pokéathlon Dome (2500 Pts.)SuTuTh"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "Water Stone": {
+   "where": [
+    {
+     "g": [
+      "red",
+      "blue",
+      "yellow"
+     ],
+     "t": [
+      "Celadon Department Store"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Sea Cottage (from Bill's grandfather)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Mystery Gift"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "crystal"
+     ],
+     "t": [
+      "Route 42 (gift from Fisherman Tully)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Abandoned Ship"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Route 124 (trade for Blue Shard with Treasure Hunter)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Seafoam Islands (×2)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Celadon Department Store"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Underground"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Routes 213 and 230",
+      "Solaceon Ruins"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Seafoam Islands",
+      "Sea Cottage (from Bill's grandfather)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Route 42 (gift from Fisherman Tully)",
+      "Bug-Catching Contest first prize (post-National Pokédex)",
+      "Pokéathlon Dome (2500 Pts.)MoTuWeFr"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "Leaf Stone": {
+   "where": [
+    {
+     "g": [
+      "red",
+      "blue",
+      "yellow"
+     ],
+     "t": [
+      "Celadon Department Store"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Sea Cottage (from Bill's grandfather)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Mystery Gift"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "crystal"
+     ],
+     "t": [
+      "Route 34 (gift from Picnicker Gina)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Route 119"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Route 124 (trade for Green Shard with Treasure Hunter)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Safari Zone (×2)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Celadon Department Store"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Floaroma Meadow"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Underground"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Route 225",
+      "Great Marsh"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Viridian Forest",
+      "Sea Cottage (from Bill's grandfather)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Route 34 (gift from Picnicker Gina)",
+      "Bug-Catching Contest first prize (post-National Pokédex)",
+      "Pokéathlon Dome (2500 Pts.)TuThSa"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "Moon Stone": {
+   "where": [
+    {
+     "g": [
+      "red",
+      "blue",
+      "yellow"
+     ],
+     "t": [
+      "Route 2",
+      "Mt. Moon (×2)",
+      "Rocket Hideout",
+      "Pokémon Mansion"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Tohjo Falls",
+      "Purchased by the player's Mom"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Mt. Moon SquareMoNight",
+      "Held by wild Clefairy (2% chance)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "crystal"
+     ],
+     "t": [
+      "Ruins of Alph"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Meteor Falls"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire"
+     ],
+     "t": [
+      "Held by wild Lunatone (5% chance)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Mt. Moon (×2)",
+      "Rocket Hideout",
+      "Pokémon Mansion",
+      "Joyful Game Corner"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Held by wild Clefairy (5% chance)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Underground",
+      "Held by wild Lunatone",
+      "wild Clefairy",
+      "and wild Cleffa (5% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Eterna City",
+      "Mt. Coronet"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Tohjo Falls",
+      "Ruins of Alph",
+      "Purchased by the player's Mom"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Mt. Moon SquareMoNight",
+      "Bug-Catching Contest first prize (post-National Pokédex)",
+      "Pokéathlon Dome (3000 Pts.)MoWe",
+      "Pickup (Lv. 41-100)",
+      "Held by wild Clefairy and wild Lunatone (5% chance each)"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "Sun Stone": {
+   "where": [
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Bug-Catching Contest first prize"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Mossdeep Space Center"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Held by wild Solrock (5% chance)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Ruin Valley"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Underground",
+      "Held by wild Solrock (5% chance)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Valor Lakefront",
+      "Mt. Coronet"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Route 13 (gift from Camper Tanner)",
+      "Bug-Catching Contest first prize",
+      "Pokéathlon Dome (post-National Pokédex) (3000 Pts.)SuMoFr",
+      "Pickup (Lv. 31-100)",
+      "Held by wild Solrock (5% chance)"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "King's Rock": {
+   "where": [
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Slowpoke Well"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Held by wild Slowpoke and wild Poliwhirl (2% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "crystal"
+     ],
+     "t": [
+      "Route 26 (held by Cooltrainer Gaven's Kingler from the second rematch onward)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Mossdeep City"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire"
+     ],
+     "t": [
+      "Battle Tower (35+ win streak)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Held by wild Hariyama (5% chance)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "emerald"
+     ],
+     "t": [
+      "Pickup (Lv. 11-30)",
+      "Battle Frontier (64 BP)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Sevault Canyon",
+      "Trainer Tower (prize for defeating Mixed Mode)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Pickup (Lv. 11-30)",
+      "Held by wild Poliwhirl (5% chance)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Celestic Town"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Slowpoke Well"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Pickup (Lv. 11-30)",
+      "Pokéathlon Dome (3000 Pts.)SuMoTh",
+      "Held by wild Slowbro and wild Poliwhirl (5% chance each)"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "Metal Coat": {
+   "where": [
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "S.S. Aqua"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Held by wild Magnemite (2% chance)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "crystal"
+     ],
+     "t": [
+      "Kanto Power Plant (held by in-game trade Magneton)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Held by wild Magnemite and wild Magneton (5% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Memorial Pillar",
+      "Trainer Tower (prize for defeating Knockout Mode)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Iron Island (from Byron)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Held by wild Magnemite",
+      "wild Steelix",
+      "wild Beldum",
+      "wild Bronzor",
+      "and wild Bronzong (5% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Iron Island"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "wild Magneton"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "S.S. Aqua",
+      "Kanto Power Plant (held by in-game trade Magneton)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Pokéathlon Dome (2500 Pts.)TuFrSa",
+      "Held by wild Magnemite",
+      "wild Magneton",
+      "wild Steelix",
+      "wild Beldum",
+      "wild Metang",
+      "wild Bronzor",
+      "and wild Bronzong (5% chance each)"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "Dragon Scale": {
+   "where": [
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Mt. Mortar"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Held by wild Horsea",
+      "wild Seadra",
+      "wild Dratini",
+      "and wild Dragonair (2% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Held by wild Horsea and wild Bagon (5% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Water Path",
+      "Trainer Tower (prize for defeating Double Mode)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Held by wild Horsea",
+      "wild Seadra",
+      "wild Dratini",
+      "and wild Dragonair (5% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Mt. Mortar"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Pokéathlon Dome (2500 Pts. - post-National Pokédex)WeFr",
+      "Held by wild Horsea",
+      "wild Seadra",
+      "wild Dratini",
+      "and wild Dragonair (5% chance each)"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "Up-Grade": {
+   "where": [
+    {
+     "g": [
+      "gold",
+      "silver",
+      "crystal"
+     ],
+     "t": [
+      "Silph Co."
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Trade"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Rocket Warehouse",
+      "Trainer Tower (prize for defeating Single Mode)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Eterna City"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Route 224",
+      "Team Galactic Eterna Building"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Silph Co."
+     ],
+     "k": "once"
+    }
+   ]
+  },
+  "Deep Sea Tooth": {
+   "where": [
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Slateport City (choice between this and a DeepSeaScale)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Trade"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Held by wild Carvanha and wild Sharpedo (5% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Route 20"
+     ],
+     "k": "once"
+    }
+   ]
+  },
+  "Deep Sea Scale": {
+   "where": [
+    {
+     "g": [
+      "ruby",
+      "sapphire",
+      "emerald"
+     ],
+     "t": [
+      "Slateport City (choice between this and a DeepSeaTooth)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "fire-red",
+      "leaf-green"
+     ],
+     "t": [
+      "Trade"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Held by wild Chinchou",
+      "wild Lanturn",
+      "and wild Relicanth (5% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Route 20"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Held by wild Chinchou",
+      "wild Lanturn",
+      "and wild Relicanth (5% chance each)"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "Shiny Stone": {
+   "where": [
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Iron Island"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Pickup (Lv. 41-100)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Routes 210 and 228"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "National Park"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Route 14 (gift from Bird Keeper Josh)",
+      "Bug-Catching Contest first prize (post-National Pokédex)",
+      "Pokéathlon Dome (post-National Pokédex, 3000 Pts.)SuMoWeThSa"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "Dusk Stone": {
+   "where": [
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Galactic Warehouse",
+      "Victory Road"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Pickup (Lv. 31-100)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Wayward Cave"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Cerulean Cave"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Route 17 (gift from Biker Reese)",
+      "Bug-Catching Contest first prize (post-National Pokédex)",
+      "Pokéathlon Dome (post-National Pokédex, 3000 Pts.)MoTuThFrSa"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "Dawn Stone": {
+   "where": [
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Mt. Coronet"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Pickup (Lv. 51-100)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Routes 212 and 225"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Mt. Silver Cave",
+      "Silph Co. (held by in-game trade Beldum)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Route 17 (gift from Biker Aiden)",
+      "Bug-Catching Contest first prize (post-National Pokédex)",
+      "Pokéathlon Dome (post-National Pokédex) (3000 Pts.)TuWeFrSa"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "Oval Stone": {
+   "where": [
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Lost Tower"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Held by wild Happiny and wild Chansey (50% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Rock Tunnel"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Route 15 (gift from Twins Kay & Tia)",
+      "Bug-Catching Contest first prize (post-National Pokédex)",
+      "Held by wild Chansey (50% chance)"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "Razor Claw": {
+   "where": [
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Route 224",
+      "Victory Road"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Battle Park/Frontier (48 BP)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Team Galactic HQ"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Battle Frontier (48 BP)"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "Razor Fang": {
+   "where": [
+    {
+     "g": [
+      "diamond",
+      "pearl"
+     ],
+     "t": [
+      "Battle Park"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl"
+     ],
+     "t": [
+      "Battle Park (48 BP)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Routes 214 and 225"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Battle Frontier (48 BP)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Battle Frontier (48 BP)"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "Protector": {
+   "where": [
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Route 228"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Iron Island"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Mt. Mortar"
+     ],
+     "k": "once"
+    }
+   ]
+  },
+  "Electirizer": {
+   "where": [
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Held by wild Elekid (50%/5% chance) and wild Electabuzz (5% chance)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Valley Windworks"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Cerulean Cave"
+     ],
+     "k": "once"
+    }
+   ]
+  },
+  "Magmarizer": {
+   "where": [
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Held by wild Magby (5%/50% chance) and wild Magmar (5% chance)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Route 214"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Cinnabar Island"
+     ],
+     "k": "once"
+    }
+   ]
+  },
+  "Reaper Cloth": {
+   "where": [
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Route 229"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Turnback Cave"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Acuity Lakefront"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Mt. Silver"
+     ],
+     "k": "once"
+    }
+   ]
+  },
+  "Dubious Disc": {
+   "where": [
+    {
+     "g": [
+      "diamond",
+      "pearl",
+      "platinum"
+     ],
+     "t": [
+      "Route 225"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "platinum"
+     ],
+     "t": [
+      "Team Galactic HQ"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "heart-gold",
+      "soul-silver"
+     ],
+     "t": [
+      "Route 42"
+     ],
+     "k": "once"
+    }
+   ]
+  }
+ }
+}

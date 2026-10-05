@@ -22,7 +22,7 @@ const SHELL = [
   "./", "index.html", "manifest.webmanifest", "css/style.css",
   "js/config.js", "js/cards.js", "js/store.js", "js/storage.js", "js/theme.js", "js/forms.js", "js/where.js", "js/app.js",
   "data/games.json", "data/pokemon.json", "data/regional.json", "data/forms.json",
-  "data/locations.json",              // so "where to find" works offline; remove this line if the file gets too big
+  "data/locations.json", "data/items.json",              // so "where to find" works offline; remove this line if the file gets too big
   "icons/icon-192.png", "icons/icon-512.png",
 ];
 const ASSETS = ["assets/fonts/pkmn-rbygsc.ttf", "assets/fonts/pokemon-rs.ttf", "assets/fonts/pokemon-frlg.ttf"];
