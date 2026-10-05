@@ -136,7 +136,8 @@ const Cards = (() => {
 
   let api, tok = 0, cur = null, dip = null; // dip = the game the open diploma dialog belongs to
 
-  async function update(game, got, st) {
+  // extra.left = required forms still missing (completion rules); the diploma stays locked until it is 0.
+  async function update(game, got, st, extra = {}) {
     const my = ++tok; $("#card").style.opacity = 0.5; // dim the old card while the new one loads
     await loadFonts();
     const c = await trainer(game, got.size, st);
@@ -146,11 +147,13 @@ const Cards = (() => {
     const gendered = !!game.card?.gender;
     document.querySelectorAll("input[name=gender]").forEach(r => { r.disabled = !gendered; r.checked = gendered && r.value === st.gender; });
     const missingMew = game.key === "yellow" && got.size === game.count - 1 && !got.has(151);
-    const done = got.size === game.count || missingMew;
+    const dexDone = got.size === game.count || missingMew, left = extra.left || 0, done = dexDone && !left;
     cur = { game, missingMew };
     $("#diploma").disabled = !(game.diploma && done);
     $("#hint").textContent = !game.diploma ? "No diploma artwork for this game yet."
-      : done ? "Your Pokédex is complete!" : "Complete the Pokédex to unlock your diploma.";
+      : done ? "Your Pokédex is complete!"
+      : dexDone ? `Pokédex complete! ${left} required form${left === 1 ? "" : "s"} still missing (see Settings).`
+      : "Complete the Pokédex to unlock your diploma.";
   }
 
   // ---- diploma dialog ----

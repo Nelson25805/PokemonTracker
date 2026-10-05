@@ -111,6 +111,15 @@ body.selecting footer{padding-bottom:110px}
 #selcount{font:400 14px "PKMN",monospace;min-width:11ch}
 #selrange[aria-pressed=true]{background:var(--ink);color:var(--bg)}
 
+/* shiny / normal corner badge, tracking switch, settings */
+.trk{display:flex;align-items:center;gap:6px}
+.other{position:absolute;bottom:7px;left:7px;z-index:1;display:flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;font:700 14px/1 system-ui,sans-serif;opacity:.6}
+.other[hidden]{display:none}
+.other.on{opacity:1;background:var(--hi);color:var(--on-hi);border-color:var(--on-hi)}
+.has-badges .card{padding-bottom:30px}
+#count2{font-size:12px;white-space:nowrap;opacity:.9}#count2[hidden]{display:none}
+#settings .row>span{font-size:14px}
+
 /* phones and narrow windows: a compact sticky header (search + progress), the rest behind "Options" */
 @media (max-width:759px){
   h1{font-size:16px;padding:8px 12px 6px}
@@ -134,6 +143,28 @@ body.selecting footer{padding-bottom:110px}
 /* touch screens: bigger tap targets */
 @media (pointer:coarse){
   select,input,button{min-height:40px}
-  .card,.where{min-height:0}
+  .card,.where,.other{min-height:0}
   .where{width:30px;height:30px}
+  .other{width:30px;height:30px}
 }
+
+/* forms: card chip, counter, info-dialog tabs, completion rules */
+.chip{position:absolute;bottom:7px;right:7px;z-index:1;height:24px;padding:0 6px;font:400 11px/1 "PKMN",monospace;opacity:.75}
+.chip.done{opacity:1;background:var(--hi);color:var(--on-hi);border-color:var(--on-hi)}
+.card.hasform{padding-bottom:30px}
+body.selecting .chip{display:none}
+#count3{font-size:12px;white-space:nowrap;opacity:.9}#count3[hidden]{display:none}
+#wtabs{margin:0 0 10px}#wtabs[hidden]{display:none}
+#tab-forms h3{margin:12px 0 6px;font:400 13px "PKMN",monospace}
+#forms-note{margin:0 0 10px;font-size:13px}
+.flist{list-style:none;margin:0;padding:0}
+.frow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:4px 6px;margin:0 0 6px;border:2px solid var(--line);background:var(--card)}
+.frow .pair{display:flex;gap:2px}
+.frow img{width:48px;height:48px;image-rendering:pixelated;object-fit:contain}
+.frow .fname{flex:1 1 9ch;display:flex;flex-direction:column;font-weight:600;overflow-wrap:anywhere}
+.frow .fname small{font-weight:400;font-size:12px;opacity:.8}
+.ftogs{display:flex;gap:6px}
+.ftog[aria-pressed=true]{background:var(--hi);color:var(--on-hi);border-color:var(--on-hi)}
+#settings .rules{flex-direction:column;align-items:flex-start;gap:6px;border:2px solid var(--line);padding:8px 10px}
+#settings .rules p{margin:0;font-size:12px;max-width:44ch}#settings .rules .fine{opacity:.8}
+@media (pointer:coarse){.chip{min-height:30px;height:30px}}

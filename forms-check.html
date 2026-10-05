@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forms check</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/theme.js"></script>
+<style>
+  body{padding:16px;max-width:1200px;margin:auto}
+  h1{padding:0 0 6px}
+  .bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:10px 0}
+  #summary{font-weight:600;margin:8px 0 16px}
+  .help{font-size:13px;max-width:90ch}
+  .sp{border:2px solid var(--line);background:var(--panel);margin:0 0 10px;padding:8px}
+  .sp h2{font:400 14px "PKMN",monospace;margin:0 0 6px}
+  .sp h2 small{font:13px system-ui,sans-serif;opacity:.8;margin-left:8px}
+  .row{display:flex;flex-wrap:wrap;gap:6px}
+  .f{width:92px;text-align:center;font-size:12px;border:2px solid var(--line);background:var(--card);padding:4px}
+  .f.base{border-style:dashed}
+  .f .pair{display:flex;justify-content:center;gap:2px}
+  .f img{width:44px;height:44px;object-fit:contain;image-rendering:pixelated}
+  .f img.miss{outline:2px solid #c62828;background:#f8d7da}
+  .f b{display:block;font-weight:600;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<h1>Forms check</h1>
+<p class="help">Shows every alternate form and gender variant in <code>data/forms.json</code> for one game, with its normal sprite
+(left) and shiny sprite (right). The dashed tile is the base form, which the main grid already tracks. A red outline means the
+image file is missing. Run <code>python3 build_forms.py</code> if you see any.</p>
+<div class="bar">
+  <label>Game <select id="game"></select></label>
+  <label class="check"><input type="checkbox" id="c-alt" checked> Alternate forms</label>
+  <label class="check"><input type="checkbox" id="c-gender" checked> Gender differences</label>
+</div>
+<div id="summary" aria-live="polite"></div>
+<div id="out"></div>
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+let games = [], mons = new Map(), forms = null;
+const pad = n => String(n).padStart(3, "0");
+
+function img(src, miss) {
+  const i = new Image(); i.alt = ""; i.loading = "lazy"; i.src = src;
+  i.onerror = () => { i.classList.add("miss"); miss.n++; summary(); };
+  return i;
+}
+const miss = { n: 0 };
+let shown = 0, total = 0;
+function summary() {
+  const g = games.find(x => x.key === $("#game").value);
+  $("#summary").textContent = `${g ? g.name : ""}: ${shown} Pokémon, ${total} forms shown · missing images: ${miss.n}`;
+}
+
+function render() {
+  const g = games.find(x => x.key === $("#game").value), out = $("#out");
+  out.textContent = ""; miss.n = 0; shown = 0; total = 0;
+  const cats = { alt: $("#c-alt").checked, gender: $("#c-gender").checked };
+  const dir = `assets/sprites/${g.sprites}`;
+  for (const [n, sp] of Object.entries(forms.species)) {
+    const list = sp.forms.filter(f => f.g.includes(g.key) && cats[f.cat]);
+    if (!list.length) continue;
+    shown++; total += list.length;
+    const box = document.createElement("section"); box.className = "sp";
+    const h = document.createElement("h2"); h.textContent = `#${pad(n)} ${(mons.get(+n) || {}).name || ""}`;
+    const small = document.createElement("small"); small.textContent = `${list.length} form${list.length === 1 ? "" : "s"}`; h.append(small);
+    const row = document.createElement("div"); row.className = "row";
+    const tile = (label, sub, src, shinySrc, base) => {
+      const t = document.createElement("div"); t.className = "f" + (base ? " base" : "");
+      const pair = document.createElement("div"); pair.className = "pair";
+      pair.append(img(src, miss)); if (g.shiny && shinySrc) pair.append(img(shinySrc, miss));
+      const b = document.createElement("b"); b.textContent = label;
+      t.append(pair, b); if (sub) t.append(sub); row.append(t);
+    };
+    tile(sp.base, "", `${dir}/${n}.png`, g.shiny ? `${dir}/shiny/${n}.png` : null, true);
+    for (const f of list) tile(f.name, "", `${dir}/forms/${f.id}.png`, g.shiny ? `${dir}/shiny/forms/${f.id}.png` : null, false);
+    box.append(h, row); out.append(box);
+  }
+  summary();
+}
+
+(async function start() {
+  try {
+    const [gl, ml, fl] = await Promise.all(["games", "pokemon", "forms"].map(f => fetch(`data/${f}.json`).then(r => r.json())));
+    games = gl.filter(g => g.gen >= 2); mons = new Map(ml.map(m => [m.n, m])); forms = fl;
+  } catch {
+    $("#out").textContent = "Couldn't load data. Serve the folder (python3 -m http.server) instead of opening the file directly, and run build_forms.py first.";
+    return;
+  }
+  const have = new Set(Object.values(forms.species).flatMap(s => s.forms.flatMap(f => f.g)));
+  games = games.filter(g => have.has(g.key));
+  $("#game").innerHTML = games.map(g => `<option value="${g.key}">${g.name}</option>`).join("");
+  $("#game").value = games.find(g => g.key === "platinum") ? "platinum" : games[0].key;
+  for (const id of ["#game", "#c-alt", "#c-gender"]) $(id).addEventListener("change", render);
+  render();
+})();
+</script>
+</body>
+</html>

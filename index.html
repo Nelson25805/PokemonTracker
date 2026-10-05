@@ -18,19 +18,25 @@
   <div class="hrow">
     <input type="search" id="search" placeholder="Search name or number" aria-label="Search">
     <button type="button" id="optbtn" aria-expanded="false" aria-controls="opts">Options</button>
+    <button type="button" id="setbtn" aria-haspopup="dialog" title="Theme, light / dark and display settings">Settings</button>
   </div>
   <div class="controls" id="opts">
     <label>Game <select id="game"></select></label>
     <label>Dex <select id="dex"><option value="national">National</option><option value="regional">Regional</option></select></label>
-    <label class="check"><input type="checkbox" id="shiny"> Shiny</label>
-    <label>Theme <select id="theme"></select></label>
-    <button type="button" id="mode" title="Light / dark (Classic green theme only)">Mode: Auto</button>
+    <div class="trk"><span>Tracking</span>
+      <div class="seg" id="track" role="group" aria-label="Which list taps, filters and bulk actions use">
+        <button type="button" data-track="normal" aria-pressed="true">Normal</button>
+        <button type="button" data-track="shiny" aria-pressed="false">Shiny</button>
+      </div>
+    </div>
     <input type="text" id="trainer" maxlength="10" placeholder="Trainer name" aria-label="Trainer name">
   </div>
   <div class="progress" aria-live="polite">
     <span id="gname"></span>
     <div class="bar"><div id="fill"></div></div>
     <span id="count"></span>
+    <span id="count2" hidden></span>
+    <span id="count3" hidden></span>
   </div>
 </header>
 
@@ -96,16 +102,40 @@
     <button id="dsave">Save PNG</button><button id="dclose">Close</button>
   </div>
 </dialog>
+<dialog id="settings" aria-labelledby="set-title">
+  <h2 id="set-title">Settings</h2>
+  <div class="row"><label>Theme <select id="theme"></select></label></div>
+  <div class="row"><span>Light / dark</span><button type="button" id="mode">Mode: Auto</button></div>
+  <div class="row"><label class="check"><input type="checkbox" id="badges"> Show ★ / ✓ badges on cards</label></div>
+  <div class="row"><fieldset class="rules"><legend>Completion rules</legend>
+    <label class="check"><input type="checkbox" id="req-gender"> Require gender differences</label>
+    <label class="check"><input type="checkbox" id="req-alt"> Require alternate forms</label>
+    <p id="req-hint"></p>
+    <p class="fine">Off by default. When on, those forms must be caught (normal list) before the Pokédex counts as complete and the diploma unlocks. The trainer card and diploma still print the base-dex number.</p>
+  </fieldset></div>
+  <div class="row"><button type="button" id="setclose">Close</button></div>
+</dialog>
 <dialog id="where" aria-labelledby="where-title">
   <h2 id="where-title"></h2>
-  <p id="where-note"></p>
-  <div id="where-body"></div>
+  <div class="seg" id="wtabs" role="group" aria-label="Show" hidden>
+    <button type="button" data-tab="where" aria-pressed="true">Where to find</button>
+    <button type="button" data-tab="forms" aria-pressed="false">Forms</button>
+  </div>
+  <div id="tab-where">
+    <p id="where-note"></p>
+    <div id="where-body"></div>
+  </div>
+  <div id="tab-forms" hidden>
+    <p id="forms-note"></p>
+    <div id="forms-body"></div>
+  </div>
   <div class="row"><a id="where-link" href="#" target="_blank" rel="noopener">Full details on Bulbapedia ↗</a><button id="where-close">Close</button></div>
 </dialog>
 <script src="js/config.js"></script>
 <script src="js/cards.js"></script>
 <script src="js/store.js"></script>
 <script src="js/storage.js"></script>
+<script src="js/forms.js"></script>
 <script src="js/where.js"></script>
 <script src="js/app.js"></script>
 <script>
