@@ -192,3 +192,12 @@ body.selecting .chip{display:none}
 .amapimg .unk{position:absolute;display:block;pointer-events:none;image-rendering:pixelated;height:auto}
 .amapimg .unk.txt{left:5%;top:38.9%;width:85%;padding:6px 0;text-align:center;line-height:1.2;font:400 4cqw "PKMN",monospace;background:#f8e8f8;color:#181010;border:2px solid #181010}
 .amaptitle{position:absolute;right:0;z-index:1;pointer-events:none;white-space:nowrap;overflow:hidden;line-height:1;font-family:"PKMN",monospace;color:#181010}
+/* time of day on the region map (js/maps.js): filter bar, M / D / N badges, "not at this time" banner */
+.amaptime{margin:6px 8px 2px;flex-wrap:wrap}
+.amaptime button{font-size:13px;padding:4px 8px}
+.amapimg .tm{outline:2px solid var(--tc,#fff);box-shadow:0 0 0 1px #000,inset 0 0 0 1px #000}
+.amapimg .tm[hidden]{display:none}
+.amapimg .tb{position:absolute;right:-1px;bottom:-1px;padding:.25cqw .5cqw;font:400 2.6cqw/1 "PKMN",monospace;background:#000;color:var(--tc,#fff);letter-spacing:.1cqw}
+.amapimg .nest .tb,.amapimg .mk .tb{animation:none}
+.amapimg .unk.txt.small{font-size:3cqw}
+.amapimg .unk.txt[hidden]{display:none}

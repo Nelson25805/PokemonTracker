@@ -239,7 +239,8 @@ const Where = (() => {
           hl.innerHTML = bx.map(([x, y, w, h]) => `<i style="left:${pc(x / W)};top:${pc(y / H)};width:${pc(w / W)};height:${pc(h / H)}"></i>`).join("");
         }
       }
-      tip.innerHTML = hits.map(h => h.here ? `<b>${esc(h.name)}</b> · found here` : esc(h.name)).join("<br>");
+      // name; if the Pokémon is found there: "found here", plus the time of day on maps that have one (Gold / Silver / Crystal)
+      tip.innerHTML = hits.map(h => h.here ? `<b>${esc(h.name)}</b> · found here${h.when ? ` · ${esc(h.when)}` : ""}` : esc(h.name)).join("<br>");
       tip.style.left = fx * 100 + "%"; tip.style.top = fy * 100 + "%";
       const h = fx < 0.3 ? "0" : fx > 0.7 ? "-100%" : "-50%";                  // keep the tooltip inside the map
       tip.style.transform = fy < 0.25 ? `translate(${h}, 16px)` : `translate(${h}, calc(-100% - 8px))`;
