@@ -20,9 +20,9 @@ const ASSET_CACHE = "pokedex-assets-v1";
 // Downloaded when the worker installs. Paths are relative to this file. A missing file is skipped, not fatal.
 const SHELL = [
   "./", "index.html", "manifest.webmanifest", "css/style.css",
-  "js/config.js", "js/cards.js", "js/store.js", "js/storage.js", "js/theme.js", "js/forms.js", "js/where.js", "js/app.js",
+  "js/config.js", "js/cards.js", "js/store.js", "js/storage.js", "js/theme.js", "js/forms.js", "js/maps.js", "js/where.js", "js/app.js",
   "data/games.json", "data/pokemon.json", "data/regional.json", "data/forms.json",
-  "data/locations.json", "data/items.json",              // so "where to find" works offline; remove this line if the file gets too big
+  "data/locations.json", "data/items.json", "data/maps.json",              // so "where to find" works offline; remove this line if the file gets too big
   "icons/icon-192.png", "icons/icon-512.png",
 ];
 const ASSETS = ["assets/fonts/pkmn-rbygsc.ttf", "assets/fonts/pokemon-rs.ttf", "assets/fonts/pokemon-frlg.ttf"];
@@ -78,6 +78,6 @@ self.addEventListener("fetch", e => {
   const req = e.request, url = new URL(req.url);
   if (req.method !== "GET" || url.origin !== location.origin || !url.pathname.startsWith(BASE)) return;
   const path = url.pathname.slice(BASE.length);
-  if (/^tests?(\/|\.html$)/.test(path)) return;           // the render-check page and its baselines must always be fresh
+  if (/^(tests?(\/|\.html$)|map-editor\.html$)/.test(path)) return;           // the render-check page and its baselines must always be fresh
   e.respondWith(path.startsWith("assets/") ? cacheFirst(req) : staleWhileRevalidate(e));
 });

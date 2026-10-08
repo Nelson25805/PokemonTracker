@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Map editor</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/theme.js"></script>
+<style>
+  body{padding:16px;max-width:1500px;margin:auto}
+  h1{padding:0 0 6px}
+  .help{font-size:13px;max-width:100ch}
+  .bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:10px 0}
+  .cols{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+  #side{flex:0 0 300px;max-width:100%}
+  #list{list-style:none;margin:8px 0 0;padding:0;max-height:70vh;overflow:auto;border:2px solid var(--line);background:var(--card)}
+  #list li{padding:4px 8px;cursor:pointer;border-bottom:1px dashed var(--mid);display:flex;justify-content:space-between;gap:8px}
+  #list li.sel{background:var(--ink);color:var(--bg)}
+  #list li.done::after{content:"✓"}
+  #list li.stale{font-style:italic;opacity:.8}
+  #wrap{flex:1 1 400px;overflow:auto;max-height:80vh;border:2px solid var(--line);background:var(--card)}
+  #stage{position:relative;line-height:0;cursor:crosshair;touch-action:none;user-select:none}
+  #stage img{display:block;width:100%;image-rendering:pixelated;pointer-events:none}
+  #ov i{position:absolute;pointer-events:none;border:1px solid rgba(0,0,0,.5);background:rgba(40,90,220,.25)}
+  #ov i.cur{background:rgba(220,30,30,.55);border-color:#fff}
+  #ov i.pre{background:rgba(255,220,0,.5);border-color:#000}
+  #msg{font-weight:600;margin:6px 0}
+</style>
+</head>
+<body>
+<h1>Map editor</h1>
+<p class="help">Marks where each location sits on a game's map and writes <code>data/maps.json</code>. Pick a map, click a location in the
+list, then drag on the map to draw a box over it (several boxes per location are fine). With a grid size set, boxes snap to
+whole tiles, so they match the in-game look. When you're done press <b>Download maps.json</b> and put it in <code>data/</code>.
+Your work is also kept in this browser as a draft. Blue = other locations already done, red = the selected one.
+If the map image isn't in <code>assets/maps/</code> yet, use <b>Preview image…</b> to load it from your computer; the file name in
+<code>data/maps.json</code> is what the site will use.</p>
+<div class="bar">
+  <label>Map <select id="map"></select></label>
+  <label>Grid (image px per tile, 0 = free) <input id="grid" type="number" min="0" max="64" value="0" style="width:5em"></label>
+  <label>Zoom <select id="zoom"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>6</option></select>×</label>
+  <button id="img">Preview image…</button><input type="file" id="imgfile" accept="image/*" hidden>
+  <button id="undo">Undo last box</button>
+  <button id="clear">Clear this location</button>
+  <button id="save">Download maps.json</button>
+</div>
+<div id="msg" aria-live="polite"></div>
+<div class="cols">
+  <div id="side">
+    <input type="search" id="q" placeholder="Filter locations" style="width:100%">
+    <label class="check"><input type="checkbox" id="todo"> Only locations not marked yet</label>
+    <ul id="list"></ul>
+  </div>
+  <div id="wrap"><div id="stage"><img id="im" alt="Map"><div id="ov"></div></div></div>
+</div>
+<script src="js/maps.js"></script>
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const DRAFT = "pokedexTracker.mapDraft";
+let db, loc, mapId, place = null, drag = null, cache = {};
+
+const boxes = (id, p) => ((db.areas[id] || {})[p]) || [];
+const map = () => db.maps[mapId];
+
+function placesFor(id) {
+  if (cache[id]) return cache[id];
+  const set = new Set();
+  for (const [g, ids] of Object.entries(db.games)) if (ids.includes(id))
+    for (const list of Object.values(loc.loc[g] || {})) for (const e of list) set.add(Maps.placeKey(e[0]));
+  return (cache[id] = [...set].sort((a, b) => a.localeCompare(b, undefined, { numeric: true })));
+}
+
+function persist() { try { localStorage.setItem(DRAFT, JSON.stringify(db)); } catch {} }
+
+function renderList() {
+  const q = $("#q").value.trim().toLowerCase(), todo = $("#todo").checked, ul = $("#list");
+  ul.textContent = "";
+  let done = 0;
+  const all = placesFor(mapId);
+  // Names saved in maps.json that no location in locations.json produces. The site never looks them up, but they still draw
+  // on the hover highlight, so list them (marked "unused") to let you move or delete them.
+  const extra = Object.keys(db.areas[mapId] || {}).filter(p => !all.includes(p)).sort();
+  for (const p of [...all, ...extra]) {
+    const stale = !all.includes(p), d = boxes(mapId, p).length > 0; if (d && !stale) done++;
+    if ((q && !p.toLowerCase().includes(q)) || (todo && d)) continue;
+    const li = document.createElement("li"); li.textContent = stale ? `${p} ⚠ unused` : p;
+    li.className = (d ? "done " : "") + (stale ? "stale " : "") + (p === place ? "sel" : "");
+    li.onclick = () => { place = p; renderList(); renderBoxes(); };
+    ul.append(li);
+  }
+  $("#msg").textContent = `${map().name} (${mapId}): ${done} of ${all.length} locations marked` + (place ? ` · selected: ${place}` : " · pick a location from the list");
+}
+
+function renderBoxes() {
+  const m = map(), ov = $("#ov"); ov.textContent = "";
+  if (!m.w) return;
+  const add = (b, cls) => {
+    const i = document.createElement("i"); i.className = cls;
+    Object.assign(i.style, { left: b[0] / m.w * 100 + "%", top: b[1] / m.h * 100 + "%", width: b[2] / m.w * 100 + "%", height: b[3] / m.h * 100 + "%" });
+    ov.append(i);
+  };
+  for (const [p, list] of Object.entries(db.areas[mapId] || {})) for (const b of list) add(b, p === place ? "cur" : "");
+  if (drag) add(drag.box, "pre");
+}
+
+function loadImage(src) {
+  const im = $("#im");
+  im.onload = () => {
+    const m = map(); m.w = im.naturalWidth; m.h = im.naturalHeight; persist();
+    $("#stage").style.width = m.w * Number($("#zoom").value) + "px";
+    renderBoxes(); renderList();
+  };
+  im.onerror = () => { $("#msg").textContent = `Couldn't load ${map().img}. Use "Preview image…" to load it from your computer.`; };
+  im.src = src;
+}
+
+function selectMap(id) {
+  mapId = id; place = null; $("#grid").value = map().grid || 0;
+  loadImage(map().img); renderList(); renderBoxes();
+}
+
+// Pointer position -> image pixel, snapped to the grid.
+function pos(e) {
+  const m = map(), r = $("#stage").getBoundingClientRect();
+  return [Math.max(0, Math.min(m.w - 1, (e.clientX - r.left) / r.width * m.w)), Math.max(0, Math.min(m.h - 1, (e.clientY - r.top) / r.height * m.h))];
+}
+function boxOf(a, b) {
+  const g = Number($("#grid").value) || 0, m = map();
+  if (!g) { const x = Math.min(a[0], b[0]), y = Math.min(a[1], b[1]); return [Math.round(x), Math.round(y), Math.max(1, Math.round(Math.abs(a[0] - b[0]))), Math.max(1, Math.round(Math.abs(a[1] - b[1])))]; }
+  const x0 = Math.floor(Math.min(a[0], b[0]) / g), x1 = Math.floor(Math.max(a[0], b[0]) / g);
+  const y0 = Math.floor(Math.min(a[1], b[1]) / g), y1 = Math.floor(Math.max(a[1], b[1]) / g);
+  return [x0 * g, y0 * g, Math.min((x1 - x0 + 1) * g, m.w - x0 * g), Math.min((y1 - y0 + 1) * g, m.h - y0 * g)];
+}
+
+$("#stage").addEventListener("pointerdown", e => {
+  if (!place) { $("#msg").textContent = "Pick a location from the list first."; return; }
+  if (!map().w) return;
+  e.currentTarget.setPointerCapture(e.pointerId);
+  const p = pos(e); drag = { from: p, box: boxOf(p, p) }; renderBoxes();
+});
+$("#stage").addEventListener("pointermove", e => { if (!drag) return; drag.box = boxOf(drag.from, pos(e)); renderBoxes(); });
+$("#stage").addEventListener("pointerup", e => {
+  if (!drag) return;
+  const b = boxOf(drag.from, pos(e)); drag = null;
+  (db.areas[mapId] = db.areas[mapId] || {})[place] = [...boxes(mapId, place), b];
+  persist(); renderBoxes(); renderList();
+});
+$("#stage").addEventListener("pointercancel", () => { drag = null; renderBoxes(); });
+
+$("#undo").onclick = () => {
+  if (!place) return;
+  const l = boxes(mapId, place).slice(0, -1);
+  if (l.length) db.areas[mapId][place] = l; else if (db.areas[mapId]) delete db.areas[mapId][place];
+  persist(); renderBoxes(); renderList();
+};
+$("#clear").onclick = () => { if (place && db.areas[mapId]) { delete db.areas[mapId][place]; persist(); renderBoxes(); renderList(); } };
+$("#grid").onchange = () => { map().grid = Number($("#grid").value) || 0; persist(); };
+$("#zoom").onchange = () => { if (map().w) $("#stage").style.width = map().w * Number($("#zoom").value) + "px"; };
+$("#map").onchange = e => selectMap(e.target.value);
+$("#q").oninput = renderList; $("#todo").onchange = renderList;
+$("#img").onclick = () => $("#imgfile").click();
+$("#imgfile").onchange = e => { const f = e.target.files[0]; if (f) loadImage(URL.createObjectURL(f)); e.target.value = ""; };
+$("#save").onclick = () => {
+  const out = { ...db, generated: new Date().toISOString().slice(0, 10) };
+  for (const id of Object.keys(out.areas)) if (!Object.keys(out.areas[id]).length) delete out.areas[id];
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 1)], { type: "application/json" }));
+  a.download = "maps.json"; a.click(); URL.revokeObjectURL(a.href);
+};
+
+(async function start() {
+  try {
+    [db, loc] = await Promise.all(["maps", "locations"].map(f => fetch(`data/${f}.json`).then(r => r.json())));
+  } catch {
+    $("#msg").textContent = "Couldn't load data/maps.json and data/locations.json. Serve the folder (python3 -m http.server) and run build_locations.py first.";
+    return;
+  }
+  try { const d = JSON.parse(localStorage.getItem(DRAFT)); if (d && d.maps && confirm("Continue with the unsaved draft from this browser? (Cancel = start from data/maps.json)")) db = d; } catch {}
+  db.areas = db.areas || {};
+  $("#map").innerHTML = Object.entries(db.maps).map(([id, m]) => `<option value="${id}">${m.name} (${id})</option>`).join("");
+  selectMap(Object.keys(db.maps)[0]);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,550 @@
+{
+ "version": 1,
+ "maps": {
+  "kanto-rby": {
+   "name": "Kanto",
+   "img": "assets/maps/kanto-rby.png",
+   "w": 160,
+   "h": 144,
+   "grid": 8,
+   "icon": "assets/maps/nest-rby.png",
+   "unknown": {
+    "img": "assets/maps/area-unknown-rby.png",
+    "x": 8,
+    "y": 56,
+    "w": 136,
+    "h": 32
+   },
+   "title": {
+    "text": "{NAME}'s NEST",
+    "x": 8,
+    "y": 0,
+    "size": 8
+   }
+  },
+  "kanto-frlg": {
+   "name": "Kanto",
+   "img": "assets/maps/kanto-frlg.png",
+   "w": 0,
+   "h": 0,
+   "grid": 0
+  },
+  "johto-gsc": {
+   "name": "Johto",
+   "img": "assets/maps/johto-gsc.png",
+   "w": 0,
+   "h": 0,
+   "grid": 0
+  },
+  "kanto-gsc": {
+   "name": "Kanto",
+   "img": "assets/maps/kanto-gsc.png",
+   "w": 0,
+   "h": 0,
+   "grid": 0
+  },
+  "hoenn-rse": {
+   "name": "Hoenn",
+   "img": "assets/maps/hoenn-rse.png",
+   "w": 0,
+   "h": 0,
+   "grid": 0
+  },
+  "sinnoh-dp": {
+   "name": "Sinnoh",
+   "img": "assets/maps/sinnoh-dp.png",
+   "w": 0,
+   "h": 0,
+   "grid": 0
+  },
+  "sinnoh-pt": {
+   "name": "Sinnoh",
+   "img": "assets/maps/sinnoh-pt.png",
+   "w": 0,
+   "h": 0,
+   "grid": 0
+  },
+  "johto-hgss": {
+   "name": "Johto",
+   "img": "assets/maps/johto-hgss.png",
+   "w": 0,
+   "h": 0,
+   "grid": 0
+  },
+  "kanto-hgss": {
+   "name": "Kanto",
+   "img": "assets/maps/kanto-hgss.png",
+   "w": 0,
+   "h": 0,
+   "grid": 0
+  }
+ },
+ "games": {
+  "red": [
+   "kanto-rby"
+  ],
+  "blue": [
+   "kanto-rby"
+  ],
+  "yellow": [
+   "kanto-rby"
+  ],
+  "gold": [
+   "johto-gsc",
+   "kanto-gsc"
+  ],
+  "silver": [
+   "johto-gsc",
+   "kanto-gsc"
+  ],
+  "crystal": [
+   "johto-gsc",
+   "kanto-gsc"
+  ],
+  "ruby": [
+   "hoenn-rse"
+  ],
+  "sapphire": [
+   "hoenn-rse"
+  ],
+  "emerald": [
+   "hoenn-rse"
+  ],
+  "fire-red": [
+   "kanto-frlg"
+  ],
+  "leaf-green": [
+   "kanto-frlg"
+  ],
+  "diamond": [
+   "sinnoh-dp"
+  ],
+  "pearl": [
+   "sinnoh-dp"
+  ],
+  "platinum": [
+   "sinnoh-pt"
+  ],
+  "heart-gold": [
+   "johto-hgss",
+   "kanto-hgss"
+  ],
+  "soul-silver": [
+   "johto-hgss",
+   "kanto-hgss"
+  ]
+ },
+ "areas": {
+  "kanto-rby": {
+   "Pallet Town": [
+    [
+     32,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Viridian City": [
+    [
+     32,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Pewter City": [
+    [
+     32,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Cerulean City": [
+    [
+     96,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Vermilion City": [
+    [
+     96,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Lavender Town": [
+    [
+     128,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Celadon City": [
+    [
+     72,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Fuchsia City": [
+    [
+     80,
+     112,
+     8,
+     8
+    ]
+   ],
+   "Saffron City": [
+    [
+     96,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Cinnabar Island": [
+    [
+     32,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Indigo Plateau": [
+    [
+     16,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Viridian Forest": [
+    [
+     32,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Mt. Moon": [
+    [
+     64,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Rock Tunnel": [
+    [
+     128,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Seafoam Islands": [
+    [
+     56,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Kanto Victory Road": [
+    [
+     16,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Cerulean Cave": [
+    [
+     96,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Pokemon Tower": [
+    [
+     128,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Pokemon Mansion": [
+    [
+     32,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Kanto Safari Zone": [
+    [
+     80,
+     112,
+     8,
+     8
+    ]
+   ],
+   "Kanto Safari Zone Center": [
+    [
+     80,
+     112,
+     8,
+     8
+    ]
+   ],
+   "Silph Co.": [
+    [
+     96,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Diglett's Cave": [
+    [
+     104,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Diglett S Cave": [
+    [
+     104,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Digletts Cave": [
+    [
+     104,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 4": [
+    [
+     80,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 9": [
+    [
+     112,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 10": [
+    [
+     128,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 11": [
+    [
+     112,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 16": [
+    [
+     56,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 17": [
+    [
+     48,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 18": [
+    [
+     64,
+     112,
+     8,
+     8
+    ]
+   ],
+   "Kanto Sea Route 19": [
+    [
+     80,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Kanto Sea Route 20": [
+    [
+     64,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 22": [
+    [
+     24,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 23": [
+    [
+     16,
+     56,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 2": [
+    [
+     32,
+     56,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 3": [
+    [
+     48,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 5": [
+    [
+     96,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 6": [
+    [
+     96,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 7": [
+    [
+     80,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 8": [
+    [
+     120,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 12": [
+    [
+     128,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 13": [
+    [
+     120,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 14": [
+    [
+     104,
+     104,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 15": [
+    [
+     96,
+     112,
+     8,
+     8
+    ]
+   ],
+   "Kanto Sea Route 21": [
+    [
+     32,
+     112,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 24": [
+    [
+     96,
+     16,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 25": [
+    [
+     104,
+     8,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 1": [
+    [
+     32,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Kanto Power Plant": [
+    [
+     128,
+     32,
+     8,
+     8
+    ]
+   ]
+  }
+ },
+ "generated": "2026-10-08"
+}

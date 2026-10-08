@@ -170,3 +170,25 @@ body.selecting .chip{display:none}
 #settings .rules{flex-direction:column;align-items:flex-start;gap:6px;border:2px solid var(--line);padding:8px 10px}
 #settings .rules p{margin:0;font-size:12px;max-width:44ch}#settings .rules .fine{opacity:.8}
 @media (pointer:coarse){.chip{min-height:30px;height:30px}}
+/* region map in the "Where to find" panel (js/maps.js) */
+.amap{margin:0;padding:6px 8px 4px}
+.amapimg{position:relative;line-height:0;border:2px solid var(--line);background:var(--card)}
+.amapimg img{display:block;width:100%;height:auto;image-rendering:pixelated}
+.amapimg .mk{position:absolute;background:rgba(220,30,30,.7);outline:1px solid #fff;animation:mkblink 1s steps(1) infinite}
+@keyframes mkblink{50%{opacity:.2}}
+@media (prefers-reduced-motion:reduce){.amapimg .mk{animation:none}}
+.amap figcaption{font-size:12px;opacity:.85;margin-top:4px}
+/* blinking nest icon (maps.json "icon") and the hover / tap tooltip over the map */
+.amapimg .nest{position:absolute;background-repeat:repeat;image-rendering:pixelated;animation:mkblink 1s steps(1) infinite}
+@media (prefers-reduced-motion:reduce){.amapimg .nest{animation:none}}
+.amaptip{position:absolute;z-index:2;pointer-events:none;white-space:nowrap;line-height:1.3;font:12px system-ui,sans-serif;
+  background:var(--bg);color:var(--ink);border:2px solid var(--line);padding:3px 6px}
+.amaptip[hidden]{display:none}
+.amapimg .nest,.amapimg .mk{pointer-events:none}
+.amaphl{position:absolute;inset:0;z-index:1;pointer-events:none}
+.amaphl i{position:absolute;background:rgba(255,230,0,.45);outline:2px solid #000;box-shadow:0 0 0 1px #fff}
+/* "AREA UNKNOWN" banner and the "NAME's NEST" heading on the map (js/maps.js) */
+.amapimg{container-type:inline-size}
+.amapimg .unk{position:absolute;display:block;pointer-events:none;image-rendering:pixelated;height:auto}
+.amapimg .unk.txt{left:5%;top:38.9%;width:85%;padding:6px 0;text-align:center;line-height:1.2;font:400 4cqw "PKMN",monospace;background:#f8e8f8;color:#181010;border:2px solid #181010}
+.amaptitle{position:absolute;right:0;z-index:1;pointer-events:none;white-space:nowrap;overflow:hidden;line-height:1;font-family:"PKMN",monospace;color:#181010}

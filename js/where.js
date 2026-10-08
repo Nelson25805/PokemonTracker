@@ -146,22 +146,30 @@ const Where = (() => {
     return groups;
   }
 
-  // "Route 2 — Grass 3–5, 10%" lines, one per location.
+  // "Route 2 — Grass 3–5, 10%" lines, one per location, best odds first.
+  // `chance` is the encounter rate within that area (several slots of one method are already added up in
+  // build_locations.py). An area is ranked by its best method; entries with no recorded rate (0) go last.
+  // Within an area the methods are sorted the same way, and ties fall back to the area name.
   function lines(entries) {
     const areas = new Map();
     for (const [area, method, lo, hi, chance, cond] of entries) {
       const bits = [label(method), cond, lo ? (lo === hi ? `Lv ${lo}` : `Lv ${lo}–${hi}`) : "", chance && chance < 100 ? `${chance}%` : ""].filter(Boolean);
-      if (!areas.has(area)) areas.set(area, []);
-      areas.get(area).push(bits.join(" · "));
+      if (!areas.has(area)) areas.set(area, { rows: [], best: 0 });
+      const a = areas.get(area);
+      a.rows.push({ text: bits.join(" · "), chance: chance || 0 });
+      a.best = Math.max(a.best, chance || 0);
     }
-    return [...areas].map(([area, how]) => ({ area, how: how.join("; ") }));
+    return [...areas]
+      .map(([area, a]) => ({ area, best: a.best, how: a.rows.sort((x, y) => y.chance - x.chance).map(r => r.text).join("; ") }))
+      .sort((x, y) => y.best - x.best || x.area.localeCompare(y.area, undefined, { numeric: true }));
   }
 
   const nameOf = n => (mons.find(m => m.n === n) || { name: `#${n}` }).name;
 
   function render(game, n, groups) {
     if (!groups.length) {
-      return `<p>No wild, gift or one-time encounters are recorded for ${esc(nameOf(n))} in ${esc(game.name)} or the games that link to it.
+      const map = typeof Maps !== "undefined" ? Maps.html([game.key], [], nameOf(n)) : "";   // still show the map, with "AREA UNKNOWN"
+      return map + `<p>No wild, gift or one-time encounters are recorded for ${esc(nameOf(n))} in ${esc(game.name)} or the games that link to it.
         It may be an evolution, a breeding result, an event Pokémon, or a trade. Check the full page below.</p>`;
     }
     return groups.map(g => {
@@ -169,15 +177,20 @@ const Where = (() => {
       if (g.evolve) rows.unshift(...evoRows(g.evolve));
       const open = g.games.some(x => x.key === game.key) || rows.length <= 6;
       const sub = g.vias.length ? `<small>reaches ${esc(game.name)} by ${esc(g.vias.join(" / "))}</small>` : "";
-      return `<details${open ? " open" : ""}><summary>${esc(g.games.map(x => x.name).join(", "))} ${sub}</summary><ul>${rows.join("")}</ul></details>`;
+      const maps = typeof Maps !== "undefined" ? Maps.html(g.games.map(x => x.key), g.entries, nameOf(n)) : "";   // region map with the locations marked
+      return `<details${open ? " open" : ""}><summary>${esc(g.games.map(x => x.name).join(", "))} ${sub}</summary>${maps}<ul>${rows.join("")}</ul></details>`;
     }).join("");
   }
 
   function load() {
     if (data) return Promise.resolve(data);
     const get = f => fetch(`data/${f}.json`).then(r => (r.ok ? r.json() : null)).catch(() => null);
-    return (loading = loading || Promise.all([get("locations"), get("items")])
-      .then(([d, items]) => { loading = null; return (data = d && { ...d, items }); }));   // items.json is optional; a failed load can be retried next time
+    return (loading = loading || Promise.all([get("locations"), get("items"), get("maps")])
+      .then(([d, items, maps]) => {
+        loading = null;
+        if (typeof Maps !== "undefined") Maps.init(maps);                                  // maps.json is optional too
+        return (data = d && { ...d, items });
+      }));   // items.json is optional; a failed load can be retried next time
   }
 
   async function open(game, n) {
@@ -200,6 +213,42 @@ const Where = (() => {
     games = deps.games; mons = deps.mons;
     byKey = Object.fromEntries(games.map(g => [g.key, g]));
     $("#where-close").addEventListener("click", () => $("#where").close());
+
+    // Map hover / tap: show which locations sit under the pointer (Maps.at in maps.js).
+    const hideTips = () => {
+      document.querySelectorAll("#where .amaptip").forEach(t => { t.hidden = true; });
+      document.querySelectorAll("#where .amaphl").forEach(l => { l.textContent = ""; l.dataset.k = ""; });
+    };
+    const pc = v => (v * 100).toFixed(3) + "%";
+    const hover = e => {
+      const box = e.target.closest && e.target.closest(".amapimg");
+      document.querySelectorAll("#where .amaptip").forEach(t => { if (!box || t.parentElement !== box) t.hidden = true; });
+      document.querySelectorAll("#where .amaphl").forEach(l => { if (!box || l.parentElement !== box) { l.textContent = ""; l.dataset.k = ""; } });
+      if (!box || typeof Maps === "undefined") return;
+      const fig = box.closest("figure"), tip = box.querySelector(".amaptip"), hl = box.querySelector(".amaphl"), r = box.getBoundingClientRect();
+      const fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
+      let found = [];
+      try { found = JSON.parse(fig.dataset.found || "[]"); } catch { /* ignore */ }
+      const hits = Maps.at(fig.dataset.map, fx, fy, found);
+      if (!hits.length || !tip) { if (tip) tip.hidden = true; if (hl) { hl.textContent = ""; hl.dataset.k = ""; } return; }
+      if (hl) {                                                                 // outline every tile of the hovered place(s)
+        const bx = hits.flatMap(x => x.boxes), key = JSON.stringify(bx);
+        if (hl.dataset.k !== key) {
+          const W = Number(fig.dataset.w), H = Number(fig.dataset.h);
+          hl.dataset.k = key;
+          hl.innerHTML = bx.map(([x, y, w, h]) => `<i style="left:${pc(x / W)};top:${pc(y / H)};width:${pc(w / W)};height:${pc(h / H)}"></i>`).join("");
+        }
+      }
+      tip.innerHTML = hits.map(h => h.here ? `<b>${esc(h.name)}</b> · found here` : esc(h.name)).join("<br>");
+      tip.style.left = fx * 100 + "%"; tip.style.top = fy * 100 + "%";
+      const h = fx < 0.3 ? "0" : fx > 0.7 ? "-100%" : "-50%";                  // keep the tooltip inside the map
+      tip.style.transform = fy < 0.25 ? `translate(${h}, 16px)` : `translate(${h}, calc(-100% - 8px))`;
+      tip.hidden = false;
+    };
+    const wb = $("#where-body");
+    wb.addEventListener("pointermove", hover);
+    wb.addEventListener("pointerdown", hover);                                  // touch: tap a tile
+    wb.addEventListener("pointerleave", hideTips);
   }
 
   return { init, open, plan, render };
