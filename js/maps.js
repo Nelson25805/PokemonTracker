@@ -19,7 +19,10 @@
 //     and the map has "times": true, the tooltip also says when (Morning / Day / Night, or All day).
 //     maps.json "mark" = icon size in image pixels (default: the map's grid size).
 //   Title: maps.json "title" { text, x, y, size } writes "{NAME}'S NEST" over the image (Red/Blue/Yellow, whose art has an empty
-//   top row). With "bar": true it is drawn in a light header strip ABOVE the map instead (Gold/Silver/Crystal), like the games.
+//   top row). With "bar": true it is drawn like the Gold/Silver/Crystal Pokédex screen instead: pale text on a black strip above
+//   the map, in the game's thin pixel font (drawn as SVG, so it is crisp at any size).
+//   "frame": true adds the games' grey bevelled border around the map. "labels": [{ text, side: "left"|"right" }] puts
+//   region name plates ("JOHTO", "KANTO") in the bottom corners, in the games' bold pixel font.
 //
 // Time of day: the last column of each entry row holds conditions such as "Morning" or "Night" (rows without one count as
 // all day). Maps with at least one location that is only there at some times get All / Morning / Day / Night buttons
@@ -30,6 +33,7 @@
 //     "maps":  { "<mapId>": { "name": "Kanto", "img": "assets/maps/kanto-rby.png", "w": 160, "h": 144, "grid": 8,
 //                             "icon": "assets/maps/nest-rby.png",                       optional: see above
 //                             "single": true, "mark": 8, "times": true,                 optional: one icon per location; icon size; show times in the tooltip
+//                             "title": {...}, "frame": true, "labels": [...],           optional: see above
 //                             "unknown": { "img": "...", "x": 8, "y": 56, "w": 136, "h": 32 } } },   optional: the AREA UNKNOWN banner art
 //     "games": { "<game key>": ["<mapId>", ...] },                   a game can have several maps
 //     "areas": { "<mapId>": { "<place>": [[x, y, w, h], ...] } } }   boxes in image pixels
@@ -56,11 +60,105 @@ const Maps = (() => {
     return "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" shape-rendering="crispEdges" fill="#d01818">${r}</svg>`);
   })();
 
+
+  // ---- the games' pixel fonts, drawn as SVG paths (crisp at any size, no font file needed) ----
+  // THIN: the Pokédex title font. 7x7 glyphs on an 8px pitch (copied from the Gold/Silver/Crystal "NEST" screen).
+  // BOLD: the region-name font. 6 rows tall; each glyph is as wide as its rows, plus 1px gap (T has none).
+  // A character that isn't in a table is skipped. Add glyphs here if a Pokémon name needs one.
+  const THIN = {
+    A: ["..###..", ".#...#.", "#.....#", "#.....#", "#######", "#.....#", "#.....#"],
+    B: ["######.", "#.....#", "#.....#", "######.", "#.....#", "#.....#", "######."],
+    C: ["..####.", ".#....#", "#......", "#......", "#......", ".#....#", "..####."],
+    D: ["#####..", "#....#.", "#.....#", "#.....#", "#.....#", "#....#.", "#####.."],
+    E: ["#######", "#......", "#......", "######.", "#......", "#......", "#######"],
+    F: ["#######", "#......", "#......", "######.", "#......", "#......", "#......"],
+    G: ["..####.", ".#....#", "#......", "#..####", "#.....#", ".#....#", "..####."],
+    H: ["#.....#", "#.....#", "#.....#", "#######", "#.....#", "#.....#", "#.....#"],
+    I: [".#####.", "...#...", "...#...", "...#...", "...#...", "...#...", ".#####."],
+    J: ["....###", ".....#.", ".....#.", ".....#.", ".....#.", "#....#.", ".####.."],
+    K: ["#....#.", "#...#..", "#..#...", "###....", "#..#...", "#...#..", "#....#."],
+    L: ["#......", "#......", "#......", "#......", "#......", "#......", "#######"],
+    M: ["#.....#", "##...##", "#.#.#.#", "#..#..#", "#.....#", "#.....#", "#.....#"],
+    N: ["#.....#", "##....#", "#.#...#", "#..#..#", "#...#.#", "#....##", "#.....#"],
+    O: ["..###..", ".#...#.", "#.....#", "#.....#", "#.....#", ".#...#.", "..###.."],
+    P: ["######.", "#.....#", "#.....#", "######.", "#......", "#......", "#......"],
+    Q: ["..###..", ".#...#.", "#.....#", "#.....#", "#...#.#", ".#...#.", "..###.#"],
+    R: ["######.", "#.....#", "#.....#", "######.", "#..#...", "#...#..", "#....##"],
+    S: [".####..", "#....#.", "#......", ".#####.", "......#", "#.....#", ".#####."],
+    T: ["#######", "...#...", "...#...", "...#...", "...#...", "...#...", "...#..."],
+    U: ["#.....#", "#.....#", "#.....#", "#.....#", "#.....#", "#.....#", ".#####."],
+    V: ["#.....#", "#.....#", "#.....#", ".#...#.", ".#...#.", "..#.#..", "...#..."],
+    W: ["#.....#", "#.....#", "#.....#", "#..#..#", "#.#.#.#", "##...##", "#.....#"],
+    X: ["#.....#", ".#...#.", "..#.#..", "...#...", "..#.#..", ".#...#.", "#.....#"],
+    Y: ["#.....#", ".#...#.", "..#.#..", "...#...", "...#...", "...#...", "...#..."],
+    Z: ["#######", ".....#.", "....#..", "...#...", "..#....", ".#.....", "#######"],
+    0: ["..###..", ".#...#.", "#....##", "#..#..#", "##....#", ".#...#.", "..###.."],
+    1: ["...#...", "..##...", "...#...", "...#...", "...#...", "...#...", ".#####."],
+    2: [".#####.", "#.....#", "......#", "...##..", "..#....", ".#.....", "#######"],
+    3: [".#####.", "#.....#", "......#", "..####.", "......#", "#.....#", ".#####."],
+    4: ["....##.", "...#.#.", "..#..#.", ".#...#.", "#######", ".....#.", ".....#."],
+    5: ["#######", "#......", "######.", "......#", "......#", "#.....#", ".#####."],
+    6: ["..####.", ".#.....", "#......", "######.", "#.....#", "#.....#", ".#####."],
+    7: ["#######", "......#", ".....#.", "....#..", "...#...", "..#....", "..#...."],
+    8: [".#####.", "#.....#", "#.....#", ".#####.", "#.....#", "#.....#", ".#####."],
+    9: [".#####.", "#.....#", "#.....#", ".######", "......#", ".....#.", ".####.."],
+    "'": ["...##..", "...##..", "....#..", "...#...", ".......", ".......", "......."],
+    ".": [".......", ".......", ".......", ".......", ".......", "..##...", "..##..."],
+    "-": [".......", ".......", ".......", ".#####.", ".......", ".......", "......."],
+    "♀": ["..###..", ".#...#.", ".#...#.", "..###..", "...#...", "..###..", "...#..."],
+    "♂": ["....###", ".....##", "..###.#", ".#...#.", ".#...#.", ".#...#.", "..###.."],
+  };
+  const BOLD = {
+    A: [".###.", "#####", "#..##", "#..##", "#####", "#..##"],
+    E: ["#####", "##...", "####.", "##...", "##...", "#####"],
+    H: ["#..##", "#..##", "#..##", "#####", "#..##", "#..##"],
+    I: ["#####", ".##..", ".##..", ".##..", ".##..", "#####"],
+    J: ["..####", "...##.", "...##.", "...##.", "#..##.", ".###.."],
+    K: ["##.##", "##.##", "####.", "###..", "####.", "##.##"],
+    N: ["#..##", "#..##", "##.##", "#.###", "#..##", "#..##"],
+    O: [".###.", "#..##", "#..##", "#..##", "#..##", ".###."],
+    S: [".####", "##...", ".###.", "...##", "...##", "####."],
+    T: ["######", "..##..", "..##..", "..##..", "..##..", "..##.."],
+  };
+  // rows of "#"/"." -> one SVG path of 1x1 pixel runs, drawn with its top-left at (x, y)
+  const runs = (rows, x, y) => {
+    let d = "";
+    rows.forEach((row, r) => { const re = /#+/g; let k; while ((k = re.exec(row))) d += `M${x + k.index} ${y + r}h${k[0].length}v1h-${k[0].length}z`; });
+    return d;
+  };
+  const thinText = (txt, x, y) => {
+    let d = "";
+    for (const ch of String(txt).toUpperCase()) { if (THIN[ch]) d += runs(THIN[ch], x, y); x += 8; }
+    return d;
+  };
+  const boldText = (txt, x, y) => {                                     // -> [path, width of the text without its last gap]
+    let d = "", end = x;
+    for (const ch of String(txt).toUpperCase()) {
+      const g = BOLD[ch]; if (!g) { x += 4; end = x; continue; }
+      d += runs(g, x, y); end = x + g[0].length; x = end + (ch === "T" ? 0 : 1);
+    }
+    return [d, end - 0];
+  };
+  const CUT = [5, 3, 2, 1, 1, 0, 0, 0];                                 // the plate's rounded corner, row by row (8 rows)
+  // A region name plate ("JOHTO") for one bottom corner: pale plate, black bold text, rounded corner towards the map.
+  const labelSvg = (m, l) => {
+    const left = l.side !== "right", pad = left ? 2 : 8;                // 2px on the frame side, 8px on the map side
+    const [text, end] = boldText(l.text, pad, 1), w = end + (left ? 8 : 2);
+    let plate = "";
+    for (let r = 0; r < 8; r++) { const a = left ? 0 : CUT[r], b = left ? w - CUT[r] : w; plate += `M${a} ${r}h${b - a}v1h-${b - a}z`; }
+    return `<svg class="amaplabel" role="img" aria-label="${esc(l.text)}" shape-rendering="crispEdges" viewBox="0 0 ${w} 8" ` +
+      `style="${left ? "left" : "right"}:0;width:${(w / m.w * 100).toFixed(3)}%"><path fill="#e0f8a0" d="${plate}"/><path fill="#000" d="${text}"/></svg>`;
+  };
+
   const CSS = `
 .amap .one,.amap .bug{background-repeat:no-repeat;background-size:100% 100%}
 .amap .bug{filter:drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff)}
 .amap .amapwrap{container-type:inline-size}
-.amap .amapbar{text-align:center;white-space:nowrap;overflow:hidden;line-height:1;font-family:"PKMN",monospace;color:#181010;background:#f8f8f8;border:2px solid var(--line);border-bottom:0;padding:1.4cqw 0}
+.amap .amapbar{display:block;width:100%;height:auto;image-rendering:pixelated}
+.amap .amapwrap.framed{background:#000}
+.amap .amapwrap.framed .amapframe{padding:calc(var(--u) * 8)}
+.amap .amapwrap.framed .amapimg{border:0;box-shadow:0 0 0 calc(var(--u) * 2) #000,0 0 0 calc(var(--u) * 4) #686868,0 0 0 calc(var(--u) * 6) #a8a8a8}
+.amap .amaplabel{position:absolute;bottom:0;display:block;height:auto;pointer-events:none;image-rendering:pixelated}
 .amap[data-time=morning] i:not([data-t~=morning]),.amap[data-time=day] i:not([data-t~=day]),.amap[data-time=night] i:not([data-t~=night]){display:none}
 .amap .tfilter{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-top:6px;font-size:12px}
 .amap .tfilter button{padding:2px 8px;font-size:12px;display:inline-flex;align-items:center;gap:4px}
@@ -108,16 +206,20 @@ const Maps = (() => {
       const txt = String(t.text).replace("{NAME}", name.toUpperCase()).replace("{name}", name);
       return `<div class="amaptitle" style="left:${pc((t.x || 0) / m.w)};top:${pc((t.y || 0) / m.h)};font-size:${((t.size || 8) / m.w * 100).toFixed(3)}cqw">${esc(txt)}</div>`;
     };
-    // The "HOOTHOOT'S NEST" strip above the map (maps.json title.bar). Outside .amapimg, so hover positions stay exact.
+    // The "HOOTHOOT'S NEST" strip above the map (maps.json title.bar): pale pixel text on black, like the games.
+    // It is outside .amapimg, so hover positions stay exact. Its viewBox is in the same "image pixels" as the map.
     const bar = m => {
       const t = m.title;
       if (!t || !t.text || !name || !t.bar) return "";
-      const txt = String(t.text).replace("{NAME}", name.toUpperCase()).replace("{name}", name);
-      return `<div class="amapbar" style="font-size:${((t.size || 8) / m.w * 100).toFixed(3)}cqw">${esc(txt)}</div>`;
+      const txt = String(t.text).replace("{NAME}", name.toUpperCase()).replace("{name}", name), W = m.frame ? m.w + 16 : m.w, H = 14;
+      return `<svg class="amapbar" viewBox="0 0 ${W} ${H}" shape-rendering="crispEdges" role="img" aria-label="${esc(txt)}">` +
+        `<rect width="${W}" height="${H}" fill="#000"/><path fill="${esc(t.color || "#e0f8a0")}" d="${thinText(txt, 16, 4)}"/></svg>`;
     };
     const wrap = (m, id, inner, cap, f = [], extra = "") =>
-      `<figure class="amap" data-map="${esc(id)}" data-w="${m.w}" data-h="${m.h}" data-time="all" data-found="${esc(JSON.stringify(f))}"><div class="amapwrap">${bar(m)}<div class="amapimg"><img alt="${esc(m.name)} map" src="${esc(m.img)}" ` +
-      `onerror="this.closest('figure').remove()">${inner}<div class="amaphl"></div>${title(m)}<div class="amaptip" hidden></div></div></div><figcaption>${cap}</figcaption>${extra}</figure>`;
+      `<figure class="amap" data-map="${esc(id)}" data-w="${m.w}" data-h="${m.h}" data-time="all" data-found="${esc(JSON.stringify(f))}">` +
+      `<div class="amapwrap${m.frame ? " framed" : ""}"${m.frame ? ` style="--u:${(100 / (m.w + 16)).toFixed(4)}cqw"` : ""}>${bar(m)}<div class="amapframe"><div class="amapimg">` +
+      `<img alt="${esc(m.name)} map" src="${esc(m.img)}" onerror="this.closest('figure').remove()">${inner}<div class="amaphl"></div>${title(m)}` +
+      `${(m.labels || []).map(l => labelSvg(m, l)).join("")}<div class="amaptip" hidden></div></div></div></div><figcaption>${cap}</figcaption>${extra}</figure>`;
     // All / Morning / Day / Night buttons (inline handler: this file never touches the DOM after init).
     const filter = () =>
       `<div class="tfilter" role="group" aria-label="Time of day">` +

@@ -34,9 +34,19 @@
    "single": true,
    "title": {
     "text": "{NAME}'S NEST",
-    "bar": true,
-    "size": 8
-   }
+    "bar": true
+   },
+   "frame": true,
+   "labels": [
+    {
+     "text": "JOHTO",
+     "side": "left"
+    },
+    {
+     "text": "KANTO",
+     "side": "right"
+    }
+   ]
   },
   "kanto-frlg": {
    "name": "Kanto",
