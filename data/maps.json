@@ -1,1439 +1,2906 @@
 {
-    "version": 1,
-    "maps": {
-        "kanto-rby": {
-            "name": "Kanto",
-            "img": "assets/maps/kanto-rby.png",
-            "w": 160,
-            "h": 144,
-            "grid": 8,
-            "icon": "assets/maps/nest-rby.png",
-            "unknown": {
-                "img": "assets/maps/area-unknown-rby.png",
-                "x": 8,
-                "y": 56,
-                "w": 136,
-                "h": 32
-            },
-            "title": {
-                "text": "{NAME}'s NEST",
-                "x": 8,
-                "y": 0,
-                "size": 8
-            },
-            "single": true,
-            "mark": 8
-        },
-        "johto-kanto-gsc": {
-            "name": "Johto & Kanto",
-            "img": "assets/maps/johto-kanto-gsc.png",
-            "w": 288,
-            "h": 128,
-            "grid": 4,
-            "mark": 8,
-            "times": true,
-            "icon": "assets/maps/nest-gsc.png",
-            "single": true,
-            "title": {
-                "text": "{NAME}'S NEST",
-                "bar": true
-            },
-            "frame": true,
-            "labels": [
-                {
-                    "text": "JOHTO",
-                    "side": "left"
-                },
-                {
-                    "text": "KANTO",
-                    "side": "right"
-                }
-            ]
-        },
-        "kanto-frlg": {
-            "name": "Kanto",
-            "img": "assets/maps/kanto-frlg.png",
-            "w": 0,
-            "h": 0,
-            "grid": 0
-        },
-        "hoenn-rse": {
-            "name": "Hoenn",
-            "img": "assets/maps/hoenn-rse.png",
-            "w": 0,
-            "h": 0,
-            "grid": 0
-        },
-        "sinnoh-dp": {
-            "name": "Sinnoh",
-            "img": "assets/maps/sinnoh-dp.png",
-            "w": 0,
-            "h": 0,
-            "grid": 0
-        },
-        "sinnoh-pt": {
-            "name": "Sinnoh",
-            "img": "assets/maps/sinnoh-pt.png",
-            "w": 0,
-            "h": 0,
-            "grid": 0
-        },
-        "johto-hgss": {
-            "name": "Johto",
-            "img": "assets/maps/johto-hgss.png",
-            "w": 0,
-            "h": 0,
-            "grid": 0
-        },
-        "kanto-hgss": {
-            "name": "Kanto",
-            "img": "assets/maps/kanto-hgss.png",
-            "w": 0,
-            "h": 0,
-            "grid": 0
-        }
+ "version": 1,
+ "maps": {
+  "kanto-rby": {
+   "name": "Kanto",
+   "img": "assets/maps/kanto-rby.png",
+   "w": 160,
+   "h": 144,
+   "grid": 8,
+   "icon": "assets/maps/nest-rby.png",
+   "unknown": {
+    "img": "assets/maps/area-unknown-rby.png",
+    "x": 8,
+    "y": 56,
+    "w": 136,
+    "h": 32
+   },
+   "title": {
+    "text": "{NAME}'s NEST",
+    "x": 8,
+    "y": 0,
+    "size": 8
+   },
+   "single": true,
+   "mark": 8
+  },
+  "johto-kanto-gsc": {
+   "name": "Johto & Kanto",
+   "img": "assets/maps/johto-kanto-gsc.png",
+   "w": 288,
+   "h": 128,
+   "grid": 4,
+   "mark": 8,
+   "times": true,
+   "icon": "assets/maps/nest-gsc.png",
+   "single": true,
+   "title": {
+    "text": "{NAME}'S NEST",
+    "bar": true
+   },
+   "frame": true,
+   "labels": [
+    {
+     "text": "JOHTO",
+     "side": "left"
     },
-    "games": {
-        "red": [
-            "kanto-rby"
-        ],
-        "blue": [
-            "kanto-rby"
-        ],
-        "yellow": [
-            "kanto-rby"
-        ],
-        "gold": [
-            "johto-kanto-gsc"
-        ],
-        "silver": [
-            "johto-kanto-gsc"
-        ],
-        "crystal": [
-            "johto-kanto-gsc"
-        ],
-        "ruby": [
-            "hoenn-rse"
-        ],
-        "sapphire": [
-            "hoenn-rse"
-        ],
-        "emerald": [
-            "hoenn-rse"
-        ],
-        "fire-red": [
-            "kanto-frlg"
-        ],
-        "leaf-green": [
-            "kanto-frlg"
-        ],
-        "diamond": [
-            "sinnoh-dp"
-        ],
-        "pearl": [
-            "sinnoh-dp"
-        ],
-        "platinum": [
-            "sinnoh-pt"
-        ],
-        "heart-gold": [
-            "johto-hgss",
-            "kanto-hgss"
-        ],
-        "soul-silver": [
-            "johto-hgss",
-            "kanto-hgss"
-        ]
-    },
-    "areas": {
-        "kanto-rby": {
-            "Pokemon Tower": [
-                [
-                    136,
-                    48,
-                    8,
-                    8
-                ]
-            ],
-            "Pokemon Mansion": [
-                [
-                    32,
-                    128,
-                    8,
-                    8
-                ]
-            ],
-            "Mt. Moon": [
-                [
-                    56,
-                    24,
-                    16,
-                    8
-                ]
-            ],
-            "Rock Tunnel": [
-                [
-                    128,
-                    40,
-                    8,
-                    8
-                ]
-            ],
-            "Seafoam Islands": [
-                [
-                    56,
-                    128,
-                    8,
-                    8
-                ]
-            ],
-            "Cerulean Cave": [
-                [
-                    88,
-                    16,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Victory Road": [
-                [
-                    8,
-                    40,
-                    8,
-                    8
-                ]
-            ],
-            "Viridian Forest": [
-                [
-                    32,
-                    48,
-                    8,
-                    16
-                ]
-            ],
-            "Kanto Power Plant": [
-                [
-                    120,
-                    40,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Safari Zone": [
-                [
-                    72,
-                    104,
-                    16,
-                    16
-                ]
-            ],
-            "Pallet Town": [
-                [
-                    32,
-                    96,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 1": [
-                [
-                    32,
-                    80,
-                    8,
-                    16
-                ]
-            ],
-            "Viridian City": [
-                [
-                    32,
-                    72,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 2": [
-                [
-                    32,
-                    40,
-                    8,
-                    32
-                ]
-            ],
-            "Pewter City": [
-                [
-                    32,
-                    32,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 3": [
-                [
-                    56,
-                    24,
-                    8,
-                    8
-                ],
-                [
-                    40,
-                    32,
-                    24,
-                    8
-                ]
-            ],
-            "Kanto Route 4": [
-                [
-                    64,
-                    24,
-                    32,
-                    8
-                ]
-            ],
-            "Cerulean City": [
-                [
-                    96,
-                    24,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 5": [
-                [
-                    96,
-                    32,
-                    8,
-                    16
-                ]
-            ],
-            "Saffron City": [
-                [
-                    96,
-                    48,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 6": [
-                [
-                    96,
-                    56,
-                    8,
-                    24
-                ]
-            ],
-            "Vermilion City": [
-                [
-                    96,
-                    80,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 8": [
-                [
-                    104,
-                    48,
-                    24,
-                    8
-                ]
-            ],
-            "Lavender Town": [
-                [
-                    128,
-                    48,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 7": [
-                [
-                    80,
-                    48,
-                    16,
-                    8
-                ]
-            ],
-            "Celadon City": [
-                [
-                    72,
-                    48,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 9": [
-                [
-                    104,
-                    24,
-                    32,
-                    8
-                ]
-            ],
-            "Kanto Route 10": [
-                [
-                    128,
-                    32,
-                    8,
-                    16
-                ]
-            ],
-            "Kanto Route 11": [
-                [
-                    104,
-                    80,
-                    24,
-                    8
-                ]
-            ],
-            "Kanto Route 12": [
-                [
-                    128,
-                    56,
-                    8,
-                    40
-                ]
-            ],
-            "Kanto Route 13": [
-                [
-                    104,
-                    96,
-                    32,
-                    8
-                ]
-            ],
-            "Kanto Route 14": [
-                [
-                    104,
-                    104,
-                    8,
-                    16
-                ]
-            ],
-            "Kanto Route 15": [
-                [
-                    88,
-                    112,
-                    16,
-                    8
-                ]
-            ],
-            "Fuchsia City": [
-                [
-                    80,
-                    112,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 16": [
-                [
-                    48,
-                    48,
-                    24,
-                    8
-                ]
-            ],
-            "Kanto Route 17": [
-                [
-                    48,
-                    56,
-                    8,
-                    56
-                ]
-            ],
-            "Kanto Route 18": [
-                [
-                    48,
-                    112,
-                    32,
-                    8
-                ]
-            ],
-            "Kanto Sea Route 19": [
-                [
-                    80,
-                    120,
-                    8,
-                    16
-                ]
-            ],
-            "Kanto Sea Route 20": [
-                [
-                    40,
-                    128,
-                    40,
-                    8
-                ]
-            ],
-            "Cinnabar Island": [
-                [
-                    32,
-                    128,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Sea Route 21": [
-                [
-                    32,
-                    104,
-                    8,
-                    24
-                ]
-            ],
-            "Kanto Route 22": [
-                [
-                    16,
-                    72,
-                    16,
-                    8
-                ]
-            ],
-            "Kanto Route 23": [
-                [
-                    16,
-                    32,
-                    8,
-                    40
-                ]
-            ],
-            "Indigo Plateau": [
-                [
-                    16,
-                    24,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 24": [
-                [
-                    96,
-                    8,
-                    8,
-                    16
-                ]
-            ],
-            "Kanto Route 25": [
-                [
-                    104,
-                    8,
-                    16,
-                    8
-                ]
-            ],
-            "Diglett's Cave": [
-                [
-                    104,
-                    80,
-                    8,
-                    8
-                ],
-                [
-                    32,
-                    80,
-                    8,
-                    8
-                ]
-            ],
-            "Diglett S Cave": [
-                [
-                    104,
-                    80,
-                    8,
-                    8
-                ],
-                [
-                    32,
-                    80,
-                    8,
-                    8
-                ]
-            ],
-            "Digletts Cave": [
-                [
-                    104,
-                    80,
-                    8,
-                    8
-                ],
-                [
-                    32,
-                    80,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Safari Zone Center": [
-                [
-                    72,
-                    104,
-                    16,
-                    16
-                ]
-            ],
-            "Silph Co.": [
-                [
-                    96,
-                    48,
-                    8,
-                    8
-                ]
-            ]
-        },
-        "johto-kanto-gsc": {
-            "Victory Road": [
-                [
-                    160,
-                    32,
-                    8,
-                    16
-                ]
-            ],
-            "Kanto Victory Road": [
-                [
-                    160,
-                    32,
-                    8,
-                    16
-                ]
-            ],
-            "Johto Victory Road": [
-                [
-                    160,
-                    32,
-                    8,
-                    16
-                ]
-            ],
-            "Dark Cave": [
-                [
-                    108,
-                    52,
-                    8,
-                    8
-                ],
-                [
-                    92,
-                    36,
-                    8,
-                    8
-                ],
-                [
-                    116,
-                    32,
-                    8,
-                    8
-                ]
-            ],
-            "Dark Cave Violet City": [
-                [
-                    108,
-                    52,
-                    8,
-                    8
-                ],
-                [
-                    92,
-                    36,
-                    8,
-                    8
-                ],
-                [
-                    116,
-                    32,
-                    8,
-                    8
-                ]
-            ],
-            "Dark Cave Blackthorn City": [
-                [
-                    108,
-                    52,
-                    8,
-                    8
-                ],
-                [
-                    92,
-                    36,
-                    8,
-                    8
-                ],
-                [
-                    116,
-                    32,
-                    8,
-                    8
-                ]
-            ],
-            "Ruins of Alph": [
-                [
-                    64,
-                    54,
-                    8,
-                    12
-                ]
-            ],
-            "Union Cave": [
-                [
-                    68,
-                    100,
-                    8,
-                    8
-                ]
-            ],
-            "Slowpoke Well": [
-                [
-                    60,
-                    108,
-                    8,
-                    8
-                ]
-            ],
-            "Ilex Forest": [
-                [
-                    48,
-                    108,
-                    8,
-                    8
-                ]
-            ],
-            "National Park": [
-                [
-                    36,
-                    36,
-                    8,
-                    8
-                ]
-            ],
-            "Burned Tower": [
-                [
-                    52,
-                    20,
-                    8,
-                    8
-                ]
-            ],
-            "Bell Tower": [
-                [
-                    60,
-                    20,
-                    8,
-                    8
-                ]
-            ],
-            "Tin Tower": [
-                [
-                    60,
-                    20,
-                    8,
-                    8
-                ]
-            ],
-            "Sprout Tower": [
-                [
-                    72,
-                    36,
-                    8,
-                    8
-                ]
-            ],
-            "Mt. Mortar": [
-                [
-                    72,
-                    20,
-                    8,
-                    8
-                ]
-            ],
-            "Ice Path": [
-                [
-                    120,
-                    16,
-                    8,
-                    8
-                ]
-            ],
-            "Dragon's Den": [
-                [
-                    112,
-                    16,
-                    8,
-                    8
-                ]
-            ],
-            "Dragons Den": [
-                [
-                    112,
-                    16,
-                    8,
-                    8
-                ]
-            ],
-            "Dragon S Den": [
-                [
-                    112,
-                    16,
-                    8,
-                    8
-                ]
-            ],
-            "Lake of Rage": [
-                [
-                    96,
-                    8,
-                    8,
-                    8
-                ]
-            ],
-            "Tohjo Falls": [
-                [
-                    144,
-                    76,
-                    8,
-                    8
-                ]
-            ],
-            "Mt. Silver": [
-                [
-                    136,
-                    48,
-                    8,
-                    8
-                ]
-            ],
-            "Indigo Plateau": [
-                [
-                    160,
-                    16,
-                    8,
-                    8
-                ]
-            ],
-            "Mt. Moon": [
-                [
-                    208,
-                    28,
-                    8,
-                    8
-                ]
-            ],
-            "Rock Tunnel": [
-                [
-                    260,
-                    40,
-                    8,
-                    8
-                ]
-            ],
-            "Radio Tower": [
-                [
-                    272,
-                    48,
-                    8,
-                    8
-                ]
-            ],
-            "Diglett's Cave": [
-                [
-                    240,
-                    60,
-                    8,
-                    8
-                ],
-                [
-                    188,
-                    40,
-                    8,
-                    8
-                ]
-            ],
-            "Diglett S Cave": [
-                [
-                    240,
-                    60,
-                    8,
-                    8
-                ],
-                [
-                    188,
-                    40,
-                    8,
-                    8
-                ]
-            ],
-            "Digletts Cave": [
-                [
-                    240,
-                    60,
-                    8,
-                    8
-                ],
-                [
-                    188,
-                    40,
-                    8,
-                    8
-                ]
-            ],
-            "Seafoam Islands": [
-                [
-                    200,
-                    108,
-                    8,
-                    8
-                ]
-            ],
-            "Whirl Islands": [
-                [
-                    20,
-                    72,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 1": [
-                [
-                    184,
-                    64,
-                    8,
-                    24
-                ]
-            ],
-            "Kanto Route 2": [
-                [
-                    184,
-                    40,
-                    8,
-                    16
-                ]
-            ],
-            "Kanto Route 3": [
-                [
-                    192,
-                    32,
-                    16,
-                    8
-                ]
-            ],
-            "Kanto Route 4": [
-                [
-                    208,
-                    32,
-                    24,
-                    8
-                ]
-            ],
-            "Kanto Route 5": [
-                [
-                    232,
-                    40,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 6": [
-                [
-                    232,
-                    56,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 7": [
-                [
-                    216,
-                    48,
-                    16,
-                    8
-                ]
-            ],
-            "Kanto Route 8": [
-                [
-                    240,
-                    48,
-                    24,
-                    8
-                ]
-            ],
-            "Kanto Route 9": [
-                [
-                    240,
-                    32,
-                    32,
-                    8
-                ]
-            ],
-            "Kanto Route 10": [
-                [
-                    264,
-                    40,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 11": [
-                [
-                    240,
-                    64,
-                    24,
-                    8
-                ]
-            ],
-            "Kanto Route 12": [
-                [
-                    264,
-                    56,
-                    8,
-                    24
-                ]
-            ],
-            "Kanto Route 13": [
-                [
-                    248,
-                    80,
-                    24,
-                    8
-                ]
-            ],
-            "Kanto Route 14": [
-                [
-                    248,
-                    88,
-                    8,
-                    16
-                ]
-            ],
-            "Kanto Route 15": [
-                [
-                    232,
-                    96,
-                    16,
-                    8
-                ]
-            ],
-            "Kanto Route 16": [
-                [
-                    200,
-                    48,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 17": [
-                [
-                    200,
-                    56,
-                    8,
-                    40
-                ]
-            ],
-            "Kanto Route 18": [
-                [
-                    200,
-                    96,
-                    24,
-                    8
-                ]
-            ],
-            "Kanto Route 19": [
-                [
-                    224,
-                    104,
-                    8,
-                    16
-                ]
-            ],
-            "Kanto Route 20": [
-                [
-                    192,
-                    112,
-                    32,
-                    8
-                ]
-            ],
-            "Kanto Route 21": [
-                [
-                    184,
-                    96,
-                    8,
-                    16
-                ]
-            ],
-            "Kanto Route 22": [
-                [
-                    168,
-                    48,
-                    16,
-                    8
-                ]
-            ],
-            "Kanto Route 23": [
-                [
-                    160,
-                    24,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 24": [
-                [
-                    232,
-                    24,
-                    8,
-                    8
-                ]
-            ],
-            "Kanto Route 25": [
-                [
-                    232,
-                    16,
-                    24,
-                    8
-                ]
-            ],
-            "Kanto Route 26": [
-                [
-                    160,
-                    56,
-                    8,
-                    32
-                ]
-            ],
-            "Kanto Route 27": [
-                [
-                    136,
-                    80,
-                    24,
-                    8
-                ]
-            ],
-            "Kanto Route 28": [
-                [
-                    144,
-                    48,
-                    16,
-                    8
-                ]
-            ],
-            "Johto Route 29": [
-                [
-                    96,
-                    80,
-                    32,
-                    8
-                ]
-            ],
-            "Johto Route 30": [
-                [
-                    88,
-                    48,
-                    8,
-                    32
-                ]
-            ],
-            "Johto Route 31": [
-                [
-                    80,
-                    40,
-                    16,
-                    8
-                ]
-            ],
-            "Johto Route 32": [
-                [
-                    72,
-                    48,
-                    8,
-                    56
-                ]
-            ],
-            "Johto Route 33": [
-                [
-                    64,
-                    104,
-                    16,
-                    8
-                ]
-            ],
-            "Johto Route 34": [
-                [
-                    40,
-                    80,
-                    8,
-                    24
-                ],
-                [
-                    40,
-                    104,
-                    16,
-                    8
-                ]
-            ],
-            "Johto Route 35": [
-                [
-                    40,
-                    48,
-                    8,
-                    24
-                ]
-            ],
-            "Johto Route 36": [
-                [
-                    40,
-                    40,
-                    32,
-                    8
-                ]
-            ],
-            "Johto Route 37": [
-                [
-                    56,
-                    32,
-                    8,
-                    8
-                ]
-            ],
-            "Johto Route 38": [
-                [
-                    32,
-                    24,
-                    24,
-                    8
-                ]
-            ],
-            "Johto Route 39": [
-                [
-                    24,
-                    24,
-                    8,
-                    16
-                ]
-            ],
-            "Johto Route 40": [
-                [
-                    16,
-                    40,
-                    8,
-                    24
-                ]
-            ],
-            "Johto Route 41": [
-                [
-                    16,
-                    64,
-                    8,
-                    24
-                ]
-            ],
-            "Johto Route 42": [
-                [
-                    64,
-                    24,
-                    32,
-                    8
-                ]
-            ],
-            "Johto Route 43": [
-                [
-                    96,
-                    16,
-                    8,
-                    8
-                ]
-            ],
-            "Johto Route 44": [
-                [
-                    104,
-                    24,
-                    16,
-                    8
-                ]
-            ],
-            "Johto Route 45": [
-                [
-                    120,
-                    32,
-                    8,
-                    32
-                ]
-            ],
-            "Johto Route 46": [
-                [
-                    112,
-                    56,
-                    8,
-                    24
-                ]
-            ],
-            "New Bark Town": [
-                [
-                    128,
-                    80,
-                    8,
-                    8
-                ]
-            ],
-            "Cherrygrove City": [
-                [
-                    88,
-                    80,
-                    8,
-                    8
-                ]
-            ],
-            "Violet City": [
-                [
-                    72,
-                    40,
-                    8,
-                    8
-                ]
-            ],
-            "Azalea Town": [
-                [
-                    56,
-                    104,
-                    8,
-                    8
-                ]
-            ],
-            "Goldenrod City": [
-                [
-                    40,
-                    72,
-                    8,
-                    8
-                ]
-            ],
-            "Ecruteak City": [
-                [
-                    56,
-                    24,
-                    8,
-                    8
-                ]
-            ],
-            "Olivine City": [
-                [
-                    24,
-                    40,
-                    8,
-                    8
-                ]
-            ],
-            "Cianwood City": [
-                [
-                    8,
-                    80,
-                    8,
-                    8
-                ]
-            ],
-            "Mahogany Town": [
-                [
-                    96,
-                    24,
-                    8,
-                    8
-                ]
-            ],
-            "Blackthorn City": [
-                [
-                    120,
-                    24,
-                    8,
-                    8
-                ]
-            ],
-            "Pallet Town": [
-                [
-                    184,
-                    88,
-                    8,
-                    8
-                ]
-            ],
-            "Viridian City": [
-                [
-                    184,
-                    56,
-                    8,
-                    8
-                ]
-            ],
-            "Pewter City": [
-                [
-                    184,
-                    32,
-                    8,
-                    8
-                ]
-            ],
-            "Cerulean City": [
-                [
-                    232,
-                    32,
-                    8,
-                    8
-                ]
-            ],
-            "Cerulean Cave": [
-                [
-                    232,
-                    32,
-                    8,
-                    8
-                ]
-            ],
-            "Saffron City": [
-                [
-                    232,
-                    48,
-                    8,
-                    8
-                ]
-            ],
-            "Vermilion City": [
-                [
-                    232,
-                    64,
-                    8,
-                    8
-                ]
-            ],
-            "Celadon City": [
-                [
-                    208,
-                    48,
-                    8,
-                    8
-                ]
-            ],
-            "Lavender Town": [
-                [
-                    264,
-                    48,
-                    8,
-                    8
-                ]
-            ],
-            "Fuchsia City": [
-                [
-                    224,
-                    96,
-                    8,
-                    8
-                ]
-            ],
-            "Cinnabar Island": [
-                [
-                    184,
-                    112,
-                    8,
-                    8
-                ]
-            ]
-        }
-    },
-    "generated": "2026-10-08"
+    {
+     "text": "KANTO",
+     "side": "right"
+    }
+   ]
+  },
+  "kanto-frlg": {
+   "name": "Kanto",
+   "img": "assets/maps/kanto-frlg.png",
+   "w": 192,
+   "h": 144,
+   "grid": 8
+  },
+  "hoenn-rse": {
+   "name": "Hoenn",
+   "img": "assets/maps/hoenn-rse.png",
+   "w": 256,
+   "h": 156,
+   "grid": 8,
+   "flash": true
+  },
+  "sinnoh-dp": {
+   "name": "Sinnoh",
+   "img": "assets/maps/sinnoh-dp.png",
+   "w": 0,
+   "h": 0,
+   "grid": 0
+  },
+  "sinnoh-pt": {
+   "name": "Sinnoh",
+   "img": "assets/maps/sinnoh-pt.png",
+   "w": 0,
+   "h": 0,
+   "grid": 0
+  },
+  "johto-hgss": {
+   "name": "Johto",
+   "img": "assets/maps/johto-hgss.png",
+   "w": 0,
+   "h": 0,
+   "grid": 0
+  },
+  "kanto-hgss": {
+   "name": "Kanto",
+   "img": "assets/maps/kanto-hgss.png",
+   "w": 0,
+   "h": 0,
+   "grid": 0
+  },
+  "sevii-123-frlg": {
+   "name": "Sevii Islands 1, 2 & 3",
+   "img": "assets/maps/sevii-123-frlg.png",
+   "w": 192,
+   "h": 144,
+   "grid": 8,
+   "flash": true
+  },
+  "sevii-45-frlg": {
+   "name": "Sevii Islands 4 & 5",
+   "img": "assets/maps/sevii-45-frlg.png",
+   "w": 192,
+   "h": 144,
+   "grid": 8,
+   "flash": true
+  }
+ },
+ "games": {
+  "red": [
+   "kanto-rby"
+  ],
+  "blue": [
+   "kanto-rby"
+  ],
+  "yellow": [
+   "kanto-rby"
+  ],
+  "gold": [
+   "johto-kanto-gsc"
+  ],
+  "silver": [
+   "johto-kanto-gsc"
+  ],
+  "crystal": [
+   "johto-kanto-gsc"
+  ],
+  "ruby": [
+   "hoenn-rse"
+  ],
+  "sapphire": [
+   "hoenn-rse"
+  ],
+  "emerald": [
+   "hoenn-rse"
+  ],
+  "fire-red": [
+   "kanto-frlg",
+   "sevii-123-frlg",
+   "sevii-45-frlg"
+  ],
+  "leaf-green": [
+   "kanto-frlg",
+   "sevii-123-frlg",
+   "sevii-45-frlg"
+  ],
+  "diamond": [
+   "sinnoh-dp"
+  ],
+  "pearl": [
+   "sinnoh-dp"
+  ],
+  "platinum": [
+   "sinnoh-pt"
+  ],
+  "heart-gold": [
+   "johto-hgss",
+   "kanto-hgss"
+  ],
+  "soul-silver": [
+   "johto-hgss",
+   "kanto-hgss"
+  ]
+ },
+ "areas": {
+  "kanto-rby": {
+   "Pokemon Tower": [
+    [
+     136,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Pokemon Mansion": [
+    [
+     32,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Mt. Moon": [
+    [
+     56,
+     24,
+     16,
+     8
+    ]
+   ],
+   "Rock Tunnel": [
+    [
+     128,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Seafoam Islands": [
+    [
+     56,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Cerulean Cave": [
+    [
+     88,
+     16,
+     8,
+     8
+    ]
+   ],
+   "Kanto Victory Road": [
+    [
+     8,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Viridian Forest": [
+    [
+     32,
+     48,
+     8,
+     16
+    ]
+   ],
+   "Kanto Power Plant": [
+    [
+     120,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Kanto Safari Zone": [
+    [
+     72,
+     104,
+     16,
+     16
+    ]
+   ],
+   "Pallet Town": [
+    [
+     32,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 1": [
+    [
+     32,
+     80,
+     8,
+     16
+    ]
+   ],
+   "Viridian City": [
+    [
+     32,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 2": [
+    [
+     32,
+     40,
+     8,
+     32
+    ]
+   ],
+   "Pewter City": [
+    [
+     32,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 3": [
+    [
+     56,
+     24,
+     8,
+     8
+    ],
+    [
+     40,
+     32,
+     24,
+     8
+    ]
+   ],
+   "Kanto Route 4": [
+    [
+     64,
+     24,
+     32,
+     8
+    ]
+   ],
+   "Cerulean City": [
+    [
+     96,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 5": [
+    [
+     96,
+     32,
+     8,
+     16
+    ]
+   ],
+   "Saffron City": [
+    [
+     96,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 6": [
+    [
+     96,
+     56,
+     8,
+     24
+    ]
+   ],
+   "Vermilion City": [
+    [
+     96,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 8": [
+    [
+     104,
+     48,
+     24,
+     8
+    ]
+   ],
+   "Lavender Town": [
+    [
+     128,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 7": [
+    [
+     80,
+     48,
+     16,
+     8
+    ]
+   ],
+   "Celadon City": [
+    [
+     72,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 9": [
+    [
+     104,
+     24,
+     32,
+     8
+    ]
+   ],
+   "Kanto Route 10": [
+    [
+     128,
+     32,
+     8,
+     16
+    ]
+   ],
+   "Kanto Route 11": [
+    [
+     104,
+     80,
+     24,
+     8
+    ]
+   ],
+   "Kanto Route 12": [
+    [
+     128,
+     56,
+     8,
+     40
+    ]
+   ],
+   "Kanto Route 13": [
+    [
+     104,
+     96,
+     32,
+     8
+    ]
+   ],
+   "Kanto Route 14": [
+    [
+     104,
+     104,
+     8,
+     16
+    ]
+   ],
+   "Kanto Route 15": [
+    [
+     88,
+     112,
+     16,
+     8
+    ]
+   ],
+   "Fuchsia City": [
+    [
+     80,
+     112,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 16": [
+    [
+     48,
+     48,
+     24,
+     8
+    ]
+   ],
+   "Kanto Route 17": [
+    [
+     48,
+     56,
+     8,
+     56
+    ]
+   ],
+   "Kanto Route 18": [
+    [
+     48,
+     112,
+     32,
+     8
+    ]
+   ],
+   "Kanto Sea Route 19": [
+    [
+     80,
+     120,
+     8,
+     16
+    ]
+   ],
+   "Kanto Sea Route 20": [
+    [
+     40,
+     128,
+     40,
+     8
+    ]
+   ],
+   "Cinnabar Island": [
+    [
+     32,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Kanto Sea Route 21": [
+    [
+     32,
+     104,
+     8,
+     24
+    ]
+   ],
+   "Kanto Route 22": [
+    [
+     16,
+     72,
+     16,
+     8
+    ]
+   ],
+   "Kanto Route 23": [
+    [
+     16,
+     32,
+     8,
+     40
+    ]
+   ],
+   "Indigo Plateau": [
+    [
+     16,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 24": [
+    [
+     96,
+     8,
+     8,
+     16
+    ]
+   ],
+   "Kanto Route 25": [
+    [
+     104,
+     8,
+     16,
+     8
+    ]
+   ],
+   "Diglett's Cave": [
+    [
+     104,
+     80,
+     8,
+     8
+    ],
+    [
+     32,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Diglett S Cave": [
+    [
+     104,
+     80,
+     8,
+     8
+    ],
+    [
+     32,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Digletts Cave": [
+    [
+     104,
+     80,
+     8,
+     8
+    ],
+    [
+     32,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Kanto Safari Zone Center": [
+    [
+     72,
+     104,
+     16,
+     16
+    ]
+   ],
+   "Silph Co.": [
+    [
+     96,
+     48,
+     8,
+     8
+    ]
+   ]
+  },
+  "johto-kanto-gsc": {
+   "Victory Road": [
+    [
+     160,
+     32,
+     8,
+     16
+    ]
+   ],
+   "Kanto Victory Road": [
+    [
+     160,
+     32,
+     8,
+     16
+    ]
+   ],
+   "Johto Victory Road": [
+    [
+     160,
+     32,
+     8,
+     16
+    ]
+   ],
+   "Dark Cave": [
+    [
+     108,
+     52,
+     8,
+     8
+    ],
+    [
+     92,
+     36,
+     8,
+     8
+    ],
+    [
+     116,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Dark Cave Violet City": [
+    [
+     108,
+     52,
+     8,
+     8
+    ],
+    [
+     92,
+     36,
+     8,
+     8
+    ],
+    [
+     116,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Dark Cave Blackthorn City": [
+    [
+     108,
+     52,
+     8,
+     8
+    ],
+    [
+     92,
+     36,
+     8,
+     8
+    ],
+    [
+     116,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Ruins of Alph": [
+    [
+     64,
+     54,
+     8,
+     12
+    ]
+   ],
+   "Union Cave": [
+    [
+     68,
+     100,
+     8,
+     8
+    ]
+   ],
+   "Slowpoke Well": [
+    [
+     60,
+     108,
+     8,
+     8
+    ]
+   ],
+   "Ilex Forest": [
+    [
+     48,
+     108,
+     8,
+     8
+    ]
+   ],
+   "National Park": [
+    [
+     36,
+     36,
+     8,
+     8
+    ]
+   ],
+   "Burned Tower": [
+    [
+     52,
+     20,
+     8,
+     8
+    ]
+   ],
+   "Bell Tower": [
+    [
+     60,
+     20,
+     8,
+     8
+    ]
+   ],
+   "Tin Tower": [
+    [
+     60,
+     20,
+     8,
+     8
+    ]
+   ],
+   "Sprout Tower": [
+    [
+     72,
+     36,
+     8,
+     8
+    ]
+   ],
+   "Mt. Mortar": [
+    [
+     72,
+     20,
+     8,
+     8
+    ]
+   ],
+   "Ice Path": [
+    [
+     120,
+     16,
+     8,
+     8
+    ]
+   ],
+   "Dragon's Den": [
+    [
+     112,
+     16,
+     8,
+     8
+    ]
+   ],
+   "Dragons Den": [
+    [
+     112,
+     16,
+     8,
+     8
+    ]
+   ],
+   "Dragon S Den": [
+    [
+     112,
+     16,
+     8,
+     8
+    ]
+   ],
+   "Lake of Rage": [
+    [
+     96,
+     8,
+     8,
+     8
+    ]
+   ],
+   "Tohjo Falls": [
+    [
+     144,
+     76,
+     8,
+     8
+    ]
+   ],
+   "Mt. Silver": [
+    [
+     136,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Indigo Plateau": [
+    [
+     160,
+     16,
+     8,
+     8
+    ]
+   ],
+   "Mt. Moon": [
+    [
+     208,
+     28,
+     8,
+     8
+    ]
+   ],
+   "Rock Tunnel": [
+    [
+     260,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Radio Tower": [
+    [
+     272,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Diglett's Cave": [
+    [
+     240,
+     60,
+     8,
+     8
+    ],
+    [
+     188,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Diglett S Cave": [
+    [
+     240,
+     60,
+     8,
+     8
+    ],
+    [
+     188,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Digletts Cave": [
+    [
+     240,
+     60,
+     8,
+     8
+    ],
+    [
+     188,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Seafoam Islands": [
+    [
+     200,
+     108,
+     8,
+     8
+    ]
+   ],
+   "Whirl Islands": [
+    [
+     20,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 1": [
+    [
+     184,
+     64,
+     8,
+     24
+    ]
+   ],
+   "Kanto Route 2": [
+    [
+     184,
+     40,
+     8,
+     16
+    ]
+   ],
+   "Kanto Route 3": [
+    [
+     192,
+     32,
+     16,
+     8
+    ]
+   ],
+   "Kanto Route 4": [
+    [
+     208,
+     32,
+     24,
+     8
+    ]
+   ],
+   "Kanto Route 5": [
+    [
+     232,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 6": [
+    [
+     232,
+     56,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 7": [
+    [
+     216,
+     48,
+     16,
+     8
+    ]
+   ],
+   "Kanto Route 8": [
+    [
+     240,
+     48,
+     24,
+     8
+    ]
+   ],
+   "Kanto Route 9": [
+    [
+     240,
+     32,
+     32,
+     8
+    ]
+   ],
+   "Kanto Route 10": [
+    [
+     264,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 11": [
+    [
+     240,
+     64,
+     24,
+     8
+    ]
+   ],
+   "Kanto Route 12": [
+    [
+     264,
+     56,
+     8,
+     24
+    ]
+   ],
+   "Kanto Route 13": [
+    [
+     248,
+     80,
+     24,
+     8
+    ]
+   ],
+   "Kanto Route 14": [
+    [
+     248,
+     88,
+     8,
+     16
+    ]
+   ],
+   "Kanto Route 15": [
+    [
+     232,
+     96,
+     16,
+     8
+    ]
+   ],
+   "Kanto Route 16": [
+    [
+     200,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 17": [
+    [
+     200,
+     56,
+     8,
+     40
+    ]
+   ],
+   "Kanto Route 18": [
+    [
+     200,
+     96,
+     24,
+     8
+    ]
+   ],
+   "Kanto Route 19": [
+    [
+     224,
+     104,
+     8,
+     16
+    ]
+   ],
+   "Kanto Route 20": [
+    [
+     192,
+     112,
+     32,
+     8
+    ]
+   ],
+   "Kanto Route 21": [
+    [
+     184,
+     96,
+     8,
+     16
+    ]
+   ],
+   "Kanto Route 22": [
+    [
+     168,
+     48,
+     16,
+     8
+    ]
+   ],
+   "Kanto Route 23": [
+    [
+     160,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 24": [
+    [
+     232,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 25": [
+    [
+     232,
+     16,
+     24,
+     8
+    ]
+   ],
+   "Kanto Route 26": [
+    [
+     160,
+     56,
+     8,
+     32
+    ]
+   ],
+   "Kanto Route 27": [
+    [
+     136,
+     80,
+     24,
+     8
+    ]
+   ],
+   "Kanto Route 28": [
+    [
+     144,
+     48,
+     16,
+     8
+    ]
+   ],
+   "Johto Route 29": [
+    [
+     96,
+     80,
+     32,
+     8
+    ]
+   ],
+   "Johto Route 30": [
+    [
+     88,
+     48,
+     8,
+     32
+    ]
+   ],
+   "Johto Route 31": [
+    [
+     80,
+     40,
+     16,
+     8
+    ]
+   ],
+   "Johto Route 32": [
+    [
+     72,
+     48,
+     8,
+     56
+    ]
+   ],
+   "Johto Route 33": [
+    [
+     64,
+     104,
+     16,
+     8
+    ]
+   ],
+   "Johto Route 34": [
+    [
+     40,
+     80,
+     8,
+     24
+    ],
+    [
+     40,
+     104,
+     16,
+     8
+    ]
+   ],
+   "Johto Route 35": [
+    [
+     40,
+     48,
+     8,
+     24
+    ]
+   ],
+   "Johto Route 36": [
+    [
+     40,
+     40,
+     32,
+     8
+    ]
+   ],
+   "Johto Route 37": [
+    [
+     56,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Johto Route 38": [
+    [
+     32,
+     24,
+     24,
+     8
+    ]
+   ],
+   "Johto Route 39": [
+    [
+     24,
+     24,
+     8,
+     16
+    ]
+   ],
+   "Johto Route 40": [
+    [
+     16,
+     40,
+     8,
+     24
+    ]
+   ],
+   "Johto Route 41": [
+    [
+     16,
+     64,
+     8,
+     24
+    ]
+   ],
+   "Johto Route 42": [
+    [
+     64,
+     24,
+     32,
+     8
+    ]
+   ],
+   "Johto Route 43": [
+    [
+     96,
+     16,
+     8,
+     8
+    ]
+   ],
+   "Johto Route 44": [
+    [
+     104,
+     24,
+     16,
+     8
+    ]
+   ],
+   "Johto Route 45": [
+    [
+     120,
+     32,
+     8,
+     32
+    ]
+   ],
+   "Johto Route 46": [
+    [
+     112,
+     56,
+     8,
+     24
+    ]
+   ],
+   "New Bark Town": [
+    [
+     128,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Cherrygrove City": [
+    [
+     88,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Violet City": [
+    [
+     72,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Azalea Town": [
+    [
+     56,
+     104,
+     8,
+     8
+    ]
+   ],
+   "Goldenrod City": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Ecruteak City": [
+    [
+     56,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Olivine City": [
+    [
+     24,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Cianwood City": [
+    [
+     8,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Mahogany Town": [
+    [
+     96,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Blackthorn City": [
+    [
+     120,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Pallet Town": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Viridian City": [
+    [
+     184,
+     56,
+     8,
+     8
+    ]
+   ],
+   "Pewter City": [
+    [
+     184,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Cerulean City": [
+    [
+     232,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Cerulean Cave": [
+    [
+     232,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Saffron City": [
+    [
+     232,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Vermilion City": [
+    [
+     232,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Celadon City": [
+    [
+     208,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Lavender Town": [
+    [
+     264,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Fuchsia City": [
+    [
+     224,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Cinnabar Island": [
+    [
+     184,
+     112,
+     8,
+     8
+    ]
+   ]
+  },
+  "hoenn-rse": {
+   "Littleroot Town": [
+    [
+     40,
+     104,
+     8,
+     8
+    ]
+   ],
+   "Oldale Town": [
+    [
+     40,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Petalburg City": [
+    [
+     16,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Rustboro City": [
+    [
+     8,
+     56,
+     8,
+     16
+    ]
+   ],
+   "Fallarbor Town": [
+    [
+     32,
+     16,
+     8,
+     8
+    ]
+   ],
+   "Lavaridge Town": [
+    [
+     48,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Mauville City": [
+    [
+     72,
+     64,
+     16,
+     8
+    ]
+   ],
+   "Verdanturf Town": [
+    [
+     40,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Slateport City": [
+    [
+     72,
+     96,
+     8,
+     16
+    ]
+   ],
+   "Dewford Town": [
+    [
+     24,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Fortree City": [
+    [
+     104,
+     16,
+     8,
+     8
+    ]
+   ],
+   "Lilycove City": [
+    [
+     152,
+     40,
+     16,
+     8
+    ]
+   ],
+   "Mossdeep City": [
+    [
+     200,
+     56,
+     16,
+     8
+    ]
+   ],
+   "Sootopolis City": [
+    [
+     176,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Pacifidlog Town": [
+    [
+     144,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Ever Grande City": [
+    [
+     224,
+     80,
+     8,
+     16
+    ]
+   ],
+   "Hoenn Victory Road": [
+    [
+     232,
+     80,
+     8,
+     16
+    ]
+   ],
+   "Victory Road": [
+    [
+     232,
+     80,
+     8,
+     16
+    ]
+   ],
+   "Shoal Cave": [
+    [
+     200,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Shoal Cave Low Tide": [
+    [
+     200,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Shoal Cave Low Tide Entrance Room": [
+    [
+     200,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Shoal Cave Low Tide Inner Room": [
+    [
+     200,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Shoal Cave Low Tide Stairs Room": [
+    [
+     200,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Shoal Cave Low Tide Lower Room": [
+    [
+     200,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Shoal Cave High Tide": [
+    [
+     200,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Shoal Cave High Tide Entrance Room": [
+    [
+     200,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Shoal Cave High Tide Inner Room": [
+    [
+     200,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Shoal Cave High Tide Stairs Room": [
+    [
+     200,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Shoal Cave High Tide Lower Room": [
+    [
+     200,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Team Aqua Hideout": [
+    [
+     168,
+     32,
+     8,
+     16
+    ]
+   ],
+   "Aqua Hideout": [
+    [
+     168,
+     32,
+     8,
+     16
+    ]
+   ],
+   "Hoenn Safari Zone": [
+    [
+     136,
+     32,
+     16,
+     16
+    ]
+   ],
+   "Safari Zone": [
+    [
+     136,
+     32,
+     16,
+     16
+    ]
+   ],
+   "Ancient Tomb": [
+    [
+     120,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Mt. Pyre": [
+    [
+     136,
+     56,
+     8,
+     8
+    ]
+   ],
+   "Mt. Pyre Summit": [
+    [
+     136,
+     56,
+     8,
+     8
+    ]
+   ],
+   "Mt. Pyre Interior": [
+    [
+     136,
+     56,
+     8,
+     8
+    ]
+   ],
+   "Desert Ruins": [
+    [
+     64,
+     48,
+     16,
+     8
+    ]
+   ],
+   "Jagged Pass": [
+    [
+     48,
+     32,
+     16,
+     8
+    ]
+   ],
+   "Fiery Path": [
+    [
+     64,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Team Magma Hideout": [
+    [
+     64,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Magma Hideout": [
+    [
+     64,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Desert Underpass": [
+    [
+     24,
+     16,
+     8,
+     8
+    ]
+   ],
+   "Meteor Falls": [
+    [
+     0,
+     32,
+     16,
+     16
+    ]
+   ],
+   "Petalburg Woods": [
+    [
+     0,
+     80,
+     16,
+     8
+    ]
+   ],
+   "Altering Cave": [
+    [
+     56,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Rusturf Tunnel": [
+    [
+     48,
+     64,
+     16,
+     8
+    ]
+   ],
+   "Island Cave": [
+    [
+     0,
+     104,
+     16,
+     8
+    ]
+   ],
+   "Abandoned Ship": [
+    [
+     48,
+     128,
+     16,
+     8
+    ]
+   ],
+   "Abandoned Ship Rooms": [
+    [
+     48,
+     128,
+     16,
+     8
+    ]
+   ],
+   "Abandoned Ship Corridors": [
+    [
+     48,
+     128,
+     16,
+     8
+    ]
+   ],
+   "Abandoned Ship Underwater": [
+    [
+     48,
+     128,
+     16,
+     8
+    ]
+   ],
+   "Abandoned Ship Deck": [
+    [
+     48,
+     128,
+     16,
+     8
+    ]
+   ],
+   "Abandoned Ship Captains Office": [
+    [
+     48,
+     128,
+     16,
+     8
+    ]
+   ],
+   "Cave of Origin": [
+    [
+     184,
+     64,
+     8,
+     16
+    ]
+   ],
+   "Mirage Island": [
+    [
+     168,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Seafloor Cavern": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Seafloor Cavern Room 1": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Seafloor Cavern Room 2": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Seafloor Cavern Room 3": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Seafloor Cavern Room 4": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Seafloor Cavern Room 5": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Seafloor Cavern Room 6": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Seafloor Cavern Room 7": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Seafloor Cavern Room 8": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Seafloor Cavern Room 9": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Seafloor Cavern Room 10": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Sky Pillar": [
+    [
+     160,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Southern Island": [
+    [
+     104,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Southern Island Interior": [
+    [
+     104,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Artisan Cave": [
+    [
+     192,
+     112,
+     8,
+     8
+    ]
+   ],
+   "Battle Frontier": [
+    [
+     184,
+     112,
+     8,
+     8
+    ]
+   ],
+   "Granite Cave": [
+    [
+     16,
+     128,
+     8,
+     8
+    ]
+   ],
+   "New Mauville": [
+    [
+     80,
+     72,
+     8,
+     8
+    ]
+   ],
+   "New Mauville Inside": [
+    [
+     80,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Mt. Chimney": [
+    [
+     56,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Mirage Tower": [
+    [
+     80,
+     16,
+     8,
+     48
+    ]
+   ],
+   "Sealed Chamber": [
+    [
+     96,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Scorched Slab": [
+    [
+     112,
+     16,
+     8,
+     8
+    ]
+   ],
+   "Hoenn Route 101": [
+    [
+     40,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Hoenn Route 102": [
+    [
+     24,
+     88,
+     16,
+     8
+    ]
+   ],
+   "Hoenn Route 103": [
+    [
+     40,
+     80,
+     32,
+     8
+    ]
+   ],
+   "Hoenn Route 104": [
+    [
+     8,
+     72,
+     8,
+     24
+    ]
+   ],
+   "Hoenn Route 105": [
+    [
+     8,
+     96,
+     8,
+     24
+    ]
+   ],
+   "Hoenn Route 106": [
+    [
+     8,
+     120,
+     24,
+     8
+    ]
+   ],
+   "Hoenn Route 107": [
+    [
+     32,
+     128,
+     24,
+     8
+    ]
+   ],
+   "Hoenn Route 108": [
+    [
+     56,
+     128,
+     16,
+     8
+    ]
+   ],
+   "Hoenn Route 109": [
+    [
+     72,
+     112,
+     8,
+     24
+    ]
+   ],
+   "Hoenn Route 110": [
+    [
+     72,
+     72,
+     8,
+     24
+    ]
+   ],
+   "Hoenn Route 111": [
+    [
+     72,
+     16,
+     8,
+     48
+    ]
+   ],
+   "Hoenn Route 112": [
+    [
+     56,
+     40,
+     16,
+     8
+    ]
+   ],
+   "Hoenn Route 113": [
+    [
+     40,
+     16,
+     32,
+     8
+    ]
+   ],
+   "Hoenn Route 114": [
+    [
+     16,
+     16,
+     16,
+     8
+    ],
+    [
+     16,
+     24,
+     8,
+     16
+    ]
+   ],
+   "Hoenn Route 115": [
+    [
+     8,
+     32,
+     8,
+     24
+    ]
+   ],
+   "Hoenn Route 116": [
+    [
+     16,
+     56,
+     32,
+     8
+    ]
+   ],
+   "Hoenn Route 117": [
+    [
+     48,
+     64,
+     24,
+     8
+    ]
+   ],
+   "Hoenn Route 118": [
+    [
+     88,
+     64,
+     16,
+     8
+    ]
+   ],
+   "Hoenn Route 119": [
+    [
+     96,
+     16,
+     8,
+     48
+    ]
+   ],
+   "Hoenn Route 120": [
+    [
+     112,
+     16,
+     8,
+     32
+    ]
+   ],
+   "Hoenn Route 121": [
+    [
+     120,
+     40,
+     32,
+     8
+    ]
+   ],
+   "Hoenn Route 122": [
+    [
+     136,
+     48,
+     8,
+     16
+    ]
+   ],
+   "Hoenn Route 123": [
+    [
+     104,
+     64,
+     40,
+     8
+    ]
+   ],
+   "Hoenn Route 124": [
+    [
+     168,
+     40,
+     32,
+     24
+    ]
+   ],
+   "Hoenn Route 125": [
+    [
+     200,
+     40,
+     16,
+     16
+    ]
+   ],
+   "Hoenn Route 126": [
+    [
+     168,
+     64,
+     24,
+     24
+    ]
+   ],
+   "Hoenn Route 127": [
+    [
+     192,
+     64,
+     24,
+     24
+    ]
+   ],
+   "Hoenn Route 128": [
+    [
+     192,
+     88,
+     32,
+     8
+    ]
+   ],
+   "Hoenn Route 129": [
+    [
+     200,
+     96,
+     16,
+     8
+    ]
+   ],
+   "Hoenn Route 130": [
+    [
+     176,
+     96,
+     24,
+     8
+    ]
+   ],
+   "Hoenn Route 131": [
+    [
+     152,
+     96,
+     24,
+     8
+    ]
+   ],
+   "Hoenn Route 132": [
+    [
+     128,
+     96,
+     16,
+     8
+    ]
+   ],
+   "Hoenn Route 133": [
+    [
+     104,
+     96,
+     24,
+     8
+    ]
+   ],
+   "Hoenn Route 134": [
+    [
+     80,
+     96,
+     24,
+     8
+    ]
+   ]
+  },
+  "kanto-frlg": {
+   "Pallet Town": [
+    [
+     40,
+     104,
+     8,
+     8
+    ]
+   ],
+   "Viridian City": [
+    [
+     40,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Pewter City": [
+    [
+     40,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Cerulean City": [
+    [
+     120,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Saffron City": [
+    [
+     120,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Lavender Town": [
+    [
+     152,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Celadon City": [
+    [
+     96,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Vermilion City": [
+    [
+     120,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Fuchsia City": [
+    [
+     104,
+     112,
+     8,
+     8
+    ]
+   ],
+   "Cinnabar Island": [
+    [
+     40,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Indigo Plateau": [
+    [
+     24,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Seafoam Islands": [
+    [
+     72,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Kanto Victory Road": [
+    [
+     24,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Viridian Forest": [
+    [
+     32,
+     56,
+     8,
+     16
+    ]
+   ],
+   "Diglett's Cave": [
+    [
+     40,
+     56,
+     8,
+     8
+    ],
+    [
+     128,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Mt. Moon": [
+    [
+     72,
+     32,
+     16,
+     8
+    ]
+   ],
+   "Cerulean Cave": [
+    [
+     112,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Kanto Power Plant": [
+    [
+     152,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Rock Tunnel": [
+    [
+     144,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Pokemon Tower": [
+    [
+     160,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Kanto Safari Zone": [
+    [
+     96,
+     96,
+     16,
+     16
+    ]
+   ],
+   "Pokemon Mansion": [
+    [
+     40,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 1": [
+    [
+     40,
+     88,
+     8,
+     16
+    ]
+   ],
+   "Kanto Route 2": [
+    [
+     40,
+     56,
+     8,
+     24
+    ]
+   ],
+   "Kanto Route 3": [
+    [
+     48,
+     48,
+     32,
+     8
+    ],
+    [
+     72,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 4": [
+    [
+     80,
+     40,
+     40,
+     8
+    ]
+   ],
+   "Kanto Route 5": [
+    [
+     120,
+     48,
+     8,
+     16
+    ]
+   ],
+   "Kanto Route 6": [
+    [
+     120,
+     72,
+     8,
+     16
+    ]
+   ],
+   "Kanto Route 7": [
+    [
+     104,
+     64,
+     16,
+     8
+    ]
+   ],
+   "Kanto Route 8": [
+    [
+     128,
+     64,
+     24,
+     8
+    ]
+   ],
+   "Kanto Route 9": [
+    [
+     128,
+     40,
+     32,
+     8
+    ]
+   ],
+   "Kanto Route 10": [
+    [
+     152,
+     48,
+     8,
+     16
+    ]
+   ],
+   "Kanto Route 11": [
+    [
+     128,
+     88,
+     24,
+     8
+    ]
+   ],
+   "Kanto Route 12": [
+    [
+     152,
+     72,
+     8,
+     32
+    ]
+   ],
+   "Kanto Route 13": [
+    [
+     136,
+     104,
+     24,
+     8
+    ]
+   ],
+   "Kanto Route 14": [
+    [
+     128,
+     104,
+     8,
+     16
+    ]
+   ],
+   "Kanto Route 15": [
+    [
+     112,
+     112,
+     16,
+     8
+    ]
+   ],
+   "Kanto Route 16": [
+    [
+     64,
+     64,
+     32,
+     8
+    ]
+   ],
+   "Kanto Route 17": [
+    [
+     64,
+     72,
+     8,
+     40
+    ]
+   ],
+   "Kanto Route 18": [
+    [
+     64,
+     112,
+     40,
+     8
+    ]
+   ],
+   "Kanto Route 19": [
+    [
+     104,
+     120,
+     8,
+     16
+    ]
+   ],
+   "Kanto Route 20": [
+    [
+     48,
+     128,
+     56,
+     8
+    ]
+   ],
+   "Kanto Route 21": [
+    [
+     40,
+     112,
+     8,
+     16
+    ]
+   ],
+   "Kanto Route 22": [
+    [
+     24,
+     80,
+     16,
+     8
+    ]
+   ],
+   "Kanto Route 23": [
+    [
+     24,
+     48,
+     8,
+     32
+    ]
+   ],
+   "Kanto Route 24": [
+    [
+     120,
+     24,
+     8,
+     16
+    ]
+   ],
+   "Kanto Route 25": [
+    [
+     128,
+     24,
+     16,
+     8
+    ]
+   ],
+   "Diglett S Cave": [
+    [
+     40,
+     56,
+     8,
+     8
+    ],
+    [
+     128,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Digletts Cave": [
+    [
+     40,
+     56,
+     8,
+     8
+    ],
+    [
+     128,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Kanto Sea Route 19": [
+    [
+     104,
+     120,
+     8,
+     16
+    ]
+   ],
+   "Kanto Sea Route 20": [
+    [
+     48,
+     128,
+     56,
+     8
+    ]
+   ],
+   "Kanto Sea Route 21": [
+    [
+     40,
+     112,
+     8,
+     16
+    ]
+   ],
+   "Kanto Safari Zone Center": [
+    [
+     96,
+     96,
+     16,
+     16
+    ]
+   ],
+   "Silph Co.": [
+    [
+     120,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Victory Road": [
+    [
+     24,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Power Plant": [
+    [
+     152,
+     48,
+     8,
+     8
+    ]
+   ],
+   "Safari Zone": [
+    [
+     96,
+     96,
+     16,
+     16
+    ]
+   ]
+  },
+  "sevii-123-frlg": {
+   "One Island": [
+    [
+     16,
+     0,
+     8,
+     8
+    ]
+   ],
+   "Treasure Beach": [
+    [
+     16,
+     8,
+     8,
+     16
+    ]
+   ],
+   "Two Island": [
+    [
+     80,
+     8,
+     8,
+     8
+    ]
+   ]
+  },
+  "sevii-45-frlg": {
+   "Trainer Tower": [
+    [
+     48,
+     48,
+     8,
+     16
+    ]
+   ],
+   "Canyon Entrance": [
+    [
+     48,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Seven Island": [
+    [
+     48,
+     64,
+     8,
+     8
+    ]
+   ]
+  }
+ },
+ "generated": "2026-10-08"
 }

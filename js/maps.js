@@ -10,6 +10,12 @@
 //                                "AREA UNKNOWN" banner instead, like the in-game Pokédex.
 //   Maps.placeKey(area)          "Kanto Route 2 South towards Viridian City" -> "Kanto Route 2"
 //   Maps.at(mapId, fx, fy, found) the places under a point; where.js shows them in the hover tooltip
+//   Maps.drop(img)               called by a map picture that fails to load: removes that map (and its tab)
+//
+// Several maps for one game (FireRed / LeafGreen: Kanto + three Sevii Islands maps; HeartGold / SoulSilver: Johto + Kanto):
+// when a Pokémon is marked on two or more DIFFERENT maps, they are shown with a row of tabs (map name + how many locations
+// are marked on it) and one map at a time. A Pokémon that is only on one map gets just that map, with no tabs.
+// Give every map of a game its own "name" in maps.json: it is the tab label.
 //
 // Two marker styles:
 //   * map has "icon" (Red/Blue/Yellow): the game's blinking sprite on EVERY tile of every location.
@@ -24,11 +30,22 @@
 //   "frame": true adds the games' grey bevelled border around the map. "labels": [{ text, side: "left"|"right" }] puts
 //   region name plates ("JOHTO", "KANTO") in the bottom corners, in the games' bold pixel font.
 //
+// Flashing area map (Hoenn and FireRed / LeafGreen, maps.json "flash": true): the Gen 3 Pokédex "Area" screen. Instead of an icon,
+// every box of a location FLASHES (see the .fl rules in style.css). Locations are split in two kinds by name (Maps.kindOf):
+//   land    routes, towns, cities and villages   (name contains Route / Town / City / Village; plus the Sevii "One Island" ...
+//           "Seven Island" towns, Cinnabar Island, Indigo Plateau and Three Isle Port)
+//   special everything else: caves, woods, towers, buildings, islands...
+// Ruby / Sapphire: routes and towns flash red; then they stop and the special locations flash red twice; repeat.
+// Emerald:         routes and towns flash yellowish -> orange -> red; the special locations then flash a whitish red twice; repeat.
+// Fire Red / Leaf Green use the Ruby / Sapphire look.
+// The same map image serves all three Hoenn games (the figure gets data-flash="rs" or "emerald"; a group that contains both
+// kinds of game shows one map for each). If the Pokémon is only on one kind, that kind just flashes on its own.
+//
 // Time of day: the last column of each entry row holds conditions such as "Morning" or "Night" (rows without one count as
 // all day). Maps with at least one location that is only there at some times get All / Morning / Day / Night buttons
 // that hide the icons that don't apply.
 //
-// data/maps.json (made with map-editor.html):
+// data/maps.json (made with map-editor.html, or tools/add_areas.py):
 //   { "version": 1,
 //     "maps":  { "<mapId>": { "name": "Kanto", "img": "assets/maps/kanto-rby.png", "w": 160, "h": 144, "grid": 8,
 //                             "icon": "assets/maps/nest-rby.png",                       optional: see above
@@ -42,7 +59,7 @@
 // count as one location.
 const Maps = (() => {
   let data = null;
-  const FLOOR = /^b?\d+f$/i;
+  const FLOOR = /^b?\d+[fr]$/i;       // floors (1F, B2F) and rooms (1R, as in Meteor Falls 1F 1R)
   const WORDS = new Set(["north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest",
     "ne", "nw", "se", "sw", "area", "entrance", "exterior", "outside"]);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -164,7 +181,18 @@ const Maps = (() => {
 .amap .tfilter button{padding:2px 8px;font-size:12px;display:inline-flex;align-items:center;gap:4px}
 .amap .tfilter button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
 .amap .tfilter .sw{display:inline-block;width:10px;height:10px;border:1px solid #000}
-.amap .tnote{flex:1 1 100%;opacity:.85}`;
+.amap .tnote{flex:1 1 100%;opacity:.85}
+.amaps figure[hidden]{display:none}
+.amaptabs{display:flex;flex-wrap:wrap;padding:6px 8px 0}
+.amaptab{padding:4px 10px;font-size:13px;border-right-width:0}
+.amaptab:last-child{border-right-width:2px}
+.amaptab[aria-selected=true]{background:var(--ink);color:var(--bg)}
+.amaptab .cnt{margin-left:5px;font-size:11px;opacity:.75}`;
+
+  // Flashing maps: is this place a route / town (land) or a unique location (special)?
+  const LAND = new RegExp("\\b(route|town|city|village)\\b|\\b(one|two|three|four|five|six|seven) island\\b" +
+    "|\\bcinnabar island\\b|\\bindigo plateau\\b|\\bthree isle port\\b", "i");
+  const kindOf = place => (LAND.test(String(place)) ? "land" : "special");
 
   function placeKey(area) {
     const w = String(area).split(/\s+towards\s+/i)[0].trim().split(/\s+/);
@@ -174,7 +202,7 @@ const Maps = (() => {
 
   function init(d) {
     data = d && typeof d === "object" && d.maps && d.games ? d : null;
-    if (typeof document !== "undefined" && !document.getElementById("maps-time-css")) {   // styles for the bug icon and time buttons
+    if (typeof document !== "undefined" && !document.getElementById("maps-time-css")) {   // styles for the bug icon, time buttons and map tabs
       const s = document.createElement("style"); s.id = "maps-time-css"; s.textContent = CSS; document.head.append(s);
     }
   }
@@ -185,9 +213,30 @@ const Maps = (() => {
     return t.length ? t : TIMES;
   }
 
+  // A map picture failed to load (inline onerror): remove that map, and its tab if there are tabs. If the map that was on
+  // show goes, the first remaining one is shown instead; with only one map left the tab row goes too.
+  function drop(img) {
+    const fig = img && img.closest && img.closest("figure");
+    if (!fig) return;
+    const box = fig.closest(".amaps"), id = fig.dataset.map;
+    fig.remove();
+    if (!box) return;
+    const tabs = [...box.querySelectorAll(".amaptab")].filter(t => {
+      if (box.querySelector(`figure.amap[data-map="${t.dataset.map}"]`)) return true;   // its map is still there
+      t.remove(); return false;
+    });
+    if (!tabs.length) { box.remove(); return; }
+    const on = tabs.find(t => t.getAttribute("aria-selected") === "true") || tabs[0];
+    tabs.forEach(t => t.setAttribute("aria-selected", String(t === on)));
+    box.querySelectorAll("figure.amap").forEach(f => { f.hidden = f.dataset.map !== on.dataset.map; });
+    if (tabs.length < 2) { const strip = box.querySelector(".amaptabs"); if (strip) strip.remove(); }
+  }
+
   function html(keys, entries, name = "") {
     if (!data) return "";
     const areas = [...new Set(entries.map(e => e[0]))], done = new Set(), out = [], none = !areas.length;
+    const meta = [];                                                    // one { id, name, n } per figure in `out`, for the tabs
+    const emit = (id, m, n, markup) => { out.push(markup); meta.push({ id, name: m.name, n }); };
     // times per area name: the union over all of that area's rows
     const areaTimes = new Map();
     for (const e of entries) {
@@ -215,10 +264,10 @@ const Maps = (() => {
       return `<svg class="amapbar" viewBox="0 0 ${W} ${H}" shape-rendering="crispEdges" role="img" aria-label="${esc(txt)}">` +
         `<rect width="${W}" height="${H}" fill="#000"/><path fill="${esc(t.color || "#e0f8a0")}" d="${thinText(txt, 16, 4)}"/></svg>`;
     };
-    const wrap = (m, id, inner, cap, f = [], extra = "") =>
-      `<figure class="amap" data-map="${esc(id)}" data-w="${m.w}" data-h="${m.h}" data-time="all" data-found="${esc(JSON.stringify(f))}">` +
+    const wrap = (m, id, inner, cap, f = [], extra = "", attrs = "") =>
+      `<figure class="amap"${attrs} data-map="${esc(id)}" data-w="${m.w}" data-h="${m.h}" data-time="all" data-found="${esc(JSON.stringify(f))}">` +
       `<div class="amapwrap${m.frame ? " framed" : ""}"${m.frame ? ` style="--u:${(100 / (m.w + 16)).toFixed(4)}cqw"` : ""}>${bar(m)}<div class="amapframe"><div class="amapimg">` +
-      `<img alt="${esc(m.name)} map" src="${esc(m.img)}" onerror="this.closest('figure').remove()">${inner}<div class="amaphl"></div>${title(m)}` +
+      `<img alt="${esc(m.name)} map" src="${esc(m.img)}" onerror="Maps.drop(this)">${inner}<div class="amaphl"></div>${title(m)}` +
       `${(m.labels || []).map(l => labelSvg(m, l)).join("")}<div class="amaptip" hidden></div></div></div></div><figcaption>${cap}</figcaption>${extra}</figure>`;
     // All / Morning / Day / Night buttons (inline handler: this file never touches the DOM after init).
     const filter = () =>
@@ -229,11 +278,13 @@ const Maps = (() => {
         `${col ? `<span class="sw" style="background:${col}"></span>` : ""}${label}</button>`).join("") +
       `<span class="tnote">Hover a location to see when the Pokémon is there. The buttons show only the locations that apply at one time of day.</span></div>`;
 
+    const mixed = keys.includes("emerald") && keys.some(k => k !== "emerald");   // Emerald and Ruby/Sapphire in one group
     for (const key of keys) for (const id of data.games[key] || []) {
-      if (done.has(id)) continue;
-      done.add(id);
       const m = data.maps[id];
       if (!m || !m.w || !m.h) continue;                                 // not set up yet
+      const fstyle = m.flash ? (key === "emerald" ? "emerald" : "rs") : "";   // flashing maps look different in Emerald
+      if (done.has(id + "|" + fstyle)) continue;
+      done.add(id + "|" + fstyle);
       if (none) {                                                       // nowhere to show: the in-game "AREA UNKNOWN" box
         const u = m.unknown, banner = u && u.img
           ? `<img class="unk" alt="Area unknown" src="${esc(u.img)}" style="left:${pc(u.x / m.w)};top:${pc(u.y / m.h)};width:${pc(u.w / m.w)}">`
@@ -241,6 +292,25 @@ const Maps = (() => {
         return wrap(m, id, banner, `${esc(m.name)}: area unknown`);       // only the first map; one banner is enough
       }
       const table = (data.areas || {})[id] || {};
+
+      if (m.flash) {                                                    // style 3: the locations themselves flash (Hoenn, FireRed / LeafGreen)
+        const seen = new Set(), sets = { land: [], special: [] }, names = new Set();
+        for (const a of areas) {
+          const boxes = table[a] || table[placeKey(a)];
+          if (!boxes || !boxes.length) continue;
+          const kind = kindOf(placeKey(a));
+          names.add(placeKey(a));
+          for (const b of boxes) { const sig = kind + JSON.stringify(b); if (!seen.has(sig)) { seen.add(sig); sets[kind].push(b); } }
+        }
+        if (!seen.size) continue;                                       // nothing of this Pokémon on this map
+        const marks = ["land", "special"].flatMap(k => sets[k].map(([x, y, w, h]) =>
+          `<i class="fl ${k}" style="left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(w / m.w)};height:${pc(h / m.h)}"></i>`)).join("");
+        const mix = sets.land.length && sets.special.length ? "both" : sets.land.length ? "land" : "special";
+        const who = mixed ? (fstyle === "emerald" ? " (Emerald)" : " (Ruby / Sapphire)") : "";
+        emit(id, m, names.size, wrap(m, id, marks, `${esc(m.name)}${who}: ${names.size} location${names.size === 1 ? "" : "s"} marked`, found, "",
+          ` data-flash="${fstyle}" data-mix="${mix}"`));
+        continue;
+      }
 
       if (m.icon && !m.single) {                                        // style 1: the game's sprite on every tile
         const seen = new Set(), places = new Set();
@@ -256,7 +326,7 @@ const Maps = (() => {
           const pos = `left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(w / m.w)};height:${pc(h / m.h)}`;
           return `<i class="nest" style="${pos};background-image:url(${esc(m.icon)});background-size:${pc(g / w)} ${pc(g / h)}"></i>`;
         }).join("");
-        out.push(wrap(m, id, marks, `${esc(m.name)}: ${places.size} location${places.size === 1 ? "" : "s"} marked`, found));
+        emit(id, m, places.size, wrap(m, id, marks, `${esc(m.name)}: ${places.size} location${places.size === 1 ? "" : "s"} marked`, found));
         continue;
       }
 
@@ -283,9 +353,24 @@ const Maps = (() => {
         const pos = `left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(cw / m.w)};height:${pc(ch / m.h)}`;
         return `<i class="nest ${m.icon ? "one" : "bug"}" data-t="${TIMES.filter(t => gr.times.has(t)).join(" ")}" style="${pos};background-image:url(${sprite})"></i>`;
       }).join("");
-      out.push(wrap(m, id, marks, `${esc(m.name)}: ${groups.size} location${groups.size === 1 ? "" : "s"} marked`, found, timed ? filter() : ""));
+      emit(id, m, groups.size, wrap(m, id, marks, `${esc(m.name)}: ${groups.size} location${groups.size === 1 ? "" : "s"} marked`, found, timed ? filter() : ""));
     }
-    return out.join("");
+
+    // Two or more different maps (Kanto + Sevii Islands ...): a tab for each, one map shown at a time. (The same map twice, as
+    // with Hoenn's Ruby / Sapphire + Emerald, is not a tab: both versions stay on show so they can be compared.)
+    const ids = [...new Set(meta.map(x => x.id))];
+    if (ids.length < 2) return out.join("");
+    const first = ids[0];
+    const pick = "var w=this.closest('.amaps'),id=this.dataset.map;" +
+      "w.querySelectorAll('.amaptab').forEach(function(b){b.setAttribute('aria-selected',b===this)},this);" +
+      "w.querySelectorAll('figure.amap').forEach(function(f){f.hidden=f.dataset.map!==id})";
+    const tabs = ids.map(id => {
+      const x = meta.filter(y => y.id === id);
+      return `<button type="button" class="amaptab" role="tab" data-map="${esc(id)}" aria-selected="${id === first}" onclick="${pick}">` +
+        `${esc(x[0].name)}<span class="cnt">${Math.max(...x.map(y => y.n))}</span></button>`;
+    }).join("");
+    const figs = out.map((h, i) => (meta[i].id === first ? h : h.replace('<figure class="amap"', '<figure class="amap" hidden')));
+    return `<div class="amaps"><div class="amaptabs" role="tablist" aria-label="Maps">${tabs}</div>${figs.join("")}</div>`;
   }
 
   // "Pokémon Tower" / "Pokemon Tower", "Diglett's Cave" / "Diglett S Cave" and "Kanto Victory Road" / "Victory Road"
@@ -323,5 +408,5 @@ const Maps = (() => {
     }));
   }
 
-  return { init, html, placeKey, at };
+  return { init, html, placeKey, kindOf, at, drop };
 })();

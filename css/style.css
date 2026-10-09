@@ -201,3 +201,26 @@ body.selecting .chip{display:none}
 .amapimg .nest .tb,.amapimg .mk .tb{animation:none}
 .amapimg .unk.txt.small{font-size:3cqw}
 .amapimg .unk.txt[hidden]{display:none}
+
+/* flashing area map (maps.json "flash": true, Hoenn; js/maps.js). Every box of a location is an <i class="fl land|special">.
+   Ruby / Sapphire (data-flash=rs): routes/towns flash red three times, stop, then the special places (caves, buildings...)
+   flash red twice, then it repeats. Emerald: routes/towns go yellowish -> orange -> red, the special places flash whitish red.
+   Change the three --l colours (the three route/town flashes) or --sp (the special-place flash) to tune the look. */
+.amap[data-flash]{--l1:#e01818;--l2:#e01818;--l3:#e01818;--sp:#e01818}
+.amap[data-flash=emerald]{--l1:#f8e040;--l2:#f89828;--l3:#e01818;--sp:#ff9c9c}
+.amapimg .fl{position:absolute;pointer-events:none;opacity:0;background:var(--l1);mix-blend-mode:normal}
+.amapimg .fl.special{background:var(--sp)}
+/* both kinds on the map: one 4 s loop. 0-60 % routes/towns flash x3, 60-100 % special places flash x2 */
+.amap[data-mix=both] .fl.land{animation:flLand 4s step-end infinite}
+.amap[data-mix=both] .fl.special{animation:flSpecial 4s step-end infinite}
+/* only one kind on the map: it just keeps flashing on its own */
+.amap[data-mix=land] .fl.land{animation:flLandSolo 3s step-end infinite}
+.amap[data-mix=special] .fl.special{animation:flSpecialSolo 2.4s step-end infinite}
+@keyframes flLand{0%{opacity:1;background:var(--l1)}12%{opacity:0}24%{opacity:1;background:var(--l2)}36%{opacity:0}48%{opacity:1;background:var(--l3)}60%,100%{opacity:0}}
+@keyframes flSpecial{0%{opacity:0}60%{opacity:1}70%{opacity:0}80%{opacity:1}90%,100%{opacity:0}}
+@keyframes flLandSolo{0%{opacity:1;background:var(--l1)}16.66%{opacity:0}33.33%{opacity:1;background:var(--l2)}50%{opacity:0}66.66%{opacity:1;background:var(--l3)}83.33%,100%{opacity:0}}
+@keyframes flSpecialSolo{0%{opacity:1}15%{opacity:0}30%{opacity:1}45%,100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  .amapimg .fl{animation:none !important;opacity:.7}
+  .amapimg .fl.special{outline:2px solid #000}
+}
