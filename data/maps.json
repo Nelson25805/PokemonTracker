@@ -69,16 +69,20 @@
   "sinnoh-dp": {
    "name": "Sinnoh",
    "img": "assets/maps/sinnoh-dp.png",
-   "w": 0,
-   "h": 0,
-   "grid": 0
+   "w": 216,
+   "h": 168,
+   "grid": 8,
+   "flash": true,
+   "times": true
   },
   "sinnoh-pt": {
    "name": "Sinnoh",
    "img": "assets/maps/sinnoh-pt.png",
-   "w": 0,
-   "h": 0,
-   "grid": 0
+   "w": 216,
+   "h": 168,
+   "grid": 8,
+   "flash": true,
+   "times": true
   },
   "johto-hgss": {
    "name": "Johto",
@@ -3505,6 +3509,2678 @@
     [
      128,
      16,
+     8,
+     8
+    ]
+   ]
+  },
+  "sinnoh-dp": {
+   "Ravaged Path": [
+    [
+     32,
+     112,
+     8,
+     8
+    ]
+   ],
+   "Sendoff Spring": [
+    [
+     160,
+     112,
+     16,
+     8
+    ]
+   ],
+   "Oreburgh Gate": [
+    [
+     48,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Oreburgh Mine": [
+    [
+     56,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Oreburgh Mining Museum": [
+    [
+     72,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Trophy Garden": [
+    [
+     104,
+     136,
+     8,
+     8
+    ]
+   ],
+   "Stark Mountain": [
+    [
+     160,
+     8,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Victory Road": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Fullmoon Island": [
+    [
+     8,
+     16,
+     8,
+     8
+    ]
+   ],
+   "Newmoon Island": [
+    [
+     32,
+     16,
+     8,
+     8
+    ]
+   ],
+   "Flower Paradise": [
+    [
+     200,
+     0,
+     8,
+     8
+    ]
+   ],
+   "Pal Park": [
+    [
+     64,
+     160,
+     8,
+     8
+    ]
+   ],
+   "Fuego Ironworks": [
+    [
+     32,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Valley Windworks": [
+    [
+     48,
+     104,
+     8,
+     8
+    ]
+   ],
+   "Eterna Forest": [
+    [
+     40,
+     72,
+     16,
+     16
+    ]
+   ],
+   "Old Chateau": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Maniac Tunnel": [
+    [
+     152,
+     104,
+     8,
+     16
+    ]
+   ],
+   "Mt Coronet": [
+    [
+     80,
+     104,
+     8,
+     16
+    ],
+    [
+     80,
+     96,
+     16,
+     8
+    ],
+    [
+     88,
+     48,
+     8,
+     48
+    ]
+   ],
+   "Spear Pillar": [
+    [
+     88,
+     104,
+     8,
+     8
+    ]
+   ],
+   "Hall of Origin": [
+    [
+     96,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Canalave City": [
+    [
+     8,
+     112,
+     8,
+     16
+    ]
+   ],
+   "Jubilife City": [
+    [
+     32,
+     120,
+     8,
+     16
+    ]
+   ],
+   "Sandgem Town": [
+    [
+     32,
+     144,
+     8,
+     8
+    ]
+   ],
+   "Twinleaf Town": [
+    [
+     24,
+     152,
+     8,
+     8
+    ]
+   ],
+   "Verity Lakefront": [
+    [
+     8,
+     136,
+     16,
+     16
+    ]
+   ],
+   "Oreburgh City": [
+    [
+     56,
+     120,
+     16,
+     8
+    ],
+    [
+     64,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Floaroma Town": [
+    [
+     32,
+     96,
+     8,
+     16
+    ]
+   ],
+   "Eterna City": [
+    [
+     64,
+     80,
+     8,
+     8
+    ],
+    [
+     64,
+     72,
+     16,
+     8
+    ]
+   ],
+   "Seabreak Path": [
+    [
+     200,
+     8,
+     8,
+     56
+    ]
+   ],
+   "Celestic Town": [
+    [
+     96,
+     72,
+     16,
+     8
+    ]
+   ],
+   "Solaceon Town": [
+    [
+     120,
+     104,
+     16,
+     8
+    ]
+   ],
+   "Solaceon Ruins": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Hearthome City": [
+    [
+     96,
+     112,
+     16,
+     8
+    ]
+   ],
+   "Pastoria City": [
+    [
+     128,
+     136,
+     16,
+     16
+    ]
+   ],
+   "Great Marsh": [
+    [
+     128,
+     128,
+     8,
+     16
+    ]
+   ],
+   "Valor Lakefront": [
+    [
+     144,
+     120,
+     16,
+     16
+    ]
+   ],
+   "Veilstone City": [
+    [
+     144,
+     88,
+     16,
+     16
+    ]
+   ],
+   "Sunyshore City": [
+    [
+     184,
+     120,
+     16,
+     16
+    ]
+   ],
+   "Pokémon League": [
+    [
+     184,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Resort Area": [
+    [
+     176,
+     56,
+     8,
+     8
+    ]
+   ],
+   "Fight Area": [
+    [
+     136,
+     48,
+     16,
+     8
+    ]
+   ],
+   "Survival Area": [
+    [
+     144,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Snowpoint City": [
+    [
+     80,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Snowpoint Temple": [
+    [
+     88,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Iron Island": [
+    [
+     24,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Acuity Lakefront": [
+    [
+     64,
+     0,
+     16,
+     16
+    ]
+   ],
+   "Lost Tower": [
+    [
+     120,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Route 201": [
+    [
+     24,
+     144,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Route 202": [
+    [
+     32,
+     136,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Route 203": [
+    [
+     40,
+     120,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 204": [
+    [
+     32,
+     112,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Route 205": [
+    [
+     40,
+     80,
+     8,
+     32
+    ],
+    [
+     40,
+     72,
+     24,
+     8
+    ]
+   ],
+   "Sinnoh Route 206": [
+    [
+     64,
+     88,
+     8,
+     24
+    ]
+   ],
+   "Sinnoh Route 207": [
+    [
+     64,
+     112,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 208": [
+    [
+     88,
+     112,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Route 209": [
+    [
+     112,
+     112,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 210": [
+    [
+     104,
+     72,
+     24,
+     8
+    ],
+    [
+     120,
+     80,
+     8,
+     24
+    ]
+   ],
+   "Sinnoh Route 211": [
+    [
+     64,
+     48,
+     24,
+     8
+    ]
+   ],
+   "Sinnoh Route 212": [
+    [
+     96,
+     120,
+     8,
+     24
+    ],
+    [
+     96,
+     144,
+     32,
+     8
+    ]
+   ],
+   "Sinnoh Route 213": [
+    [
+     144,
+     136,
+     16,
+     16
+    ]
+   ],
+   "Sinnoh Route 214": [
+    [
+     152,
+     104,
+     8,
+     16
+    ]
+   ],
+   "Sinnoh Route 215": [
+    [
+     128,
+     88,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 216": [
+    [
+     80,
+     72,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 217": [
+    [
+     64,
+     16,
+     8,
+     32
+    ]
+   ],
+   "Sinnoh Route 218": [
+    [
+     16,
+     120,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 219": [
+    [
+     32,
+     152,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Route 220": [
+    [
+     32,
+     160,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 221": [
+    [
+     48,
+     160,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 222": [
+    [
+     160,
+     128,
+     24,
+     8
+    ]
+   ],
+   "Sinnoh Route 223": [
+    [
+     184,
+     96,
+     8,
+     24
+    ]
+   ],
+   "Sinnoh Route 224": [
+    [
+     192,
+     80,
+     8,
+     8
+    ],
+    [
+     192,
+     72,
+     16,
+     8
+    ],
+    [
+     200,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Route 225": [
+    [
+     136,
+     32,
+     8,
+     16
+    ]
+   ],
+   "Sinnoh Route 226": [
+    [
+     152,
+     32,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 227": [
+    [
+     160,
+     16,
+     8,
+     16
+    ]
+   ],
+   "Sinnoh Route 228": [
+    [
+     168,
+     32,
+     8,
+     16
+    ]
+   ],
+   "Sinnoh Route 229": [
+    [
+     168,
+     48,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 230": [
+    [
+     152,
+     48,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Sea Route 220": [
+    [
+     32,
+     160,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Sea Route 223": [
+    [
+     184,
+     96,
+     8,
+     24
+    ]
+   ],
+   "Sinnoh Sea Route 226": [
+    [
+     152,
+     32,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Sea Route 226 Island House": [
+    [
+     152,
+     32,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Sea Route 230": [
+    [
+     152,
+     48,
+     16,
+     8
+    ]
+   ],
+   "Lost Tower 1F": [
+    [
+     120,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Lost Tower 2F": [
+    [
+     120,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Lost Tower 3F": [
+    [
+     120,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Lost Tower 4F": [
+    [
+     120,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Lost Tower 5F": [
+    [
+     120,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Iron Island 1F": [
+    [
+     24,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Iron Island B1F Left": [
+    [
+     24,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Iron Island B1F Right": [
+    [
+     24,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Iron Island B2F Left": [
+    [
+     24,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Iron Island B2F Right": [
+    [
+     24,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Iron Island B3F": [
+    [
+     24,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau 2F": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau 2F Left Room": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau 2F Leftmost Room": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau 2F Middle Room": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau 2F Private Room": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau 2F Right Room": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau 2F Rightmost Room": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau Dining Room": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau Entrance": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins 1F": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins 2F": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B1F A": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B1F B": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B1F C": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B2F A": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B2F B": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B2F C": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B3F A": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B3F B": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B3F C": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B3F D": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B3F E": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B4F A": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B4F B": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B4F C": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B4F D": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B5F": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Snowpoint Temple 1F": [
+    [
+     88,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Snowpoint Temple B1F": [
+    [
+     88,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Snowpoint Temple B2F": [
+    [
+     88,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Snowpoint Temple B3F": [
+    [
+     88,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Snowpoint Temple B4F": [
+    [
+     88,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Snowpoint Temple B5F": [
+    [
+     88,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Stark Mountain Entrance": [
+    [
+     160,
+     8,
+     8,
+     8
+    ]
+   ],
+   "Stark Mountain Heatran Chamber": [
+    [
+     160,
+     8,
+     8,
+     8
+    ]
+   ],
+   "Stark Mountain Inside": [
+    [
+     160,
+     8,
+     8,
+     8
+    ]
+   ],
+   "Oreburgh Mine 1F": [
+    [
+     56,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Oreburgh Mine B1F": [
+    [
+     56,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Oreburgh Gate 1F": [
+    [
+     48,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Oreburgh Gate B1F": [
+    [
+     48,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Oreburgh City North West House": [
+    [
+     56,
+     120,
+     16,
+     8
+    ],
+    [
+     64,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Oreburgh City Oreburgh Mining Museum": [
+    [
+     56,
+     120,
+     16,
+     8
+    ],
+    [
+     64,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Eterna City Eterna Condominiums": [
+    [
+     64,
+     80,
+     8,
+     8
+    ],
+    [
+     64,
+     72,
+     16,
+     8
+    ]
+   ],
+   "Eterna City West Gate": [
+    [
+     64,
+     80,
+     8,
+     8
+    ],
+    [
+     64,
+     72,
+     16,
+     8
+    ]
+   ],
+   "Hearthome City West Gate": [
+    [
+     96,
+     112,
+     16,
+     8
+    ]
+   ],
+   "Snowpoint City North West House": [
+    [
+     80,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Great Marsh Area 1": [
+    [
+     128,
+     128,
+     8,
+     16
+    ]
+   ],
+   "Great Marsh Area 2": [
+    [
+     128,
+     128,
+     8,
+     16
+    ]
+   ],
+   "Great Marsh Area 3": [
+    [
+     128,
+     128,
+     8,
+     16
+    ]
+   ],
+   "Great Marsh Area 4": [
+    [
+     128,
+     128,
+     8,
+     16
+    ]
+   ],
+   "Great Marsh Area 5": [
+    [
+     128,
+     128,
+     8,
+     16
+    ]
+   ],
+   "Great Marsh Area 6": [
+    [
+     128,
+     128,
+     8,
+     16
+    ]
+   ],
+   "Maniac Tunnel 26 Plus Different Unown Caught": [
+    [
+     152,
+     104,
+     8,
+     16
+    ]
+   ],
+   "Ruin Maniac Cave 0 9 Different Unown Caught": [
+    [
+     152,
+     104,
+     8,
+     16
+    ]
+   ],
+   "Ruin Maniac Cave 10 25 Different Unown Caught": [
+    [
+     152,
+     104,
+     8,
+     16
+    ]
+   ],
+   "Sinnoh Victory Road 1F": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Victory Road 2F": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Victory Road B1F": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Victory Road Inside": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Victory Road Inside B1F": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Victory Road Inside Exit": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Hall of Origin 1": [
+    [
+     88,
+     104,
+     8,
+     8
+    ]
+   ],
+   "Resort Gorgeous": [
+    [
+     176,
+     56,
+     8,
+     8
+    ]
+   ],
+   "Victory Road": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ]
+  },
+  "sinnoh-pt": {
+   "Ravaged Path": [
+    [
+     32,
+     112,
+     8,
+     8
+    ]
+   ],
+   "Sendoff Spring": [
+    [
+     160,
+     112,
+     16,
+     8
+    ]
+   ],
+   "Oreburgh Gate": [
+    [
+     48,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Oreburgh Mine": [
+    [
+     56,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Oreburgh Mining Museum": [
+    [
+     72,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Trophy Garden": [
+    [
+     104,
+     136,
+     8,
+     8
+    ]
+   ],
+   "Stark Mountain": [
+    [
+     160,
+     8,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Victory Road": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Fullmoon Island": [
+    [
+     8,
+     16,
+     8,
+     8
+    ]
+   ],
+   "Newmoon Island": [
+    [
+     32,
+     16,
+     8,
+     8
+    ]
+   ],
+   "Flower Paradise": [
+    [
+     200,
+     0,
+     8,
+     8
+    ]
+   ],
+   "Pal Park": [
+    [
+     64,
+     160,
+     8,
+     8
+    ]
+   ],
+   "Fuego Ironworks": [
+    [
+     32,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Valley Windworks": [
+    [
+     48,
+     104,
+     8,
+     8
+    ]
+   ],
+   "Eterna Forest": [
+    [
+     40,
+     72,
+     16,
+     16
+    ]
+   ],
+   "Old Chateau": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Maniac Tunnel": [
+    [
+     152,
+     104,
+     8,
+     16
+    ]
+   ],
+   "Mt Coronet": [
+    [
+     80,
+     104,
+     8,
+     16
+    ],
+    [
+     80,
+     96,
+     16,
+     8
+    ],
+    [
+     88,
+     48,
+     8,
+     48
+    ]
+   ],
+   "Spear Pillar": [
+    [
+     88,
+     104,
+     8,
+     8
+    ]
+   ],
+   "Hall of Origin": [
+    [
+     96,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Canalave City": [
+    [
+     8,
+     112,
+     8,
+     16
+    ]
+   ],
+   "Jubilife City": [
+    [
+     32,
+     120,
+     8,
+     16
+    ]
+   ],
+   "Sandgem Town": [
+    [
+     32,
+     144,
+     8,
+     8
+    ]
+   ],
+   "Twinleaf Town": [
+    [
+     24,
+     152,
+     8,
+     8
+    ]
+   ],
+   "Verity Lakefront": [
+    [
+     8,
+     136,
+     16,
+     16
+    ]
+   ],
+   "Oreburgh City": [
+    [
+     56,
+     120,
+     16,
+     8
+    ],
+    [
+     64,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Floaroma Town": [
+    [
+     32,
+     96,
+     8,
+     16
+    ]
+   ],
+   "Eterna City": [
+    [
+     64,
+     80,
+     8,
+     8
+    ],
+    [
+     64,
+     72,
+     16,
+     8
+    ]
+   ],
+   "Seabreak Path": [
+    [
+     200,
+     8,
+     8,
+     56
+    ]
+   ],
+   "Celestic Town": [
+    [
+     96,
+     72,
+     16,
+     8
+    ]
+   ],
+   "Solaceon Town": [
+    [
+     120,
+     104,
+     16,
+     8
+    ]
+   ],
+   "Solaceon Ruins": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Hearthome City": [
+    [
+     96,
+     112,
+     16,
+     8
+    ]
+   ],
+   "Pastoria City": [
+    [
+     128,
+     136,
+     16,
+     16
+    ]
+   ],
+   "Great Marsh": [
+    [
+     128,
+     128,
+     8,
+     16
+    ]
+   ],
+   "Valor Lakefront": [
+    [
+     144,
+     120,
+     16,
+     16
+    ]
+   ],
+   "Veilstone City": [
+    [
+     144,
+     88,
+     16,
+     16
+    ]
+   ],
+   "Sunyshore City": [
+    [
+     184,
+     120,
+     16,
+     16
+    ]
+   ],
+   "Pokémon League": [
+    [
+     184,
+     80,
+     8,
+     8
+    ]
+   ],
+   "Resort Area": [
+    [
+     176,
+     56,
+     8,
+     8
+    ]
+   ],
+   "Fight Area": [
+    [
+     136,
+     48,
+     16,
+     8
+    ]
+   ],
+   "Survival Area": [
+    [
+     144,
+     32,
+     8,
+     8
+    ]
+   ],
+   "Snowpoint City": [
+    [
+     80,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Snowpoint Temple": [
+    [
+     88,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Iron Island": [
+    [
+     24,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Acuity Lakefront": [
+    [
+     64,
+     0,
+     16,
+     16
+    ]
+   ],
+   "Lost Tower": [
+    [
+     120,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Route 201": [
+    [
+     24,
+     144,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Route 202": [
+    [
+     32,
+     136,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Route 203": [
+    [
+     40,
+     120,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 204": [
+    [
+     32,
+     112,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Route 205": [
+    [
+     40,
+     80,
+     8,
+     32
+    ],
+    [
+     40,
+     72,
+     24,
+     8
+    ]
+   ],
+   "Sinnoh Route 206": [
+    [
+     64,
+     88,
+     8,
+     24
+    ]
+   ],
+   "Sinnoh Route 207": [
+    [
+     64,
+     112,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 208": [
+    [
+     88,
+     112,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Route 209": [
+    [
+     112,
+     112,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 210": [
+    [
+     104,
+     72,
+     24,
+     8
+    ],
+    [
+     120,
+     80,
+     8,
+     24
+    ]
+   ],
+   "Sinnoh Route 211": [
+    [
+     64,
+     48,
+     24,
+     8
+    ]
+   ],
+   "Sinnoh Route 212": [
+    [
+     96,
+     120,
+     8,
+     24
+    ],
+    [
+     96,
+     144,
+     32,
+     8
+    ]
+   ],
+   "Sinnoh Route 213": [
+    [
+     144,
+     136,
+     16,
+     16
+    ]
+   ],
+   "Sinnoh Route 214": [
+    [
+     152,
+     104,
+     8,
+     16
+    ]
+   ],
+   "Sinnoh Route 215": [
+    [
+     128,
+     88,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 216": [
+    [
+     80,
+     72,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 217": [
+    [
+     64,
+     16,
+     8,
+     32
+    ]
+   ],
+   "Sinnoh Route 218": [
+    [
+     16,
+     120,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 219": [
+    [
+     32,
+     152,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Route 220": [
+    [
+     32,
+     160,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 221": [
+    [
+     48,
+     160,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 222": [
+    [
+     160,
+     128,
+     24,
+     8
+    ]
+   ],
+   "Sinnoh Route 223": [
+    [
+     184,
+     96,
+     8,
+     24
+    ]
+   ],
+   "Sinnoh Route 224": [
+    [
+     192,
+     80,
+     8,
+     8
+    ],
+    [
+     192,
+     72,
+     16,
+     8
+    ],
+    [
+     200,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Route 225": [
+    [
+     136,
+     32,
+     8,
+     16
+    ]
+   ],
+   "Sinnoh Route 226": [
+    [
+     152,
+     32,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 227": [
+    [
+     160,
+     16,
+     8,
+     16
+    ]
+   ],
+   "Sinnoh Route 228": [
+    [
+     168,
+     32,
+     8,
+     16
+    ]
+   ],
+   "Sinnoh Route 229": [
+    [
+     168,
+     48,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Route 230": [
+    [
+     152,
+     48,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Sea Route 220": [
+    [
+     32,
+     160,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Sea Route 223": [
+    [
+     184,
+     96,
+     8,
+     24
+    ]
+   ],
+   "Sinnoh Sea Route 226": [
+    [
+     152,
+     32,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Sea Route 226 Island House": [
+    [
+     152,
+     32,
+     16,
+     8
+    ]
+   ],
+   "Sinnoh Sea Route 230": [
+    [
+     152,
+     48,
+     16,
+     8
+    ]
+   ],
+   "Lost Tower 1F": [
+    [
+     120,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Lost Tower 2F": [
+    [
+     120,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Lost Tower 3F": [
+    [
+     120,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Lost Tower 4F": [
+    [
+     120,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Lost Tower 5F": [
+    [
+     120,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Iron Island 1F": [
+    [
+     24,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Iron Island B1F Left": [
+    [
+     24,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Iron Island B1F Right": [
+    [
+     24,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Iron Island B2F Left": [
+    [
+     24,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Iron Island B2F Right": [
+    [
+     24,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Iron Island B3F": [
+    [
+     24,
+     64,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau 2F": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau 2F Left Room": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau 2F Leftmost Room": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau 2F Middle Room": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau 2F Private Room": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau 2F Right Room": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau 2F Rightmost Room": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau Dining Room": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Old Chateau Entrance": [
+    [
+     40,
+     72,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins 1F": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins 2F": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B1F A": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B1F B": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B1F C": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B2F A": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B2F B": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B2F C": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B3F A": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B3F B": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B3F C": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B3F D": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B3F E": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B4F A": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B4F B": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B4F C": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B4F D": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Solaceon Ruins B5F": [
+    [
+     128,
+     96,
+     8,
+     8
+    ]
+   ],
+   "Snowpoint Temple 1F": [
+    [
+     88,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Snowpoint Temple B1F": [
+    [
+     88,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Snowpoint Temple B2F": [
+    [
+     88,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Snowpoint Temple B3F": [
+    [
+     88,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Snowpoint Temple B4F": [
+    [
+     88,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Snowpoint Temple B5F": [
+    [
+     88,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Stark Mountain Entrance": [
+    [
+     160,
+     8,
+     8,
+     8
+    ]
+   ],
+   "Stark Mountain Heatran Chamber": [
+    [
+     160,
+     8,
+     8,
+     8
+    ]
+   ],
+   "Stark Mountain Inside": [
+    [
+     160,
+     8,
+     8,
+     8
+    ]
+   ],
+   "Oreburgh Mine 1F": [
+    [
+     56,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Oreburgh Mine B1F": [
+    [
+     56,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Oreburgh Gate 1F": [
+    [
+     48,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Oreburgh Gate B1F": [
+    [
+     48,
+     120,
+     8,
+     8
+    ]
+   ],
+   "Oreburgh City North West House": [
+    [
+     56,
+     120,
+     16,
+     8
+    ],
+    [
+     64,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Oreburgh City Oreburgh Mining Museum": [
+    [
+     56,
+     120,
+     16,
+     8
+    ],
+    [
+     64,
+     128,
+     8,
+     8
+    ]
+   ],
+   "Eterna City Eterna Condominiums": [
+    [
+     64,
+     80,
+     8,
+     8
+    ],
+    [
+     64,
+     72,
+     16,
+     8
+    ]
+   ],
+   "Eterna City West Gate": [
+    [
+     64,
+     80,
+     8,
+     8
+    ],
+    [
+     64,
+     72,
+     16,
+     8
+    ]
+   ],
+   "Hearthome City West Gate": [
+    [
+     96,
+     112,
+     16,
+     8
+    ]
+   ],
+   "Snowpoint City North West House": [
+    [
+     80,
+     0,
+     8,
+     16
+    ]
+   ],
+   "Great Marsh Area 1": [
+    [
+     128,
+     128,
+     8,
+     16
+    ]
+   ],
+   "Great Marsh Area 2": [
+    [
+     128,
+     128,
+     8,
+     16
+    ]
+   ],
+   "Great Marsh Area 3": [
+    [
+     128,
+     128,
+     8,
+     16
+    ]
+   ],
+   "Great Marsh Area 4": [
+    [
+     128,
+     128,
+     8,
+     16
+    ]
+   ],
+   "Great Marsh Area 5": [
+    [
+     128,
+     128,
+     8,
+     16
+    ]
+   ],
+   "Great Marsh Area 6": [
+    [
+     128,
+     128,
+     8,
+     16
+    ]
+   ],
+   "Maniac Tunnel 26 Plus Different Unown Caught": [
+    [
+     152,
+     104,
+     8,
+     16
+    ]
+   ],
+   "Ruin Maniac Cave 0 9 Different Unown Caught": [
+    [
+     152,
+     104,
+     8,
+     16
+    ]
+   ],
+   "Ruin Maniac Cave 10 25 Different Unown Caught": [
+    [
+     152,
+     104,
+     8,
+     16
+    ]
+   ],
+   "Sinnoh Victory Road 1F": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Victory Road 2F": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Victory Road B1F": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Victory Road Inside": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Victory Road Inside B1F": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Victory Road Inside Exit": [
+    [
+     184,
+     88,
+     8,
+     8
+    ]
+   ],
+   "Sinnoh Hall of Origin 1": [
+    [
+     88,
+     104,
+     8,
+     8
+    ]
+   ],
+   "Resort Gorgeous": [
+    [
+     176,
+     56,
+     8,
+     8
+    ]
+   ],
+   "Victory Road": [
+    [
+     184,
+     88,
      8,
      8
     ]

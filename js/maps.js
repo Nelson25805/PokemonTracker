@@ -30,7 +30,7 @@
 //   "frame": true adds the games' grey bevelled border around the map. "labels": [{ text, side: "left"|"right" }] puts
 //   region name plates ("JOHTO", "KANTO") in the bottom corners, in the games' bold pixel font.
 //
-// Flashing area map (Hoenn and FireRed / LeafGreen, maps.json "flash": true): the Gen 3 Pokédex "Area" screen. Instead of an icon,
+// Flashing area map (Hoenn, FireRed / LeafGreen and Sinnoh, maps.json "flash": true): the Gen 3 Pokédex "Area" screen. Instead of an icon,
 // every box of a location FLASHES (see the .fl rules in style.css). Locations are split in two kinds by name (Maps.kindOf):
 //   land    routes, towns, cities and villages   (name contains Route / Town / City / Village; plus the Sevii "One Island" ...
 //           "Seven Island" towns, Cinnabar Island, Indigo Plateau and Three Isle Port)
@@ -47,9 +47,12 @@
 // "could be roaming here". The region comes from the row's name ("Roaming Johto" -> routes starting "Johto "). Sevii Islands and
 // other maps with no routes show nothing. Only data/maps.json "areas" is used, so no new data files are needed.
 //
+// Sinnoh (Diamond / Pearl / Platinum) uses the same flashing style as Ruby / Sapphire and has a clock: see "Time of day" below.
+//
 // Time of day: the last column of each entry row holds conditions such as "Morning" or "Night" (rows without one count as
 // all day). Maps with at least one location that is only there at some times get All / Morning / Day / Night buttons
-// that hide the icons that don't apply.
+// that hide the icons that don't apply. On EVERY map that has them (Gold / Silver / Crystal, Sinnoh, any later game) the map picture is also tinted: warm for Morning, darker
+// and bluer for Night, untouched for Day. Put "times": true on the map in maps.json so the hover tooltip says when, too.
 //
 // data/maps.json (made with map-editor.html, or tools/add_areas.py):
 //   { "version": 1,
@@ -182,7 +185,11 @@ const Maps = (() => {
 .amap .amapwrap.framed .amapframe{padding:calc(var(--u) * 8)}
 .amap .amapwrap.framed .amapimg{border:0;box-shadow:0 0 0 calc(var(--u) * 2) #000,0 0 0 calc(var(--u) * 4) #686868,0 0 0 calc(var(--u) * 6) #a8a8a8}
 .amap .amaplabel{position:absolute;bottom:0;display:block;height:auto;pointer-events:none;image-rendering:pixelated}
-.amap[data-time=morning] i:not([data-t~=morning]),.amap[data-time=day] i:not([data-t~=day]),.amap[data-time=night] i:not([data-t~=night]){display:none}
+.amap[data-time=morning] i:not(.roam):not([data-t~=morning]),.amap[data-time=day] i:not(.roam):not([data-t~=day]),.amap[data-time=night] i:not(.roam):not([data-t~=night]){display:none}
+/* any map whose locations depend on the clock (Gold / Silver / Crystal, Sinnoh, and later games): the picture is tinted to the chosen time of day */
+.amap[data-timed] .amapimg img{transition:filter .4s}
+.amap[data-timed][data-time=morning] .amapimg img{filter:sepia(.28) saturate(1.2) brightness(1.07) hue-rotate(-8deg)}
+.amap[data-timed][data-time=night] .amapimg img{filter:brightness(.55) saturate(.8) hue-rotate(12deg) contrast(1.05)}
 .amap .tfilter{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-top:6px;font-size:12px}
 .amap .tfilter button{padding:2px 8px;font-size:12px;display:inline-flex;align-items:center;gap:4px}
 .amap .tfilter button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
@@ -331,22 +338,32 @@ const Maps = (() => {
       const table = (data.areas || {})[id] || {};
 
       if (m.flash) {                                                    // style 3: the locations themselves flash (Hoenn, FireRed / LeafGreen)
-        const seen = new Set(), sets = { land: [], special: [] }, names = new Set();
+        const seen = new Map(), sets = { land: [], special: [] }, names = new Set();   // seen: kind + box -> { b, times }
         for (const a of areas) {
           const boxes = table[a] || table[placeKey(a)];
           if (!boxes || !boxes.length) continue;
           const kind = kindOf(placeKey(a));
           names.add(placeKey(a));
-          for (const b of boxes) { const sig = kind + JSON.stringify(b); if (!seen.has(sig)) { seen.add(sig); sets[kind].push(b); } }
+          for (const b of boxes) {
+            const sig = kind + JSON.stringify(b);
+            let o = seen.get(sig);
+            if (!o) { seen.set(sig, o = { b, times: new Set() }); sets[kind].push(o); }
+            for (const t of areaTimes.get(a)) o.times.add(t);               // a box shared by two places is there whenever either is
+          }
         }
         const rm = roamFor(table, m);
         if (!seen.size && !rm) continue;                                // nothing of this Pokémon on this map
-        const marks = (rm ? rm.marks : "") + ["land", "special"].flatMap(k => sets[k].map(([x, y, w, h]) =>
-          `<i class="fl ${k}" style="left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(w / m.w)};height:${pc(h / m.h)}"></i>`)).join("");
+        // Morning / Day / Night: with a clock in the game (Sinnoh), boxes that only apply at some times get data-t,
+        // the figure gets the time buttons, and the picture is tinted to the chosen time (see data-timed in the CSS).
+        let timed = false;
+        const marks = (rm ? rm.marks : "") + ["land", "special"].flatMap(k => sets[k].map(({ b: [x, y, w, h], times }) => {
+          if (times.size < TIMES.length) timed = true;
+          return `<i class="fl ${k}" data-t="${TIMES.filter(t => times.has(t)).join(" ")}" style="left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(w / m.w)};height:${pc(h / m.h)}"></i>`;
+        })).join("");
         const mix = sets.land.length && sets.special.length ? "both" : sets.special.length ? "special" : "land";
         const who = mixed ? (fstyle === "emerald" ? " (Emerald)" : " (Ruby / Sapphire)") : "";
-        emit(id, m, names.size, wrap(m, id, marks, `${esc(m.name)}${who}: ${capOf(names.size, rm)}`, rm ? found.concat(rm.found) : found, rm ? rm.note : "",
-          ` data-flash="${fstyle}" data-mix="${mix}"`), !names.size);
+        emit(id, m, names.size, wrap(m, id, marks, `${esc(m.name)}${who}: ${capOf(names.size, rm)}`, rm ? found.concat(rm.found) : found,
+          (timed ? filter() : "") + (rm ? rm.note : ""), ` data-flash="${fstyle}" data-mix="${mix}"${timed ? " data-timed" : ""}`), !names.size);
         continue;
       }
 
@@ -394,7 +411,7 @@ const Maps = (() => {
         return `<i class="nest ${m.icon ? "one" : "bug"}" data-t="${TIMES.filter(t => gr.times.has(t)).join(" ")}" style="${pos};background-image:url(${sprite})"></i>`;
       }).join("");
       emit(id, m, groups.size, wrap(m, id, marks, `${esc(m.name)}: ${capOf(groups.size, rm)}`, rm ? found.concat(rm.found) : found,
-        (timed ? filter() : "") + (rm ? rm.note : "")), !groups.size);
+        (timed ? filter() : "") + (rm ? rm.note : ""), timed ? " data-timed" : ""), !groups.size);
     }
 
     // Two or more different maps (Kanto + Sevii Islands ...): a tab for each, one map shown at a time. (The same map twice, as

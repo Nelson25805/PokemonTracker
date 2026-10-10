@@ -35,9 +35,14 @@ How it works
   * --aliases file.json gives extra spellings that share the same boxes:
         {"Mt. Pyre": ["Mt. Pyre Summit", "Mt. Pyre Interior"], "Shoal Cave": ["Shoal Cave Low Tide"]}
     Alias sets for places PokeAPI splits into rooms live nicely in one file per region.
+    An extra name may contain a * wildcard ({"Mt. Coronet": ["Mt. Coronet *"]}): it is expanded against every name in the
+    --check locations.json file, so you don't have to list each floor or room by hand.
+  * --tile auto works out the map's grid from the shapes themselves (use it when boxes look slightly off), and
+    --preview check.html writes a page that draws every box over the map picture so you can see the result at once.
+  * --times marks the map as having a Morning / Day / Night clock (Sinnoh): the hover tooltip then says when a Pokemon is there.
   * A backup (maps.json.bak) is written before saving. Nothing is written with --dry-run.
 """
-import argparse, base64, csv, difflib, json, os, re, shutil, struct, sys
+import argparse, base64, csv, difflib, fnmatch, json, os, re, shutil, struct, sys
 from collections import defaultdict
 from html.parser import HTMLParser
 
@@ -109,13 +114,21 @@ def load_source(path):
 
 
 def find_canvas_width(paths):
+    return (find_canvas_size(paths) or (None, None))[0]
+
+
+def find_canvas_size(paths):
+    """(width, height) of the <canvas> in the first HTML input that has one (height may be None)."""
     for p in paths:
         if os.path.splitext(p)[1].lower() in (".json", ".csv"):
             continue
         with open(p, encoding="utf-8-sig") as f:
-            m = re.search(r"<canvas[^>]*\swidth=\"(\d+)\"", f.read())
-        if m:
-            return int(m[1])
+            tag = re.search(r"<canvas[^>]*>", f.read())
+        if tag:
+            w = re.search(r"\swidth=\"(\d+)\"", tag[0])
+            h = re.search(r"\sheight=\"(\d+)\"", tag[0])
+            if w:
+                return int(w[1]), (int(h[1]) if h else None)
     return None
 
 
@@ -169,17 +182,18 @@ def is_rect(poly):
     return len(xs) == 2 and len(ys) == 2 and len(poly) == 4
 
 
-def snapped_rect(poly, scale, tile):
+def snapped_rect(poly, scale, tile, yscale=None):
     """Axis-aligned box: round each edge to the grid (at least one tile)."""
-    sn = lambda v: round(v / scale / tile) * tile
-    x0, x1 = sn(min(p[0] for p in poly)), sn(max(p[0] for p in poly))
-    y0, y1 = sn(min(p[1] for p in poly)), sn(max(p[1] for p in poly))
+    ys_ = yscale or scale
+    sn = lambda v, s_: round(v / s_ / tile) * tile
+    x0, x1 = sn(min(p[0] for p in poly), scale), sn(max(p[0] for p in poly), scale)
+    y0, y1 = sn(min(p[1] for p in poly), ys_), sn(max(p[1] for p in poly), ys_)
     return [[x0, y0, max(tile, x1 - x0), max(tile, y1 - y0)]]
 
 
-def polygon_to_cells(poly, scale, tile):
+def polygon_to_cells(poly, scale, tile, yscale=None):
     """Paint the polygon (source px) onto the tile grid; a cell is on if its centre is inside."""
-    pts = [(x / scale, y / scale) for x, y in poly]
+    pts = [(x / scale, y / (yscale or scale)) for x, y in poly]
     xs, ys = [p[0] for p in pts], [p[1] for p in pts]
     c0, c1 = int(min(xs) // tile), int(max(xs) // tile)
     r0, r1 = int(min(ys) // tile), int(max(ys) // tile)
@@ -218,6 +232,42 @@ def cells_to_rects(cells, tile):
     return [[a * tile, r0 * tile, (b - a + 1) * tile, (r1 - r0 + 1) * tile] for _, a, b, r0, r1 in rects]
 
 
+def detect_tile(shapes, sx, sy):
+    """Find the map's tile size: the biggest T (4..24 map px) that nearly all polygon corners sit on. None if no clean grid."""
+    pts = [(x / sx, y / sy) for sh in shapes for x, y in sh]
+    if len(pts) < 12:
+        return None
+    tol = 0.7 / min(sx, sy) + 0.1                                       # source coords are whole numbers, so allow their rounding
+    score = {t: sum(1 for x, y in pts if abs(x - round(x / t) * t) <= tol and abs(y - round(y / t) * t) <= tol) / len(pts)
+             for t in range(4, 25)}
+    best = max(score.values())
+    if best < 0.75:
+        return None
+    # the biggest tile that still fits nearly as well as the best one (a grid of 8 also fits a grid of 4, only less well)
+    return max(t for t, v in score.items() if v >= max(0.75, best - 0.2))
+
+
+def preview_html(mp, boxes, path):
+    """A stand-alone page: the map picture with every imported box drawn on it (hover a box for its name)."""
+    w, h = mp["w"], mp["h"]
+    items = []
+    for name, rs in sorted(boxes.items()):
+        for x, y, bw, bh in rs:
+            nm = name.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;")
+            items.append(f'<i title="{nm}" data-n="{nm}" style="left:{x / w * 100:.3f}%;top:{y / h * 100:.3f}%;'
+                         f'width:{bw / w * 100:.3f}%;height:{bh / h * 100:.3f}%"></i>')
+    page = ("<!doctype html><meta charset=utf-8><title>Import preview</title>"
+            "<style>body{font:14px sans-serif;margin:12px}#m{position:relative;max-width:900px;line-height:0}#m img{width:100%;image-rendering:pixelated}"
+            "#m i{position:absolute;background:rgba(255,0,0,.35);outline:1px solid rgba(255,255,255,.9);box-sizing:border-box}"
+            "#m i:hover{background:rgba(255,230,0,.7);z-index:2}#t{margin:8px 0;min-height:1.4em;font-weight:600}</style>"
+            f"<p>Every box the import made, over <code>{mp['img']}</code>. They should sit exactly on the routes and places of the picture. "
+            f"({len(boxes)} places, map {w}x{h})</p><label><input type=range min=0 max=100 value=100 oninput=\"m.querySelector('img').style.opacity=this.value/100\"> picture opacity</label>"
+            f"<div id=t>Hover a box</div><div id=m><img src=\"{mp['img']}\">{''.join(items)}</div>"
+            "<script>m.onmouseover=e=>{if(e.target.dataset.n)t.textContent=e.target.dataset.n}</script>")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(page)
+
+
 # ---------- names ----------
 def clean_name(name, prefix, prefix_pattern):
     name = re.sub(r"\s+", " ", name).strip()
@@ -234,7 +284,9 @@ def main():
     ap.add_argument("--input", required=True, nargs="+", help="one or more source files")
     ap.add_argument("--data", default=os.path.join("data", "maps.json"), help="path to maps.json")
     ap.add_argument("--scale", default="1.5", help='source px per map px (default 1.5), or "auto" = <canvas> width in the HTML / map width')
-    ap.add_argument("--tile", type=int, default=8, help="grid size in map px (default 8)")
+    ap.add_argument("--tile", default="8", help='grid size in map px (default 8), or "auto" = work it out from the shapes (exact boxes if there is no clean grid)')
+    ap.add_argument("--yscale", type=float, help="vertical scale if it differs from --scale (default: from the page's canvas height, when it has one)")
+    ap.add_argument("--preview", metavar="FILE.html", help="also write a page that draws every imported box over the map picture, to check the result by eye")
     ap.add_argument("--prefix", default="", help='region prefix for routes etc., e.g. "Hoenn"')
     ap.add_argument("--prefix-pattern", default=DEFAULT_PREFIX_PATTERN, help="regex for names that get the prefix")
     ap.add_argument("--size", metavar="WxH", help="map pixel size if it is missing / 0, e.g. 192x144 (default: read from the embedded picture)")
@@ -257,6 +309,7 @@ def main():
     ap.add_argument("--new", action="store_true",
                     help="create the map in maps.json if it isn't there (size from --size or from the embedded picture)")
     ap.add_argument("--name", help='display name / tab label, e.g. "Sevii Islands 1, 2 & 3"')
+    ap.add_argument("--times", action="store_true", help='map has a Morning / Day / Night clock (maps.json "times": true; Sinnoh)')
     ap.add_argument("--flash", action="store_true", help="use the flashing Gen 3 style for this map (maps.json \"flash\": true)")
     ap.add_argument("--games", help="comma-separated game keys that use this map, e.g. fire-red,leaf-green (added to maps.json \"games\")")
     ap.add_argument("--aliases", help="JSON file: {name: [extra names sharing the same boxes]}")
@@ -264,6 +317,11 @@ def main():
     ap.add_argument("--create", metavar="WxH", help="like --new, with an explicit size, e.g. 192x144")
     ap.add_argument("--dry-run", action="store_true", help="show what would change; write nothing")
     args = ap.parse_args()
+    auto_tile = str(args.tile).lower() == "auto"
+    try:
+        args.tile = 8 if auto_tile else int(args.tile)                  # "auto" is settled below, once the shapes are read
+    except ValueError:
+        sys.exit('--tile needs a whole number (e.g. 8) or the word auto')
 
     # fail early, and helpfully, if any file path is wrong
     for label, p in [("--data", args.data)] + [("--input", p) for p in args.input] + \
@@ -304,6 +362,15 @@ def main():
     if not wh and png_size(emb):
         wh = png_size(emb)
         print(f"  size {wh[0]}x{wh[1]} read from the embedded map picture")
+    if not wh and args.map in maps:                                     # no embedded picture: use the map's picture file if it is already on disk
+        for cand in (maps[args.map].get("img"), os.path.join("assets", "maps", args.map + ".png")):
+            if cand and os.path.isfile(cand):
+                with open(cand, "rb") as f:
+                    sz = png_size(f.read(32))
+                if sz:
+                    wh = sz
+                    print(f"  size {wh[0]}x{wh[1]} read from {cand}")
+                    break
     if args.map not in maps:
         close = difflib.get_close_matches(args.map, list(maps), n=3, cutoff=0.6)
         hint = f' Did you mean: {", ".join(close)}?' if close else ""
@@ -318,12 +385,15 @@ def main():
     mp = maps[args.map]
     if not mp.get("w") or not mp.get("h"):
         if not wh:
-            sys.exit(f'Map "{args.map}" has no size yet (w/h are 0). Add --size 192x144, the pixel size of its image.')
+            sys.exit(f'Map "{args.map}" has no size yet (w/h are 0), and this page does not contain the map picture.\n'
+                     f'  Fix: save the map picture from the website (right-click it > Save image as) to assets\\maps\\{args.map}.png and run again,\n'
+                     f'  or give the size yourself: --size WIDTHxHEIGHT using the picture\'s real pixel size (e.g. --size 256x192).')
         mp["w"], mp["h"] = wh
         print(f'  set {args.map} size to {wh[0]}x{wh[1]}')
     elif wh and args.size and tuple(wh) != (mp["w"], mp["h"]):
         print(f'  ! --size ignored: map already has size {mp["w"]}x{mp["h"]}')
-    if not mp.get("grid"):
+    grid_unset = not mp.get("grid")
+    if grid_unset:
         mp["grid"] = args.grid or args.tile
     if args.name:
         mp["name"] = args.name
@@ -331,6 +401,8 @@ def main():
         mp["img"] = img_path
     if args.flash:
         mp["flash"] = True
+    if args.times:
+        mp["times"] = True
     mw, mh = mp["w"], mp["h"]
     for g in [x.strip() for x in (args.games or "").split(",") if x.strip()]:
         lst = db.setdefault("games", {}).setdefault(g, [])
@@ -340,14 +412,25 @@ def main():
     if emb and png_size(emb) and (mw, mh) != tuple(png_size(emb)):
         print(f"  ! the embedded picture is {png_size(emb)[0]}x{png_size(emb)[1]} but the map is {mw}x{mh}")
 
+    canvas_h = None
     if str(args.scale).lower() == "auto":
-        cw = find_canvas_width(args.input)
-        if not cw:
+        size = find_canvas_size(args.input)
+        if not size:
             sys.exit('--scale auto needs a <canvas width="..."> in an HTML input; pass a number instead.')
+        cw, canvas_h = size
         args.scale = cw / mw
         print(f"  auto scale = {cw} / {mw} = {args.scale:.4f}")
     else:
         args.scale = float(args.scale)
+    # Some pages draw the map slightly stretched (Hoenn's canvas was 388x240 for a 256x156 map: 1.516 across, 1.538 down).
+    # When the canvas height is known (and the page is not a stack of several maps) use a separate vertical scale.
+    yscale = args.yscale
+    if not yscale and canvas_h and not (args.panel or args.region):
+        ys = canvas_h / mh
+        if abs(ys / args.scale - 1) > 0.015:
+            yscale = ys
+            print(f"  vertical scale = {canvas_h} / {mh} = {ys:.4f} (differs from the horizontal {args.scale:.4f}, so it is used separately)")
+    yscale = yscale or args.scale
     region = None
     if args.region and args.panel:
         sys.exit("Use either --region or --panel, not both.")
@@ -374,26 +457,12 @@ def main():
                 with open(dest, "wb") as out:
                     out.write(emb)
             print(f"  map picture {'would be saved' if args.dry_run else 'saved'} to {dest}")
-        else:
+        elif not img_path:
             print("  ! no embedded map picture in the input (the page only links to it). "
                   "Open the site's image URL in your browser and save it manually.")
 
-    # sanity check: the smallest shapes are one tile (--tile map px), so their size / tile should equal the scale
-    pitches = []
-    for path in args.input:
-        for _, shape in load_source(path):
-            if not isinstance(shape, tuple) and is_rect(shape):
-                side = min(max(p[0] for p in shape) - min(p[0] for p in shape), max(p[1] for p in shape) - min(p[1] for p in shape))
-                if side > 2:
-                    pitches.append(side)
-    if len(pitches) >= 8:
-        pitches.sort()
-        guess = pitches[len(pitches) // 5] / args.tile                  # a low percentile: most places are one tile wide
-        if abs(guess / args.scale - 1) > 0.12:
-            print(f"  ! the shapes look like they were drawn at scale {guess:.2f}, but the scale in use is {args.scale:.2f}. "
-                  f"Try --scale {guess:.3f}")
-
-    boxes = {}
+    # read every shape (cut to the panel if there is one)
+    shapes = []                                                         # (name, polygon in page px, or ("rects", ...))
     for path in args.input:
         for name, shape in load_source(path):
             if region and not isinstance(shape, tuple):
@@ -402,13 +471,44 @@ def main():
                 if not (region[0] <= cx < region[2] and region[1] <= cy < region[3]):
                     continue
                 shape = [(x - region[0], y - region[1]) for x, y in shape]
-            name = clean_name(renames.get(name, name), args.prefix, args.prefix_pattern)
-            if isinstance(shape, tuple):
-                rects = [list(map(int, r)) for r in shape[1]]
-            else:
-                rects = (snapped_rect(shape, args.scale, args.tile) if is_rect(shape)
-                         else cells_to_rects(polygon_to_cells(shape, args.scale, args.tile), args.tile))
-            boxes.setdefault(name, []).extend(rects)
+            shapes.append((name, shape))
+    polys = [sh for _, sh in shapes if not isinstance(sh, tuple)]
+
+    if auto_tile:
+        t = detect_tile(polys, args.scale, yscale)
+        if t:
+            args.tile = t
+            print(f"  auto tile = {t} map px (nearly every corner sits on that grid)")
+        else:
+            args.tile = 1
+            print("  auto tile: no clean grid found, so the boxes follow the drawn shapes exactly (1 px)")
+        if grid_unset:
+            mp["grid"] = args.grid or (args.tile if args.tile >= 4 else 8)
+
+    # sanity check: the smallest shapes are one tile (--tile map px), so their size / tile should equal the scale
+    pitches, ypitches = [], []
+    for shape in polys:
+        if is_rect(shape):
+            xs_, ys_ = [p[0] for p in shape], [p[1] for p in shape]
+            if min(max(xs_) - min(xs_), max(ys_) - min(ys_)) > 2:
+                pitches.append(max(xs_) - min(xs_))
+                ypitches.append(max(ys_) - min(ys_))
+    if len(pitches) >= 8 and args.tile >= 4:
+        pitches.sort()
+        guess = pitches[len(pitches) // 5] / args.tile                  # a low percentile: most places are one tile wide
+        if abs(guess / args.scale - 1) > 0.12:
+            print(f"  ! the shapes look like they were drawn at scale {guess:.2f}, but the scale in use is {args.scale:.2f}. "
+                  f"Try --scale {guess:.3f}")
+
+    boxes = {}
+    for name, shape in shapes:
+        name = clean_name(renames.get(name, name), args.prefix, args.prefix_pattern)
+        if isinstance(shape, tuple):
+            rects = [list(map(int, r)) for r in shape[1]]
+        else:
+            rects = (snapped_rect(shape, args.scale, args.tile, yscale) if is_rect(shape)
+                     else cells_to_rects(polygon_to_cells(shape, args.scale, args.tile, yscale), args.tile))
+        boxes.setdefault(name, []).extend(rects)
     if not boxes:
         sys.exit("No locations found in the input files (looked for <area> tags, JSON and CSV).")
 
@@ -416,6 +516,23 @@ def main():
     if args.aliases:
         with open(args.aliases, encoding="utf-8") as f:
             aliases = json.load(f)
+    all_names = set()                                                   # every location name in locations.json, for "*" aliases
+    if args.check:
+        with open(args.check, encoding="utf-8") as f:
+            for rows_by_n in json.load(f)["loc"].values():
+                for rows in rows_by_n.values():
+                    all_names.update(r[0] for r in rows)
+    wild = [a for alts in aliases.values() for a in alts if "*" in a]
+    if wild and not args.check:
+        print('  ! some aliases use "*" but there is no --check locations.json to expand them against; they were skipped')
+    for name, alts in list(aliases.items()):
+        out = []
+        for a in alts:
+            if "*" in a:
+                out += sorted(n for n in all_names if fnmatch.fnmatchcase(n.lower(), a.lower()))
+            else:
+                out.append(a)
+        aliases[name] = out
     result = dict(boxes)
     made, elsewhere = set(), 0
     for name, alts in aliases.items():
@@ -474,6 +591,9 @@ def main():
     if multi:
         print(f"  multi-box shapes: {', '.join(sorted(multi))}")
 
+    if args.preview:
+        preview_html(mp, boxes, args.preview)
+        print(f"  preview written to {args.preview} - open it in your browser to check the boxes against the picture")
     if args.dry_run:
         print("Dry run - nothing written.")
         return
