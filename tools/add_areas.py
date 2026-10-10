@@ -11,11 +11,11 @@ Run from the project folder (the one containing data/). Typical use:
   python3 add_areas.py --map sinnoh-dp --input sinnoh.html --scale 1.5
 
   # Map still a placeholder (w/h/grid = 0)? Give it its real size. Scale "auto" = canvas width on the page / map width
-  python3 add_areas.py --map kanto-frlg --input kanto-frlg.html --prefix Kanto --size 192x144 --grid 8 --scale auto --region 0,0,388,291
+  python3 add_areas.py --map kanto-frlg --input kanto-frlg.html --prefix Kanto --size 192x144 --grid 8 --scale auto --panel 1
 
   # A brand-new map in one go (name, flashing style, which games use it, picture saved to assets/maps/):
   python3 add_areas.py --map sevii-123-frlg --new --name "Sevii Islands 1, 2 & 3" --flash --games fire-red,leaf-green \\
-          --input sevii-123.html --scale auto --region 0,291,388,582 --save-image
+          --input sevii-123.html --scale auto --panel 2 --save-image
 
   # Several files at once, preview only
   python3 add_areas.py --map unova-bw --input a.html b.json --dry-run
@@ -134,6 +134,19 @@ def find_embedded_png(paths):
     return None
 
 
+_FLOOR = re.compile(r"^b?\d+[fr]$", re.I)
+_WORDS = {"north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest", "ne", "nw", "se", "sw",
+          "area", "entrance", "exterior", "outside"}
+
+
+def place_key(area):
+    """Same rule as Maps.placeKey in maps.js: 'Mt. Moon B1F' -> 'Mt. Moon', 'Route 2 South towards X' -> 'Route 2'."""
+    w = re.split(r"\s+towards\s+", str(area), flags=re.I)[0].strip().split()
+    while len(w) > 1 and (_FLOOR.match(w[-1]) or w[-1].lower() in _WORDS):
+        w.pop()
+    return " ".join(w)
+
+
 def png_size(b):
     return struct.unpack(">II", b[16:24]) if b and b[:8] == b"\x89PNG\r\n\x1a\n" else None
 
@@ -229,10 +242,18 @@ def main():
     ap.add_argument("--region", metavar="x0,y0,x1,y1",
                     help="only import shapes inside this source-px rectangle and shift it to the origin "
                          "(for pages that stack several maps in one coordinate space)")
+    ap.add_argument("--panel", type=int, metavar="N",
+                    help="for pages that stack several maps vertically: import only the N-th map (1 = first). The panel height is "
+                         "worked out from the map height and the scale, so it does not depend on the browser window width the page "
+                         "was saved at (unlike --region)")
     ap.add_argument("--rename", help='JSON file: {"source name": "your name"} applied before prefixing; '
                                      "sources renamed to the same name are merged")
     ap.add_argument("--save-image", metavar="PNG", nargs="?", const="auto",
                     help="also save the map picture if the HTML embeds it. Bare --save-image = assets/maps/<map id>.png")
+    ap.add_argument("--image", metavar="PNG",
+                    help="a map picture you already have, e.g. assets\\maps\\sevii-67-frlg.png: sets the map's size and img path from it")
+    ap.add_argument("--check", metavar="locations.json",
+                    help="after importing, list every location in data/locations.json (for this map's games) that still has no box")
     ap.add_argument("--new", action="store_true",
                     help="create the map in maps.json if it isn't there (size from --size or from the embedded picture)")
     ap.add_argument("--name", help='display name / tab label, e.g. "Sevii Islands 1, 2 & 3"')
@@ -269,6 +290,17 @@ def main():
             if not m:
                 sys.exit(f'{label} needs real numbers such as 192x144 (you gave "{val}"; WxH was only a placeholder)')
             wh = (int(m[1]), int(m[2]))
+    img_path = None
+    if args.image:
+        if not os.path.isfile(args.image):
+            sys.exit(f'--image: file not found: "{args.image}" (running from {os.getcwd()})')
+        with open(args.image, "rb") as f:
+            sz = png_size(f.read(32))
+        if not sz:
+            sys.exit(f'--image: "{args.image}" is not a PNG file')
+        img_path = os.path.relpath(args.image).replace("\\", "/")
+        if not wh:
+            wh = sz
     if not wh and png_size(emb):
         wh = png_size(emb)
         print(f"  size {wh[0]}x{wh[1]} read from the embedded map picture")
@@ -279,8 +311,8 @@ def main():
             sys.exit(f'No map "{args.map}" in {args.data}.{hint}\nKnown maps: {", ".join(maps) or "none"}.\n'
                      f'(To add a new map on purpose, add --new)')
         if not wh:
-            sys.exit(f'--new needs a size: add --size 192x144 (the pixel size of the map picture), or use an HTML page that embeds the picture.')
-        maps[args.map] = {"name": args.name or args.map, "img": f"assets/maps/{args.map}.png", "w": wh[0], "h": wh[1],
+            sys.exit('--new needs a size: add --image <the map picture>, or --size 192x144 (the picture\'s pixel size).')
+        maps[args.map] = {"name": args.name or args.map, "img": img_path or f"assets/maps/{args.map}.png", "w": wh[0], "h": wh[1],
                           "grid": args.grid or args.tile}
         print(f'  created map "{args.map}" ({wh[0]}x{wh[1]})')
     mp = maps[args.map]
@@ -295,6 +327,8 @@ def main():
         mp["grid"] = args.grid or args.tile
     if args.name:
         mp["name"] = args.name
+    if img_path:
+        mp["img"] = img_path
     if args.flash:
         mp["flash"] = True
     mw, mh = mp["w"], mp["h"]
@@ -315,10 +349,18 @@ def main():
     else:
         args.scale = float(args.scale)
     region = None
+    if args.region and args.panel:
+        sys.exit("Use either --region or --panel, not both.")
     if args.region:
         region = nums(args.region)
         if len(region) != 4:
             sys.exit("--region needs four numbers: x0,y0,x1,y1")
+    if args.panel:
+        if args.panel < 1:
+            sys.exit("--panel counts from 1")
+        ph = mh * args.scale                                            # one panel's height in the page's pixels
+        region = [0, (args.panel - 1) * ph, float("inf"), args.panel * ph]
+        print(f"  panel {args.panel}: page y {region[1]:.0f} to {region[3]:.0f} (panel height {ph:.0f})")
     renames = {}
     if args.rename:
         with open(args.rename, encoding="utf-8") as f:
@@ -335,6 +377,21 @@ def main():
         else:
             print("  ! no embedded map picture in the input (the page only links to it). "
                   "Open the site's image URL in your browser and save it manually.")
+
+    # sanity check: the smallest shapes are one tile (--tile map px), so their size / tile should equal the scale
+    pitches = []
+    for path in args.input:
+        for _, shape in load_source(path):
+            if not isinstance(shape, tuple) and is_rect(shape):
+                side = min(max(p[0] for p in shape) - min(p[0] for p in shape), max(p[1] for p in shape) - min(p[1] for p in shape))
+                if side > 2:
+                    pitches.append(side)
+    if len(pitches) >= 8:
+        pitches.sort()
+        guess = pitches[len(pitches) // 5] / args.tile                  # a low percentile: most places are one tile wide
+        if abs(guess / args.scale - 1) > 0.12:
+            print(f"  ! the shapes look like they were drawn at scale {guess:.2f}, but the scale in use is {args.scale:.2f}. "
+                  f"Try --scale {guess:.3f}")
 
     boxes = {}
     for path in args.input:
@@ -360,13 +417,20 @@ def main():
         with open(args.aliases, encoding="utf-8") as f:
             aliases = json.load(f)
     result = dict(boxes)
+    made, elsewhere = set(), 0
     for name, alts in aliases.items():
         key = clean_name(name, args.prefix, args.prefix_pattern)
         if key not in boxes:
-            print(f'  ! alias target "{name}" has no boxes - skipped')
+            elsewhere += 1                                              # one alias file serves every map; this one is for another map
             continue
         for alt in alts:
-            result[alt] = [list(r) for r in boxes[key]]
+            if alt in made:                                             # the same extra name given by two places: it covers both
+                result[alt] = result[alt] + [list(r) for r in boxes[key] if list(r) not in result[alt]]
+            else:
+                result[alt] = [list(r) for r in boxes[key]]
+                made.add(alt)
+    if elsewhere:
+        print(f"  ({elsewhere} alias entries belong to other maps and were skipped)")
     # unprefixed twin for non-route names that got a prefix (e.g. "Victory Road" for "Hoenn Victory Road")
     if args.prefix:
         for name in list(boxes):
@@ -383,6 +447,26 @@ def main():
     added = [n for n in result if n not in existing]
     updated = [n for n in result if n in existing and existing[n] != result[n]]
     merged = {**existing, **result}
+
+    if args.check:
+        with open(args.check, encoding="utf-8") as f:
+            locs = json.load(f)["loc"]
+        gks = [g for g, ids in db.get("games", {}).items() if args.map in ids]
+        tables = [merged if mid == args.map else (db.get("areas", {}).get(mid) or {})
+                  for g in gks for mid in db["games"][g]]
+        have = set().union(*[set(t) for t in tables]) if tables else set()
+        miss, names = {}, {}
+        for g in gks:
+            for rows in locs.get(g, {}).values():
+                for r in rows:
+                    if r[0] in have or place_key(r[0]) in have:
+                        continue
+                    k = place_key(r[0]); miss[k] = miss.get(k, 0) + 1; names.setdefault(k, set()).add(r[0])
+        print(f"  check: {len(miss)} location name(s) in locations.json have no box on any map of {', '.join(gks) or 'this map'}"
+              + (":" if miss else " - all covered"))
+        for k, c in sorted(miss.items(), key=lambda t: -t[1]):
+            sug = difflib.get_close_matches(k, have, n=1, cutoff=0.75)
+            print(f"    {c:4d} rows  {k!r}" + (f"   (looks like '{sug[0]}')" if sug else ""))
 
     print(f'Map "{args.map}": {len(boxes)} locations read, {len(result)} names incl. aliases '
           f'({len(added)} new, {len(updated)} changed, {len(merged) - len(result)} kept from before)')

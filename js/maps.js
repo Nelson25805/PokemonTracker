@@ -9,7 +9,7 @@
 //                                With NO entries (Mew, evolution-only, event Pokémon) it shows the first map with an
 //                                "AREA UNKNOWN" banner instead, like the in-game Pokédex.
 //   Maps.placeKey(area)          "Kanto Route 2 South towards Viridian City" -> "Kanto Route 2"
-//   Maps.at(mapId, fx, fy, found) the places under a point; where.js shows them in the hover tooltip
+//   Maps.at(mapId, fx, fy, found) the places under a point ({name, here, roam, when, boxes}); where.js shows them in the hover tooltip
 //   Maps.drop(img)               called by a map picture that fails to load: removes that map (and its tab)
 //
 // Several maps for one game (FireRed / LeafGreen: Kanto + three Sevii Islands maps; HeartGold / SoulSilver: Johto + Kanto):
@@ -40,6 +40,12 @@
 // Fire Red / Leaf Green use the Ruby / Sapphire look.
 // The same map image serves all three Hoenn games (the figure gets data-flash="rs" or "emerald"; a group that contains both
 // kinds of game shows one map for each). If the Pokémon is only on one kind, that kind just flashes on its own.
+//
+// Roaming Pokémon (Gen 2 onwards: Raikou / Entei / Suicune, Latios / Latias, Mesprit / Cresselia ...): they have no fixed spot, so
+// their rows ("Roaming Johto", method roaming-grass / roaming-water) have no boxes of their own. Instead every ROUTE of the region
+// they roam is shaded on the map (a slow bluish pulse, any map style) with a one-line legend underneath, and hovering a route says
+// "could be roaming here". The region comes from the row's name ("Roaming Johto" -> routes starting "Johto "). Sevii Islands and
+// other maps with no routes show nothing. Only data/maps.json "areas" is used, so no new data files are needed.
 //
 // Time of day: the last column of each entry row holds conditions such as "Morning" or "Night" (rows without one count as
 // all day). Maps with at least one location that is only there at some times get All / Morning / Day / Night buttons
@@ -187,7 +193,13 @@ const Maps = (() => {
 .amaptab{padding:4px 10px;font-size:13px;border-right-width:0}
 .amaptab:last-child{border-right-width:2px}
 .amaptab[aria-selected=true]{background:var(--ink);color:var(--bg)}
-.amaptab .cnt{margin-left:5px;font-size:11px;opacity:.75}`;
+.amaptab .cnt{margin-left:5px;font-size:11px;opacity:.75}
+.amap i.roam{position:absolute;pointer-events:none;background:rgba(50,140,255,.48);box-shadow:inset 0 0 0 1px rgba(255,255,255,.7);animation:roamPulse 2.6s ease-in-out infinite}
+@keyframes roamPulse{0%,100%{opacity:.35}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.amap i.roam{animation:none;opacity:.75}}
+.amap .roamnote{display:flex;gap:8px;align-items:flex-start;margin:6px 0 0;font-size:12px;line-height:1.4}
+.roamhow{font-size:13px;line-height:1.45;border-left:4px solid rgba(70,150,255,.85);padding:2px 0 2px 8px}
+.amap .roamsw{flex:none;width:14px;height:14px;margin-top:1px;background:rgba(70,150,255,.5);border:1px solid #fff;outline:1px solid #000}`;
 
   // Flashing maps: is this place a route / town (land) or a unique location (special)?
   const LAND = new RegExp("\\b(route|town|city|village)\\b|\\b(one|two|three|four|five|six|seven) island\\b" +
@@ -236,7 +248,7 @@ const Maps = (() => {
     if (!data) return "";
     const areas = [...new Set(entries.map(e => e[0]))], done = new Set(), out = [], none = !areas.length;
     const meta = [];                                                    // one { id, name, n } per figure in `out`, for the tabs
-    const emit = (id, m, n, markup) => { out.push(markup); meta.push({ id, name: m.name, n }); };
+    const emit = (id, m, n, markup, roamOnly = false) => { out.push(markup); meta.push({ id, name: m.name, n, roamOnly }); };
     // times per area name: the union over all of that area's rows
     const areaTimes = new Map();
     for (const e of entries) {
@@ -278,6 +290,31 @@ const Maps = (() => {
         `${col ? `<span class="sw" style="background:${col}"></span>` : ""}${label}</button>`).join("") +
       `<span class="tnote">Hover a location to see when the Pokémon is there. The buttons show only the locations that apply at one time of day.</span></div>`;
 
+    // Roaming: which regions do the roaming rows name, and which routes of a map belong to them?
+    const regions = [...new Set(entries.filter(e => /^roaming/.test(e[1])).map(e =>
+      // PokéAPI files HeartGold / SoulSilver's Latias / Latios under Johto, but they roam Kanto (they start at Vermilion's Fan Club).
+      (/copycat/i.test(e[5]) ? "Kanto" : String(e[0]).replace(/^Roaming\s+/i, "").trim())))];
+    // caption: "3 locations marked", "roams the shaded routes", or both
+    const capOf = (n, rm) => (n ? `${n} location${n === 1 ? "" : "s"} marked` : "") + (n && rm ? " + " : "") + (rm ? "roams the shaded routes" : "");
+    const roamFor = (table, m) => {                                     // -> { marks, names, note } or null
+      if (!regions.length) return null;
+      const seen = new Set(), names = [];
+      let marks = "";
+      for (const [p, boxes] of Object.entries(table)) {
+        if (!/\broute\b/i.test(p) || !regions.some(r => p.toLowerCase().startsWith(r.toLowerCase() + " "))) continue;
+        names.push(p);
+        for (const [x, y, w, h] of boxes) {
+          const sig = x + "," + y + "," + w + "," + h; if (seen.has(sig)) continue; seen.add(sig);
+          marks += `<i class="roam" style="left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(w / m.w)};height:${pc(h / m.h)}"></i>`;
+        }
+      }
+      if (!names.length) return null;
+      const who = name ? esc(name) : "This Pokémon";
+      return { marks, found: names.map(n => ({ n, t: "", r: 1 })),
+        note: `<p class="roamnote"><span class="roamsw"></span><span><b>Roaming.</b> ${who} has no fixed spot: it can be on any shaded route, ` +
+          `and it moves around as you play. Hover a route to check it.</span></p>` };
+    };
+
     const mixed = keys.includes("emerald") && keys.some(k => k !== "emerald");   // Emerald and Ruby/Sapphire in one group
     for (const key of keys) for (const id of data.games[key] || []) {
       const m = data.maps[id];
@@ -302,13 +339,14 @@ const Maps = (() => {
           names.add(placeKey(a));
           for (const b of boxes) { const sig = kind + JSON.stringify(b); if (!seen.has(sig)) { seen.add(sig); sets[kind].push(b); } }
         }
-        if (!seen.size) continue;                                       // nothing of this Pokémon on this map
-        const marks = ["land", "special"].flatMap(k => sets[k].map(([x, y, w, h]) =>
+        const rm = roamFor(table, m);
+        if (!seen.size && !rm) continue;                                // nothing of this Pokémon on this map
+        const marks = (rm ? rm.marks : "") + ["land", "special"].flatMap(k => sets[k].map(([x, y, w, h]) =>
           `<i class="fl ${k}" style="left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(w / m.w)};height:${pc(h / m.h)}"></i>`)).join("");
-        const mix = sets.land.length && sets.special.length ? "both" : sets.land.length ? "land" : "special";
+        const mix = sets.land.length && sets.special.length ? "both" : sets.special.length ? "special" : "land";
         const who = mixed ? (fstyle === "emerald" ? " (Emerald)" : " (Ruby / Sapphire)") : "";
-        emit(id, m, names.size, wrap(m, id, marks, `${esc(m.name)}${who}: ${names.size} location${names.size === 1 ? "" : "s"} marked`, found, "",
-          ` data-flash="${fstyle}" data-mix="${mix}"`));
+        emit(id, m, names.size, wrap(m, id, marks, `${esc(m.name)}${who}: ${capOf(names.size, rm)}`, rm ? found.concat(rm.found) : found, rm ? rm.note : "",
+          ` data-flash="${fstyle}" data-mix="${mix}"`), !names.size);
         continue;
       }
 
@@ -320,13 +358,14 @@ const Maps = (() => {
           places.add(placeKey(a));
           for (const b of boxes) seen.add(JSON.stringify(b));
         }
-        if (!seen.size) continue;                                       // nothing of this Pokémon on this map
+        const rm = roamFor(table, m);
+        if (!seen.size && !rm) continue;                                // nothing of this Pokémon on this map
         const g = m.grid || 8;
-        const marks = [...seen].map(s => JSON.parse(s)).map(([x, y, w, h]) => {
+        const marks = (rm ? rm.marks : "") + [...seen].map(s => JSON.parse(s)).map(([x, y, w, h]) => {
           const pos = `left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(w / m.w)};height:${pc(h / m.h)}`;
           return `<i class="nest" style="${pos};background-image:url(${esc(m.icon)});background-size:${pc(g / w)} ${pc(g / h)}"></i>`;
         }).join("");
-        emit(id, m, places.size, wrap(m, id, marks, `${esc(m.name)}: ${places.size} location${places.size === 1 ? "" : "s"} marked`, found));
+        emit(id, m, places.size, wrap(m, id, marks, `${esc(m.name)}: ${capOf(places.size, rm)}`, rm ? found.concat(rm.found) : found, rm ? rm.note : ""), !places.size);
         continue;
       }
 
@@ -341,10 +380,11 @@ const Maps = (() => {
         for (const t of areaTimes.get(a)) gr.times.add(t);
         groups.set(sig, gr);
       }
-      if (!groups.size) continue;
+      const rm = roamFor(table, m);
+      if (!groups.size && !rm) continue;
       const ms = m.mark || m.grid || 8;
       let timed = false;
-      const marks = [...groups.values()].map(gr => {
+      const marks = (rm ? rm.marks : "") + [...groups.values()].map(gr => {
         const part = gr.times.size < TIMES.length; timed = timed || part;
         const big = gr.boxes.reduce((p, b) => (b[2] * b[3] > p[2] * p[3] ? b : p));      // biggest box of the location
         const cw = Math.min(ms, big[2]), ch = Math.min(ms, big[3]);
@@ -353,7 +393,8 @@ const Maps = (() => {
         const pos = `left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(cw / m.w)};height:${pc(ch / m.h)}`;
         return `<i class="nest ${m.icon ? "one" : "bug"}" data-t="${TIMES.filter(t => gr.times.has(t)).join(" ")}" style="${pos};background-image:url(${sprite})"></i>`;
       }).join("");
-      emit(id, m, groups.size, wrap(m, id, marks, `${esc(m.name)}: ${groups.size} location${groups.size === 1 ? "" : "s"} marked`, found, timed ? filter() : ""));
+      emit(id, m, groups.size, wrap(m, id, marks, `${esc(m.name)}: ${capOf(groups.size, rm)}`, rm ? found.concat(rm.found) : found,
+        (timed ? filter() : "") + (rm ? rm.note : "")), !groups.size);
     }
 
     // Two or more different maps (Kanto + Sevii Islands ...): a tab for each, one map shown at a time. (The same map twice, as
@@ -367,7 +408,7 @@ const Maps = (() => {
     const tabs = ids.map(id => {
       const x = meta.filter(y => y.id === id);
       return `<button type="button" class="amaptab" role="tab" data-map="${esc(id)}" aria-selected="${id === first}" onclick="${pick}">` +
-        `${esc(x[0].name)}<span class="cnt">${Math.max(...x.map(y => y.n))}</span></button>`;
+        `${esc(x[0].name)}<span class="cnt">${x.every(y => y.roamOnly) ? "roams" : Math.max(...x.map(y => y.n))}</span></button>`;
     }).join("");
     const figs = out.map((h, i) => (meta[i].id === first ? h : h.replace('<figure class="amap"', '<figure class="amap" hidden')));
     return `<div class="amaps"><div class="amaptabs" role="tablist" aria-label="Maps">${tabs}</div>${figs.join("")}</div>`;
@@ -380,13 +421,16 @@ const Maps = (() => {
 
   // Which locations cover the point (fx, fy) (0..1 across the map image)? -> [{ name, here, when, boxes }]
   // `found` = what Maps.html put in data-found: { n: area name, t: "day night" } (plain strings count as all day).
+  // `roam` = a roaming Pokémon could be there (shaded route);
   // `here` = the Pokémon is found there; `when` = "Morning / Night" or "All day" (only when the map has "times": true).
   // `boxes` = every tile of the location, so the caller can outline all of it. Aliases with the same boxes are merged.
   function at(id, fx, fy, found = []) {
     const m = data && data.maps[id];
     if (!m || !m.w || !m.h) return [];
     const x = fx * m.w, y = fy * m.h, byName = new Map();
+    const roamKeys = new Set();                                          // routes a roaming Pokémon can be on (found entries with r: 1)
     for (const f of found) {
+      if (f && f.r) { roamKeys.add(norm(f.n)); continue; }
       const k = norm(typeof f === "string" ? f : f.n), set = byName.get(k) || new Set();
       const t = typeof f === "string" || !f.t ? TIMES : f.t.split(" ");
       t.forEach(v => set.add(v)); byName.set(k, set);
@@ -398,11 +442,13 @@ const Maps = (() => {
       if (!merged.has(sig)) merged.set(sig, { names: [], boxes: all, here: false, times: new Set() });
       const g = merged.get(sig);
       g.names.push(p);
+      if (roamKeys.has(k)) g.roam = true;
       if (byName.has(k)) { g.here = true; byName.get(k).forEach(t => g.times.add(t)); }
     }
     return [...merged.values()].map(g => ({
       name: g.names.find(s => /['é]/.test(s)) || g.names[0],        // prefer the spelling with the apostrophe / é
       here: g.here,
+      roam: !!g.roam && !g.here,                                         // a roamer could be here (and it isn't a fixed spot)
       when: g.here && m.times ? timeText(g.times) : "",
       boxes: g.boxes,
     }));

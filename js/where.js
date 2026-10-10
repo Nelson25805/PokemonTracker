@@ -19,7 +19,7 @@ const Where = (() => {
   const METHODS = {
     walk: "Grass / cave / land", surf: "Surfing", "old-rod": "Old Rod", "good-rod": "Good Rod", "super-rod": "Super Rod",
     "rock-smash": "Rock Smash", headbutt: "Headbutt", gift: "Gift", "gift-egg": "Gift (Egg)", "only-one": "Static (one-time)",
-    pokeflute: "Poké Flute", "bug-catching-contest": "Bug-Catching Contest", "roaming-grass": "Roaming", "roaming-water": "Roaming (water)",
+    pokeflute: "Poké Flute", "bug-catching-contest": "Bug-Catching Contest", "roaming-grass": "Roaming (grass / land)", "roaming-water": "Roaming (surfing)",
   };
   const prettify = s => s.replace(/-/g, " ").replace(/^./, c => c.toUpperCase());
   const label = m => METHODS[m] || prettify(m);
@@ -152,7 +152,9 @@ const Where = (() => {
   // Within an area the methods are sorted the same way, and ties fall back to the area name.
   function lines(entries) {
     const areas = new Map();
-    for (const [area, method, lo, hi, chance, cond] of entries) {
+    for (const [area0, method, lo, hi, chance, cond] of entries) {
+      // PokéAPI files HeartGold / SoulSilver's Latias / Latios under Johto, but they roam Kanto (same fix as in maps.js)
+      const area = area0 === "Roaming Johto" && /copycat/i.test(cond || "") ? "Roaming Kanto" : area0;
       const bits = [label(method), cond, lo ? (lo === hi ? `Lv ${lo}` : `Lv ${lo}–${hi}`) : "", chance && chance < 100 ? `${chance}%` : ""].filter(Boolean);
       if (!areas.has(area)) areas.set(area, { rows: [], best: 0 });
       const a = areas.get(area);
@@ -162,6 +164,30 @@ const Where = (() => {
     return [...areas]
       .map(([area, a]) => ({ area, best: a.best, how: a.rows.sort((x, y) => y.chance - x.chance).map(r => r.text).join("; ") }))
       .sort((x, y) => y.best - x.best || x.area.localeCompare(y.area, undefined, { numeric: true }));
+  }
+
+  // "How roaming works": shown under the map for a Pokémon with roaming rows (Gen 2 onwards). Roamers have no fixed spot, so
+  // the map shades every route they can be on and this explains the rest. Facts are per generation (Bulbapedia, "Roaming Pokémon").
+  const ROAM = {
+    2: ["It wanders between routes and can move every time you change map, so it is rarely where you last saw it.",
+        "On the route it is on, about 1 wild encounter in 10 is the roamer.",
+        "It flees the first chance it gets. Trap it (Mean Look, Wrap...) or put it to sleep or freeze it. Its HP stays as you left it, so damage carries over, but its status and PP reset each time it flees.",
+        "Once you have seen it, the Pokédex shows the route it is on right now.",
+        "Defeat it and it is gone for good, so save before you throw a ball."],
+    3: ["It wanders between routes while you play. Whenever a wild encounter happens in tall grass or on water on its route, there is a 1 in 4 chance it is the roamer.",
+        "Each turn it tries to flee instead of attacking, unless you trap it (Mean Look, Arena Trap, Magnet Pull, Shadow Tag).",
+        "Status problems carry over to the next meeting. Once you have seen it, the Pokédex tracks the route it is on.",
+        "Do not use Roar or Whirlwind on it in Emerald, FireRed or LeafGreen (original releases): it counts as defeated and vanishes for good."],
+    4: ["It wanders between routes while you play. Check the Pokétch Marking Map (Diamond / Pearl / Platinum) or the Pokégear map card (HeartGold / SoulSilver) to see which route it is on.",
+        "Each turn it tries to flee unless you trap it. In HeartGold / SoulSilver, Raikou and Entei flee on the very first turn (Latias and Latios do not), so use a trapping move that acts first.",
+        "Platinum and HeartGold / SoulSilver let a defeated roamer come back later (after the Hall of Fame / the Champion battle), but you may have to trigger the roaming again."],
+  };
+  function roamNote(g) {
+    if (!g.entries.some(e => /^roaming/.test(e[1]))) return "";
+    const gens = [...new Set(g.games.map(x => x.gen))].filter(x => ROAM[x]).sort();
+    if (!gens.length) return "";
+    const body = gens.map(x => `${gens.length > 1 ? `<strong>Gen ${x}:</strong> ` : ""}${ROAM[x].map(esc).join("<br>")}`).join("<br><br>");
+    return `<p class="roamhow"><strong>How roaming works</strong><br>${body}</p>`;
   }
 
   const nameOf = n => (mons.find(m => m.n === n) || { name: `#${n}` }).name;
@@ -178,7 +204,7 @@ const Where = (() => {
       const open = g.games.some(x => x.key === game.key) || rows.length <= 6;
       const sub = g.vias.length ? `<small>reaches ${esc(game.name)} by ${esc(g.vias.join(" / "))}</small>` : "";
       const maps = typeof Maps !== "undefined" ? Maps.html(g.games.map(x => x.key), g.entries, nameOf(n)) : "";   // region map with the locations marked
-      return `<details${open ? " open" : ""}><summary>${esc(g.games.map(x => x.name).join(", "))} ${sub}</summary>${maps}<ul>${rows.join("")}</ul></details>`;
+      return `<details${open ? " open" : ""}><summary>${esc(g.games.map(x => x.name).join(", "))} ${sub}</summary>${maps}${roamNote(g)}<ul>${rows.join("")}</ul></details>`;
     }).join("");
   }
 
@@ -239,8 +265,9 @@ const Where = (() => {
           hl.innerHTML = bx.map(([x, y, w, h]) => `<i style="left:${pc(x / W)};top:${pc(y / H)};width:${pc(w / W)};height:${pc(h / H)}"></i>`).join("");
         }
       }
-      // name; if the Pokémon is found there: "found here", plus the time of day on maps that have one (Gold / Silver / Crystal)
-      tip.innerHTML = hits.map(h => h.here ? `<b>${esc(h.name)}</b> · found here${h.when ? ` · ${esc(h.when)}` : ""}` : esc(h.name)).join("<br>");
+      // name; if a roamer could be on that route: "could be roaming here"; if the Pokémon is found there: "found here", plus the time of day on maps that have one (Gold / Silver / Crystal)
+      tip.innerHTML = hits.map(h => h.here ? `<b>${esc(h.name)}</b> · found here${h.when ? ` · ${esc(h.when)}` : ""}`
+        : h.roam ? `<b>${esc(h.name)}</b> · could be roaming here` : esc(h.name)).join("<br>");
       tip.style.left = fx * 100 + "%"; tip.style.top = fy * 100 + "%";
       const h = fx < 0.3 ? "0" : fx > 0.7 ? "-100%" : "-50%";                  // keep the tooltip inside the map
       tip.style.transform = fy < 0.25 ? `translate(${h}, 16px)` : `translate(${h}, calc(-100% - 8px))`;
