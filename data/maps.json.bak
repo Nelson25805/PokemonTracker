@@ -84,20 +84,6 @@
    "flash": true,
    "times": true
   },
-  "johto-hgss": {
-   "name": "Johto",
-   "img": "assets/maps/johto-hgss.png",
-   "w": 0,
-   "h": 0,
-   "grid": 0
-  },
-  "kanto-hgss": {
-   "name": "Kanto",
-   "img": "assets/maps/kanto-hgss.png",
-   "w": 0,
-   "h": 0,
-   "grid": 0
-  },
   "sevii-123-frlg": {
    "name": "Sevii Islands 1, 2 & 3",
    "img": "assets/maps/sevii-123-frlg.png",
@@ -121,6 +107,15 @@
    "h": 144,
    "grid": 8,
    "flash": true
+  },
+  "johto-kanto-hgss": {
+   "name": "Johto & Kanto",
+   "img": "assets/maps/johto-kanto-hgss.png",
+   "w": 362,
+   "h": 145,
+   "grid": 0,
+   "flash": true,
+   "times": true
   }
  },
  "games": {
@@ -173,12 +168,10 @@
    "sinnoh-pt"
   ],
   "heart-gold": [
-   "johto-hgss",
-   "kanto-hgss"
+   "johto-kanto-hgss"
   ],
   "soul-silver": [
-   "johto-hgss",
-   "kanto-hgss"
+   "johto-kanto-hgss"
   ]
  },
  "areas": {
@@ -6058,6 +6051,494 @@
      149,
      52,
      20,
+     8
+    ]
+   ],
+   "Mt. Coronet": [
+    [
+     78,
+     102,
+     8,
+     21
+    ],
+    [
+     78,
+     94,
+     15,
+     8
+    ],
+    [
+     85,
+     45,
+     8,
+     49
+    ]
+   ],
+   "Mt. Coronet 1F Route 207": [
+    [
+     78,
+     102,
+     8,
+     21
+    ],
+    [
+     78,
+     94,
+     15,
+     8
+    ],
+    [
+     85,
+     45,
+     8,
+     49
+    ]
+   ],
+   "Mt. Coronet 1F Route 211": [
+    [
+     78,
+     102,
+     8,
+     21
+    ],
+    [
+     78,
+     94,
+     15,
+     8
+    ],
+    [
+     85,
+     45,
+     8,
+     49
+    ]
+   ],
+   "Mt. Coronet 1F Route 216": [
+    [
+     78,
+     102,
+     8,
+     21
+    ],
+    [
+     78,
+     94,
+     15,
+     8
+    ],
+    [
+     85,
+     45,
+     8,
+     49
+    ]
+   ],
+   "Mt. Coronet 1F from Exterior": [
+    [
+     78,
+     102,
+     8,
+     21
+    ],
+    [
+     78,
+     94,
+     15,
+     8
+    ],
+    [
+     85,
+     45,
+     8,
+     49
+    ]
+   ],
+   "Mt. Coronet 2F": [
+    [
+     78,
+     102,
+     8,
+     21
+    ],
+    [
+     78,
+     94,
+     15,
+     8
+    ],
+    [
+     85,
+     45,
+     8,
+     49
+    ]
+   ],
+   "Mt. Coronet 3F": [
+    [
+     78,
+     102,
+     8,
+     21
+    ],
+    [
+     78,
+     94,
+     15,
+     8
+    ],
+    [
+     85,
+     45,
+     8,
+     49
+    ]
+   ],
+   "Mt. Coronet 4F": [
+    [
+     78,
+     102,
+     8,
+     21
+    ],
+    [
+     78,
+     94,
+     15,
+     8
+    ],
+    [
+     85,
+     45,
+     8,
+     49
+    ]
+   ],
+   "Mt. Coronet 4F Small Room": [
+    [
+     78,
+     102,
+     8,
+     21
+    ],
+    [
+     78,
+     94,
+     15,
+     8
+    ],
+    [
+     85,
+     45,
+     8,
+     49
+    ]
+   ],
+   "Mt. Coronet 5F": [
+    [
+     78,
+     102,
+     8,
+     21
+    ],
+    [
+     78,
+     94,
+     15,
+     8
+    ],
+    [
+     85,
+     45,
+     8,
+     49
+    ]
+   ],
+   "Mt. Coronet 6F": [
+    [
+     78,
+     102,
+     8,
+     21
+    ],
+    [
+     78,
+     94,
+     15,
+     8
+    ],
+    [
+     85,
+     45,
+     8,
+     49
+    ]
+   ],
+   "Mt. Coronet B1F": [
+    [
+     78,
+     102,
+     8,
+     21
+    ],
+    [
+     78,
+     94,
+     15,
+     8
+    ],
+    [
+     85,
+     45,
+     8,
+     49
+    ]
+   ],
+   "Mt. Coronet Exterior Blizzard": [
+    [
+     78,
+     102,
+     8,
+     21
+    ],
+    [
+     78,
+     94,
+     15,
+     8
+    ],
+    [
+     85,
+     45,
+     8,
+     49
+    ]
+   ],
+   "Mt. Coronet Exterior Snowfall": [
+    [
+     78,
+     102,
+     8,
+     21
+    ],
+    [
+     78,
+     94,
+     15,
+     8
+    ],
+    [
+     85,
+     45,
+     8,
+     49
+    ]
+   ],
+   "Lake Verity": [
+    [
+     8,
+     136,
+     15,
+     15
+    ]
+   ],
+   "Lake Verity After Galactic Intervention": [
+    [
+     8,
+     136,
+     15,
+     15
+    ]
+   ],
+   "Lake Verity Before Galactic Intervention": [
+    [
+     8,
+     136,
+     15,
+     15
+    ]
+   ],
+   "Lake Valor": [
+    [
+     148,
+     122,
+     15,
+     14
+    ]
+   ],
+   "Lake Valor Cavern": [
+    [
+     148,
+     122,
+     15,
+     14
+    ]
+   ],
+   "Lake Acuity": [
+    [
+     63,
+     3,
+     15,
+     15
+    ]
+   ],
+   "Lake Acuity Cavern": [
+    [
+     63,
+     3,
+     15,
+     15
+    ]
+   ],
+   "Wayward Cave": [
+    [
+     63,
+     88,
+     9,
+     27
+    ]
+   ],
+   "Wayward Cave 1F": [
+    [
+     63,
+     88,
+     9,
+     27
+    ]
+   ],
+   "Wayward Cave B1F": [
+    [
+     63,
+     88,
+     9,
+     27
+    ]
+   ],
+   "Turnback Cave": [
+    [
+     108,
+     73,
+     19,
+     8
+    ],
+    [
+     120,
+     81,
+     7,
+     20
+    ]
+   ],
+   "Turnback Cave After Pillar 3": [
+    [
+     108,
+     73,
+     19,
+     8
+    ],
+    [
+     120,
+     81,
+     7,
+     20
+    ]
+   ],
+   "Turnback Cave Before Pillar 1": [
+    [
+     108,
+     73,
+     19,
+     8
+    ],
+    [
+     120,
+     81,
+     7,
+     20
+    ]
+   ],
+   "Turnback Cave Between Pillars 1 and 2": [
+    [
+     108,
+     73,
+     19,
+     8
+    ],
+    [
+     120,
+     81,
+     7,
+     20
+    ]
+   ],
+   "Turnback Cave Between Pillars 2 and 3": [
+    [
+     108,
+     73,
+     19,
+     8
+    ],
+    [
+     120,
+     81,
+     7,
+     20
+    ]
+   ],
+   "Turnback Cave Pillar 1": [
+    [
+     108,
+     73,
+     19,
+     8
+    ],
+    [
+     120,
+     81,
+     7,
+     20
+    ]
+   ],
+   "Turnback Cave Pillar 2": [
+    [
+     108,
+     73,
+     19,
+     8
+    ],
+    [
+     120,
+     81,
+     7,
+     20
+    ]
+   ],
+   "Turnback Cave Pillar 3": [
+    [
+     108,
+     73,
+     19,
+     8
+    ],
+    [
+     120,
+     81,
+     7,
+     20
+    ]
+   ],
+   "Floaroma Meadow": [
+    [
+     36,
+     94,
+     8,
+     15
+    ]
+   ],
+   "Sinnoh Pokemon League": [
+    [
+     183,
+     80,
+     8,
      8
     ]
    ],

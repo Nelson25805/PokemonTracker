@@ -84,20 +84,6 @@
    "flash": true,
    "times": true
   },
-  "johto-hgss": {
-   "name": "Johto",
-   "img": "assets/maps/johto-hgss.png",
-   "w": 0,
-   "h": 0,
-   "grid": 0
-  },
-  "kanto-hgss": {
-   "name": "Kanto",
-   "img": "assets/maps/kanto-hgss.png",
-   "w": 0,
-   "h": 0,
-   "grid": 0
-  },
   "sevii-123-frlg": {
    "name": "Sevii Islands 1, 2 & 3",
    "img": "assets/maps/sevii-123-frlg.png",
@@ -121,6 +107,15 @@
    "h": 144,
    "grid": 8,
    "flash": true
+  },
+  "johto-kanto-hgss": {
+   "name": "Johto & Kanto",
+   "img": "assets/maps/johto-kanto-hgss.png",
+   "w": 362,
+   "h": 145,
+   "grid": 8,
+   "flash": true,
+   "times": true
   }
  },
  "games": {
@@ -173,12 +168,10 @@
    "sinnoh-pt"
   ],
   "heart-gold": [
-   "johto-hgss",
-   "kanto-hgss"
+   "johto-kanto-hgss"
   ],
   "soul-silver": [
-   "johto-hgss",
-   "kanto-hgss"
+   "johto-kanto-hgss"
   ]
  },
  "areas": {
@@ -7171,6 +7164,1544 @@
      88,
      8,
      6
+    ]
+   ]
+  },
+  "johto-kanto-hgss": {
+   "New Bark Town": [
+    [
+     159,
+     103,
+     12,
+     11
+    ]
+   ],
+   "Cherrygrove City": [
+    [
+     118,
+     103,
+     20,
+     11
+    ]
+   ],
+   "Blackthorn City": [
+    [
+     150,
+     38,
+     21,
+     21
+    ]
+   ],
+   "Mahogany Town": [
+    [
+     118,
+     47,
+     13,
+     12
+    ]
+   ],
+   "Ecruteak City": [
+    [
+     78,
+     38,
+     21,
+     21
+    ]
+   ],
+   "Olivine City": [
+    [
+     54,
+     63,
+     21,
+     19
+    ]
+   ],
+   "Cianwood City": [
+    [
+     31,
+     86,
+     12,
+     20
+    ]
+   ],
+   "Goldenrod City": [
+    [
+     63,
+     86,
+     27,
+     20
+    ]
+   ],
+   "Azalea Town": [
+    [
+     88,
+     118,
+     18,
+     13
+    ]
+   ],
+   "Violet City": [
+    [
+     103,
+     63,
+     19,
+     19
+    ]
+   ],
+   "Pallet Town": [
+    [
+     246,
+     94,
+     12,
+     12
+    ]
+   ],
+   "Viridian City": [
+    [
+     239,
+     63,
+     19,
+     19
+    ]
+   ],
+   "Pewter City": [
+    [
+     246,
+     22,
+     21,
+     20
+    ]
+   ],
+   "Cerulean City": [
+    [
+     311,
+     31,
+     19,
+     19
+    ]
+   ],
+   "Lavender Town": [
+    [
+     342,
+     63,
+     13,
+     11
+    ]
+   ],
+   "Pokémon Tower": [
+    [
+     355,
+     63,
+     5,
+     5
+    ]
+   ],
+   "Celadon City": [
+    [
+     286,
+     63,
+     21,
+     19
+    ]
+   ],
+   "Vermilion City": [
+    [
+     311,
+     78,
+     19,
+     20
+    ]
+   ],
+   "Saffron City": [
+    [
+     311,
+     54,
+     19,
+     21
+    ]
+   ],
+   "Fuchsia City": [
+    [
+     286,
+     103,
+     21,
+     19
+    ]
+   ],
+   "Cinnabar Island": [
+    [
+     246,
+     126,
+     12,
+     12
+    ]
+   ],
+   "Johto Safari Zone": [
+    [
+     8,
+     73,
+     16,
+     16
+    ],
+    [
+     283,
+     98,
+     10,
+     10
+    ]
+   ],
+   "Lake of Rage": [
+    [
+     110,
+     15,
+     28,
+     20
+    ]
+   ],
+   "Indigo Plateau": [
+    [
+     216,
+     56,
+     9,
+     8
+    ]
+   ],
+   "Kanto Victory Road": [
+    [
+     216,
+     73,
+     9,
+     7
+    ]
+   ],
+   "Mt Silver": [
+    [
+     192,
+     73,
+     9,
+     7
+    ]
+   ],
+   "Slowpoke Well": [
+    [
+     96,
+     112,
+     8,
+     6
+    ]
+   ],
+   "Union Cave": [
+    [
+     104,
+     112,
+     9,
+     8
+    ]
+   ],
+   "Dark Cave": [
+    [
+     129,
+     73,
+     23,
+     7
+    ],
+    [
+     145,
+     64,
+     7,
+     9
+    ],
+    [
+     145,
+     80,
+     7,
+     16
+    ],
+    [
+     145,
+     56,
+     15,
+     8
+    ]
+   ],
+   "Ice Path": [
+    [
+     164,
+     35,
+     10,
+     10
+    ]
+   ],
+   "Dragon's Den": [
+    [
+     156,
+     35,
+     8,
+     10
+    ]
+   ],
+   "Mt Mortar": [
+    [
+     104,
+     44,
+     9,
+     8
+    ]
+   ],
+   "Burned Tower": [
+    [
+     78,
+     33,
+     11,
+     12
+    ]
+   ],
+   "Bell Tower": [
+    [
+     89,
+     33,
+     10,
+     12
+    ]
+   ],
+   "National Park": [
+    [
+     75,
+     59,
+     12,
+     11
+    ]
+   ],
+   "Battle Frontier": [
+    [
+     43,
+     59,
+     11,
+     11
+    ]
+   ],
+   "Sinjoh Ruins": [
+    [
+     85,
+     10,
+     7,
+     1
+    ],
+    [
+     86,
+     7,
+     5,
+     2
+    ],
+    [
+     86,
+     9,
+     6,
+     1
+    ],
+    [
+     87,
+     4,
+     3,
+     2
+    ],
+    [
+     87,
+     6,
+     4,
+     1
+    ],
+    [
+     88,
+     1,
+     1,
+     2
+    ],
+    [
+     88,
+     3,
+     2,
+     1
+    ]
+   ],
+   "Lighthouse": [
+    [
+     68,
+     77,
+     10,
+     9
+    ]
+   ],
+   "Whirl Islands": [
+    [
+     52,
+     100,
+     8,
+     7
+    ]
+   ],
+   "Ilex Forest": [
+    [
+     77,
+     124,
+     8,
+     8
+    ]
+   ],
+   "Tohjo Falls": [
+    [
+     176,
+     103,
+     9,
+     5
+    ]
+   ],
+   "Ruins of Alph": [
+    [
+     94,
+     70,
+     12,
+     20
+    ]
+   ],
+   "Sprout Tower": [
+    [
+     117,
+     59,
+     10,
+     9
+    ]
+   ],
+   "Viridian Forest": [
+    [
+     245,
+     49,
+     8,
+     7
+    ]
+   ],
+   "Mt Moon": [
+    [
+     281,
+     30,
+     7,
+     6
+    ]
+   ],
+   "Cerulean Cave": [
+    [
+     307,
+     26,
+     9,
+     10
+    ]
+   ],
+   "Power Plant": [
+    [
+     349,
+     49,
+     6,
+     7
+    ]
+   ],
+   "Rock Tunnel": [
+    [
+     341,
+     49,
+     8,
+     7
+    ]
+   ],
+   "Digglet's Cave": [
+    [
+     329,
+     77,
+     8,
+     7
+    ]
+   ],
+   "Seafoam Islands": [
+    [
+     272,
+     126,
+     9,
+     6
+    ]
+   ],
+   "Embedded Tower": [
+    [
+     8,
+     112,
+     13,
+     7
+    ]
+   ],
+   "Cliff Edge Gate": [
+    [
+     33,
+     106,
+     10,
+     6
+    ]
+   ],
+   "Cliff Cave": [
+    [
+     21,
+     112,
+     12,
+     7
+    ]
+   ],
+   "Kanto Route 1": [
+    [
+     248,
+     82,
+     9,
+     12
+    ]
+   ],
+   "Kanto Route 2": [
+    [
+     248,
+     42,
+     9,
+     21
+    ]
+   ],
+   "Kanto Route 3": [
+    [
+     267,
+     33,
+     18,
+     7
+    ]
+   ],
+   "Kanto Route 4": [
+    [
+     285,
+     33,
+     26,
+     7
+    ]
+   ],
+   "Kanto Route 5": [
+    [
+     313,
+     50,
+     8,
+     4
+    ]
+   ],
+   "Kanto Route 6": [
+    [
+     313,
+     75,
+     8,
+     3
+    ]
+   ],
+   "Kanto Route 7": [
+    [
+     307,
+     64,
+     4,
+     9
+    ]
+   ],
+   "Kanto Route 8": [
+    [
+     330,
+     64,
+     12,
+     9
+    ]
+   ],
+   "Kanto Route 9": [
+    [
+     330,
+     40,
+     23,
+     9
+    ]
+   ],
+   "Kanto Route 10": [
+    [
+     344,
+     49,
+     9,
+     14
+    ]
+   ],
+   "Kanto Route 11": [
+    [
+     330,
+     80,
+     14,
+     9
+    ]
+   ],
+   "Kanto Route 12": [
+    [
+     344,
+     74,
+     9,
+     22
+    ]
+   ],
+   "Kanto Route 13": [
+    [
+     328,
+     96,
+     25,
+     8
+    ]
+   ],
+   "Kanto Route 14": [
+    [
+     328,
+     104,
+     9,
+     16
+    ]
+   ],
+   "Kanto Route 15": [
+    [
+     307,
+     112,
+     21,
+     8
+    ]
+   ],
+   "Kanto Route 16": [
+    [
+     272,
+     73,
+     14,
+     7
+    ]
+   ],
+   "Kanto Route 17": [
+    [
+     272,
+     80,
+     9,
+     32
+    ]
+   ],
+   "Kanto Route 18": [
+    [
+     272,
+     112,
+     14,
+     8
+    ]
+   ],
+   "Kanto Route 19": [
+    [
+     288,
+     122,
+     9,
+     14
+    ]
+   ],
+   "Kanto Route 20": [
+    [
+     258,
+     128,
+     30,
+     8
+    ]
+   ],
+   "Kanto Route 21": [
+    [
+     248,
+     106,
+     9,
+     20
+    ]
+   ],
+   "Kanto Route 22": [
+    [
+     225,
+     73,
+     14,
+     7
+    ]
+   ],
+   "Kanto Route 23": [
+    [
+     216,
+     64,
+     9,
+     9
+    ]
+   ],
+   "Kanto Route 24": [
+    [
+     321,
+     17,
+     7,
+     14
+    ]
+   ],
+   "Kanto Route 25": [
+    [
+     328,
+     17,
+     25,
+     7
+    ]
+   ],
+   "Kanto Route 26": [
+    [
+     216,
+     80,
+     9,
+     32
+    ]
+   ],
+   "Kanto Route 27": [
+    [
+     171,
+     104,
+     45,
+     8
+    ]
+   ],
+   "Kanto Route 28": [
+    [
+     201,
+     73,
+     15,
+     7
+    ]
+   ],
+   "Johto Route 29": [
+    [
+     138,
+     104,
+     21,
+     8
+    ]
+   ],
+   "Johto Route 30": [
+    [
+     129,
+     80,
+     7,
+     23
+    ]
+   ],
+   "Johto Route 31": [
+    [
+     122,
+     73,
+     7,
+     7
+    ]
+   ],
+   "Johto Route 32": [
+    [
+     104,
+     82,
+     9,
+     30
+    ]
+   ],
+   "Johto Route 33": [
+    [
+     106,
+     120,
+     7,
+     8
+    ]
+   ],
+   "Johto Route 34": [
+    [
+     80,
+     106,
+     9,
+     22
+    ]
+   ],
+   "Johto Route 35": [
+    [
+     80,
+     73,
+     9,
+     13
+    ]
+   ],
+   "Johto Route 36": [
+    [
+     80,
+     64,
+     23,
+     9
+    ]
+   ],
+   "Johto Route 37": [
+    [
+     89,
+     59,
+     7,
+     5
+    ]
+   ],
+   "Johto Route 38": [
+    [
+     64,
+     49,
+     14,
+     7
+    ]
+   ],
+   "Johto Route 39": [
+    [
+     57,
+     49,
+     7,
+     14
+    ]
+   ],
+   "Johto Route 40": [
+    [
+     49,
+     73,
+     8,
+     16
+    ]
+   ],
+   "Johto Route 41": [
+    [
+     43,
+     89,
+     14,
+     15
+    ]
+   ],
+   "Johto Route 42": [
+    [
+     99,
+     49,
+     19,
+     7
+    ]
+   ],
+   "Johto Route 43": [
+    [
+     120,
+     35,
+     9,
+     12
+    ]
+   ],
+   "Johto Route 44": [
+    [
+     131,
+     49,
+     19,
+     7
+    ]
+   ],
+   "Johto Route 45": [
+    [
+     152,
+     59,
+     8,
+     37
+    ]
+   ],
+   "Johto Route 46": [
+    [
+     145,
+     96,
+     7,
+     8
+    ]
+   ],
+   "Johto Route 47": [
+    [
+     8,
+     96,
+     25,
+     16
+    ]
+   ],
+   "Johto Route 48": [
+    [
+     8,
+     89,
+     16,
+     7
+    ]
+   ],
+   "Ruins of Alph Interior A": [
+    [
+     94,
+     70,
+     12,
+     20
+    ]
+   ],
+   "Ruins of Alph Interior B": [
+    [
+     94,
+     70,
+     12,
+     20
+    ]
+   ],
+   "Ruins of Alph Interior C": [
+    [
+     94,
+     70,
+     12,
+     20
+    ]
+   ],
+   "Ruins of Alph Interior D": [
+    [
+     94,
+     70,
+     12,
+     20
+    ]
+   ],
+   "Ruins of Alph Outside": [
+    [
+     94,
+     70,
+     12,
+     20
+    ]
+   ],
+   "Union Cave 1F": [
+    [
+     104,
+     112,
+     9,
+     8
+    ]
+   ],
+   "Union Cave B1F": [
+    [
+     104,
+     112,
+     9,
+     8
+    ]
+   ],
+   "Union Cave B2F": [
+    [
+     104,
+     112,
+     9,
+     8
+    ]
+   ],
+   "Slowpoke Well 1F": [
+    [
+     96,
+     112,
+     8,
+     6
+    ]
+   ],
+   "Slowpoke Well B1F": [
+    [
+     96,
+     112,
+     8,
+     6
+    ]
+   ],
+   "Sprout Tower 2F": [
+    [
+     117,
+     59,
+     10,
+     9
+    ]
+   ],
+   "Sprout Tower 3F": [
+    [
+     117,
+     59,
+     10,
+     9
+    ]
+   ],
+   "Bell Tower 10F": [
+    [
+     89,
+     33,
+     10,
+     12
+    ]
+   ],
+   "Bell Tower 1F": [
+    [
+     89,
+     33,
+     10,
+     12
+    ]
+   ],
+   "Bell Tower 2F": [
+    [
+     89,
+     33,
+     10,
+     12
+    ]
+   ],
+   "Bell Tower 3F": [
+    [
+     89,
+     33,
+     10,
+     12
+    ]
+   ],
+   "Bell Tower 4F": [
+    [
+     89,
+     33,
+     10,
+     12
+    ]
+   ],
+   "Bell Tower 5F": [
+    [
+     89,
+     33,
+     10,
+     12
+    ]
+   ],
+   "Bell Tower 6F": [
+    [
+     89,
+     33,
+     10,
+     12
+    ]
+   ],
+   "Bell Tower 7F": [
+    [
+     89,
+     33,
+     10,
+     12
+    ]
+   ],
+   "Bell Tower 8F": [
+    [
+     89,
+     33,
+     10,
+     12
+    ]
+   ],
+   "Bell Tower 9F": [
+    [
+     89,
+     33,
+     10,
+     12
+    ]
+   ],
+   "Bell Tower Roof": [
+    [
+     89,
+     33,
+     10,
+     12
+    ]
+   ],
+   "Burned Tower 1F": [
+    [
+     78,
+     33,
+     11,
+     12
+    ]
+   ],
+   "Burned Tower B1F": [
+    [
+     78,
+     33,
+     11,
+     12
+    ]
+   ],
+   "Ice Path 1F": [
+    [
+     164,
+     35,
+     10,
+     10
+    ]
+   ],
+   "Ice Path B1F": [
+    [
+     164,
+     35,
+     10,
+     10
+    ]
+   ],
+   "Ice Path B2F": [
+    [
+     164,
+     35,
+     10,
+     10
+    ]
+   ],
+   "Ice Path B3F": [
+    [
+     164,
+     35,
+     10,
+     10
+    ]
+   ],
+   "Dark Cave Blackthorn City Entrance": [
+    [
+     129,
+     73,
+     23,
+     7
+    ],
+    [
+     145,
+     64,
+     7,
+     9
+    ],
+    [
+     145,
+     80,
+     7,
+     16
+    ],
+    [
+     145,
+     56,
+     15,
+     8
+    ]
+   ],
+   "Dark Cave Violet City Entrance": [
+    [
+     129,
+     73,
+     23,
+     7
+    ],
+    [
+     145,
+     64,
+     7,
+     9
+    ],
+    [
+     145,
+     80,
+     7,
+     16
+    ],
+    [
+     145,
+     56,
+     15,
+     8
+    ]
+   ],
+   "Whirl Islands 1F": [
+    [
+     52,
+     100,
+     8,
+     7
+    ]
+   ],
+   "Whirl Islands B1F": [
+    [
+     52,
+     100,
+     8,
+     7
+    ]
+   ],
+   "Whirl Islands B2F": [
+    [
+     52,
+     100,
+     8,
+     7
+    ]
+   ],
+   "Whirl Islands B3F": [
+    [
+     52,
+     100,
+     8,
+     7
+    ]
+   ],
+   "Dragons Den": [
+    [
+     156,
+     35,
+     8,
+     10
+    ]
+   ],
+   "Goldenrod City Bills House": [
+    [
+     63,
+     86,
+     27,
+     20
+    ]
+   ],
+   "Goldenrod City Department Store 5F": [
+    [
+     63,
+     86,
+     27,
+     20
+    ]
+   ],
+   "Goldenrod City Game Corner": [
+    [
+     63,
+     86,
+     27,
+     20
+    ]
+   ],
+   "Goldenrod City North Gate": [
+    [
+     63,
+     86,
+     27,
+     20
+    ]
+   ],
+   "Rock Tunnel 1F": [
+    [
+     341,
+     49,
+     8,
+     7
+    ]
+   ],
+   "Rock Tunnel B1F": [
+    [
+     341,
+     49,
+     8,
+     7
+    ]
+   ],
+   "Rock Tunnel B2F": [
+    [
+     341,
+     49,
+     8,
+     7
+    ]
+   ],
+   "Seafoam Islands 1F": [
+    [
+     272,
+     126,
+     9,
+     6
+    ]
+   ],
+   "Seafoam Islands B1F": [
+    [
+     272,
+     126,
+     9,
+     6
+    ]
+   ],
+   "Seafoam Islands B2F": [
+    [
+     272,
+     126,
+     9,
+     6
+    ]
+   ],
+   "Seafoam Islands B3F": [
+    [
+     272,
+     126,
+     9,
+     6
+    ]
+   ],
+   "Seafoam Islands B4F": [
+    [
+     272,
+     126,
+     9,
+     6
+    ]
+   ],
+   "Cerulean Cave 1F": [
+    [
+     307,
+     26,
+     9,
+     10
+    ]
+   ],
+   "Cerulean Cave 2F": [
+    [
+     307,
+     26,
+     9,
+     10
+    ]
+   ],
+   "Cerulean Cave B1F": [
+    [
+     307,
+     26,
+     9,
+     10
+    ]
+   ],
+   "Victory Road": [
+    [
+     216,
+     73,
+     9,
+     7
+    ]
+   ],
+   "Kanto Victory Road 1 1F": [
+    [
+     216,
+     73,
+     9,
+     7
+    ]
+   ],
+   "Kanto Victory Road 1 2F": [
+    [
+     216,
+     73,
+     9,
+     7
+    ]
+   ],
+   "Kanto Victory Road 1 3F": [
+    [
+     216,
+     73,
+     9,
+     7
+    ]
+   ],
+   "Kanto Victory Road 2 1F": [
+    [
+     216,
+     73,
+     9,
+     7
+    ]
+   ],
+   "Kanto Victory Road 2 2F": [
+    [
+     216,
+     73,
+     9,
+     7
+    ]
+   ],
+   "Kanto Victory Road 2 3F": [
+    [
+     216,
+     73,
+     9,
+     7
+    ]
+   ],
+   "Johto Safari Zone Desert": [
+    [
+     8,
+     73,
+     16,
+     16
+    ],
+    [
+     283,
+     98,
+     10,
+     10
+    ]
+   ],
+   "Johto Safari Zone Forest": [
+    [
+     8,
+     73,
+     16,
+     16
+    ],
+    [
+     283,
+     98,
+     10,
+     10
+    ]
+   ],
+   "Johto Safari Zone Marshland": [
+    [
+     8,
+     73,
+     16,
+     16
+    ],
+    [
+     283,
+     98,
+     10,
+     10
+    ]
+   ],
+   "Johto Safari Zone Meadow": [
+    [
+     8,
+     73,
+     16,
+     16
+    ],
+    [
+     283,
+     98,
+     10,
+     10
+    ]
+   ],
+   "Johto Safari Zone Mountain": [
+    [
+     8,
+     73,
+     16,
+     16
+    ],
+    [
+     283,
+     98,
+     10,
+     10
+    ]
+   ],
+   "Johto Safari Zone Peak": [
+    [
+     8,
+     73,
+     16,
+     16
+    ],
+    [
+     283,
+     98,
+     10,
+     10
+    ]
+   ],
+   "Johto Safari Zone Plains": [
+    [
+     8,
+     73,
+     16,
+     16
+    ],
+    [
+     283,
+     98,
+     10,
+     10
+    ]
+   ],
+   "Johto Safari Zone Rocky Beach": [
+    [
+     8,
+     73,
+     16,
+     16
+    ],
+    [
+     283,
+     98,
+     10,
+     10
+    ]
+   ],
+   "Johto Safari Zone Savannah": [
+    [
+     8,
+     73,
+     16,
+     16
+    ],
+    [
+     283,
+     98,
+     10,
+     10
+    ]
+   ],
+   "Johto Safari Zone Swamp": [
+    [
+     8,
+     73,
+     16,
+     16
+    ],
+    [
+     283,
+     98,
+     10,
+     10
+    ]
+   ],
+   "Johto Safari Zone Wasteland": [
+    [
+     8,
+     73,
+     16,
+     16
+    ],
+    [
+     283,
+     98,
+     10,
+     10
+    ]
+   ],
+   "Johto Safari Zone Wetland": [
+    [
+     8,
+     73,
+     16,
+     16
+    ],
+    [
+     283,
+     98,
+     10,
+     10
     ]
    ]
   }
