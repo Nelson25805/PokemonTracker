@@ -63,6 +63,9 @@
 //                             "unknown": { "img": "...", "x": 8, "y": 56, "w": 136, "h": 32 } } },   optional: the AREA UNKNOWN banner art
 //     "games": { "<game key>": ["<mapId>", ...] },                   a game can have several maps
 //     "areas": { "<mapId>": { "<place>": [[x, y, w, h], ...] } } }   boxes in image pixels
+// Two games with the same places but a different look (Red / Blue and Yellow use different colours): give the second one its own
+// map (own picture, own "unknown" banner) with "areasOf": "<the map whose boxes it uses>", so the boxes are kept in one place only.
+// "variant" ("Yellow", "Red / Blue") then names each picture in its caption when one list shows both.
 // A place is the location name without floors, compass words or "towards ...", so "Mt. Moon 1F" and "Mt. Moon 2F"
 // share one entry. An exact area name in "areas" wins over its place name. Places with identical boxes (spelling aliases)
 // count as one location.
@@ -72,6 +75,9 @@ const Maps = (() => {
   const WORDS = new Set(["north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest",
     "ne", "nw", "se", "sw", "area", "entrance", "exterior", "outside"]);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  // A map's boxes: its own, or those of the map it shares them with (maps.json "areasOf"). famOf = the id those boxes are filed under.
+  const famOf = id => { const m = data && data.maps[id]; return (m && m.areasOf) || id; };
+  const tableOf = id => ((data && data.areas) || {})[famOf(id)] || {};
 
   const TIMES = ["morning", "day", "night"];
   const TCOL = { morning: "#ffd23f", day: "#ff8a1f", night: "#3b4cc0" };
@@ -322,6 +328,9 @@ const Maps = (() => {
           `and it moves around as you play. Hover a route to check it.</span></p>` };
     };
 
+    const inGroup = {};                                                 // which maps of one family this list shows (Red / Blue + Yellow)
+    for (const k of keys) for (const id of data.games[k] || []) (inGroup[famOf(id)] = inGroup[famOf(id)] || new Set()).add(id);
+    const tag = (id, m) => (m.variant && inGroup[famOf(id)] && inGroup[famOf(id)].size > 1 ? ` (${esc(m.variant)})` : "");
     const mixed = keys.includes("emerald") && keys.some(k => k !== "emerald");   // Emerald and Ruby/Sapphire in one group
     for (const key of keys) for (const id of data.games[key] || []) {
       const m = data.maps[id];
@@ -335,7 +344,7 @@ const Maps = (() => {
           : `<div class="unk txt">AREA UNKNOWN</div>`;
         return wrap(m, id, banner, `${esc(m.name)}: area unknown`);       // only the first map; one banner is enough
       }
-      const table = (data.areas || {})[id] || {};
+      const table = tableOf(id);
 
       if (m.flash) {                                                    // style 3: the locations themselves flash (Hoenn, FireRed / LeafGreen)
         const seen = new Map(), sets = { land: [], special: [] }, names = new Set();   // seen: kind + box -> { b, times }
@@ -382,7 +391,7 @@ const Maps = (() => {
           const pos = `left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(w / m.w)};height:${pc(h / m.h)}`;
           return `<i class="nest" style="${pos};background-image:url(${esc(m.icon)});background-size:${pc(g / w)} ${pc(g / h)}"></i>`;
         }).join("");
-        emit(id, m, places.size, wrap(m, id, marks, `${esc(m.name)}: ${capOf(places.size, rm)}`, rm ? found.concat(rm.found) : found, rm ? rm.note : ""), !places.size);
+        emit(id, m, places.size, wrap(m, id, marks, `${esc(m.name)}${tag(id, m)}: ${capOf(places.size, rm)}`, rm ? found.concat(rm.found) : found, rm ? rm.note : ""), !places.size);
         continue;
       }
 
@@ -410,14 +419,14 @@ const Maps = (() => {
         const pos = `left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(cw / m.w)};height:${pc(ch / m.h)}`;
         return `<i class="nest ${m.icon ? "one" : "bug"}" data-t="${TIMES.filter(t => gr.times.has(t)).join(" ")}" style="${pos};background-image:url(${sprite})"></i>`;
       }).join("");
-      emit(id, m, groups.size, wrap(m, id, marks, `${esc(m.name)}: ${capOf(groups.size, rm)}`, rm ? found.concat(rm.found) : found,
+      emit(id, m, groups.size, wrap(m, id, marks, `${esc(m.name)}${tag(id, m)}: ${capOf(groups.size, rm)}`, rm ? found.concat(rm.found) : found,
         (timed ? filter() : "") + (rm ? rm.note : ""), timed ? " data-timed" : ""), !groups.size);
     }
 
     // Two or more different maps (Kanto + Sevii Islands ...): a tab for each, one map shown at a time. (The same map twice, as
     // with Hoenn's Ruby / Sapphire + Emerald, is not a tab: both versions stay on show so they can be compared.)
     const ids = [...new Set(meta.map(x => x.id))];
-    if (ids.length < 2) return out.join("");
+    if (new Set(ids.map(famOf)).size < 2) return out.join("");          // one place shown twice (Red / Blue + Yellow, Ruby / Sapphire + Emerald): both pictures stay on show, no tabs
     const first = ids[0];
     const pick = "var w=this.closest('.amaps'),id=this.dataset.map;" +
       "w.querySelectorAll('.amaptab').forEach(function(b){b.setAttribute('aria-selected',b===this)},this);" +
@@ -453,7 +462,7 @@ const Maps = (() => {
       t.forEach(v => set.add(v)); byName.set(k, set);
     }
     const merged = new Map();                                            // box signature -> one location
-    for (const [p, all] of Object.entries((data.areas || {})[id] || {})) {
+    for (const [p, all] of Object.entries(tableOf(id))) {
       if (!all.some(([bx, by, bw, bh]) => x >= bx && x < bx + bw && y >= by && y < by + bh)) continue;
       const sig = JSON.stringify([...all].sort()), k = norm(p);
       if (!merged.has(sig)) merged.set(sig, { names: [], boxes: all, here: false, times: new Set() });

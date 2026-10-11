@@ -22,7 +22,33 @@
     "size": 8
    },
    "single": true,
-   "mark": 8
+   "mark": 8,
+   "variant": "Red / Blue"
+  },
+  "kanto-y": {
+   "name": "Kanto",
+   "img": "assets/maps/kanto-y.png",
+   "w": 160,
+   "h": 144,
+   "grid": 8,
+   "icon": "assets/maps/nest-rby.png",
+   "unknown": {
+    "img": "assets/maps/area-unknown-y.png",
+    "x": 8,
+    "y": 56,
+    "w": 136,
+    "h": 32
+   },
+   "title": {
+    "text": "{NAME}'s NEST",
+    "x": 8,
+    "y": 0,
+    "size": 8
+   },
+   "single": true,
+   "mark": 8,
+   "variant": "Yellow",
+   "areasOf": "kanto-rby"
   },
   "johto-kanto-gsc": {
    "name": "Johto & Kanto",
@@ -126,7 +152,7 @@
    "kanto-rby"
   ],
   "yellow": [
-   "kanto-rby"
+   "kanto-y"
   ],
   "gold": [
    "johto-kanto-gsc"
