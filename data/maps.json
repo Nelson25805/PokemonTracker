@@ -90,7 +90,14 @@
    "w": 256,
    "h": 156,
    "grid": 8,
-   "flash": true
+   "flash": true,
+   "unknown": {
+    "img": "assets/maps/area-unknown-rse.png",
+    "x": 148,
+    "y": 130,
+    "w": 72,
+    "h": 25
+   }
   },
   "sinnoh-dp": {
    "name": "Sinnoh",
