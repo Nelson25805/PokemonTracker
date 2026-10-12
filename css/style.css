@@ -221,7 +221,7 @@ body.selecting .chip{display:none}
 .amapimg .nest .tb,.amapimg .mk .tb{animation:none}
 .amapimg .unk.txt.small{font-size:3cqw}
 /* Hoenn's and Sinnoh's "AREA UNKNOWN" banners are a shrunken, higher-resolution picture, so let the browser smooth it instead of using hard pixels */
-.amap[data-map=hoenn-rse] .amapimg .unk,.amap[data-map=sinnoh-dp] .amapimg .unk,.amap[data-map=sinnoh-pt] .amapimg .unk{image-rendering:auto}
+.amap[data-map=hoenn-rse] .amapimg .unk,.amap[data-map=sinnoh-dp] .amapimg .unk{image-rendering:auto}
 .amapimg .unk.txt[hidden]{display:none}
 
 /* flashing area map (maps.json "flash": true, Hoenn; js/maps.js). Every box of a location is an <i class="fl land|special">.
@@ -258,7 +258,7 @@ body.selecting .chip{display:none}
   .amapimg .fl.special{outline:2px solid #000}
 }
 /* Sinnoh (Diamond / Pearl / Platinum) flashing area map: colour + timing measured frame-by-frame from a screen capture
-   of the game (29.97 fps). Only maps "sinnoh-dp" and "sinnoh-pt" use this; Hoenn and FireRed / LeafGreen keep the rules above.
+   of the game (29.97 fps). Only the "sinnoh-dp" map (shared by Diamond, Pearl and Platinum) uses this; Hoenn and FireRed / LeafGreen keep the rules above.
    COLOUR: each box is drawn with mix-blend-mode:screen, so the map's own colours show through. The overlay colour is rgb(0, g, b):
            it starts black (no effect), the BLUE channel rises first (pale lavender), then GREEN catches up and the box peaks as
            a bright whitish cyan (about #00F0FF on screen), then fades back the same way.
@@ -268,10 +268,10 @@ body.selecting .chip{display:none}
              50 - 100 %    special places (caves, buildings...): the same pulse shape (peak at about 76 %)
            Both groups use the SAME colour; the special places simply pulse second.
    To tune: change --sinnoh-cycle (speed), or edit the rgb(0,g,b) steps in the two @keyframes below. */
-.amap[data-map=sinnoh-dp],.amap[data-map=sinnoh-pt]{--sinnoh-cycle:2.035s}
-.amap[data-map=sinnoh-dp] .amapimg .fl,.amap[data-map=sinnoh-pt] .amapimg .fl{opacity:1;background:#000;mix-blend-mode:screen}
-.amap[data-map=sinnoh-dp] .fl.land,.amap[data-map=sinnoh-pt] .fl.land{animation:sinLand var(--sinnoh-cycle) linear infinite}
-.amap[data-map=sinnoh-dp] .fl.special,.amap[data-map=sinnoh-pt] .fl.special{animation:sinSpecial var(--sinnoh-cycle) linear infinite}
+.amap[data-map=sinnoh-dp]{--sinnoh-cycle:2.035s}
+.amap[data-map=sinnoh-dp] .amapimg .fl{opacity:1;background:#000;mix-blend-mode:screen}
+.amap[data-map=sinnoh-dp] .fl.land{animation:sinLand var(--sinnoh-cycle) linear infinite}
+.amap[data-map=sinnoh-dp] .fl.special{animation:sinSpecial var(--sinnoh-cycle) linear infinite}
 @keyframes sinLand{
   0%{background:rgb(0,0,0)}
   2.5%{background:rgb(0,25,42)}
@@ -307,5 +307,5 @@ body.selecting .chip{display:none}
   100%{background:rgb(0,0,0)}
 }
 @media (prefers-reduced-motion:reduce){
-  .amap[data-map=sinnoh-dp] .amapimg .fl,.amap[data-map=sinnoh-pt] .amapimg .fl{animation:none !important;background:rgb(0,170,225)}
+  .amap[data-map=sinnoh-dp] .amapimg .fl{animation:none !important;background:rgb(0,170,225)}
 }
