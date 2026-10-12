@@ -146,7 +146,14 @@
    "h": 145,
    "grid": 8,
    "flash": true,
-   "times": true
+   "times": true,
+   "unknown": {
+    "img": "assets/maps/area-unknown-hgss.png",
+    "x": 77,
+    "y": 59,
+    "w": 208,
+    "h": 28
+   }
   }
  },
  "games": {
