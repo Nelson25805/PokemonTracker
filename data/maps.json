@@ -106,7 +106,14 @@
    "h": 168,
    "grid": 8,
    "flash": true,
-   "times": true
+   "times": true,
+   "unknown": {
+    "img": "assets/maps/area-unknown-sinnoh.png",
+    "x": 100,
+    "y": 152,
+    "w": 90,
+    "h": 15
+   }
   },
   "sinnoh-pt": {
    "name": "Sinnoh",
@@ -115,7 +122,14 @@
    "h": 168,
    "grid": 8,
    "flash": true,
-   "times": true
+   "times": true,
+   "unknown": {
+    "img": "assets/maps/area-unknown-sinnoh.png",
+    "x": 100,
+    "y": 152,
+    "w": 90,
+    "h": 15
+   }
   },
   "sevii-123-frlg": {
    "name": "Sevii Islands 1, 2 & 3",
