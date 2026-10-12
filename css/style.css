@@ -192,7 +192,15 @@ body.selecting .chip{display:none}
 @keyframes nestRB{0%{opacity:1}48%{opacity:var(--nest-ghost)}50%{opacity:0}98%{opacity:var(--nest-ghost)}100%{opacity:1}}
 .amap[data-map=kanto-rby] .amapimg .nest,.amap[data-map=kanto-y] .amapimg .nest{animation:nestRB var(--nest-cycle) step-end infinite}
 @media (prefers-reduced-motion:reduce){.amap[data-map=kanto-rby] .amapimg .nest,.amap[data-map=kanto-y] .amapimg .nest{animation:none}}
-.amap[data-map=kanto-y] .amaptitle{color:#060606}                      /* Yellow's black is a little darker than Red / Blue's */
+.amap[data-map=kanto-y] .amaptitle{color:#060606}
+/* Gold / Silver / Crystal nest blink (map "johto-kanto-gsc"), measured from a screen capture of the game.
+   Each cycle is 16 frames visible then 16 frames hidden at 59.73 Hz = 536 ms (268 ms on, 268 ms off), hard cuts
+   with no fade, visible first. While hidden the icon is fully gone, so the map underneath shows through. */
+.amap[data-map=johto-kanto-gsc]{--nest-cycle-gsc:536ms}
+@keyframes nestGSC{0%{opacity:1}50%{opacity:0}100%{opacity:0}}
+.amap[data-map=johto-kanto-gsc] .amapimg .nest{animation:nestGSC var(--nest-cycle-gsc) step-end infinite}
+@media (prefers-reduced-motion:reduce){.amap[data-map=johto-kanto-gsc] .amapimg .nest{animation:none}}
+                      /* Yellow's black is a little darker than Red / Blue's */
 .amaptip{position:absolute;z-index:2;pointer-events:none;white-space:nowrap;line-height:1.3;font:12px system-ui,sans-serif;
   background:var(--bg);color:var(--ink);border:2px solid var(--line);padding:3px 6px}
 .amaptip[hidden]{display:none}
