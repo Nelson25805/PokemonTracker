@@ -191,7 +191,7 @@ const Maps = (() => {
 .amap .amapwrap.framed .amapframe{padding:calc(var(--u) * 8)}
 .amap .amapwrap.framed .amapimg{border:0;box-shadow:0 0 0 calc(var(--u) * 2) #000,0 0 0 calc(var(--u) * 4) #686868,0 0 0 calc(var(--u) * 6) #a8a8a8}
 .amap .amaplabel{position:absolute;bottom:0;display:block;height:auto;pointer-events:none;image-rendering:pixelated}
-.amap[data-time=morning] i:not(.roam):not([data-t~=morning]),.amap[data-time=day] i:not(.roam):not([data-t~=day]),.amap[data-time=night] i:not(.roam):not([data-t~=night]){display:none}
+.amap[data-time=morning] .amapimg>i:not(.roam):not([data-t~=morning]),.amap[data-time=day] .amapimg>i:not(.roam):not([data-t~=day]),.amap[data-time=night] .amapimg>i:not(.roam):not([data-t~=night]){display:none}
 /* any map whose locations depend on the clock (Gold / Silver / Crystal, Sinnoh, and later games): the picture is tinted to the chosen time of day */
 .amap[data-timed] .amapimg img{transition:filter .4s}
 .amap[data-timed][data-time=morning] .amapimg img{filter:sepia(.28) saturate(1.2) brightness(1.07) hue-rotate(-8deg)}
