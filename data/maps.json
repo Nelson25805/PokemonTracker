@@ -82,7 +82,14 @@
    "w": 192,
    "h": 144,
    "grid": 8,
-   "flash": true
+   "flash": true,
+   "unknown": {
+    "img": "assets/maps/area-unknown-frlg.png",
+    "x": 5,
+    "y": 56,
+    "w": 181,
+    "h": 33
+   }
   },
   "hoenn-rse": {
    "name": "Hoenn",
