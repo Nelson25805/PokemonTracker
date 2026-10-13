@@ -116,7 +116,8 @@
   <div class="row"><button type="button" id="setclose">Close</button></div>
 </dialog>
 <dialog id="where" aria-labelledby="where-title">
-  <h2 id="where-title"></h2>
+  <div class="dhead"><h2 id="where-title"></h2><button type="button" id="where-x" class="xbtn" aria-label="Close" title="Close">×</button></div>
+  <div class="dbody">
   <div class="seg" id="wtabs" role="group" aria-label="Show" hidden>
     <button type="button" data-tab="where" aria-pressed="true">Where to find</button>
     <button type="button" data-tab="forms" aria-pressed="false">Forms</button>
@@ -130,6 +131,7 @@
     <div id="forms-body"></div>
   </div>
   <div class="row"><a id="where-link" href="#" target="_blank" rel="noopener">Full details on Bulbapedia ↗</a><button id="where-close">Close</button></div>
+  </div>
 </dialog>
 <script src="js/config.js"></script>
 <script src="js/cards.js"></script>

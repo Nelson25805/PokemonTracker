@@ -239,6 +239,7 @@ const Where = (() => {
     games = deps.games; mons = deps.mons;
     byKey = Object.fromEntries(games.map(g => [g.key, g]));
     $("#where-close").addEventListener("click", () => $("#where").close());
+    $("#where-x").addEventListener("click", () => $("#where").close());
 
     // Map hover / tap: show which locations sit under the pointer (Maps.at in maps.js).
     const hideTips = () => {
