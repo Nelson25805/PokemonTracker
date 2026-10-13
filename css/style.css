@@ -309,3 +309,43 @@ body.selecting .chip{display:none}
 @media (prefers-reduced-motion:reduce){
   .amap[data-map=sinnoh-dp] .amapimg .fl{animation:none !important;background:rgb(0,170,225)}
 }
+/* HeartGold / SoulSilver flashing area map (map "johto-kanto-hgss"): colour + timing measured frame-by-frame from a screen
+   capture of the game's Pokedex Area screen (29.97 fps, 41 frames). Both games share this one map, so both use this rule.
+   COLOUR: each box is drawn with mix-blend-mode:lighten, i.e. every pixel becomes the brighter of the map's own colour and the
+           overlay colour. The overlay starts black (no effect), then runs the colours measured on the map's dark-green route
+           outline: green -> lime -> a pale yellow that peaks at about #FAFC85, then back down the same way. The map's own pale
+           fills stay pale, so routes and towns light up as pale yellow and the outlines glow lime.
+   TIMING: ONE pulse of about 1.04 s (31 frames): about 0.5 s up to the peak, about 0.5 s back down. EVERY flashing location
+           (routes, towns, caves, buildings) pulses at the same time, there is no separate "special places" phase like in Hoenn.
+           The capture is only 1.37 s long, so how long the gap between two pulses is was not measured. --hgss-cycle is the loop
+           length: 1.2 s leaves about 0.16 s of rest after the pulse (the capture shows at least 0.17 s of rest before and after
+           its single pulse). If you time the real game and it differs, change ONLY --hgss-cycle; the pulse shape stretches with
+           it. (Keyframe percentages are for a 1.2 s loop; to keep the pulse at 1.04 s while changing the gap, rescale them.)
+   Not copied: the player's-head marker that also blinks on that screen (16 frames on, 8 off at 29.97 fps, about 0.8 s per blink),
+           because the tracker has no "player location" to show. */
+.amap[data-map=johto-kanto-hgss]{--hgss-cycle:1.2s}
+.amap[data-map=johto-kanto-hgss] .amapimg .fl{opacity:1;background:#000;mix-blend-mode:lighten}
+.amap[data-map=johto-kanto-hgss] .amapimg .fl.land,.amap[data-map=johto-kanto-hgss] .amapimg .fl.special{animation:hgssPulse var(--hgss-cycle) linear infinite}
+@keyframes hgssPulse{
+  0%{background:rgb(0,0,0)}
+  2.8%{background:rgb(36,157,94)}
+  8.3%{background:rgb(68,188,103)}
+  13.9%{background:rgb(99,217,106)}
+  19.5%{background:rgb(132,245,111)}
+  25%{background:rgb(164,252,120)}
+  30.6%{background:rgb(196,253,122)}
+  36.1%{background:rgb(228,253,127)}
+  41.7%{background:rgb(250,252,133)}
+  47.3%{background:rgb(239,253,130)}
+  52.8%{background:rgb(208,253,123)}
+  58.4%{background:rgb(176,253,117)}
+  64%{background:rgb(143,247,111)}
+  69.5%{background:rgb(110,226,103)}
+  75.1%{background:rgb(77,197,98)}
+  80.6%{background:rgb(45,166,92)}
+  83.4%{background:rgb(30,152,90)}
+  86.2%,100%{background:rgb(0,0,0)}
+}
+@media (prefers-reduced-motion:reduce){
+  .amap[data-map=johto-kanto-hgss] .amapimg .fl{animation:none !important;background:rgb(250,252,133)}
+}
