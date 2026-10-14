@@ -10,6 +10,7 @@
 //                                "AREA UNKNOWN" banner instead, like the in-game Pokédex.
 //   Maps.placeKey(area)          "Kanto Route 2 South towards Viridian City" -> "Kanto Route 2"
 //   Maps.at(mapId, fx, fy, found) the places under a point ({name, here, roam, when, boxes}); where.js shows them in the hover tooltip
+//   Maps.locate(keys, area)      the maps of those games that have boxes for a location -> [{ id, boxes, w, h }] (for the "Show on map" buttons)
 //   Maps.drop(img)               called by a map picture that fails to load: removes that map (and its tab)
 //
 // Several maps for one game (FireRed / LeafGreen: Kanto + three Sevii Islands maps; HeartGold / SoulSilver: Johto + Kanto):
@@ -212,6 +213,12 @@ const Maps = (() => {
 @media (prefers-reduced-motion:reduce){.amap i.roam{animation:none;opacity:.75}}
 .amap .roamnote{display:flex;gap:8px;align-items:flex-start;margin:6px 0 0;font-size:12px;line-height:1.4}
 .roamhow{font-size:13px;line-height:1.45;border-left:4px solid rgba(70,150,255,.85);padding:2px 0 2px 8px}
+.amap .amappin{position:absolute;inset:0;z-index:1;pointer-events:none}
+.amap .amappin i{position:absolute;box-sizing:border-box;background:rgba(255,40,40,.3);outline:2px solid #d01818;box-shadow:0 0 0 1px #fff,inset 0 0 0 1px #fff;animation:pinPulse 1.2s ease-in-out infinite}
+@keyframes pinPulse{0%,100%{opacity:.55}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.amap .amappin i{animation:none}}
+#where li .locbtn{margin-left:auto;padding:2px 8px;font-size:12px;white-space:nowrap}
+#where li .locbtn[aria-pressed=true]{background:var(--ink);color:var(--bg)}
 .amap .roamsw{flex:none;width:14px;height:14px;margin-top:1px;background:rgba(70,150,255,.5);border:1px solid #fff;outline:1px solid #000}`;
 
   // Flashing maps: is this place a route / town (land) or a unique location (special)?
@@ -292,7 +299,7 @@ const Maps = (() => {
     const wrap = (m, id, inner, cap, f = [], extra = "", attrs = "") =>
       `<figure class="amap"${attrs} data-map="${esc(id)}" data-w="${m.w}" data-h="${m.h}" data-time="all" data-found="${esc(JSON.stringify(f))}">` +
       `<div class="amapwrap${m.frame ? " framed" : ""}"${m.frame ? ` style="--u:${(100 / (m.w + 16)).toFixed(4)}cqw"` : ""}>${bar(m)}<div class="amapframe"><div class="amapimg">` +
-      `<img alt="${esc(m.name)} map" src="${esc(m.img)}" onerror="Maps.drop(this)">${inner}<div class="amaphl"></div>${title(m)}` +
+      `<img alt="${esc(m.name)} map" src="${esc(m.img)}" onerror="Maps.drop(this)">${inner}<div class="amaphl"></div><div class="amappin"></div>${title(m)}` +
       `${(m.labels || []).map(l => labelSvg(m, l)).join("")}<div class="amaptip" hidden></div></div></div></div><figcaption>${cap}</figcaption>${extra}</figure>`;
     // All / Morning / Day / Night buttons (inline handler: this file never touches the DOM after init).
     const filter = () =>
@@ -480,5 +487,20 @@ const Maps = (() => {
     }));
   }
 
-  return { init, html, placeKey, kindOf, at, drop };
+  // Which maps (of the given games) have boxes for this location? -> [{ id, boxes, w, h }] (used by the "Show on map" buttons in where.js)
+  function locate(keys, area) {
+    if (!data) return [];
+    const out = [], seen = new Set();
+    for (const key of keys) for (const id of data.games[key] || []) {
+      if (seen.has(id)) continue;
+      seen.add(id);
+      const m = data.maps[id];
+      if (!m || !m.w || !m.h) continue;
+      const t = tableOf(id), b = t[area] || t[placeKey(area)];
+      if (b && b.length) out.push({ id, boxes: b, w: m.w, h: m.h });
+    }
+    return out;
+  }
+
+  return { init, html, placeKey, kindOf, at, drop, locate };
 })();

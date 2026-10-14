@@ -21,6 +21,7 @@ const Where = (() => {
     "rock-smash": "Rock Smash", headbutt: "Headbutt", gift: "Gift", "gift-egg": "Gift (Egg)", "only-one": "Static (one-time)",
     pokeflute: "Poké Flute", "bug-catching-contest": "Bug-Catching Contest", "roaming-grass": "Roaming (grass / land)", "roaming-water": "Roaming (surfing)",
   };
+  const TIMES = ["morning", "day", "night"];
   const prettify = s => s.replace(/-/g, " ").replace(/^./, c => c.toUpperCase());
   const label = m => METHODS[m] || prettify(m);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -156,13 +157,15 @@ const Where = (() => {
       // PokéAPI files HeartGold / SoulSilver's Latias / Latios under Johto, but they roam Kanto (same fix as in maps.js)
       const area = area0 === "Roaming Johto" && /copycat/i.test(cond || "") ? "Roaming Kanto" : area0;
       const bits = [label(method), cond, lo ? (lo === hi ? `Lv ${lo}` : `Lv ${lo}–${hi}`) : "", chance && chance < 100 ? `${chance}%` : ""].filter(Boolean);
-      if (!areas.has(area)) areas.set(area, { rows: [], best: 0 });
+      if (!areas.has(area)) areas.set(area, { rows: [], best: 0, times: new Set() });
       const a = areas.get(area);
+      const cl = String(cond || "").toLowerCase(), hit = TIMES.filter(t => cl.includes(t));
+      (hit.length ? hit : TIMES).forEach(t => a.times.add(t));   // a row with no time condition applies all day
       a.rows.push({ text: bits.join(" · "), chance: chance || 0 });
       a.best = Math.max(a.best, chance || 0);
     }
     return [...areas]
-      .map(([area, a]) => ({ area, best: a.best, how: a.rows.sort((x, y) => y.chance - x.chance).map(r => r.text).join("; ") }))
+      .map(([area, a]) => ({ area, best: a.best, times: TIMES.filter(t => a.times.has(t)), how: a.rows.sort((x, y) => y.chance - x.chance).map(r => r.text).join("; ") }))
       .sort((x, y) => y.best - x.best || x.area.localeCompare(y.area, undefined, { numeric: true }));
   }
 
@@ -199,7 +202,13 @@ const Where = (() => {
         It may be an evolution, a breeding result, an event Pokémon, or a trade. Check the full page below.</p>`;
     }
     return groups.map(g => {
-      const rows = lines(g.entries).map(l => `<li><strong>${esc(l.area)}</strong><span>${esc(l.how)}</span></li>`);
+      const keys = g.games.map(x => x.key);
+      const rows = lines(g.entries).map(l => {
+        // "Show on map" button: only when this location has a box on one of the maps shown for this group
+        const ok = typeof Maps !== "undefined" && Maps.locate(keys, l.area).length;
+        const btn = ok ? `<button type="button" class="locbtn" data-area="${esc(l.area)}" data-keys="${esc(keys.join(","))}" data-times="${l.times.join(" ")}" aria-pressed="false" aria-label="Outline ${esc(l.area)} on the map">Show on map</button>` : "";
+        return `<li><strong>${esc(l.area)}</strong><span>${esc(l.how)}</span>${btn}</li>`;
+      });
       if (g.evolve) rows.unshift(...evoRows(g.evolve));
       const open = g.games.some(x => x.key === game.key) || rows.length <= 6;
       const sub = g.vias.length ? `<small>reaches ${esc(game.name)} by ${esc(g.vias.join(" / "))}</small>` : "";
@@ -278,6 +287,43 @@ const Where = (() => {
     wb.addEventListener("pointermove", hover);
     wb.addEventListener("pointerdown", hover);                                  // touch: tap a tile
     wb.addEventListener("pointerleave", hideTips);
+
+    // "Show on map" buttons: outline one location on its map. Only one outline can be on at a time (in the whole dialog).
+    const clearPins = () => {
+      wb.querySelectorAll(".amappin").forEach(p => { p.textContent = ""; });
+      wb.querySelectorAll(".locbtn").forEach(b => { b.setAttribute("aria-pressed", "false"); b.textContent = "Show on map"; });
+    };
+    const showPin = btn => {
+      const det = btn.closest("details"); if (det) det.open = true;
+      const scope = det || wb, q = id => CSS.escape(id);
+      const hit = Maps.locate(btn.dataset.keys.split(","), btn.dataset.area)
+        .find(h => scope.querySelector(`figure.amap[data-map="${q(h.id)}"]`));
+      if (!hit) return;                                                        // map picture failed to load
+      const figs = [...scope.querySelectorAll(`figure.amap[data-map="${q(hit.id)}"]`)];
+      const tab = scope.querySelector(`.amaptab[data-map="${q(hit.id)}"]`);    // several maps: switch to the right tab
+      if (tab && tab.getAttribute("aria-selected") !== "true") tab.click();
+      const times = btn.dataset.times ? btn.dataset.times.split(" ") : [];
+      const boxes = hit.boxes.map(([x, y, w, h]) => `<i style="left:${pc(x / hit.w)};top:${pc(y / hit.h)};width:${pc(w / hit.w)};height:${pc(h / hit.h)}"></i>`).join("");
+      for (const f of figs) {
+        // time of day: only when the entry applies to some times and not others, and the filter doesn't already match
+        if (times.length && times.length < 3 && f.querySelector(".tfilter")) {
+          const cur = f.dataset.time;
+          if (cur === "all" ? times.length === 1 : !times.includes(cur)) {
+            const tb = f.querySelector(`.tbtn[data-t="${times[0]}"]`); if (tb) tb.click();
+          }
+        }
+        const pin = f.querySelector(".amappin"); if (pin) pin.innerHTML = boxes;
+      }
+      btn.setAttribute("aria-pressed", "true"); btn.textContent = "Hide outline";
+      const calm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+      figs[0].scrollIntoView({ block: "center", behavior: calm ? "auto" : "smooth" });
+    };
+    wb.addEventListener("click", e => {
+      const btn = e.target.closest && e.target.closest(".locbtn"); if (!btn) return;
+      const was = btn.getAttribute("aria-pressed") === "true";
+      clearPins();                                                             // never two outlines at once
+      if (!was) showPin(btn);
+    });
   }
 
   return { init, open, plan, render };
