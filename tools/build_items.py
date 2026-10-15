@@ -37,20 +37,14 @@ ITEMS = {
     "Reaper Cloth": ("Reaper_Cloth", 4), "Dubious Disc": ("Dubious_Disc", 4),
 }
 
-# link title on Bulbapedia -> this project's game keys (the keys in games.json)
-GAMES = [
-    ("Pokémon Red and Blue Versions", ["red", "blue"]), ("Pokémon Yellow Version", ["yellow"]),
-    ("Pokémon Gold and Silver Versions", ["gold", "silver"]), ("Pokémon Crystal Version", ["crystal"]),
-    ("Pokémon Ruby and Sapphire Versions", ["ruby", "sapphire"]), ("Pokémon Emerald Version", ["emerald"]),
-    ("Pokémon FireRed and LeafGreen Versions", ["fire-red", "leaf-green"]),
-    ("Pokémon Diamond and Pearl Versions", ["diamond", "pearl"]), ("Pokémon Platinum Version", ["platinum"]),
-    ("Pokémon HeartGold and SoulSilver Versions", ["heart-gold", "soul-silver"]),
-]
+import gamesconfig
+
+_CFG = gamesconfig.load()                       # data/games.config.json: the single source of truth for games
+# Bulbapedia link title -> this project's game keys (games that share a title are one group)
+GAMES = gamesconfig.bulbapedia_groups(_CFG)
 TITLE_KEYS = dict(GAMES)
 ORDER = [k for _, ks in GAMES for k in ks]
-GEN = {**{k: 1 for k in ("red", "blue", "yellow")}, **{k: 2 for k in ("gold", "silver", "crystal")},
-       **{k: 3 for k in ("ruby", "sapphire", "emerald", "fire-red", "leaf-green")},
-       **{k: 4 for k in ("diamond", "pearl", "platinum", "heart-gold", "soul-silver")}}
+GEN = gamesconfig.generations(_CFG)
 
 
 # ---------------------------------------------------------------- a tiny HTML tree

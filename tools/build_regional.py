@@ -10,8 +10,10 @@ Shares the .cache/pokeapi cache with build_locations.py.
 import json, os, re, time, urllib.request
 
 API = "https://pokeapi.co/api/v2"
-MAX = 493
-DEXES = ["kanto", "original-johto", "updated-johto", "hoenn", "original-sinnoh", "extended-sinnoh"]
+import gamesconfig
+_CFG = gamesconfig.load()                       # data/games.config.json: the single source of truth for games
+MAX = gamesconfig.max_pokemon(_CFG)
+DEXES = gamesconfig.dexes(_CFG)
 CACHE = os.path.join(".cache", "pokeapi")
 
 def get(path):

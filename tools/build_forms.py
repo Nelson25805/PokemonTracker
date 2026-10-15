@@ -22,7 +22,7 @@ Output (what the app reads):
                      { "id": "201-b", "name": "B", "cat": "alt", "g": ["gold", "silver", ...] } ] } } }
 The base form is the Pokémon's normal Pokédex entry (tracked by the main grid), so only the extra forms are listed.
 Sprites:  assets/sprites/<Folder>/forms/<id>.png   and   assets/sprites/<Folder>/shiny/forms/<id>.png
-(<Folder> is the same sprite folder name games.json uses, e.g. "Ruby-Sapphire".)
+(<Folder> is the same sprite folder name games.config.json uses, e.g. "Ruby-Sapphire".)
 """
 import argparse
 import datetime
@@ -36,22 +36,15 @@ from concurrent.futures import ThreadPoolExecutor
 
 REPO = "https://github.com/PokeAPI/sprites"
 RAW = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/"
-MAX_POKEMON = 493
+import gamesconfig
+
+_CFG = gamesconfig.load()                       # data/games.config.json: the single source of truth for games
+MAX_POKEMON = gamesconfig.max_pokemon(_CFG)
 
 # (path in the sprite repo, sprite folder under assets/sprites, game keys that use that artwork)
-SETS = [
-    ("generation-ii/gold/transparent",                   "Gold",                 ["gold"]),
-    ("generation-ii/silver/transparent",                 "Silver",               ["silver"]),
-    ("generation-ii/crystal/transparent",                "Crystal",              ["crystal"]),
-    ("generation-iii/ruby-sapphire",         "Ruby-Sapphire",        ["ruby", "sapphire"]),
-    ("generation-iii/emerald",               "Emerald",              ["emerald"]),
-    ("generation-iii/firered-leafgreen",     "FireRed-LeafGreen",    ["fire-red", "leaf-green"]),
-    ("generation-iv/diamond-pearl",          "Diamond-Pearl",        ["diamond", "pearl"]),
-    ("generation-iv/platinum",               "Platinum",             ["platinum"]),
-    ("generation-iv/heartgold-soulsilver",   "HeartGold-SoulSilver", ["heart-gold", "soul-silver"]),
-]
-# (Red, Blue and Yellow have no forms or gender differences. The Gen 2 sprites use the repo's "transparent"
-#  versions, because the plain ones come with a white box behind them.)
+# Built from each game's "spriteRepo" in the config. Games without one (Red, Blue, Yellow) have no forms.
+SETS = gamesconfig.sprite_sets(_CFG)
+# (The Gen 2 "spriteRepo" values point at the repo's "transparent" versions, because the plain ones come with a white box behind them.)
 
 CATS = {"gender": "Gender differences", "alt": "Alternate forms"}
 

@@ -14,13 +14,13 @@
   Cards.init(Store);
 
   try {
-    [games, mons] = await Promise.all([fetch("data/games.json"), fetch("data/pokemon.json")].map(p => p.then(r => r.json())));
+    [games, mons] = await Promise.all([Config.load(), fetch("data/pokemon.json").then(r => r.json())]);
   } catch {
     $("#grid").textContent = "Couldn't load data. If you opened index.html directly, serve the folder instead (python3 -m http.server).";
     return;
   }
-  // The per-game card/diploma layout and link-up sources live in config.js (GAME_CFG); attach them to each game.
-  games = games.map(g => ({ ...g, ...GAME_CFG[g.key], region: REGIONAL[g.key] }));
+  // Everything per game (card / diploma layout, region, link-up sources) comes from data/games.config.json via Config.load().
+  if (typeof Theme !== "undefined") Theme.setGroups(Config.themeGroups());   // the Settings > Theme list is built from the same file
   monByN = new Map(mons.map(m => [m.n, m]));
   // Regional Pokédex lists (built by build_regional.py). Optional: without the file the Dex dropdown stays disabled.
   regional = await fetch("data/regional.json").then(r => (r.ok ? r.json() : null)).then(d => d && d.dex).catch(() => null);

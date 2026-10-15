@@ -17,7 +17,7 @@ Output format (what js/where.js reads):
       "loc": { "<game key>": { "<national dex number>": [[area, method, minLevel, maxLevel, chance, conditions], ...] } },
       "evo": { "<national dex number>": [<number it evolves from>, "Level 16"] }
     }
-Game keys match games.json (red, fire-red, heart-gold, ...).
+Game keys match data/games.config.json (red, fire-red, heart-gold, ...).
 
 Known gaps: PokéAPI records wild encounters, gifts and one-time (static) encounters, but not every
 trade NPC, Game Corner prize, fossil or event Pokémon. The site's panel links to Bulbapedia for those.
@@ -32,18 +32,12 @@ import urllib.error
 import urllib.request
 
 API = "https://pokeapi.co/api/v2"
-MAX_POKEMON = 493
+import gamesconfig
 
-# PokéAPI version name -> this project's game key (the keys in games.json / config.js).
-# PokéAPI also has things like "red-japan"; anything not listed here is ignored.
-VERSIONS = {
-    "red": "red", "blue": "blue", "yellow": "yellow",
-    "gold": "gold", "silver": "silver", "crystal": "crystal",
-    "ruby": "ruby", "sapphire": "sapphire", "emerald": "emerald",
-    "firered": "fire-red", "leafgreen": "leaf-green",
-    "diamond": "diamond", "pearl": "pearl", "platinum": "platinum",
-    "heartgold": "heart-gold", "soulsilver": "soul-silver",
-}
+_CFG = gamesconfig.load()                       # data/games.config.json: the single source of truth for games
+MAX_POKEMON = gamesconfig.max_pokemon(_CFG)
+# PokéAPI version name -> this project's game key. Anything not in the config (e.g. "red-japan") is ignored.
+VERSIONS = gamesconfig.versions(_CFG)
 
 
 # ---------------------------------------------------------------- name tidying

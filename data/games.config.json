@@ -1,0 +1,56 @@
+{
+ "version": 1,
+ "_help": "THE source of truth for games. To add a game: add one entry to \"games\" (see RELEASING.md). Read by js/config.js, gamesconfig.py and every build_*.py.",
+
+ "generations": {
+  "1": { "label": "Gen 1 · Kanto",  "transfer": [2] },
+  "2": { "label": "Gen 2 · Johto",  "transfer": [1] },
+  "3": { "label": "Gen 3 · Hoenn",  "transfer": [] },
+  "4": { "label": "Gen 4 · Sinnoh", "transfer": [3] }
+ },
+
+ "extraThemes": [
+  { "label": "Game Boy", "items": [["classic", "Classic green"], ["pocket", "Pocket gray"], ["color", "Color purple"]] }
+ ],
+
+ "cardLayouts": {
+  "rby":     { "gender": false, "name": ["pkmn", 70, 517, 167], "prog": ["pkmn", 53, 665, 350] },
+  "gs":      { "gender": false, "name": ["pkmn", 8, 47, 15],    "prog": ["tiny", 0, 70, 33] },
+  "rs":      { "gender": true,  "name": ["rs", 15, 56, 44],     "prog": ["rs", 15, 128, 68, "right"],   "color": [72, 72, 72], "shadow": [208, 208, 200] },
+  "emerald": { "gender": true,  "name": ["rs", 15, 54, 44],     "prog": ["rs", 15, 136, 68, "right"],   "color": [96, 96, 96], "shadow": [208, 208, 200] },
+  "frlg":    { "gender": true,  "name": ["frlg", 10, 63, 36],   "prog": ["frlg", 10, 145, 64, "right"], "color": [96, 96, 96], "shadow": [208, 208, 200] },
+  "gen4":    { "gender": true,  "name": ["rs", 15, 59, 45],     "prog": ["rs", 15, 85, 67] }
+ },
+
+ "diplomaLayouts": {
+  "rb":      { "dir": "Gen1/Red-Blue",          "prefix": "Red-Blue",          "choices": ["GB", "SGB"],            "name": ["pkmn", 8, 78, 31] },
+  "yellow":  { "dir": "Gen1/Yellow",            "prefix": "Yellow",            "choices": ["Regular", "Printer"],   "name": ["pkmn", 8, 78, 31], "time": [122, 127, 263] },
+  "gs":      { "dir": "Gen2/Gold-Silver",       "prefix": "Gold-Silver",       "choices": ["Regular", "Printer"],   "name": ["pkmn", 8, 70, 39], "time": [130, 135, 263] },
+  "crystal": { "dir": "Gen2/Crystal",           "prefix": "Crystal",           "choices": ["Regular", "Printer"],   "name": ["pkmn", 8, 70, 39], "time": [130, 135, 263] },
+  "rs":      { "dir": "Gen3/Ruby-Sapphire",     "prefix": "Ruby-Sapphire",     "choices": ["Regional", "National"], "name": ["rs", 17, 99, 14, [224, 8, 8]] },
+  "emerald": { "dir": "Gen3/Emerald",           "prefix": "Emerald",           "choices": ["Regional", "National"], "name": ["frlg", 10, 88, 18] },
+  "frlg":    { "dir": "Gen3/FireRed-LeafGreen", "prefix": "FireRed-LeafGreen", "choices": ["Regional", "National"], "name": ["frlg", 10, 140, 18] }
+ },
+
+ "games": [
+  {"key":"red","name":"Red","gen":1,"count":151,"sprites":"Red-Blue","shiny":false,"pokeapi":"red","bulbapedia":"Pokémon Red and Blue Versions","region":{"dex":"kanto","name":"Kanto"},"card":{"layout":"rby","dir":"Red"},"diploma":"rb"},
+  {"key":"blue","name":"Blue","gen":1,"count":151,"sprites":"Red-Blue","shiny":false,"pokeapi":"blue","bulbapedia":"Pokémon Red and Blue Versions","region":{"dex":"kanto","name":"Kanto"},"card":{"layout":"rby","dir":"Blue"},"diploma":"rb"},
+  {"key":"yellow","name":"Yellow","gen":1,"count":151,"sprites":"Yellow","shiny":false,"pokeapi":"yellow","bulbapedia":"Pokémon Yellow Version","region":{"dex":"kanto","name":"Kanto"},"card":{"layout":"rby"},"diploma":"yellow"},
+
+  {"key":"gold","name":"Gold","gen":2,"count":251,"sprites":"Gold","shiny":true,"spriteRepo":"generation-ii/gold/transparent","pokeapi":"gold","bulbapedia":"Pokémon Gold and Silver Versions","region":{"dex":"original-johto","name":"Johto"},"card":{"layout":"gs"},"diploma":"gs"},
+  {"key":"silver","name":"Silver","gen":2,"count":251,"sprites":"Silver","shiny":true,"spriteRepo":"generation-ii/silver/transparent","pokeapi":"silver","bulbapedia":"Pokémon Gold and Silver Versions","region":{"dex":"original-johto","name":"Johto"},"card":{"layout":"gs"},"diploma":"gs"},
+  {"key":"crystal","name":"Crystal","gen":2,"count":251,"sprites":"Crystal","shiny":true,"spriteRepo":"generation-ii/crystal/transparent","pokeapi":"crystal","bulbapedia":"Pokémon Crystal Version","region":{"dex":"original-johto","name":"Johto"},"card":{"layout":"gs","gender":true},"diploma":"crystal"},
+
+  {"key":"ruby","name":"Ruby","gen":3,"count":386,"sprites":"Ruby-Sapphire","shiny":true,"spriteRepo":"generation-iii/ruby-sapphire","pokeapi":"ruby","bulbapedia":"Pokémon Ruby and Sapphire Versions","region":{"dex":"hoenn","name":"Hoenn"},"card":{"layout":"rs"},"diploma":"rs"},
+  {"key":"sapphire","name":"Sapphire","gen":3,"count":386,"sprites":"Ruby-Sapphire","shiny":true,"spriteRepo":"generation-iii/ruby-sapphire","pokeapi":"sapphire","bulbapedia":"Pokémon Ruby and Sapphire Versions","region":{"dex":"hoenn","name":"Hoenn"},"card":{"layout":"rs"},"diploma":"rs"},
+  {"key":"emerald","name":"Emerald","gen":3,"count":386,"sprites":"Emerald","shiny":true,"spriteRepo":"generation-iii/emerald","pokeapi":"emerald","bulbapedia":"Pokémon Emerald Version","region":{"dex":"hoenn","name":"Hoenn"},"card":{"layout":"emerald"},"diploma":"emerald"},
+  {"key":"fire-red","name":"Fire Red","gen":3,"count":386,"sprites":"FireRed-LeafGreen","shiny":true,"spriteRepo":"generation-iii/firered-leafgreen","pokeapi":"firered","bulbapedia":"Pokémon FireRed and LeafGreen Versions","region":{"dex":"kanto","name":"Kanto"},"card":{"layout":"frlg"},"diploma":"frlg"},
+  {"key":"leaf-green","name":"Leaf Green","gen":3,"count":386,"sprites":"FireRed-LeafGreen","shiny":true,"spriteRepo":"generation-iii/firered-leafgreen","pokeapi":"leafgreen","bulbapedia":"Pokémon FireRed and LeafGreen Versions","region":{"dex":"kanto","name":"Kanto"},"card":{"layout":"frlg"},"diploma":"frlg"},
+
+  {"key":"diamond","name":"Diamond","gen":4,"count":493,"sprites":"Diamond-Pearl","shiny":true,"spriteRepo":"generation-iv/diamond-pearl","pokeapi":"diamond","bulbapedia":"Pokémon Diamond and Pearl Versions","region":{"dex":"original-sinnoh","name":"Sinnoh"},"card":{"layout":"gen4"}},
+  {"key":"pearl","name":"Pearl","gen":4,"count":493,"sprites":"Diamond-Pearl","shiny":true,"spriteRepo":"generation-iv/diamond-pearl","pokeapi":"pearl","bulbapedia":"Pokémon Diamond and Pearl Versions","region":{"dex":"original-sinnoh","name":"Sinnoh"},"card":{"layout":"gen4"}},
+  {"key":"platinum","name":"Platinum","gen":4,"count":493,"sprites":"Platinum","shiny":true,"spriteRepo":"generation-iv/platinum","pokeapi":"platinum","bulbapedia":"Pokémon Platinum Version","region":{"dex":"extended-sinnoh","name":"Sinnoh"},"card":{"layout":"gen4"}},
+  {"key":"heart-gold","name":"Heart Gold","gen":4,"count":493,"sprites":"HeartGold-SoulSilver","shiny":true,"spriteRepo":"generation-iv/heartgold-soulsilver","pokeapi":"heartgold","bulbapedia":"Pokémon HeartGold and SoulSilver Versions","region":{"dex":"updated-johto","name":"Johto"},"card":{"layout":"gen4"}},
+  {"key":"soul-silver","name":"Soul Silver","gen":4,"count":493,"sprites":"HeartGold-SoulSilver","shiny":true,"spriteRepo":"generation-iv/heartgold-soulsilver","pokeapi":"soulsilver","bulbapedia":"Pokémon HeartGold and SoulSilver Versions","region":{"dex":"updated-johto","name":"Johto"},"card":{"layout":"gen4"}}
+ ]
+}

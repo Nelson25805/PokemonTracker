@@ -31,7 +31,7 @@ for name in ORDER:
 
 os.makedirs(f'{OUT}/data', exist_ok=True)
 json.dump(mons, open(f'{OUT}/data/pokemon.json', 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
-json.dump(games, open(f'{OUT}/data/games.json', 'w'), indent=1)
+# games.json is gone: games live in data/games.config.json now (edit that by hand)
 json.dump(progress, open(f'{OUT}/../my-progress.json', 'w'), separators=(',', ':'))
 
 copied = 0

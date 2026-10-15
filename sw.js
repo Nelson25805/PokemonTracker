@@ -14,14 +14,14 @@
 //   ASSET_CACHE: when you replace an existing image or font IN PLACE (same file name). Assets are cache-first, so
 //                otherwise users keep the old picture forever. New files with new names don't need a bump.
 //   SHELL_CACHE: only to purge it, e.g. after deleting or renaming files. Ordinary edits update themselves.
-const SHELL_CACHE = "pokedex-shell-v1";
+const SHELL_CACHE = "pokedex-shell-v2";
 const ASSET_CACHE = "pokedex-assets-v1";
 
 // Downloaded when the worker installs. Paths are relative to this file. A missing file is skipped, not fatal.
 const SHELL = [
   "./", "index.html", "manifest.webmanifest", "css/style.css",
   "js/config.js", "js/cards.js", "js/store.js", "js/storage.js", "js/theme.js", "js/forms.js", "js/maps.js", "js/where.js", "js/app.js",
-  "data/games.json", "data/pokemon.json", "data/regional.json", "data/forms.json",
+  "data/games.config.json", "data/pokemon.json", "data/regional.json", "data/forms.json",
   "data/locations.json", "data/items.json", "data/maps.json",              // so "where to find" works offline; remove this line if the file gets too big
   "icons/icon-192.png", "icons/icon-512.png",
 ];

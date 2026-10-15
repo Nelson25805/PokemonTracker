@@ -151,10 +151,10 @@ function save() {
 (async function start() {
   try {
     const [list, base] = await Promise.all([
-      fetch("data/games.json").then(r => r.json()),
+      Config.load(),
       fetch("tests/baselines.json").then(r => (r.ok ? r.json() : {})).catch(() => ({})),
     ]);
-    games = list.map(g => ({ ...g, ...GAME_CFG[g.key], region: REGIONAL[g.key] }));
+    games = list;
     baseline = base;
   } catch {
     $("#out").textContent = "Couldn't load data. Serve the folder (python3 -m http.server) instead of opening the file directly.";

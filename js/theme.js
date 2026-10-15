@@ -6,24 +6,21 @@
 //   <html data-theme="ruby">   a palette (absent = Classic green)
 //   <html data-mode="dark">    "light" or "dark", always set. The Mode button cycles Auto / Light / Dark; Auto follows the device.
 //
-// To add a theme: add one line to GROUPS below and one `:root[data-theme=id]{...}` block in css/style.css.
+// The list of themes comes from data/games.config.json (one theme per game, named after its key, plus "extraThemes").
+// app.js hands it over with Theme.setGroups(Config.themeGroups()) once the config has loaded.
+// To add a theme for a new game: add the game to the config, then add one `:root[data-theme=<key>]{...}` light block
+// and one `[data-mode=dark]` block to css/style.css (without them the game just uses the default colours).
 const Theme = (() => {
   const KEY = "pokedexTracker.theme";
-  const GROUPS = [
-    ["Game Boy", [["classic", "Classic green"], ["pocket", "Pocket gray"], ["color", "Color purple"]]],
-    ["Gen 1 · Kanto", [["red", "Red"], ["blue", "Blue"], ["yellow", "Yellow"]]],
-    ["Gen 2 · Johto", [["gold", "Gold"], ["silver", "Silver"], ["crystal", "Crystal"]]],
-    ["Gen 3 · Hoenn", [["ruby", "Ruby"], ["sapphire", "Sapphire"], ["emerald", "Emerald"], ["fire-red", "Fire Red"], ["leaf-green", "Leaf Green"]]],
-    ["Gen 4 · Sinnoh", [["diamond", "Diamond"], ["pearl", "Pearl"], ["platinum", "Platinum"], ["heart-gold", "Heart Gold"], ["soul-silver", "Soul Silver"]]],
-  ];
   const MODES = ["auto", "light", "dark"];
-  const IDS = new Set(GROUPS.flatMap(g => g[1].map(t => t[0])));
+  const ID_OK = /^[a-z][a-z0-9-]{0,31}$/;
+  let GROUPS = [];                                               // [[label, [[id, name], ...]], ...], set by setGroups
   const root = document.documentElement;
   const state = { theme: "classic", mode: "auto" };
 
   try {
     const r = JSON.parse(localStorage.getItem(KEY));
-    if (r && IDS.has(r.theme)) state.theme = r.theme;
+    if (r && typeof r.theme === "string" && ID_OK.test(r.theme)) state.theme = r.theme;   // checked against the real list in setGroups
     if (r && MODES.includes(r.mode)) state.mode = r.mode;
   } catch { /* no saved theme, or storage blocked: use the defaults */ }
 
@@ -48,21 +45,32 @@ const Theme = (() => {
     try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* private mode: not remembered */ }
   }
 
+  function fillSelect() {
+    const sel = document.getElementById("theme");
+    if (!sel || !GROUPS.length) return;
+    sel.innerHTML = GROUPS.map(([label, items]) =>
+      `<optgroup label="${label}">${items.map(([id, name]) => `<option value="${id}">${name}</option>`).join("")}</optgroup>`).join("");
+    sel.value = state.theme;
+  }
+
+  // Called by app.js after data/games.config.json loads.
+  function setGroups(groups) {
+    GROUPS = groups;
+    if (!GROUPS.some(g => g[1].some(t => t[0] === state.theme))) { state.theme = "classic"; save(); }   // saved theme was removed from the config
+    fillSelect(); apply();
+  }
+
   function init() {
     const sel = document.getElementById("theme"), btn = document.getElementById("mode");
-    if (sel) {
-      sel.innerHTML = GROUPS.map(([label, items]) =>
-        `<optgroup label="${label}">${items.map(([id, name]) => `<option value="${id}">${name}</option>`).join("")}</optgroup>`).join("");
-      sel.addEventListener("change", () => { state.theme = sel.value; save(); apply(); });
-    }
+    if (sel) sel.addEventListener("change", () => { state.theme = sel.value; save(); apply(); });
     if (btn) btn.addEventListener("click", () => {
       state.mode = MODES[(MODES.indexOf(state.mode) + 1) % MODES.length]; save(); apply();
     });
-    apply();
+    fillSelect(); apply();
   }
 
   apply();                                                       // before first paint
   if (dark.addEventListener) dark.addEventListener("change", apply);
   document.addEventListener("DOMContentLoaded", init);
-  return { state };
+  return { state, setGroups };
 })();
