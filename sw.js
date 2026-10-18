@@ -15,7 +15,7 @@
 //                otherwise users keep the old picture forever. New files with new names don't need a bump.
 //   SHELL_CACHE: only to purge it, e.g. after deleting or renaming files. Ordinary edits update themselves.
 const SHELL_CACHE = "pokedex-shell-v2";
-const ASSET_CACHE = "pokedex-assets-v1";
+const ASSET_CACHE = "pokedex-assets-v2";
 
 // Downloaded when the worker installs. Paths are relative to this file. A missing file is skipped, not fatal.
 const SHELL = [
