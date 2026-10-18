@@ -104,10 +104,10 @@ const Cards = (() => {
 
   async function trainer(game, caught, st) {
     const cfg = game.card; if (!cfg) return null;
-    const badges = game.gen === 4 ? 0 : Math.min(Math.floor(caught / Math.floor(game.count / 8)), 8); // Gen 4 art has no badge variants
+    const badges = Math.min(Math.floor(caught / Math.floor(game.count / 8)), 8); // 0-8, one step per 1/8 of the dex
     const base = `assets/trainer-cards/${cfg.dir || game.sprites}/${cfg.gender ? st.gender + "/" : ""}`;
     // Request this badge count and every lower one at once; use the highest that exists
-    // (Gen 4 only has Trainer_0, and Emerald Girl is missing Trainer_2).
+    // (Emerald Girl is missing Trainer_2; any game with fewer variants falls back to the highest one it has).
     const tries = await Promise.allSettled(Array.from({ length: badges + 1 }, (_, i) => img(`${base}Trainer_${badges - i}.png`)));
     const im = tries.find(r => r.status === "fulfilled")?.value;
     if (!im) return null;
