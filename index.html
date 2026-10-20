@@ -96,6 +96,11 @@
     <label>Hour <input id="hh" inputmode="numeric" maxlength="2" size="2"></label>
     <label>Minute <input id="mm" inputmode="numeric" maxlength="2" size="2"></label>
   </div>
+  <div class="row" id="leafRow" hidden>
+    <label>Pokémon <select id="lmon"></select></label>
+    <label class="check"><input type="checkbox" id="lshiny"> Shiny</label>
+    <small style="flex:1 1 100%;opacity:.8">The trainer sprite follows the Boy / Girl choice on your trainer card.</small>
+  </div>
   <canvas id="dip-canvas" width="160" height="144"></canvas>
   <div class="row">
     <label>Size <select id="scale"><option value="1">1× (original)</option><option value="2">2×</option><option value="4" selected>4×</option><option value="8">8×</option></select></label>

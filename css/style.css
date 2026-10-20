@@ -86,6 +86,7 @@ fieldset:has(:disabled){opacity:.45}
 dialog{background:var(--bg);color:var(--ink);border:3px solid var(--line);padding:16px;max-width:min(96vw,560px);max-height:92vh}
 dialog::backdrop{background:rgba(0,0,0,.6)}dialog h2{margin:0 0 10px;font:400 18px "PKMN",monospace}
 dialog .row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:0 0 10px}dialog fieldset{border:0;padding:0}
+dialog .row[hidden]{display:none} /* a .row with the hidden attribute (diploma time fields, Leaf Crown picker) must really disappear */
 #where{width:min(96vw,640px);padding:0;overflow:hidden}
 #where[open]{display:flex;flex-direction:column}
 /* title row with the X button: always visible, never overlaps the content (only .dbody scrolls) */

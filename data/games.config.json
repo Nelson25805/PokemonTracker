@@ -29,7 +29,12 @@
   "crystal": { "dir": "Gen2/Crystal",           "prefix": "Crystal",           "choices": ["Regular", "Printer"],   "name": ["pkmn", 8, 70, 39], "time": [130, 135, 263] },
   "rs":      { "dir": "Gen3/Ruby-Sapphire",     "prefix": "Ruby-Sapphire",     "choices": ["Regional", "National"], "name": ["rs", 17, 99, 14, [224, 8, 8]] },
   "emerald": { "dir": "Gen3/Emerald",           "prefix": "Emerald",           "choices": ["Regional", "National"], "name": ["frlg", 10, 88, 18] },
-  "frlg":    { "dir": "Gen3/FireRed-LeafGreen", "prefix": "FireRed-LeafGreen", "choices": ["Regional", "National"], "name": ["frlg", 10, 140, 18] }
+  "frlg":    { "dir": "Gen3/FireRed-LeafGreen", "prefix": "FireRed-LeafGreen", "choices": ["Regional", "National"], "name": ["frlg", 10, 140, 18] },
+  "leaf":    { "type": "leaf", "dir": "Gen4/HeartGold-SoulSilver", "choices": ["Leaf Crown"],
+               "girl": "Leaf_Crown_Certificate_Girl.png", "guy": "Leaf_Crown_Certificate_Guy.png",
+               "sprites": "sprites", "defaultMon": 157,
+               "paper": "#f8f0d8", "clear": [41, 36, 174, 17], "line": [127.5, 39], "spot": [124, 148, 32],
+               "_help": "Leaf Crown certificate. girl / guy: the artwork (in dir). sprites: partner sprites folder (in dir; shiny ones in sprites/shiny). paper + clear [x, y, w, h]: the baked-in 'and' row is painted over with this colour. line [centre x, top y]: where '<name> and <POKEMON>' is drawn. spot [x, y, size]: where the partner sprite goes. defaultMon: Pokedex number picked when the dialog opens." }
  },
 
  "games": [
@@ -50,7 +55,7 @@
   {"key":"diamond","name":"Diamond","gen":4,"count":493,"sprites":"Diamond-Pearl","shiny":true,"spriteRepo":"generation-iv/diamond-pearl","pokeapi":"diamond","bulbapedia":"Pokémon Diamond and Pearl Versions","region":{"dex":"original-sinnoh","name":"Sinnoh"},"card":{"layout":"gen4"}},
   {"key":"pearl","name":"Pearl","gen":4,"count":493,"sprites":"Diamond-Pearl","shiny":true,"spriteRepo":"generation-iv/diamond-pearl","pokeapi":"pearl","bulbapedia":"Pokémon Diamond and Pearl Versions","region":{"dex":"original-sinnoh","name":"Sinnoh"},"card":{"layout":"gen4"}},
   {"key":"platinum","name":"Platinum","gen":4,"count":493,"sprites":"Platinum","shiny":true,"spriteRepo":"generation-iv/platinum","pokeapi":"platinum","bulbapedia":"Pokémon Platinum Version","region":{"dex":"extended-sinnoh","name":"Sinnoh"},"card":{"layout":"gen4"}},
-  {"key":"heart-gold","name":"Heart Gold","gen":4,"count":493,"sprites":"HeartGold-SoulSilver","shiny":true,"spriteRepo":"generation-iv/heartgold-soulsilver","pokeapi":"heartgold","bulbapedia":"Pokémon HeartGold and SoulSilver Versions","region":{"dex":"updated-johto","name":"Johto"},"card":{"layout":"gen4"}},
-  {"key":"soul-silver","name":"Soul Silver","gen":4,"count":493,"sprites":"HeartGold-SoulSilver","shiny":true,"spriteRepo":"generation-iv/heartgold-soulsilver","pokeapi":"soulsilver","bulbapedia":"Pokémon HeartGold and SoulSilver Versions","region":{"dex":"updated-johto","name":"Johto"},"card":{"layout":"gen4"}}
+  {"key":"heart-gold","name":"Heart Gold","gen":4,"count":493,"sprites":"HeartGold-SoulSilver","shiny":true,"spriteRepo":"generation-iv/heartgold-soulsilver","pokeapi":"heartgold","bulbapedia":"Pokémon HeartGold and SoulSilver Versions","region":{"dex":"updated-johto","name":"Johto"},"card":{"layout":"gen4"},"diploma":"leaf"},
+  {"key":"soul-silver","name":"Soul Silver","gen":4,"count":493,"sprites":"HeartGold-SoulSilver","shiny":true,"spriteRepo":"generation-iv/heartgold-soulsilver","pokeapi":"soulsilver","bulbapedia":"Pokémon HeartGold and SoulSilver Versions","region":{"dex":"updated-johto","name":"Johto"},"card":{"layout":"gen4"},"diploma":"leaf"}
  ]
 }

@@ -122,6 +122,7 @@ const Cards = (() => {
   }
 
   async function diploma(game, o) {
+    if (game.diploma.type === "leaf") return leafDiploma(game, o);
     const { dir, prefix, name: n, time } = game.diploma;
     const key = game.key === "yellow" && o.choice === "Printer" && o.missingMew ? "PrinterMissingMew" : o.choice;
     const [c, ctx] = canvasFor(await img(`assets/diplomas/${dir}/${prefix}-${key}.png`));
@@ -134,7 +135,93 @@ const Cards = (() => {
     return c;
   }
 
-  let api, tok = 0, cur = null, dip = null; // dip = the game the open diploma dialog belongs to
+  // ---- Leaf Crown certificate (HeartGold / SoulSilver) ----
+  // The certificate art (Boy and Girl versions) already has the trainer sprite and the paragraph baked in. We add:
+  //   * one centred line of text, "<trainer> and <POKÉMON>", in the game's pixel font (drawn from the table below);
+  //   * the partner's walking sprite, standing to the right of the trainer.
+  // The art also has a baked-in "and", so the text row is first painted over with the paper colour and the whole line
+  // is redrawn; that way the "and" moves with the names. All numbers (rows to wipe, line position, sprite spot, colours)
+  // live in "diplomaLayouts.leaf" in data/games.config.json.
+  //
+  // DSFONT: one glyph per character, [first row, "row|row|..."] where "#" is ink. Rows are counted from the top of a
+  // capital letter (capitals and digits are 9 rows tall; lowercase starts at row 3; g, j, p, q, y hang below row 8).
+  // Glyphs are 1px apart and a space is 4px wide, as in the artwork. The letters that appear in the certificate
+  // (a b c d e g h i k l m n o r s t u w y, F H I L N O P S T Y , .) were copied pixel for pixel from the master picture;
+  // the others were drawn to match them. A character that isn't listed is drawn as "?".
+  const DSFONT = {
+    "A": [0, ".###.|#...#|#...#|#...#|#####|#...#|#...#|#...#|#...#"], "B": [0, "####.|#...#|#...#|#...#|####.|#...#|#...#|#...#|####."], "C": [0, ".###.|#...#|#....|#....|#....|#....|#....|#...#|.###."],
+    "D": [0, "####.|#...#|#...#|#...#|#...#|#...#|#...#|#...#|####."], "E": [0, "#####|#....|#....|#....|####.|#....|#....|#....|#####"], "F": [0, "#####|#....|#....|#....|####.|#....|#....|#....|#...."],
+    "G": [0, ".###.|#...#|#....|#....|#.###|#...#|#...#|#...#|.###."], "H": [0, "#...#|#...#|#...#|#...#|#####|#...#|#...#|#...#|#...#"], "I": [0, ".###.|..#..|..#..|..#..|..#..|..#..|..#..|..#..|.###."],
+    "J": [0, "..###|....#|....#|....#|....#|....#|....#|#...#|.###."], "K": [0, "#...#|#...#|#..#.|#.#..|##...|#.#..|#..#.|#...#|#...#"], "L": [0, "#....|#....|#....|#....|#....|#....|#....|#....|#####"],
+    "M": [0, "#...#|##.##|#.#.#|#.#.#|#...#|#...#|#...#|#...#|#...#"], "N": [0, "#...#|#...#|##..#|##..#|#.#.#|#..##|#..##|#...#|#...#"], "O": [0, ".###.|#...#|#...#|#...#|#...#|#...#|#...#|#...#|.###."],
+    "P": [0, "####.|#...#|#...#|#...#|####.|#....|#....|#....|#...."], "Q": [0, ".###.|#...#|#...#|#...#|#...#|#...#|#.#.#|#..##|.####"], "R": [0, "####.|#...#|#...#|#...#|####.|#.#..|#..#.|#...#|#...#"],
+    "S": [0, ".###.|#...#|#....|#....|.###.|....#|....#|#...#|.###."], "T": [0, "#####|..#..|..#..|..#..|..#..|..#..|..#..|..#..|..#.."], "U": [0, "#...#|#...#|#...#|#...#|#...#|#...#|#...#|#...#|.###."],
+    "V": [0, "#...#|#...#|#...#|#...#|#...#|#...#|.#.#.|.#.#.|..#.."], "W": [0, "#...#|#...#|#...#|#...#|#...#|#.#.#|#.#.#|#.#.#|.#.#."], "X": [0, "#...#|#...#|.#.#.|.#.#.|..#..|.#.#.|.#.#.|#...#|#...#"],
+    "Y": [0, "#...#|#...#|#...#|.#.#.|.#.#.|..#..|..#..|..#..|..#.."], "Z": [0, "#####|....#|....#|...#.|..#..|.#...|#....|#....|#####"], "a": [3, ".###.|....#|.####|#...#|#...#|.####"],
+    "b": [0, "#....|#....|#....|####.|#...#|#...#|#...#|#...#|####."], "c": [3, ".###.|#...#|#....|#....|#...#|.###."], "d": [0, "....#|....#|....#|.####|#...#|#...#|#...#|#...#|.####"],
+    "e": [3, ".###.|#...#|#...#|#####|#....|.####"], "f": [0, "..##|.#..|.#..|####|.#..|.#..|.#..|.#..|.#.."], "g": [3, ".####|#...#|#...#|#...#|.####|....#|....#|.###."],
+    "h": [0, "#....|#....|#....|####.|#...#|#...#|#...#|#...#|#...#"], "i": [1, "#.|..|#.|#.|#.|#.|#.|#."], "j": [1, ".#.|...|.#.|.#.|.#.|.#.|.#.|.#.|.#.|#.."],
+    "k": [0, "#....|#....|#....|#...#|#..#.|###..|#.#..|#..#.|#...#"], "l": [0, "##.|.#.|.#.|.#.|.#.|.#.|.#.|.#.|.#."], "m": [3, "####.|#.#.#|#.#.#|#.#.#|#.#.#|#.#.#"],
+    "n": [3, "#.##.|##..#|#...#|#...#|#...#|#...#"], "o": [3, ".###.|#...#|#...#|#...#|#...#|.###."], "p": [3, "####.|#...#|#...#|#...#|#...#|####.|#....|#...."],
+    "q": [3, ".####|#...#|#...#|#...#|#...#|.####|....#|....#"], "r": [3, "#.##.|##..#|#....|#....|#....|#...."], "s": [3, ".####|#....|.###.|....#|#...#|.###."],
+    "t": [2, ".#..|####|.#..|.#..|.#..|.#..|..##"], "u": [3, "#...#|#...#|#...#|#...#|#...#|.####"], "v": [3, "#...#|#...#|#...#|#...#|.#.#.|..#.."],
+    "w": [3, "#...#|#...#|#.#.#|#.#.#|#.#.#|.#.#."], "x": [3, "#...#|#...#|.#.#.|..#..|.#.#.|#...#"], "y": [3, "#...#|#...#|#...#|#...#|.####|....#|....#|.###."],
+    "z": [3, "#####|....#|...#.|..#..|.#...|#####"], "0": [0, ".###.|#...#|#...#|#..##|#.#.#|##..#|#...#|#...#|.###."], "1": [0, "..#..|.##..|..#..|..#..|..#..|..#..|..#..|..#..|.###."],
+    "2": [0, ".###.|#...#|....#|....#|...#.|..#..|.#...|#....|#####"], "3": [0, ".###.|#...#|....#|....#|..##.|....#|....#|#...#|.###."], "4": [0, "...#.|..##.|.#.#.|#..#.|#..#.|#####|...#.|...#.|...#."],
+    "5": [0, "#####|#....|#....|####.|....#|....#|....#|#...#|.###."], "6": [0, ".###.|#...#|#....|#....|####.|#...#|#...#|#...#|.###."], "7": [0, "#####|....#|....#|...#.|...#.|..#..|..#..|..#..|..#.."],
+    "8": [0, ".###.|#...#|#...#|#...#|.###.|#...#|#...#|#...#|.###."], "9": [0, ".###.|#...#|#...#|#...#|.####|....#|....#|#...#|.###."], "'": [0, "#.|#.|#."],
+    ".": [7, ".##.|.##."], ",": [7, ".##.|.##.|..#.|.#.."], "-": [5, "###"],
+    "?": [0, ".###.|#...#|....#|...#.|..#..|..#..|.....|..#..|..#.."], "!": [0, "#.|#.|#.|#.|#.|#.|..|..|#."], ":": [3, "#.|..|..|..|..|#."],
+    "♀": [1, ".###.|#...#|#...#|#...#|.###.|..#..|.###.|..#.."], "♂": [1, "..####|....##|...#.#|.###..|#...#.|#...#.|#...#.|.###.."],
+  };
+  const DS_INK = "#585850", DS_SHADOW = "#a8b8b8";
+  const dsGlyph = ch => DSFONT[ch] || DSFONT["?"];
+
+  // Where each glyph of `text` goes (x from the left of the line) and how wide the whole line is.
+  function dsLayout(text) {
+    const glyphs = []; let pen = 0;
+    for (const ch of text) {
+      if (ch === " ") { pen += 4; continue; }
+      const [top, rows] = dsGlyph(ch), r = rows.split("|");
+      glyphs.push({ top, rows: r, x: pen });
+      pen += r[0].length + 1;
+    }
+    return { glyphs, width: Math.max(0, pen - 1) };
+  }
+
+  // Draw a line with its top-left corner at (x, y): a light shadow to the right, below and below-right of every
+  // ink pixel (like the games), then the ink on top so a shadow never covers a neighbouring letter.
+  function dsText(ctx, text, x, y) {
+    const { glyphs } = dsLayout(text);
+    for (const [color, offs] of [[DS_SHADOW, [[1, 0], [0, 1], [1, 1]]], [DS_INK, [[0, 0]]]]) {
+      ctx.fillStyle = color;
+      for (const g of glyphs) g.rows.forEach((row, ry) => {
+        for (let rx = 0; rx < row.length; rx++) if (row[rx] === "#")
+          for (const [dx, dy] of offs) ctx.fillRect(x + g.x + rx + dx, y + g.top + ry + dy, 1, 1);
+      });
+    }
+  }
+
+  // o = { gender: "Boy" | "Girl", name, mon: { n, name }, shiny }
+  async function leafDiploma(game, o) {
+    const d = game.diploma, dir = `assets/diplomas/${d.dir}`;
+    const sprite = o.mon ? img(`${dir}/${d.sprites}${o.shiny ? "/shiny" : ""}/${o.mon.n}.png`) : null;
+    if (sprite) sprite.catch(() => {});                                 // a missing sprite is reported below, not as an unhandled rejection
+    const [c, ctx] = canvasFor(await img(`${dir}/${o.gender === "Girl" ? d.girl : d.guy}`));
+    ctx.fillStyle = d.paper; ctx.fillRect(...d.clear);                  // wipe the baked-in "and" row
+    const name = String(o.name || "").trim() || "Trainer", mon = o.mon ? String(o.mon.name).toUpperCase() : "";
+    const text = mon ? `${name} and ${mon}` : name, [cx, top] = d.line;
+    dsText(ctx, text, Math.round(cx - dsLayout(text).width / 2), top);
+    if (sprite) {
+      const [sx, sy, size] = d.spot, im = await sprite;
+      ctx.imageSmoothingEnabled = im.naturalWidth !== size;             // 64px sprites (Lugia, Kyogre...) are halved smoothly to fit the 32px spot
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(im, sx, sy, size, size);
+    }
+    return c;
+  }
+
+  let api, tok = 0, cur = null, dip = null, mons = []; // dip = the game the open diploma dialog belongs to; mons = Pokémon list for the Leaf Crown picker
 
   // extra.left = required forms still missing (completion rules); the diploma stays locked until it is 0.
   async function update(game, got, st, extra = {}) {
@@ -161,15 +248,23 @@ const Cards = (() => {
   const opts = () => document.querySelector("input[name=choice]:checked")?.value;
   async function redraw() {
     const choice = opts(); if (!choice || !dip) return;
-    const printer = choice === "Printer";
+    const printer = choice === "Printer", leaf = dip.game.diploma.type === "leaf";
     $("#timeRow").hidden = !printer;
-    const c = await diploma(dip.game, { choice, name: $("#dname").value, hour: $("#hh").value, minute: $("#mm").value, missingMew: dip.missingMew });
-    const v = $("#dip-canvas"); v.width = c.width; v.height = c.height; v.getContext("2d").drawImage(c, 0, 0); fit(v, 480);
+    const o = { choice, name: $("#dname").value, hour: $("#hh").value, minute: $("#mm").value, missingMew: dip.missingMew };
+    if (leaf) Object.assign(o, { gender: api.get().gender, mon: mons.find(m => m.n === Number($("#lmon").value)), shiny: $("#lshiny").checked });
+    const c = await diploma(dip.game, o);
+    const v = $("#dip-canvas"); v.width = c.width; v.height = c.height; v.getContext("2d").drawImage(c, 0, 0); fit(v, v.width > 200 ? 512 : 480);
   }
   function open() {
     dip = cur;
-    const { choices } = dip.game.diploma;
+    const { choices } = dip.game.diploma, leaf = dip.game.diploma.type === "leaf";
     $("#choices").innerHTML = choices.map((c, i) => `<label><input type="radio" name="choice" value="${c}" ${i ? "" : "checked"}> ${c}</label>`).join("");
+    $("#choices").closest(".row").hidden = choices.length < 2;           // nothing to choose between
+    $("#leafRow").hidden = !leaf;
+    if (leaf) {                                                          // Leaf Crown: pick the partner Pokémon
+      $("#lmon").innerHTML = mons.filter(m => m.n <= dip.game.count).map(m => `<option value="${m.n}">#${String(m.n).padStart(3, "0")} ${m.name}</option>`).join("");
+      $("#lmon").value = dip.game.diploma.defaultMon; $("#lshiny").checked = false;
+    }
     $("#dname").value = api.get().name; $("#hh").value = $("#mm").value = "";
     dlg().showModal(); redraw();
   }
@@ -179,7 +274,10 @@ const Cards = (() => {
     const ctx = out.getContext("2d"); ctx.imageSmoothingEnabled = false; ctx.drawImage(src, 0, 0, out.width, out.height);
     out.toBlob(b => {
       const a = document.createElement("a"), safe = ($("#dname").value || "Trainer").replace(/[^\w-]+/g, "_");
-      a.href = URL.createObjectURL(b); a.download = `${dip.game.name.replace(/ /g, "")}_Diploma_${safe}.png`; a.click(); URL.revokeObjectURL(a.href);
+      const partner = (mons.find(m => m.n === Number($("#lmon").value)) || {}).name || "Pokemon";
+      a.href = URL.createObjectURL(b);
+      a.download = dip.game.diploma.type === "leaf" ? `${dip.game.name.replace(/ /g, "")}_LeafCrown_${safe}_${partner.replace(/[^\w-]+/g, "_")}.png` : `${dip.game.name.replace(/ /g, "")}_Diploma_${safe}.png`;
+      a.click(); URL.revokeObjectURL(a.href);
     }, "image/png");
   }
 
@@ -190,8 +288,9 @@ const Cards = (() => {
     $("#dclose").addEventListener("click", () => dlg().close());
     $("#dsave").addEventListener("click", save);
     $("#choices").addEventListener("change", redraw);
+    ["#lmon", "#lshiny"].forEach(s => $(s).addEventListener("change", redraw));
     ["#dname", "#hh", "#mm"].forEach(s => $(s).addEventListener("input", e => { if (s !== "#dname") e.target.value = e.target.value.replace(/\D/g, ""); redraw(); }));
   }
   // trainer / diploma are exported so test.html can render every game's artwork without the main page.
-  return { init, update, pixelText, outlined, trainer, diploma };
+  return { init, update, pixelText, outlined, trainer, diploma, dsText, dsLayout, setMons: list => { mons = list; } };
 })();

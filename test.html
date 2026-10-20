@@ -46,6 +46,8 @@ or <code>cards.js</code>. Tiles are compared with <code>tests/baselines.json</co
 const $ = s => document.querySelector(s);
 const DEFAULT = "ASH", WIDE = "WWWWWWWWWW";
 let games = [], baseline = {}, results = {}, mode = null, run = 0;
+// Leaf Crown partners: a normal 32px sprite, a 64px one (halved to fit), and names with symbols / the longest names.
+const LEAF_MONS = [{ n: 157, name: "Typhlosion" }, { n: 249, name: "Lugia" }, { n: 29, name: "Nidoran♀" }, { n: 83, name: "Farfetch'd" }, { n: 439, name: "Mime Jr." }, { n: 474, name: "Porygon-Z" }];
 
 const el = (tag, text, cls) => { const e = document.createElement(tag); if (text) e.textContent = text; if (cls) e.className = cls; return e; };
 
@@ -69,7 +71,14 @@ function casesFor(g, name, wide) {
       }
     }
   }
-  if (g.diploma) {
+  if (g.diploma && g.diploma.type === "leaf") {
+    for (const gender of ["Boy", "Girl"]) {
+      for (const mon of LEAF_MONS) {
+        out.push({ id: `${g.key}/diploma/leaf/${gender}/${mon.n}`, label: `Leaf Crown · ${gender} · ${mon.name}`, draw: () => Cards.diploma(g, { name, gender, mon, shiny: false }) });
+      }
+      out.push({ id: `${g.key}/diploma/leaf/${gender}/157s`, label: `Leaf Crown · ${gender} · Typhlosion (shiny)`, draw: () => Cards.diploma(g, { name, gender, mon: LEAF_MONS[0], shiny: true }) });
+    }
+  } else if (g.diploma) {
     for (const choice of g.diploma.choices) {
       const printer = choice === "Printer";
       const o = { choice, name, hour: printer ? (wide ? "88" : "12") : "", minute: printer ? (wide ? "88" : "34") : "" };

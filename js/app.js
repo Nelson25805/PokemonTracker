@@ -22,6 +22,7 @@
   // Everything per game (card / diploma layout, region, link-up sources) comes from data/games.config.json via Config.load().
   if (typeof Theme !== "undefined") Theme.setGroups(Config.themeGroups());   // the Settings > Theme list is built from the same file
   monByN = new Map(mons.map(m => [m.n, m]));
+  Cards.setMons(mons);                                                     // the Leaf Crown diploma (HeartGold / SoulSilver) lets you pick a partner Pokémon
   // Regional Pokédex lists (built by build_regional.py). Optional: without the file the Dex dropdown stays disabled.
   regional = await fetch("data/regional.json").then(r => (r.ok ? r.json() : null)).then(d => d && d.dex).catch(() => null);
   Forms.init(await fetch("data/forms.json").then(r => (r.ok ? r.json() : null)).catch(() => null));   // optional: without it there are no chips
