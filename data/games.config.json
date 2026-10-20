@@ -32,9 +32,9 @@
   "frlg":    { "dir": "Gen3/FireRed-LeafGreen", "prefix": "FireRed-LeafGreen", "choices": ["Regional", "National"], "name": ["frlg", 10, 140, 18] },
   "leaf":    { "type": "leaf", "dir": "Gen4/HeartGold-SoulSilver", "choices": ["Leaf Crown"],
                "girl": "Leaf_Crown_Certificate_Girl.png", "guy": "Leaf_Crown_Certificate_Guy.png",
-               "sprites": "sprites", "defaultMon": 157,
+               "sprites": "sprites", "defaultMon": 25, "always": true,
                "paper": "#f8f0d8", "clear": [41, 36, 174, 17], "line": [127.5, 39], "spot": [124, 148, 32],
-               "_help": "Leaf Crown certificate. girl / guy: the artwork (in dir). sprites: partner sprites folder (in dir; shiny ones in sprites/shiny). paper + clear [x, y, w, h]: the baked-in 'and' row is painted over with this colour. line [centre x, top y]: where '<name> and <POKEMON>' is drawn. spot [x, y, size]: where the partner sprite goes. defaultMon: Pokedex number picked when the dialog opens." }
+               "_help": "Leaf Crown certificate. girl / guy: the artwork (in dir). sprites: partner sprites folder (in dir; shiny ones in sprites/shiny). paper + clear [x, y, w, h]: the baked-in 'and' row is painted over with this colour. line [centre x, top y]: where '<name> and <POKEMON>' is drawn. spot [x, y, size]: where the partner sprite goes. defaultMon: Pokedex number picked when the dialog opens. always: true = the diploma button works at any time, not only once the Pokedex is complete." }
  },
 
  "games": [

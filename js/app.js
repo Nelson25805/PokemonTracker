@@ -191,7 +191,7 @@
     $("#fill").style.width = `${(n / total) * 100}%`;
     const left = formsLeft(s, g);                                      // required forms still missing (0 unless a completion rule is on)
     $("#tsum").textContent = `${normal} / ${total}` + (normal === total && left ? ` · ${left} required form${left === 1 ? "" : "s"} left`
-      : normal === total && g.diploma ? " · Diploma ready!" : "");
+      : normal === total && g.diploma && !g.diploma.always ? " · Diploma ready!" : "");
     const c2 = $("#count2");                                           // the other list's progress, for games with shiny sprites
     c2.hidden = !g.shiny;
     if (g.shiny) {

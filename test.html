@@ -76,6 +76,7 @@ function casesFor(g, name, wide) {
       for (const mon of LEAF_MONS) {
         out.push({ id: `${g.key}/diploma/leaf/${gender}/${mon.n}`, label: `Leaf Crown · ${gender} · ${mon.name}`, draw: () => Cards.diploma(g, { name, gender, mon, shiny: false }) });
       }
+      out.push({ id: `${g.key}/diploma/leaf/${gender}/nick`, label: `Leaf Crown · ${gender} · nickname`, draw: () => Cards.diploma(g, { name, gender, mon: LEAF_MONS[0], nick: "Sparky" }) });
       out.push({ id: `${g.key}/diploma/leaf/${gender}/157s`, label: `Leaf Crown · ${gender} · Typhlosion (shiny)`, draw: () => Cards.diploma(g, { name, gender, mon: LEAF_MONS[0], shiny: true }) });
     }
   } else if (g.diploma) {

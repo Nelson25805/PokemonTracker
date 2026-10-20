@@ -94,7 +94,7 @@ dialog .row[hidden]{display:none} /* a .row with the hidden attribute (diploma t
 #where .dhead h2{margin:0}
 #where .dbody{flex:1 1 auto;min-height:0;overflow:auto;padding:0 16px 16px}
 .xbtn{flex:none;width:32px;height:32px;padding:0;font:400 22px/1 system-ui,sans-serif}
-@media (pointer:coarse){.xbtn{width:40px;height:40px}}}
+@media (pointer:coarse){.xbtn{width:40px;height:40px}}
 #where-note{margin:0 0 10px;font-size:13px}#where-body p{margin:0 0 10px}
 #where details{border:2px solid var(--line);background:var(--card);margin:0 0 8px}
 #where summary{cursor:pointer;padding:6px 8px;font-weight:600}#where summary small{font-weight:400;opacity:.8;margin-left:6px}

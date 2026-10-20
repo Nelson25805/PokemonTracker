@@ -202,14 +202,15 @@ const Cards = (() => {
     }
   }
 
-  // o = { gender: "Boy" | "Girl", name, mon: { n, name }, shiny }
+  // o = { gender: "Boy" | "Girl", name, mon: { n, name }, nick (optional nickname), shiny }
   async function leafDiploma(game, o) {
     const d = game.diploma, dir = `assets/diplomas/${d.dir}`;
     const sprite = o.mon ? img(`${dir}/${d.sprites}${o.shiny ? "/shiny" : ""}/${o.mon.n}.png`) : null;
     if (sprite) sprite.catch(() => {});                                 // a missing sprite is reported below, not as an unhandled rejection
     const [c, ctx] = canvasFor(await img(`${dir}/${o.gender === "Girl" ? d.girl : d.guy}`));
     ctx.fillStyle = d.paper; ctx.fillRect(...d.clear);                  // wipe the baked-in "and" row
-    const name = String(o.name || "").trim() || "Trainer", mon = o.mon ? String(o.mon.name).toUpperCase() : "";
+    const name = String(o.name || "").trim() || "Trainer", nick = String(o.nick || "").trim();
+    const mon = nick || (o.mon ? String(o.mon.name).toUpperCase() : "");   // a nickname is shown as typed, like in the game
     const text = mon ? `${name} and ${mon}` : name, [cx, top] = d.line;
     dsText(ctx, text, Math.round(cx - dsLayout(text).width / 2), top);
     if (sprite) {
@@ -236,8 +237,10 @@ const Cards = (() => {
     const missingMew = game.key === "yellow" && got.size === game.count - 1 && !got.has(151);
     const dexDone = got.size === game.count || missingMew, left = extra.left || 0, done = dexDone && !left;
     cur = { game, missingMew };
-    $("#diploma").disabled = !(game.diploma && done);
+    const always = !!(game.diploma && game.diploma.always);              // e.g. the Leaf Crown: not tied to a complete Pokédex
+    $("#diploma").disabled = !(game.diploma && (done || always));
     $("#hint").textContent = !game.diploma ? "No diploma artwork for this game yet."
+      : always ? "You can make this diploma at any time."
       : done ? "Your Pokédex is complete!"
       : dexDone ? `Pokédex complete! ${left} required form${left === 1 ? "" : "s"} still missing (see Settings).`
       : "Complete the Pokédex to unlock your diploma.";
@@ -251,7 +254,7 @@ const Cards = (() => {
     const printer = choice === "Printer", leaf = dip.game.diploma.type === "leaf";
     $("#timeRow").hidden = !printer;
     const o = { choice, name: $("#dname").value, hour: $("#hh").value, minute: $("#mm").value, missingMew: dip.missingMew };
-    if (leaf) Object.assign(o, { gender: api.get().gender, mon: mons.find(m => m.n === Number($("#lmon").value)), shiny: $("#lshiny").checked });
+    if (leaf) Object.assign(o, { gender: api.get().gender, mon: mons.find(m => m.n === Number($("#lmon").value)), nick: $("#lnick").value, shiny: $("#lshiny").checked });
     const c = await diploma(dip.game, o);
     const v = $("#dip-canvas"); v.width = c.width; v.height = c.height; v.getContext("2d").drawImage(c, 0, 0); fit(v, v.width > 200 ? 512 : 480);
   }
@@ -263,7 +266,7 @@ const Cards = (() => {
     $("#leafRow").hidden = !leaf;
     if (leaf) {                                                          // Leaf Crown: pick the partner Pokémon
       $("#lmon").innerHTML = mons.filter(m => m.n <= dip.game.count).map(m => `<option value="${m.n}">#${String(m.n).padStart(3, "0")} ${m.name}</option>`).join("");
-      $("#lmon").value = dip.game.diploma.defaultMon; $("#lshiny").checked = false;
+      $("#lmon").value = dip.game.diploma.defaultMon; $("#lshiny").checked = false; $("#lnick").value = "";
     }
     $("#dname").value = api.get().name; $("#hh").value = $("#mm").value = "";
     dlg().showModal(); redraw();
@@ -274,7 +277,7 @@ const Cards = (() => {
     const ctx = out.getContext("2d"); ctx.imageSmoothingEnabled = false; ctx.drawImage(src, 0, 0, out.width, out.height);
     out.toBlob(b => {
       const a = document.createElement("a"), safe = ($("#dname").value || "Trainer").replace(/[^\w-]+/g, "_");
-      const partner = (mons.find(m => m.n === Number($("#lmon").value)) || {}).name || "Pokemon";
+      const partner = ($("#lnick").value.trim() || (mons.find(m => m.n === Number($("#lmon").value)) || {}).name || "Pokemon");
       a.href = URL.createObjectURL(b);
       a.download = dip.game.diploma.type === "leaf" ? `${dip.game.name.replace(/ /g, "")}_LeafCrown_${safe}_${partner.replace(/[^\w-]+/g, "_")}.png` : `${dip.game.name.replace(/ /g, "")}_Diploma_${safe}.png`;
       a.click(); URL.revokeObjectURL(a.href);
@@ -289,6 +292,8 @@ const Cards = (() => {
     $("#dsave").addEventListener("click", save);
     $("#choices").addEventListener("change", redraw);
     ["#lmon", "#lshiny"].forEach(s => $(s).addEventListener("change", redraw));
+    $("#lmon").addEventListener("change", () => { $("#lnick").value = ""; redraw(); });   // a nickname belongs to one Pokémon: clear it when the Pokémon changes
+    $("#lnick").addEventListener("input", redraw);
     ["#dname", "#hh", "#mm"].forEach(s => $(s).addEventListener("input", e => { if (s !== "#dname") e.target.value = e.target.value.replace(/\D/g, ""); redraw(); }));
   }
   // trainer / diploma are exported so test.html can render every game's artwork without the main page.
