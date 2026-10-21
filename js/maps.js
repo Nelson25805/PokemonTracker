@@ -83,6 +83,16 @@ const Maps = (() => {
   const TIMES = ["morning", "day", "night"];
   const TCOL = { morning: "#ffd23f", day: "#ff8a1f", night: "#3b4cc0" };
   const TLABEL = { morning: "Morning", day: "Day", night: "Night" };
+  // In-game clock ranges for each period, shown on the Morning / Day / Night buttons. Keyed by map id; a map in maps.json can
+  // override with its own "clock": { "morning": "...", "day": "...", "night": "..." }. Gen 2 and HeartGold / SoulSilver share
+  // the same hours; Diamond / Pearl / Platinum (map "sinnoh-dp") have a longer day.
+  const CLOCK_GS = { morning: "4:00–9:59 AM", day: "10:00 AM–5:59 PM", night: "6:00 PM–3:59 AM" };
+  const CLOCKS = {
+    "johto-kanto-gsc": CLOCK_GS,
+    "johto-kanto-hgss": CLOCK_GS,
+    "sinnoh-dp": { morning: "4:00–9:59 AM", day: "10:00 AM–7:59 PM", night: "8:00 PM–3:59 AM" },
+  };
+  const clockOf = (id, m) => (m && m.clock) || CLOCKS[id] || null;
   const timeText = set => (set.size >= TIMES.length ? "All day" : TIMES.filter(t => set.has(t)).map(t => TLABEL[t]).join(" / "));
 
   // The built-in bug marker: 8x8 pixels, drawn as an SVG so no image file is needed.
@@ -200,6 +210,7 @@ const Maps = (() => {
 .amap .tfilter{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin-top:6px;font-size:12px}
 .amap .tfilter button{padding:2px 8px;font-size:12px;display:inline-flex;align-items:center;gap:4px}
 .amap .tfilter button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.amap .tfilter .trange{font-size:10px;opacity:.85;white-space:nowrap}
 .amap .tfilter .sw{display:inline-block;width:10px;height:10px;border:1px solid #000}
 .amap .tnote{flex:1 1 100%;opacity:.85}
 .amaps figure[hidden]{display:none}
@@ -302,13 +313,16 @@ const Maps = (() => {
       `<img alt="${esc(m.name)} map" src="${esc(m.img)}" onerror="Maps.drop(this)">${inner}<div class="amaphl"></div><div class="amappin"></div>${title(m)}` +
       `${(m.labels || []).map(l => labelSvg(m, l)).join("")}<div class="amaptip" hidden></div></div></div></div><figcaption>${cap}</figcaption>${extra}</figure>`;
     // All / Morning / Day / Night buttons (inline handler: this file never touches the DOM after init).
-    const filter = () =>
-      `<div class="tfilter" role="group" aria-label="Time of day">` +
+    const filter = (m, id) => {
+      const clock = clockOf(id, m) || {};
+      return `<div class="tfilter" role="group" aria-label="Time of day">` +
       [["all", "All times", ""], ...TIMES.map(t => [t, TLABEL[t], TCOL[t]])].map(([t, label, col]) =>
         `<button type="button" class="tbtn" data-t="${t}" aria-pressed="${t === "all"}" ` +
         `onclick="var f=this.closest('figure');f.dataset.time=this.dataset.t;f.querySelectorAll('.tbtn').forEach(function(b){b.setAttribute('aria-pressed',b===this)},this)">` +
-        `${col ? `<span class="sw" style="background:${col}"></span>` : ""}${label}</button>`).join("") +
-      `<span class="tnote">Hover a location to see when the Pokémon is there. The buttons show only the locations that apply at one time of day.</span></div>`;
+        `${col ? `<span class="sw" style="background:${col}"></span>` : ""}${label}${clock[t] ? `<small class="trange">${esc(clock[t])}</small>` : ""}</button>`).join("") +
+      `<span class="tnote">Hover a location to see when the Pokémon is there. The buttons show only the locations that apply at one time of day.` +
+      `${clock.morning ? " The hours are the game's own clock." : ""}</span></div>`;
+    };
 
     // Roaming: which regions do the roaming rows name, and which routes of a map belong to them?
     const regions = [...new Set(entries.filter(e => /^roaming/.test(e[1])).map(e =>
@@ -379,7 +393,7 @@ const Maps = (() => {
         const mix = sets.land.length && sets.special.length ? "both" : sets.special.length ? "special" : "land";
         const who = mixed ? (fstyle === "emerald" ? " (Emerald)" : " (Ruby / Sapphire)") : "";
         emit(id, m, names.size, wrap(m, id, marks, `${esc(m.name)}${who}: ${capOf(names.size, rm)}`, rm ? found.concat(rm.found) : found,
-          (timed ? filter() : "") + (rm ? rm.note : ""), ` data-flash="${fstyle}" data-mix="${mix}"${timed ? " data-timed" : ""}`), !names.size);
+          (timed ? filter(m, id) : "") + (rm ? rm.note : ""), ` data-flash="${fstyle}" data-mix="${mix}"${timed ? " data-timed" : ""}`), !names.size);
         continue;
       }
 
@@ -427,7 +441,7 @@ const Maps = (() => {
         return `<i class="nest ${m.icon ? "one" : "bug"}" data-t="${TIMES.filter(t => gr.times.has(t)).join(" ")}" style="${pos};background-image:url(${sprite})"></i>`;
       }).join("");
       emit(id, m, groups.size, wrap(m, id, marks, `${esc(m.name)}${tag(id, m)}: ${capOf(groups.size, rm)}`, rm ? found.concat(rm.found) : found,
-        (timed ? filter() : "") + (rm ? rm.note : ""), timed ? " data-timed" : ""), !groups.size);
+        (timed ? filter(m, id) : "") + (rm ? rm.note : ""), timed ? " data-timed" : ""), !groups.size);
     }
 
     // Two or more different maps (Kanto + Sevii Islands ...): a tab for each, one map shown at a time. (The same map twice, as
