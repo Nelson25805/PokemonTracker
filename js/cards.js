@@ -60,8 +60,31 @@ const Cards = (() => {
     ctx.drawImage(out, Math.round(x - 4 * k), Math.round(y - 4 * k));
   }
   // Names: at or above native size draw crisp as-is; below it, scale down from native.
+  // Big pixel text (Gen 1 trainer card names: an 8px font drawn at 70px, so one font pixel = 8.75 canvas pixels).
+  // pixelText() draws the glyphs at the big size and thresholds them, and because 8.75 isn't a whole number some font
+  // pixels come out 8px wide and others 9px, which leaves thin gaps in letters. Here the glyphs are drawn at the font's
+  // NATIVE size (always crisp), and every lit font pixel is then filled as one rectangle whose edges are rounded from the
+  // same grid, so neighbouring pixels always touch and every letter stays solid. Anchored by the top-left corner.
+  function gridText(ctx, text, [fk, size, x, y], color = [0, 0, 0]) {
+    if (!text) return;
+    const f = FONTS[fk], n = f.native, k = size / n, font = `${n}px "${f.css}"`;
+    const t = document.createElement("canvas"), c = t.getContext("2d", { willReadFrequently: true });
+    c.font = font;
+    const glyphs = []; let cum = 0;
+    for (const ch of text) { glyphs.push([ch, cum]); cum += Math.round(c.measureText(ch).width); }
+    t.width = cum + 8; t.height = Math.ceil(n * (f.asc + 0.7)) + 8;       // resizing resets the context
+    c.font = font; c.fillStyle = "#000"; c.textBaseline = "alphabetic";
+    const base = 4 + Math.round(f.asc * n);
+    for (const [ch, gx] of glyphs) c.fillText(ch, 4 + gx, base);
+    const W = t.width, H = t.height, p = c.getImageData(0, 0, W, H).data;
+    ctx.fillStyle = `rgb(${color.join(",")})`;
+    const X = v => Math.round(x + (v - 4) * k), Y = v => Math.round(y + (v - 4) * k);
+    for (let py = 0; py < H; py++) for (let px = 0; px < W; px++)
+      if (p[(py * W + px) * 4 + 3] >= 128) ctx.fillRect(X(px), Y(py), X(px + 1) - X(px), Y(py + 1) - Y(py));
+  }
   const crisp = (ctx, text, spec, color, align, shadow) =>
-    spec[1] < FONTS[spec[0]].native - 1 ? scaledText(ctx, text, spec, color) : pixelText(ctx, text, spec, color, align, shadow);
+    spec[0] === "pkmn" && spec[1] >= FONTS.pkmn.native * 2 ? gridText(ctx, text, spec, color)   // big Gen 1 names
+    : spec[1] < FONTS[spec[0]].native - 1 ? scaledText(ctx, text, spec, color) : pixelText(ctx, text, spec, color, align, shadow);
 
   // Hand-drawn 5x7 digits for the Gen 2 card. The game font's digits are 7px wide, which doesn't fit
   // "251 / 251" beside the sprite, and scaling it down makes it fuzzy. Whole pixels stay sharp.

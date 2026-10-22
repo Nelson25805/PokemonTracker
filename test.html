@@ -93,9 +93,10 @@ function casesFor(g, name, wide) {
 }
 
 function show(cv, zoom) {
-  cv.classList.add("px");
-  if (zoom === "fit") { const s = Math.floor(320 / cv.width); cv.style.width = (s >= 1 ? cv.width * s : 320) + "px"; }
-  else cv.style.width = cv.width * Number(zoom) + "px";
+  // Pixelated (nearest-neighbour) scaling only when scaling UP by a whole number. Shrinking a big card (Gen 1 is ~1400px wide)
+  // with nearest-neighbour drops rows and columns, which looked like white lines through the letters. The main page already smooths these.
+  if (zoom === "fit") { const s = Math.floor(320 / cv.width); cv.classList.toggle("px", s >= 1); cv.style.width = (s >= 1 ? cv.width * s : 320) + "px"; }
+  else { const z = Number(zoom); cv.classList.toggle("px", cv.width * z >= cv.width); cv.style.width = cv.width * z + "px"; }
 }
 
 async function render() {
