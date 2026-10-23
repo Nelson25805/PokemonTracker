@@ -4,6 +4,7 @@
 //   Config.load()          Promise of the games array (cached). Each game is the config entry plus:
 //                            card      the named card layout merged with that game's own overrides (or undefined)
 //                            diploma   the named diploma layout (or undefined)
+//                            pc        { boxes, box, cols }: the in-game PC (from the generation, for the "PC boxes" layout)
 //                            sources   keys of the games whose Pokémon can reach this game (itself first), for "where to find"
 //   Config.themeGroups()   [[group label, [[id, name], ...]], ...] for the Theme dropdown (after load())
 //   Config.build(cfg)      pure: raw config -> games array (exported for testing)
@@ -34,6 +35,8 @@ const Config = (() => {
     };
     return cfg.games.map(g => {
       const { card, diploma, ...rest } = g, out = { ...rest, sources: sourcesOf(g) };
+      const pc = (cfg.generations[g.gen] || {}).pc;                    // PC box layout of the generation: { boxes, box (slots per box), cols }
+      if (pc) out.pc = pc;
       if (card) {
         const { layout, ...over } = card;
         if (!cfg.cardLayouts[layout]) throw new Error(`${g.key}: unknown card layout "${layout}"`);

@@ -357,3 +357,14 @@ body.selecting .chip{display:none}
 @media (prefers-reduced-motion:reduce){
   .amap[data-map=johto-kanto-hgss] .amapimg .fl{animation:none !important;background:rgb(250,252,133)}
 }
+/* PC boxes layout (Layout > PC boxes): Pokémon grouped into boxes like the in-game PC of that generation (js/app.js renderGrid) */
+.grid.pc{display:block}
+.pcnote{margin:0 6px 10px;font-size:13px;opacity:.85}
+.pcbox{max-width:calc(var(--cols) * 150px + 24px);margin:0 auto 14px;border:3px solid var(--line);background:var(--panel)}
+.pcbox[hidden]{display:none}
+.pcbox h2{display:flex;justify-content:space-between;gap:10px;margin:0;padding:8px 12px;font:400 16px "PKMN",monospace;background:var(--ink);color:var(--bg)}
+.pcbox .bcount{font-size:13px}
+.pcbox .boxgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));padding:6px}
+@media (min-width:760px){.pcbox .boxgrid{grid-template-columns:repeat(var(--cols),minmax(0,1fr))}}
+.cell.empty::before{content:"";flex:1;min-height:150px;border:2px dashed var(--line);opacity:.3}
+.pcbox.filtering .cell.empty{display:none}

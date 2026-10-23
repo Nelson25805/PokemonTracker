@@ -32,6 +32,7 @@
   const gameOf = s => games.find(g => g.key === s.last.game) || games[0];
   const shinyOn = (s, g = gameOf(s)) => !!(s.last.shiny && g.shiny);
   const listKey = (s, g = gameOf(s)) => (shinyOn(s, g) ? "shiny" : "caught");
+  const pcOn = (s, g = gameOf(s)) => s.last.layout === "pc" && !!g.pc;     // PC boxes layout (needs the generation's box sizes)
   const caughtSet = (s, g = gameOf(s)) => new Set(s[listKey(s, g)][g.key] || []);
 
   // Regional lists are arrays of national numbers in regional order. A game only offers the regional
@@ -62,6 +63,10 @@
       b.setAttribute("aria-pressed", (b.dataset.track === "shiny") === shinyOn(s, g));
       if (b.dataset.track === "shiny") b.disabled = !g.shiny;
     });
+    document.querySelectorAll("#layout button").forEach(b => {          // Layout: Grid / PC boxes
+      b.setAttribute("aria-pressed", (b.dataset.layout === "pc") === pcOn(s, g));
+      if (b.dataset.layout === "pc") b.disabled = !g.pc;
+    });
     $("#badges").checked = s.last.badges !== false;
     const rq = reqOf(s), tot = Forms.catTotals(g, inDexOf(s, g)), pl = (k, w) => `${k} ${w}${k === 1 ? "" : "s"}`;
     $("#req-gender").checked = rq.gender; $("#req-alt").checked = rq.alt;
@@ -85,11 +90,23 @@
   function renderGrid(s) {
     const g = gameOf(s), got = caughtSet(s, g), dir = spriteDir(s, g), list = dexList(s, g), fm = Forms.forGame(g);
     const rows = (list ? list.map((n, i) => [monByN.get(n), i + 1]) : mons.slice(0, g.count).map(m => [m, m.n])).filter(([m]) => m);
-    $("#grid").innerHTML = rows
-      .map(([m, pos]) => `<div class="cell"><button class="card${got.has(m.n) ? " on" : ""}${fm.has(m.n) ? " hasform" : ""}" data-n="${m.n}" data-pos="${pos}" data-name="${m.name.toLowerCase()}" aria-pressed="${got.has(m.n)}" aria-keyshortcuts="${["I", g.shiny && "S", fm.has(m.n) && "F"].filter(Boolean).join(" ")}">
+    const cell = ([m, pos]) => `<div class="cell"><button class="card${got.has(m.n) ? " on" : ""}${fm.has(m.n) ? " hasform" : ""}" data-n="${m.n}" data-pos="${pos}" data-name="${m.name.toLowerCase()}" aria-pressed="${got.has(m.n)}" aria-keyshortcuts="${["I", g.shiny && "S", fm.has(m.n) && "F"].filter(Boolean).join(" ")}">
         <img loading="lazy" decoding="async" alt="" src="${spriteSrc(dir, m.n)}">
         <span class="n">#${String(pos).padStart(3, "0")}</span><span class="nm">${m.name}</span></button>
-        <button class="where" tabindex="-1" data-n="${m.n}" aria-label="Where to find ${m.name}" title="Where to find (or press I on a card)">?</button>${g.shiny ? `<button class="other" tabindex="-1" data-n="${m.n}"></button>` : ""}${fm.has(m.n) ? `<button class="chip" tabindex="-1" data-n="${m.n}"></button>` : ""}</div>`).join("");
+        <button class="where" tabindex="-1" data-n="${m.n}" aria-label="Where to find ${m.name}" title="Where to find (or press I on a card)">?</button>${g.shiny ? `<button class="other" tabindex="-1" data-n="${m.n}"></button>` : ""}${fm.has(m.n) ? `<button class="chip" tabindex="-1" data-n="${m.n}"></button>` : ""}</div>`;
+    const pc = pcOn(s, g);
+    $("#grid").classList.toggle("pc", pc);
+    if (!pc) $("#grid").innerHTML = rows.map(cell).join("");
+    else {                                                            // like the in-game PC: fixed-size boxes filled in Pokédex order
+      const { box, boxes, cols } = g.pc, need = Math.ceil(rows.length / box);
+      let out = `<p class="pcnote">${g.name} PC: ${boxes} boxes of ${box} (${boxes * box} slots). This Pokédex fills ${need} of them.</p>`;
+      for (let b = 0; b < need; b++) {
+        const part = rows.slice(b * box, (b + 1) * box);
+        out += `<section class="pcbox" style="--cols:${cols}"><h2><span>BOX ${b + 1}</span><span class="bcount"></span></h2><div class="boxgrid">` +
+          part.map(cell).join("") + '<div class="cell empty" aria-hidden="true"></div>'.repeat(box - part.length) + "</div></section>";
+      }
+      $("#grid").innerHTML = out;
+    }
     cardEls = [...document.querySelectorAll("#grid .card")];
     badgeEls = [...document.querySelectorAll("#grid .other")];     // same order as cardEls (empty when the game has no shiny sprites)
     chipEls = [...document.querySelectorAll("#grid .chip")];
@@ -109,6 +126,13 @@
       const stateOk = view.filter === "all" || (view.filter === "caught") === got.has(n);
       el.parentElement.hidden = !(textOk && stateOk);
       if (!(textOk && stateOk)) view.selected.delete(n);
+    }
+    const narrowed = !!q || view.filter !== "all";                      // PC boxes: hide boxes with nothing to show, and the empty slots while filtering
+    for (const b of document.querySelectorAll("#grid .pcbox")) {
+      const cards = [...b.querySelectorAll(".card")], on = cards.filter(c => c.classList.contains("on")).length;
+      b.hidden = !cards.some(isShown);
+      b.classList.toggle("filtering", narrowed);
+      b.querySelector(".bcount").textContent = `${on} / ${cards.length}`;
     }
     paintSelection();
   }
@@ -213,7 +237,7 @@
   const changed = (s, p, ...keys) => keys.some(k => s[k] !== p[k]);
   function onChange(s, p) {
     if (changed(s, p, "last", "name")) renderControls(s);
-    if (s.last.game !== p.last.game || s.last.dex !== p.last.dex) renderGrid(s); // different game or dex: build its cards
+    if (s.last.game !== p.last.game || s.last.dex !== p.last.dex || s.last.layout !== p.last.layout) renderGrid(s); // different game, dex or layout: build its cards
     else {
       if (s.last.shiny !== p.last.shiny) renderSprites(s);                 // same cards, other sprite folder
       if (changed(s, p, "last", "caught", "shiny")) renderMarks(s);        // which cards are lit
@@ -242,6 +266,10 @@
   $("#track").addEventListener("click", e => {                            // Tracking: which list taps, filters and bulk actions use
     const b = e.target.closest("button[data-track]"); if (!b || b.disabled) return;
     Store.set({ last: { ...Store.get().last, shiny: b.dataset.track === "shiny" } });
+  });
+  $("#layout").addEventListener("click", e => {                         // Layout: Grid / PC boxes (saved)
+    const b = e.target.closest("button[data-layout]"); if (!b || b.disabled) return;
+    Store.set({ last: { ...Store.get().last, layout: b.dataset.layout } });
   });
   $("#badges").addEventListener("change", e => Store.set({ last: { ...Store.get().last, badges: e.target.checked } }));
   // Completion rules: off by default. When on, those forms must be caught (normal list) before the Pokédex counts as complete.

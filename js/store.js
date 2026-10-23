@@ -26,7 +26,7 @@
 // Shape (kept identical to the old exports, so existing backup files still import):
 //   { version, name, gender, caught: {gameKey: [n…]}, shiny: {gameKey: [n…]},
 //     forms: { caught: {gameKey: [id…]}, shiny: {gameKey: [id…]} },        (version 2: forms/gender variants, ids from data/forms.json)
-//     last: {game, shiny, dex, cardOpen, badges, require: {gender, alt}} }   (require = completion rules: form categories that must be caught for the dex to count as complete; no migration needed, old saves get the defaults)   (last.shiny = which list is being tracked; last.badges = show the corner badges)
+//     last: {game, shiny, dex, cardOpen, badges, layout ("grid" | "pc": the PC boxes view), require: {gender, alt}} }   (require = completion rules: form categories that must be caught for the dex to count as complete; no migration needed, old saves get the defaults)   (last.shiny = which list is being tracked; last.badges = show the corner badges)
 const Store = (() => {
   const isObj = x => x !== null && typeof x === "object" && !Array.isArray(x);
   const VERSION = 2;
@@ -56,7 +56,7 @@ const Store = (() => {
     return d;
   }
 
-  const blank = () => ({ version: VERSION, name: "", gender: "Boy", caught: {}, shiny: {}, forms: { caught: {}, shiny: {} }, last: { game: "red", shiny: false, dex: "national", cardOpen: false, badges: true, require: { gender: false, alt: false } } });
+  const blank = () => ({ version: VERSION, name: "", gender: "Boy", caught: {}, shiny: {}, forms: { caught: {}, shiny: {} }, last: { game: "red", shiny: false, dex: "national", cardOpen: false, badges: true, layout: "grid", require: { gender: false, alt: false } } });
 
   // Fill in anything missing from saved/imported data so the rest of the app can trust the shape.
   function normalize(data) {
@@ -113,7 +113,7 @@ const Store = (() => {
     };
     const forms = { caught: formLists(d.forms.caught, "caught"), shiny: formLists(d.forms.shiny, "shiny") };
     const rq = isObj(d.last.require) ? d.last.require : {};
-    const last = { ...d.last, require: { gender: rq.gender === true, alt: rq.alt === true } };
+    const last = { ...d.last, layout: d.last.layout === "pc" ? "pc" : "grid", require: { gender: rq.gender === true, alt: rq.alt === true } };
     return { dropped, state: { ...d, name, gender: d.gender === "Girl" ? "Girl" : "Boy", caught, shiny, forms, last } };
   }
 
