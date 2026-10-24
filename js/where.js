@@ -153,19 +153,33 @@ const Where = (() => {
   // Within an area the methods are sorted the same way, and ties fall back to the area name.
   function lines(entries) {
     const areas = new Map();
+    const TNAME = { morning: "Morning", day: "Day", night: "Night" };
     for (const [area0, method, lo, hi, chance, cond] of entries) {
       // PokéAPI files HeartGold / SoulSilver's Latias / Latios under Johto, but they roam Kanto (same fix as in maps.js)
       const area = area0 === "Roaming Johto" && /copycat/i.test(cond || "") ? "Roaming Kanto" : area0;
-      const bits = [label(method), cond, lo ? (lo === hi ? `Lv ${lo}` : `Lv ${lo}–${hi}`) : "", chance && chance < 100 ? `${chance}%` : ""].filter(Boolean);
-      if (!areas.has(area)) areas.set(area, { rows: [], best: 0, times: new Set() });
+      // Split the condition text into time of day (Morning / Day / Night) and everything else (Swarm, Poké Radar, ...).
+      // Rows that differ only by time of day are merged into one line that names the times, e.g. "Morning / Day".
+      const parts = String(cond || "").split(",").map(x => x.trim()).filter(Boolean);
+      const hit = TIMES.filter(t => parts.some(p => p.toLowerCase() === t));
+      const other = parts.filter(p => !TIMES.includes(p.toLowerCase())).join(", ");
+      const times = hit.length ? hit : TIMES;                      // a row with no time condition applies all day
+      if (!areas.has(area)) areas.set(area, { rows: new Map(), best: 0, times: new Set() });
       const a = areas.get(area);
-      const cl = String(cond || "").toLowerCase(), hit = TIMES.filter(t => cl.includes(t));
-      (hit.length ? hit : TIMES).forEach(t => a.times.add(t));   // a row with no time condition applies all day
-      a.rows.push({ text: bits.join(" · "), chance: chance || 0 });
+      times.forEach(t => a.times.add(t));
+      const key = [method, other, lo, hi, chance || 0].join("|");
+      let r = a.rows.get(key);
+      if (!r) a.rows.set(key, r = { method, other, lo, hi, chance: chance || 0, times: new Set() });
+      times.forEach(t => r.times.add(t));
       a.best = Math.max(a.best, chance || 0);
     }
+    const rowText = r => {
+      const tl = TIMES.filter(t => r.times.has(t));
+      const when = tl.length < TIMES.length ? tl.map(t => TNAME[t]).join(" / ") : "";   // all three = all day, nothing to say
+      return [label(r.method), when, r.other, r.lo ? (r.lo === r.hi ? `Lv ${r.lo}` : `Lv ${r.lo}–${r.hi}`) : "", r.chance && r.chance < 100 ? `${r.chance}%` : ""].filter(Boolean).join(" · ");
+    };
     return [...areas]
-      .map(([area, a]) => ({ area, best: a.best, times: TIMES.filter(t => a.times.has(t)), how: a.rows.sort((x, y) => y.chance - x.chance).map(r => r.text).join("; ") }))
+      .map(([area, a]) => ({ area, best: a.best, times: TIMES.filter(t => a.times.has(t)),
+        how: [...a.rows.values()].sort((x, y) => y.chance - x.chance).map(rowText).join("; ") }))
       .sort((x, y) => y.best - x.best || x.area.localeCompare(y.area, undefined, { numeric: true }));
   }
 
