@@ -243,6 +243,22 @@ const Maps = (() => {
     return w.join(" ");
   }
 
+  // Segments: "Sinnoh Route 212 North" -> { base: "Sinnoh Route 212", seg: "North" } (compass words kept, floors / "towards" dropped)
+  const COMPASS = new Set(["north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest"]);
+  function segment(area) {
+    const parts = String(area).split(/\s+towards\s+/i), w = parts[0].trim().split(/\s+/), seg = [];
+    while (w.length > 1 && FLOOR.test(w[w.length - 1])) w.pop();
+    while (w.length > 1 && COMPASS.has(w[w.length - 1].toLowerCase())) seg.unshift(w.pop());
+    const to = parts[1] ? "towards " + parts[1].trim() : "";           // "Route 205 South towards Floaroma Town"
+    return { base: placeKey(w.join(" ")), seg: [seg.join(" "), to].filter(Boolean).join(" ") };
+  }
+  // Is this exact area name (e.g. "Sinnoh Route 212 North") drawn on any map of these games? false = only its parent route is.
+  function exact(keys, area) {
+    if (!data) return true;
+    for (const key of keys) for (const id of data.games[key] || []) if (tableOf(id)[area]) return true;
+    return false;
+  }
+
   function init(d) {
     data = d && typeof d === "object" && d.maps && d.games ? d : null;
     if (typeof document !== "undefined" && !document.getElementById("maps-time-css")) {   // styles for the bug icon, time buttons and map tabs
@@ -516,5 +532,5 @@ const Maps = (() => {
     return out;
   }
 
-  return { init, html, placeKey, kindOf, at, drop, locate };
+  return { init, html, placeKey, segment, exact, kindOf, at, drop, locate };
 })();

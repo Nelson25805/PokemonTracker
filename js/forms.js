@@ -18,6 +18,21 @@ const Forms = (() => {
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const have = (state, kind, key) => new Set(((state.forms || {})[kind] || {})[key] || []);
 
+  // data/form-areas.json: which form shows up in which area (and segment). rules: [{ n, g: [game keys], area, form: "base" | form id }]
+  let fa = [];
+  const setAreas = d => { fa = d && Array.isArray(d.rules) ? d.rules : []; };
+  const formName = (n, id) => {
+    const sp = data && data.species[n]; if (!sp) return id;
+    if (id === "base") return sp.base;
+    const f = (sp.forms || []).find(x => x.id === id); return f ? f.name : id;
+  };
+  // Form names that apply to Pokémon n in this area for these games (used by the "Where to find" list).
+  const areasFor = (n, keys, area, base) => [...new Set(fa.filter(r => r.n === n && r.g.some(k => keys.includes(k)) && (r.area === area || r.area === base)).map(r => formName(n, r.form)))];
+  const areaHtml = a => {
+    const s = typeof Maps !== "undefined" ? Maps.segment(a) : { base: a, seg: "" };
+    return esc(s.base) + (s.seg ? ` <mark class="segtag">${esc(s.seg)}</mark>` : "");
+  };
+
   function init(d) { data = d && typeof d === "object" && d.species ? d : null; cache.clear(); }
 
   function forGame(g) {
@@ -77,22 +92,23 @@ const Forms = (() => {
     const dir = `assets/sprites/${g.sprites}`;
     const fc = have(state, "caught", g.key), fs = have(state, "shiny", g.key);
     const mc = new Set(state.caught[g.key] || []), ms = new Set(state.shiny[g.key] || []);
-    const row = (label, sub, id, src, ssrc, c, s) => {
+    const whereOf = fid => { const r = fa.filter(x => x.n === n && x.form === fid && x.g.includes(g.key)); return r.length ? `<small class="fwhere">Found in: ${r.map(x => areaHtml(x.area)).join(", ")}</small>` : ""; };
+    const row = (label, sub, id, src, ssrc, c, s, wh = "") => {
       const pair = `<img alt="" loading="lazy" src="${src}">` + (g.shiny ? `<img alt="" loading="lazy" src="${ssrc}">` : "");
       const btn = (kind, glyph, word, on) =>
         `<button type="button" class="ftog" data-kind="${kind}" data-id="${esc(id)}" aria-pressed="${on}" aria-label="${word}: ${esc(label)}">${glyph} ${word}</button>`;
-      return `<li class="frow"><span class="pair">${pair}</span><span class="fname">${esc(label)}${sub ? `<small>${esc(sub)}</small>` : ""}</span>` +
+      return `<li class="frow"><span class="pair">${pair}</span><span class="fname">${esc(label)}${sub ? `<small>${esc(sub)}</small>` : ""}${wh}</span>` +
         `<span class="ftogs">${btn("caught", "✓", "Normal", c)}${g.shiny ? btn("shiny", "★", "Shiny", s) : ""}</span></li>`;
     };
-    let out = `<ul class="flist">${row(sp.base, "base form, same as the main grid", "", `${dir}/${n}.png`, `${dir}/shiny/${n}.png`, mc.has(n), ms.has(n))}</ul>`;
+    let out = `<ul class="flist">${row(sp.base, "base form, same as the main grid", "", `${dir}/${n}.png`, `${dir}/shiny/${n}.png`, mc.has(n), ms.has(n), whereOf("base"))}</ul>`;
     for (const [cat, title] of CATS) {
       const list = sp.forms.filter(f => f.cat === cat);
       if (!list.length) continue;
       out += `<h3>${esc(title)}</h3><ul class="flist">` + list.map(f =>
-        row(f.name, "", f.id, `${dir}/forms/${f.id}.png`, `${dir}/shiny/forms/${f.id}.png`, fc.has(f.id), fs.has(f.id))).join("") + "</ul>";
+        row(f.name, "", f.id, `${dir}/forms/${f.id}.png`, `${dir}/shiny/forms/${f.id}.png`, fc.has(f.id), fs.has(f.id), whereOf(f.id))).join("") + "</ul>";
     }
     return out;
   }
 
-  return { init, ready: () => !!data, data: () => data, forGame, counts, speciesCounts, catTotals, missing, html };
+  return { init, setAreas, areasFor, ready: () => !!data, data: () => data, forGame, counts, speciesCounts, catTotals, missing, html };
 })();

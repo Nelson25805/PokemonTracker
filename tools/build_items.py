@@ -37,7 +37,7 @@ ITEMS = {
     "Reaper Cloth": ("Reaper_Cloth", 4), "Dubious Disc": ("Dubious_Disc", 4),
 }
 
-import gamesconfig
+import tools.gamesconfig as gamesconfig
 
 _CFG = gamesconfig.load()                       # data/games.config.json: the single source of truth for games
 # Bulbapedia link title -> this project's game keys (games that share a title are one group)

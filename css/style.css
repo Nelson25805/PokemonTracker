@@ -368,3 +368,14 @@ body.selecting .chip{display:none}
 @media (min-width:760px){.pcbox .boxgrid{grid-template-columns:repeat(var(--cols),minmax(0,1fr))}}
 .cell.empty::before{content:"";flex:1;min-height:150px;border:2px dashed var(--line);opacity:.3}
 .pcbox.filtering .cell.empty{display:none}
+/* location segments (North / South / East / West) and form badges (js/where.js, js/forms.js) */
+.segtag,.formtag{display:inline-block;padding:0 6px;margin-left:2px;font:600 11px/1.6 system-ui,sans-serif;border:2px solid var(--line);vertical-align:middle;white-space:nowrap}
+.segtag{background:var(--ink);color:var(--bg)}
+.segtag.approx{background:var(--card);color:var(--ink);border-style:dashed}
+.formtag{background:var(--hi);color:var(--on-hi)}
+.segnote{display:block;font-weight:400;font-size:11px;opacity:.8}
+.fwhere{font-weight:400;font-size:12px;opacity:.9}
+
+/* form badges that match their sprites (any theme, light or dark): Shellos / Gastrodon West Sea = pink, East Sea = blue */
+.formtag[data-form=west-sea]{background:#f6b3d0;color:#4a1230;border-color:#c9658f}
+.formtag[data-form=east-sea]{background:#9fd0f2;color:#0c2e4d;border-color:#4f8fc4}

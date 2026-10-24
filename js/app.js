@@ -26,6 +26,7 @@
   // Regional Pokédex lists (built by build_regional.py). Optional: without the file the Dex dropdown stays disabled.
   regional = await fetch("data/regional.json").then(r => (r.ok ? r.json() : null)).then(d => d && d.dex).catch(() => null);
   Forms.init(await fetch("data/forms.json").then(r => (r.ok ? r.json() : null)).catch(() => null));   // optional: without it there are no chips
+  Forms.setAreas(await fetch("data/form-areas.json").then(r => (r.ok ? r.json() : null)).catch(() => null));   // optional: which form lives where
   Where.init({ games, mons });
 
   // ---- selectors: everything the view needs is derived from state ----

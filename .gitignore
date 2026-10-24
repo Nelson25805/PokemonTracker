@@ -2,3 +2,4 @@ my-progress.json
 RELEASING.md
 .cache/ 
 extrafiles/
+__pycache__/

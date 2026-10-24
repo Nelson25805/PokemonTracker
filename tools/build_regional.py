@@ -10,7 +10,7 @@ Shares the .cache/pokeapi cache with build_locations.py.
 import json, os, re, time, urllib.request
 
 API = "https://pokeapi.co/api/v2"
-import gamesconfig
+import tools.gamesconfig as gamesconfig
 _CFG = gamesconfig.load()                       # data/games.config.json: the single source of truth for games
 MAX = gamesconfig.max_pokemon(_CFG)
 DEXES = gamesconfig.dexes(_CFG)

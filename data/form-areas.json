@@ -1,0 +1,225 @@
+{
+ "version": 1,
+ "_help": "Which form of a Pokémon appears in which area. 'area' is a location name exactly as in locations.json (e.g. \"Sinnoh Route 212 North\"), or a whole route (\"Sinnoh Route 212\") to cover all its segments. 'form' is \"base\" or a form id from forms.json (e.g. \"422-east\"). 'g' = game keys. Check it with: python3 check_form_areas.py",
+ "rules": [
+  {
+   "n": 422,
+   "g": [
+    "platinum"
+   ],
+   "area": "Canalave City",
+   "form": "base",
+   "auto": true
+  },
+  {
+   "n": 422,
+   "g": [
+    "diamond",
+    "pearl",
+    "platinum"
+   ],
+   "area": "Fuego Ironworks",
+   "form": "base",
+   "auto": true
+  },
+  {
+   "n": 422,
+   "g": [
+    "platinum"
+   ],
+   "area": "Pastoria City",
+   "form": "422-east",
+   "auto": true
+  },
+  {
+   "n": 422,
+   "g": [
+    "diamond",
+    "pearl",
+    "platinum"
+   ],
+   "area": "Sinnoh Route 205",
+   "form": "base",
+   "auto": true
+  },
+  {
+   "n": 422,
+   "g": [
+    "platinum"
+   ],
+   "area": "Sinnoh Route 212",
+   "form": "422-east",
+   "auto": true
+  },
+  {
+   "n": 422,
+   "g": [
+    "diamond",
+    "pearl",
+    "platinum"
+   ],
+   "area": "Sinnoh Route 213",
+   "form": "422-east",
+   "auto": true
+  },
+  {
+   "n": 422,
+   "g": [
+    "diamond",
+    "pearl",
+    "platinum"
+   ],
+   "area": "Sinnoh Route 218",
+   "form": "base",
+   "auto": true
+  },
+  {
+   "n": 422,
+   "g": [
+    "diamond",
+    "pearl"
+   ],
+   "area": "Sinnoh Route 221",
+   "form": "base",
+   "auto": true
+  },
+  {
+   "n": 422,
+   "g": [
+    "diamond",
+    "pearl"
+   ],
+   "area": "Sinnoh Route 224",
+   "form": "422-east",
+   "auto": true
+  },
+  {
+   "n": 422,
+   "g": [
+    "diamond",
+    "pearl",
+    "platinum"
+   ],
+   "area": "Valley Windworks",
+   "form": "base",
+   "auto": true
+  },
+  {
+   "n": 423,
+   "g": [
+    "platinum"
+   ],
+   "area": "Canalave City",
+   "form": "base",
+   "auto": true
+  },
+  {
+   "n": 423,
+   "g": [
+    "diamond",
+    "pearl",
+    "platinum"
+   ],
+   "area": "Fuego Ironworks",
+   "form": "base",
+   "auto": true
+  },
+  {
+   "n": 423,
+   "g": [
+    "platinum"
+   ],
+   "area": "Pastoria City",
+   "form": "423-east",
+   "auto": true
+  },
+  {
+   "n": 423,
+   "g": [
+    "platinum"
+   ],
+   "area": "Sinnoh Route 205",
+   "form": "base",
+   "auto": true
+  },
+  {
+   "n": 423,
+   "g": [
+    "platinum"
+   ],
+   "area": "Sinnoh Route 212",
+   "form": "423-east",
+   "auto": true
+  },
+  {
+   "n": 423,
+   "g": [
+    "platinum"
+   ],
+   "area": "Sinnoh Route 213",
+   "form": "423-east",
+   "auto": true
+  },
+  {
+   "n": 423,
+   "g": [
+    "diamond",
+    "pearl",
+    "platinum"
+   ],
+   "area": "Sinnoh Route 218",
+   "form": "base",
+   "auto": true
+  },
+  {
+   "n": 423,
+   "g": [
+    "diamond",
+    "pearl"
+   ],
+   "area": "Sinnoh Route 221",
+   "form": "base",
+   "auto": true
+  },
+  {
+   "n": 423,
+   "g": [
+    "diamond",
+    "pearl"
+   ],
+   "area": "Sinnoh Route 222",
+   "form": "423-east",
+   "auto": true
+  },
+  {
+   "n": 423,
+   "g": [
+    "diamond",
+    "pearl",
+    "platinum"
+   ],
+   "area": "Sinnoh Route 224",
+   "form": "423-east",
+   "auto": true
+  },
+  {
+   "n": 423,
+   "g": [
+    "diamond",
+    "pearl"
+   ],
+   "area": "Sinnoh Sea Route 230",
+   "form": "423-east",
+   "auto": true
+  },
+  {
+   "n": 423,
+   "g": [
+    "platinum"
+   ],
+   "area": "Valley Windworks",
+   "form": "base",
+   "auto": true
+  }
+ ]
+}

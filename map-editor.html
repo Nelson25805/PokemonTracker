@@ -61,6 +61,7 @@ If the map image isn't in <code>assets/maps/</code> yet, use <b>Preview image…
   <button id="img">Preview image…</button><input type="file" id="imgfile" accept="image/*" hidden>
   <button id="undo">Undo last box</button>
   <button id="clear">Clear this location</button>
+  <button id="seed" title="For a segment like Route 212 North: start from the whole route's boxes, then Alt+click the parts that belong to the other segment">Copy parent route boxes</button>
   <button id="save">Download maps.json</button>
 </div>
 <div id="msg" aria-live="polite"></div>
@@ -90,7 +91,7 @@ function placesFor(id) {
   if (cache[id]) return cache[id];
   const set = new Set();
   for (const [g, ids] of Object.entries(db.games)) if (ids.includes(id))
-    for (const list of Object.values(loc.loc[g] || {})) for (const e of list) set.add(Maps.placeKey(e[0]));
+    for (const list of Object.values(loc.loc[g] || {})) for (const e of list) { set.add(Maps.placeKey(e[0])); const s = Maps.segment(e[0]); if (s.seg) set.add(e[0]); }   // segments (North / South...) get their own entry
   return (cache[id] = [...set].sort((a, b) => a.localeCompare(b, undefined, { numeric: true })));
 }
 
@@ -313,6 +314,13 @@ $("#undo").onclick = () => {
   const l = boxes(mapId, place).slice(0, -1);
   if (l.length) db.areas[mapId][place] = l; else if (db.areas[mapId]) delete db.areas[mapId][place];
   persist(); renderBoxes(); renderList(); clearHover();
+};
+$("#seed").onclick = () => {
+  if (!place) return;
+  const p = Maps.segment(place).base, src = p !== place ? boxes(mapId, p) : [];
+  if (!src.length) { $("#msg").textContent = "Select a segment (e.g. Route 212 North) whose whole route is already drawn."; return; }
+  if (boxes(mapId, place).length && !confirm("Replace this segment's boxes?")) return;
+  db.areas[mapId][place] = src.map(b => b.slice()); persist(); renderBoxes(); renderList();
 };
 $("#clear").onclick = () => { if (place && db.areas[mapId]) { delete db.areas[mapId][place]; persist(); renderBoxes(); renderList(); clearHover(); } };
 const gridChanged = () => { const m = map(); m.editGrid = num("#grid"); m.editOx = num("#ox"); m.editOy = num("#oy"); persist(); drawGrid(); };

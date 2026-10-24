@@ -32,7 +32,7 @@ import urllib.error
 import urllib.request
 
 API = "https://pokeapi.co/api/v2"
-import gamesconfig
+import tools.gamesconfig as gamesconfig
 
 _CFG = gamesconfig.load()                       # data/games.config.json: the single source of truth for games
 MAX_POKEMON = gamesconfig.max_pokemon(_CFG)

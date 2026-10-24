@@ -177,10 +177,40 @@ const Where = (() => {
       const when = tl.length < TIMES.length ? tl.map(t => TNAME[t]).join(" / ") : "";   // all three = all day, nothing to say
       return [label(r.method), when, r.other, r.lo ? (r.lo === r.hi ? `Lv ${r.lo}` : `Lv ${r.lo}–${r.hi}`) : "", r.chance && r.chance < 100 ? `${r.chance}%` : ""].filter(Boolean).join(" · ");
     };
-    return [...areas]
-      .map(([area, a]) => ({ area, best: a.best, times: TIMES.filter(t => a.times.has(t)),
-        how: [...a.rows.values()].sort((x, y) => y.chance - x.chance).map(rowText).join("; ") }))
-      .sort((x, y) => y.best - x.best || x.area.localeCompare(y.area, undefined, { numeric: true }));
+    const rows = [...areas].map(([area, a]) => {
+      const s = typeof Maps !== "undefined" ? Maps.segment(area) : { base: area, seg: "" };
+      return { area, base: s.base, seg: s.seg, best: a.best, times: TIMES.filter(t => a.times.has(t)),
+        how: [...a.rows.values()].sort((x, y) => y.chance - x.chance).map(rowText).join("; ") };
+    });
+    const top = new Map();                                      // North / South of one route stay together, ranked by the better one
+    rows.forEach(r => top.set(r.base, Math.max(top.get(r.base) || 0, r.best)));
+    return rows.sort((x, y) => top.get(y.base) - top.get(x.base) || x.base.localeCompare(y.base, undefined, { numeric: true }) || x.seg.localeCompare(y.seg));
+  }
+
+  // Which segments (North, South, East...) exist for each place in a game, from the location data itself.
+  const segCache = {};
+  function segIndex(key) {
+    if (segCache[key]) return segCache[key];
+    const m = new Map();
+    for (const rows of Object.values((data && data.loc[key]) || {})) for (const r of rows) {
+      const s = Maps.segment(r[0]); if (!s.seg) continue;
+      if (!m.has(s.base)) m.set(s.base, new Set());
+      m.get(s.base).add(s.seg);
+    }
+    return (segCache[key] = m);
+  }
+  // Location name + segment badge ("North only", "not in South") + form badges ("East Sea").
+  function nameHtml(l, keys, mine, n) {
+    let out = esc(l.seg ? l.base : l.area);
+    if (l.seg) {
+      const all = new Set(); keys.forEach(k => (segIndex(k).get(l.base) || []).forEach(s => all.add(s)));
+      const have = mine[l.base], rest = [...all].filter(s => !have.has(s)), only = rest.length > 0;
+      const drawn = Maps.exact(keys, l.area);
+      out += ` <mark class="segtag${drawn ? "" : " approx"}" title="${drawn ? "Only this part of the route." : "This part isn't drawn on the map yet, so Show on map outlines the whole route."}">${esc(l.seg)}${only ? " only" : ""}</mark>`;
+      if (only) out += `<small class="segnote">not in ${esc(rest.join(" / "))}</small>`;
+    }
+    const forms = typeof Forms !== "undefined" ? Forms.areasFor(n, keys, l.area, l.base) : [];
+    return out + forms.map(f => ` <mark class="formtag" data-form="${esc(f.toLowerCase().replace(/[^a-z0-9]+/g, "-"))}" title="Form found here">${esc(f)}</mark>`).join("");
   }
 
   // "How roaming works": shown under the map for a Pokémon with roaming rows (Gen 2 onwards). Roamers have no fixed spot, so
@@ -217,11 +247,13 @@ const Where = (() => {
     }
     return groups.map(g => {
       const keys = g.games.map(x => x.key);
-      const rows = lines(g.entries).map(l => {
+      const ls = lines(g.entries), mine = {};
+      ls.forEach(l => { if (l.seg) (mine[l.base] = mine[l.base] || new Set()).add(l.seg); });
+      const rows = ls.map(l => {
         // "Show on map" button: only when this location has a box on one of the maps shown for this group
         const ok = typeof Maps !== "undefined" && Maps.locate(keys, l.area).length;
         const btn = ok ? `<button type="button" class="locbtn" data-area="${esc(l.area)}" data-keys="${esc(keys.join(","))}" data-times="${l.times.join(" ")}" aria-pressed="false" aria-label="Outline ${esc(l.area)} on the map">Show on map</button>` : "";
-        return `<li><strong>${esc(l.area)}</strong><span>${esc(l.how)}</span>${btn}</li>`;
+        return `<li><strong>${nameHtml(l, keys, mine, n)}</strong><span>${esc(l.how)}</span>${btn}</li>`;
       });
       if (g.evolve) rows.unshift(...evoRows(g.evolve));
       const open = g.games.some(x => x.key === game.key) || rows.length <= 6;
