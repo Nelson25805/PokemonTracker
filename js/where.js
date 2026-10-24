@@ -10,16 +10,25 @@
 // leaves out methods that don't exist in the games being shown, and lists where to get any item it needs
 // (data/items.json, optional; items it doesn't know link to Bulbapedia).
 //
+// Honey trees (Diamond / Pearl / Platinum): data/honey.json (optional) lists what a slathered honey tree can attract and where
+// the trees are. At load time its encounters are added to the location data as ONE "Honey Trees" row (the per-route
+// "Honey tree" rows that PokéAPI has in locations.json are folded into it, so honey trees are listed in one place only),
+// Maps.addHoney() puts the 21 trees on the map (one small flashing square each), and the row gets a short help text plus
+// a list of every tree with a "Show on map" button each.
+//
 // Location data lives in data/locations.json (built by build_locations.py) and is fetched the first
 // time the panel opens, so it costs nothing until someone asks.
 const Where = (() => {
   const $ = s => document.querySelector(s);
-  let games = [], mons = [], byKey = {}, data = null, loading = null;
+  let games = [], mons = [], byKey = {}, data = null, loading = null, honey = null;
+
+  const HONEY = "Honey Trees", HONEY_PRE = "Honey Tree: ";     // same names as in maps.js
 
   const METHODS = {
     walk: "Grass / cave / land", surf: "Surfing", "old-rod": "Old Rod", "good-rod": "Good Rod", "super-rod": "Super Rod",
     "rock-smash": "Rock Smash", headbutt: "Headbutt", gift: "Gift", "gift-egg": "Gift (Egg)", "only-one": "Static (one-time)",
     pokeflute: "Poké Flute", "bug-catching-contest": "Bug-Catching Contest", "roaming-grass": "Roaming (grass / land)", "roaming-water": "Roaming (surfing)",
+    "honey-tree": "Honey tree",
   };
   const TIMES = ["morning", "day", "night"];
   const prettify = s => s.replace(/-/g, " ").replace(/^./, c => c.toUpperCase());
@@ -237,6 +246,47 @@ const Where = (() => {
     return `<p class="roamhow"><strong>How roaming works</strong><br>${body}</p>`;
   }
 
+  // ---- honey trees ----
+  // Builds ONE "Honey Trees" row per Pokémon a honey tree can attract, in the same shape as the rows of locations.json:
+  // [area, method, lo, hi, chance, cond]. Done once, when the data loads.
+  //  1. PokéAPI lists a honey-tree row for every route a tree stands on ("Honey tree group c" on Route 205, 206, ...), which
+  //     put 20-odd near-identical rows (and 37 flashing places) on the map. Those rows are removed for the honey games.
+  //  2. The rows from honey.json are added instead (exact rates, 21 exact trees).
+  //  3. A Pokémon PokéAPI knows about but honey.json doesn't (yet) still gets a single "Honey Trees" row, so nothing is lost.
+  function mergeHoney(d, h) {
+    if (!d || !h || !Array.isArray(h.encounters)) return;
+    d.loc = d.loc || {};
+    const isHoney = r => r && r[1] === "honey-tree" && r[0] !== HONEY;
+    const covered = new Set();                                           // "game|n" pairs honey.json describes itself
+    for (const e of h.encounters) for (const g of e.g || []) covered.add(g + "|" + e.n);
+    for (const g of h.games || []) {
+      const byMon = d.loc[g]; if (!byMon) continue;
+      for (const n of Object.keys(byMon)) {
+        const rows = byMon[n], old = rows.filter(isHoney);
+        if (!old.length) continue;
+        byMon[n] = rows.filter(r => !isHoney(r));
+        if (!covered.has(g + "|" + n)) {                                 // keep one row, with the widest level range seen
+          const lo = Math.min(...old.map(r => r[2] || 99)), hi = Math.max(...old.map(r => r[3] || 0));
+          byMon[n].push([HONEY, "honey-tree", lo === 99 ? 0 : lo, hi, 0, ""]);
+        }
+      }
+    }
+    for (const e of h.encounters) for (const g of e.g || []) {
+      const byMon = (d.loc[g] = d.loc[g] || {});
+      (byMon[e.n] = byMon[e.n] || []).push([HONEY, "honey-tree", e.lo || 0, e.hi || 0, e.chance || 0, ""]);
+    }
+  }
+  // The help under a "Honey Trees" row: how honey trees work, a note for this Pokémon, and every tree with its own button.
+  function honeyHtml(keys, n) {
+    if (!honey || !Array.isArray(honey.spots)) return "";
+    const spots = honey.spots.filter(s => typeof Maps !== "undefined" && Maps.locate(keys, HONEY_PRE + s.name).length);
+    const note = honey.notes && honey.notes[n] ? `<p>${esc(honey.notes[n])}</p>` : "";
+    const list = spots.map((s, i) => `<li><strong>${i + 1}. ${esc(s.name)}</strong><span>${esc(s.desc || "")}</span>` +
+      `<button type="button" class="locbtn" data-area="${esc(HONEY_PRE + s.name)}" data-keys="${esc(keys.join(","))}" data-times="" aria-pressed="false" aria-label="Outline the ${esc(s.name)} honey tree on the map">Show on map</button></li>`).join("");
+    return `<div class="honeyinfo">${honey.intro ? `<p>${esc(honey.intro)}</p>` : ""}${note}` +
+      (list ? `<details class="honeydet" open><summary>All ${spots.length} honey trees</summary><ul>${list}</ul></details>` : "") + `</div>`;
+  }
+
   const nameOf = n => (mons.find(m => m.n === n) || { name: `#${n}` }).name;
 
   function render(game, n, groups) {
@@ -253,7 +303,8 @@ const Where = (() => {
         // "Show on map" button: only when this location has a box on one of the maps shown for this group
         const ok = typeof Maps !== "undefined" && Maps.locate(keys, l.area).length;
         const btn = ok ? `<button type="button" class="locbtn" data-area="${esc(l.area)}" data-keys="${esc(keys.join(","))}" data-times="${l.times.join(" ")}" aria-pressed="false" aria-label="Outline ${esc(l.area)} on the map">Show on map</button>` : "";
-        return `<li><strong>${nameHtml(l, keys, mine, n)}</strong><span>${esc(l.how)}</span>${btn}</li>`;
+        const extra = l.area === HONEY && honey ? honeyHtml(keys, n) : "";
+        return `<li><strong>${nameHtml(l, keys, mine, n)}</strong><span>${esc(l.how)}</span>${btn}${extra}</li>`;
       });
       if (g.evolve) rows.unshift(...evoRows(g.evolve));
       const open = g.games.some(x => x.key === game.key) || rows.length <= 6;
@@ -266,12 +317,16 @@ const Where = (() => {
   function load() {
     if (data) return Promise.resolve(data);
     const get = f => fetch(`data/${f}.json`).then(r => (r.ok ? r.json() : null)).catch(() => null);
-    return (loading = loading || Promise.all([get("locations"), get("items"), get("maps")])
-      .then(([d, items, maps]) => {
+    return (loading = loading || Promise.all([get("locations"), get("items"), get("maps"), get("honey")])
+      .then(([d, items, maps, hon]) => {
         loading = null;
-        if (typeof Maps !== "undefined") Maps.init(maps);                                  // maps.json is optional too
+        if (typeof Maps !== "undefined") {
+          Maps.init(maps);                                                         // maps.json is optional too
+          if (hon) Maps.addHoney(hon);                                             // honey.json is optional: puts the trees on the map
+        }
+        if (d && hon) { mergeHoney(d, hon); honey = hon; }
         return (data = d && { ...d, items });
-      }));   // items.json is optional; a failed load can be retried next time
+      }));   // items.json and honey.json are optional; a failed load can be retried next time
   }
 
   async function open(game, n) {
@@ -340,7 +395,7 @@ const Where = (() => {
       wb.querySelectorAll(".locbtn").forEach(b => { b.setAttribute("aria-pressed", "false"); b.textContent = "Show on map"; });
     };
     const showPin = btn => {
-      const det = btn.closest("details"); if (det) det.open = true;
+      const det = btn.closest("details:not(.honeydet)"); if (det) det.open = true;   // the honey tree list is a details inside the game's details
       const scope = det || wb, q = id => CSS.escape(id);
       const hit = Maps.locate(btn.dataset.keys.split(","), btn.dataset.area)
         .find(h => scope.querySelector(`figure.amap[data-map="${q(h.id)}"]`));
@@ -349,7 +404,8 @@ const Where = (() => {
       const tab = scope.querySelector(`.amaptab[data-map="${q(hit.id)}"]`);    // several maps: switch to the right tab
       if (tab && tab.getAttribute("aria-selected") !== "true") tab.click();
       const times = btn.dataset.times ? btn.dataset.times.split(" ") : [];
-      const boxes = hit.boxes.map(([x, y, w, h]) => `<i style="left:${pc(x / hit.w)};top:${pc(y / hit.h)};width:${pc(w / hit.w)};height:${pc(h / hit.h)}"></i>`).join("");
+      const tree = btn.dataset.area.startsWith(Maps.honeyPrefix) || btn.dataset.area === Maps.honeyAll, g = tree ? 2 : 0;   // a honey tree: red outline a little outside the icon
+      const boxes = hit.boxes.map(([x, y, w, h]) => `<i${tree ? ' class="tree"' : ""} style="left:${pc((x - g) / hit.w)};top:${pc((y - g) / hit.h)};width:${pc((w + 2 * g) / hit.w)};height:${pc((h + 2 * g) / hit.h)}"></i>`).join("");
       for (const f of figs) {
         // time of day: only when the entry applies to some times and not others, and the filter doesn't already match
         if (times.length && times.length < 3 && f.querySelector(".tfilter")) {

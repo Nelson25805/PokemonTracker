@@ -37,6 +37,9 @@
   /* hover outline + name tooltip: same look as the site's "Where to find" map (.amaphl / .amaptip in style.css) */
   #hl{z-index:1}
   #tip{line-height:1.3}
+  /* honey tree icons (Sinnoh) */
+  #ov i.ico{border:0 !important;background-color:transparent !important;background-repeat:no-repeat;background-size:100% 100%;image-rendering:pixelated}
+  #list li.tree{font-weight:600}
 </style>
 </head>
 <body>
@@ -50,6 +53,10 @@ or enter the real tile size (decimals are fine, Sinnoh is about 7.2) and use <b>
 <b>Hover</b> to see the location under the pointer; <b>Shift + click</b> selects a marked location without drawing;
 <b>Alt + click</b> deletes the box of the selected location under the pointer; <b>arrow keys</b> nudge the whole selected location by 1 px (hold Shift for 5 px).
 If the map image isn't in <code>assets/maps/</code> yet, use <b>Preview image…</b>.</p>
+<p class="help"><b>Honey trees (Sinnoh map).</b> The 🌳 entries at the top of the list are the trees from <code>data/honey.json</code>. Select one, then
+<b>click</b> the map to put its icon there (the old position is replaced), or drag a box. <b>Arrow keys</b> nudge it, <b>Alt + click</b> or <b>Clear this location</b>
+removes its position, <b>Add honey tree</b> creates a new one and <b>Delete honey tree</b> removes it completely. Press <b>Download honey.json</b> and put the file in <code>data/</code>
+(separate from maps.json). The order of the list is the order shown on the site.</p>
 <div class="toolbar">
   <label>Map <select id="map"></select></label>
   <label>Grid (image px per tile, 0 = free) <input id="grid" type="number" min="0" max="64" step="any" value="0" style="width:5em"></label>
@@ -63,6 +70,9 @@ If the map image isn't in <code>assets/maps/</code> yet, use <b>Preview image…
   <button id="clear">Clear this location</button>
   <button id="seed" title="For a segment like Route 212 North: start from the whole route's boxes, then Alt+click the parts that belong to the other segment">Copy parent route boxes</button>
   <button id="save">Download maps.json</button>
+  <button id="addtree" title="Sinnoh map only">Add honey tree</button>
+  <button id="deltree">Delete honey tree</button>
+  <button id="savehoney">Download honey.json</button>
 </div>
 <div id="msg" aria-live="polite"></div>
 <div class="cols">
@@ -78,9 +88,25 @@ If the map image isn't in <code>assets/maps/</code> yet, use <b>Preview image…
 "use strict";
 const $ = s => document.querySelector(s);
 const DRAFT = "pokedexTracker.mapDraft";
-let db, loc, mapId, place = null, drag = null, cache = {}, hoverNames = new Set();
+const HDRAFT = "pokedexTracker.honeyDraft";
+let db, loc, honey = null, mapId, place = null, drag = null, cache = {}, hoverNames = new Set();
 
-const boxes = (id, p) => ((db.areas[id] || {})[p]) || [];
+const HP = Maps.honeyPrefix;                                   // "Honey Tree: "
+const isTree = (id, p) => !!honey && honey.map === id && String(p).startsWith(HP);
+const spotOf = p => honey && (honey.spots || []).find(s => HP + s.name === p);
+// Boxes of a place. Honey trees live in honey.json (spot.boxes), everything else in maps.json (db.areas).
+const boxes = (id, p) => isTree(id, p) ? ((spotOf(p) || {}).boxes || []) : (((db.areas[id] || {})[p]) || []);
+function setBoxes(id, p, list) {
+  if (isTree(id, p)) { const s = spotOf(p); if (s) s.boxes = list; return; }
+  const t = (db.areas[id] = db.areas[id] || {});
+  if (list.length) t[p] = list; else delete t[p];
+}
+// Every [place, boxes] drawn on a map, honey trees included.
+function areaEntries(id) {
+  const out = Object.entries(db.areas[id] || {});
+  if (honey && honey.map === id) for (const s of honey.spots || []) if ((s.boxes || []).length) out.push([HP + s.name, s.boxes]);
+  return out;
+}
 const map = () => db.maps[mapId];
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const pc = v => (v * 100).toFixed(3) + "%";
@@ -95,21 +121,24 @@ function placesFor(id) {
   return (cache[id] = [...set].sort((a, b) => a.localeCompare(b, undefined, { numeric: true })));
 }
 
-function persist() { try { localStorage.setItem(DRAFT, JSON.stringify(db)); } catch {} }
+function persist() { try { localStorage.setItem(DRAFT, JSON.stringify(db)); if (honey) localStorage.setItem(HDRAFT, JSON.stringify(honey)); } catch {} }
 
 function renderList() {
   const q = $("#q").value.trim().toLowerCase(), todo = $("#todo").checked, ul = $("#list");
   ul.textContent = "";
-  let done = 0;
+  let done = 0, tdone = 0;
   const all = placesFor(mapId);
   // Names saved in maps.json that no location in locations.json produces. The site never looks them up, but they still draw
   // on the hover highlight, so list them (marked "unused") to let you move or delete them.
   const extra = Object.keys(db.areas[mapId] || {}).filter(p => !all.includes(p)).sort();
-  for (const p of [...all, ...extra]) {
-    const stale = !all.includes(p), d = boxes(mapId, p).length > 0; if (d && !stale) done++;
+  const trees = honey && honey.map === mapId ? (honey.spots || []).map(s => HP + s.name) : [];
+  for (const p of [...trees, ...all, ...extra]) {
+    const tree = trees.includes(p), stale = !tree && !all.includes(p), d = boxes(mapId, p).length > 0;
+    if (d && tree) tdone++; else if (d && !stale) done++;
     if ((q && !p.toLowerCase().includes(q)) || (todo && d)) continue;
-    const li = document.createElement("li"); li.textContent = stale ? `${p} ⚠ unused` : p;
-    li.className = (d ? "done " : "") + (stale ? "stale " : "") + (p === place ? "sel " : "") + (hoverNames.has(p) ? "hov" : "");
+    const li = document.createElement("li");
+    li.textContent = tree ? `🌳 ${trees.indexOf(p) + 1}. ${p.slice(HP.length)}` : stale ? `${p} ⚠ unused` : p;
+    li.className = (d ? "done " : "") + (tree ? "tree " : "") + (stale ? "stale " : "") + (p === place ? "sel " : "") + (hoverNames.has(p) ? "hov" : "");
     li.dataset.p = p;
     li.onclick = () => { place = p; renderList(); renderBoxes(); };
     // hovering a list entry outlines all of its boxes on the map
@@ -117,18 +146,24 @@ function renderList() {
     li.onpointerleave = () => clearHover();
     ul.append(li);
   }
-  $("#msg").textContent = `${map().name} (${mapId}): ${done} of ${all.length} locations marked` + (place ? ` · selected: ${place}` : " · pick a location from the list");
+  $("#msg").textContent = `${map().name} (${mapId}): ${done} of ${all.length} locations marked`
+    + (trees.length ? ` · ${tdone} of ${trees.length} honey trees placed` : "")
+    + (place ? ` · selected: ${isTree(mapId, place) ? "honey tree " + place.slice(HP.length) : place}` : " · pick a location from the list");
 }
 
 function renderBoxes() {
   const m = map(), ov = $("#ov"); ov.textContent = "";
   if (!m.w) return;
-  const add = (b, cls) => {
+  const add = (b, cls, icon) => {
     const i = document.createElement("i"); i.className = cls;
-    Object.assign(i.style, { left: b[0] / m.w * 100 + "%", top: b[1] / m.h * 100 + "%", width: b[2] / m.w * 100 + "%", height: b[3] / m.h * 100 + "%" });
+    const [x, y, w, h] = icon ? [b[0] - 1, b[1] - 1, b[2] + 2, b[3] + 2] : b;      // the icon is 1px larger than the tree's box on every side
+    Object.assign(i.style, { left: x / m.w * 100 + "%", top: y / m.h * 100 + "%", width: w / m.w * 100 + "%", height: h / m.h * 100 + "%" });
+    if (icon) i.style.backgroundImage = `url(${Maps.honeyIcon})`;
     ov.append(i);
   };
-  for (const [p, list] of Object.entries(db.areas[mapId] || {})) for (const b of list) add(b, p === place ? "cur" : "");
+  const ents = areaEntries(mapId);
+  for (const [p, list] of ents) for (const b of list) add(b, p === place ? "cur" : "");
+  for (const [p, list] of ents) if (isTree(mapId, p)) for (const b of list) add(b, "ico", true);   // icons on top of the boxes
   if (drag) add(drag.box, "pre");
 }
 
@@ -159,13 +194,15 @@ function clearHover() {
 // Locations whose boxes cover the point (fx, fy in 0..1). Places with identical boxes (spelling aliases) count as one.
 function hitsAt(fx, fy) {
   const m = map(), x = fx * m.w, y = fy * m.h, merged = new Map();
-  for (const [p, all] of Object.entries(db.areas[mapId] || {})) {
-    if (!all.some(([bx, by, bw, bh]) => x >= bx && x < bx + bw && y >= by && y < by + bh)) continue;
+  for (const [p, all] of areaEntries(mapId)) {
+    const pad = isTree(mapId, p) ? 1 : 0;                            // a tree's icon is 1px bigger than its box, so hover covers the whole icon
+    if (!all.some(([bx, by, bw, bh]) => x >= bx - pad && x < bx + bw + pad && y >= by - pad && y < by + bh + pad)) continue;
     const sig = JSON.stringify([...all].sort());
     if (!merged.has(sig)) merged.set(sig, { names: [], boxes: all });
     merged.get(sig).names.push(p);
   }
-  return [...merged.values()];
+  // honey trees first, so Shift+click and the tooltip find the tree standing on top of a route
+  return [...merged.values()].sort((a, b) => (b.names[0].startsWith(HP) ? 1 : 0) - (a.names[0].startsWith(HP) ? 1 : 0));
 }
 function hover(e) {
   const m = map();
@@ -265,12 +302,12 @@ $("#stage").addEventListener("pointerdown", e => {
   if (e.altKey) {                                     // Alt + click: delete the selected location's box under the pointer
     if (!place || !map().w) return;
     const m = map(), x = (e.clientX - r.left) / r.width * m.w, y = (e.clientY - r.top) / r.height * m.h;
-    const list = boxes(mapId, place).slice();
+    const list = boxes(mapId, place).slice(), pad = isTree(mapId, place) ? 1 : 0;
     for (let i = list.length - 1; i >= 0; i--) {
       const [bx, by, bw, bh] = list[i];
-      if (x >= bx && x < bx + bw && y >= by && y < by + bh) {
+      if (x >= bx - pad && x < bx + bw + pad && y >= by - pad && y < by + bh + pad) {
         list.splice(i, 1);
-        if (list.length) db.areas[mapId][place] = list; else delete db.areas[mapId][place];
+        setBoxes(mapId, place, list);
         persist(); renderBoxes(); renderList(); clearHover();
         return;
       }
@@ -291,8 +328,14 @@ $("#stage").addEventListener("pointermove", e => {
 $("#stage").addEventListener("pointerleave", () => { if (!drag) clearHover(); });
 $("#stage").addEventListener("pointerup", e => {
   if (!drag) return;
-  const b = boxOf(drag.from, pos(e), drag.ed); drag = null;
-  (db.areas[mapId] = db.areas[mapId] || {})[place] = [...boxes(mapId, place), b];
+  const end = pos(e), from = drag.from, b = boxOf(from, end, drag.ed); drag = null;
+  if (isTree(mapId, place)) {
+    // a honey tree is ONE box. A plain click puts a tile-sized box (same size as before, else 7x7) centred on the pointer; a drag draws the box.
+    const m = map(), old = boxes(mapId, place)[0], w = old ? old[2] : 7, h = old ? old[3] : 7;
+    const click = Math.abs(end[0] - from[0]) < 3 && Math.abs(end[1] - from[1]) < 3;
+    const nb = click ? [Math.max(0, Math.min(m.w - w, Math.round(end[0] - w / 2))), Math.max(0, Math.min(m.h - h, Math.round(end[1] - h / 2))), w, h] : b;
+    setBoxes(mapId, place, [nb]);
+  } else setBoxes(mapId, place, [...boxes(mapId, place), b]);
   persist(); renderBoxes(); renderList(); hover(e);
 });
 $("#stage").addEventListener("pointercancel", () => { drag = null; renderBoxes(); });
@@ -305,24 +348,51 @@ document.addEventListener("keydown", e => {
   const l = boxes(mapId, place); if (!l.length) return;
   e.preventDefault();
   const k = e.shiftKey ? 5 : 1;
-  db.areas[mapId][place] = l.map(([x, y, w, h]) => [x + d[0] * k, y + d[1] * k, w, h]);
+  setBoxes(mapId, place, l.map(([x, y, w, h]) => [x + d[0] * k, y + d[1] * k, w, h]));
   persist(); renderBoxes(); clearHover();
 });
 
 $("#undo").onclick = () => {
   if (!place) return;
-  const l = boxes(mapId, place).slice(0, -1);
-  if (l.length) db.areas[mapId][place] = l; else if (db.areas[mapId]) delete db.areas[mapId][place];
+  setBoxes(mapId, place, boxes(mapId, place).slice(0, -1));
   persist(); renderBoxes(); renderList(); clearHover();
 };
 $("#seed").onclick = () => {
-  if (!place) return;
+  if (!place || isTree(mapId, place)) return;
   const p = Maps.segment(place).base, src = p !== place ? boxes(mapId, p) : [];
   if (!src.length) { $("#msg").textContent = "Select a segment (e.g. Route 212 North) whose whole route is already drawn."; return; }
   if (boxes(mapId, place).length && !confirm("Replace this segment's boxes?")) return;
-  db.areas[mapId][place] = src.map(b => b.slice()); persist(); renderBoxes(); renderList();
+  setBoxes(mapId, place, src.map(b => b.slice())); persist(); renderBoxes(); renderList();
 };
-$("#clear").onclick = () => { if (place && db.areas[mapId]) { delete db.areas[mapId][place]; persist(); renderBoxes(); renderList(); clearHover(); } };
+$("#clear").onclick = () => { if (place) { setBoxes(mapId, place, []); persist(); renderBoxes(); renderList(); clearHover(); } };
+
+// ---- honey trees: add / delete / download honey.json ----
+$("#addtree").onclick = () => {
+  if (!honey) { $("#msg").textContent = "data/honey.json didn't load, so honey trees can't be edited."; return; }
+  if (honey.map !== mapId) { $("#msg").textContent = `Honey trees are drawn on the "${honey.map}" map. Pick that map first.`; return; }
+  const name = (prompt("Name of the new honey tree (shown in the list), e.g. Route 209 (by the lake)") || "").trim();
+  if (!name) return;
+  if (spotOf(HP + name)) { alert("There is already a honey tree with that name."); return; }
+  const desc = (prompt("Short help text shown on the site (optional), e.g. On Route 209, north of the bridge.") || "").trim();
+  honey.spots = honey.spots || [];
+  honey.spots.push({ name, desc, boxes: [] });
+  place = HP + name; persist(); renderList(); renderBoxes();
+  $("#msg").textContent = `Added "${name}". Now click the map where the tree stands.`;
+  const li = document.querySelector("#list li.sel"); if (li) li.scrollIntoView({ block: "nearest" });
+};
+$("#deltree").onclick = () => {
+  if (!isTree(mapId, place)) { $("#msg").textContent = "Select a honey tree (🌳) in the list first."; return; }
+  if (!confirm(`Delete the honey tree "${place.slice(HP.length)}" completely? (To only remove its position, use Clear this location.)`)) return;
+  honey.spots = honey.spots.filter(s => HP + s.name !== place);
+  place = null; persist(); renderList(); renderBoxes(); clearHover();
+};
+$("#savehoney").onclick = () => {
+  if (!honey) return;
+  const out = JSON.parse(JSON.stringify(honey));
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 1)], { type: "application/json" }));
+  a.download = "honey.json"; a.click(); URL.revokeObjectURL(a.href);
+};
 const gridChanged = () => { const m = map(); m.editGrid = num("#grid"); m.editOx = num("#ox"); m.editOy = num("#oy"); persist(); drawGrid(); };
 $("#grid").oninput = gridChanged; $("#ox").oninput = gridChanged; $("#oy").oninput = gridChanged;
 $("#gridshow").onchange = drawGrid;
@@ -348,6 +418,8 @@ $("#save").onclick = () => {
     return;
   }
   try { const d = JSON.parse(localStorage.getItem(DRAFT)); if (d && d.maps && confirm("Continue with the unsaved draft from this browser? (Cancel = start from data/maps.json)")) db = d; } catch {}
+  try { honey = await fetch("data/honey.json").then(r => (r.ok ? r.json() : null)); } catch {}
+  try { const d = JSON.parse(localStorage.getItem(HDRAFT)); if (d && Array.isArray(d.spots) && confirm("Continue with the unsaved honey tree draft from this browser? (Cancel = start from data/honey.json)")) honey = d; } catch {}
   db.areas = db.areas || {};
   $("#map").innerHTML = Object.entries(db.maps).map(([id, m]) => `<option value="${id}">${m.name} (${id})</option>`).join("");
   selectMap(Object.keys(db.maps)[0]);

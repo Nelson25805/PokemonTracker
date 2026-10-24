@@ -1,0 +1,50 @@
+{
+ "version": 1,
+ "_help": "Honey trees (Diamond / Pearl / Platinum). Read by js/where.js and js/maps.js. 'map' = the map id in maps.json the trees are drawn on. 'games' = games that have honey trees. 'encounters' = what a slathered tree can attract (n = national dex number, g = games, lo/hi = level range, chance = % on a normal tree). 'spots' = the 21 trees, in the numbered order of the HoneyTree sketch: 'name' is shown in the list, 'desc' is the short help text, 'boxes' = [[x,y,w,h],...] in map pixels (each tree is one 7x7 tile). To move a tree, edit its box (or use map-editor.html). Instead of 'boxes' a spot may use 'area' = an existing place name in maps.json 'areas' whose boxes are borrowed (boxes wins). In where.js these spots REPLACE the per-route 'honey-tree' rows that locations.json (PokeAPI) has for each Pokemon: the Honey Trees row is now the only place honey trees are listed.",
+ "map": "sinnoh-dp",
+ "games": ["diamond", "pearl", "platinum"],
+ "intro": "Slather Honey on a honey tree (a special tree with a different look from normal trees), then come back about 6 real-life hours later: a wild Pokémon will be on it for roughly 24 hours. Every tree gives the same Pokémon, so use whichever is closest. Rates shown are for a normal tree. Each flashing square on the map is one tree; its position is approximate (within about a tile).",
+ "notes": {
+  "446": "Only 4 of the 21 trees can ever attract Munchlax (about 1% each time). Which 4 depends on your Trainer ID and Secret ID, so it is different for every save file. If a tree shakes a lot when you slather it, it is more likely to be a rare Pokémon.",
+  "214": "Heracross is rare on every tree (about 1%). Trees that can attract Munchlax also give rare Pokémon like this more often."
+ },
+ "encounters": [
+  { "n": 265, "g": ["diamond", "pearl"], "lo": 5, "hi": 15, "chance": 29 },
+  { "n": 266, "g": ["diamond"], "lo": 5, "hi": 15, "chance": 14 },
+  { "n": 268, "g": ["pearl"], "lo": 5, "hi": 15, "chance": 14 },
+  { "n": 415, "g": ["diamond", "pearl"], "lo": 5, "hi": 15, "chance": 22 },
+  { "n": 412, "g": ["diamond", "pearl"], "lo": 5, "hi": 15, "chance": 11 },
+  { "n": 420, "g": ["diamond", "pearl"], "lo": 5, "hi": 15, "chance": 7.5 },
+  { "n": 190, "g": ["diamond", "pearl"], "lo": 5, "hi": 15, "chance": 5.5 },
+  { "n": 214, "g": ["diamond", "pearl", "platinum"], "lo": 5, "hi": 15, "chance": 1 },
+  { "n": 446, "g": ["diamond", "pearl", "platinum"], "lo": 5, "hi": 15, "chance": 1 },
+  { "n": 415, "g": ["platinum"], "lo": 5, "hi": 15, "chance": 32 },
+  { "n": 412, "g": ["platinum"], "lo": 5, "hi": 15, "chance": 22 },
+  { "n": 265, "g": ["platinum"], "lo": 5, "hi": 15, "chance": 14 },
+  { "n": 420, "g": ["platinum"], "lo": 5, "hi": 15, "chance": 11 },
+  { "n": 190, "g": ["platinum"], "lo": 5, "hi": 15, "chance": 10 }
+ ],
+ "spots": [
+  {"name": "Floaroma Meadow", "desc": "In Floaroma Meadow, the flower field at Floaroma Town.", "boxes": [[35, 101, 7, 7]]},
+  {"name": "Valley Windworks", "desc": "Outside Valley Windworks, the windmill plant east of Floaroma Town.", "boxes": [[50, 101, 7, 7]]},
+  {"name": "Route 205 (above Valley Windworks)", "desc": "On Route 205, just above (north of) Valley Windworks.", "boxes": [[42, 101, 7, 7]]},
+  {"name": "Fuego Ironworks", "desc": "Outside Fuego Ironworks, the factory on the coast. Surf required.", "boxes": [[35, 87, 7, 7]]},
+  {"name": "Eterna Forest (exterior)", "desc": "Outside Eterna Forest, on the Route 205 side. Cut required.", "boxes": [[42, 80, 7, 7]]},
+  {"name": "Route 205 (west of Eterna City)", "desc": "On Route 205, west of Eterna City.", "boxes": [[56, 73, 7, 7]]},
+  {"name": "Route 207 (north of Oreburgh City)", "desc": "On Route 207, north of Oreburgh City.", "boxes": [[63, 114, 7, 7]]},
+  {"name": "Route 206 (under Cycling Road)", "desc": "On Route 206, underneath the Cycling Road. Cut required.", "boxes": [[64, 101, 7, 7]]},
+  {"name": "Route 211 (west of Celestic Town)", "desc": "On Route 211, west of Celestic Town.", "boxes": [[94, 73, 7, 7]]},
+  {"name": "Route 208 (west of Hearthome City)", "desc": "On Route 208, west of Hearthome City.", "boxes": [[91, 115, 7, 7]]},
+  {"name": "Route 212 (south of Hearthome City)", "desc": "On Route 212, just south of Hearthome City.", "boxes": [[99, 123, 7, 7]]},
+  {"name": "Route 209 (past the bridges)", "desc": "On Route 209, past the bridges east of Hearthome City.", "boxes": [[122, 115, 7, 7]]},
+  {"name": "Route 210 (south of the cafe)", "desc": "On Route 210, below (south of) the cafe.", "boxes": [[121, 94, 7, 7]]},
+  {"name": "Route 215 (upper left, past the bridge)", "desc": "On Route 215, in the upper left, past the bridge.", "boxes": [[128, 87, 7, 7]]},
+  {"name": "Route 210 (northeast corner)", "desc": "On Route 210, in the northeast corner.", "boxes": [[121, 73, 7, 7]]},
+  {"name": "Route 212 (across mud and grass)", "desc": "On Route 212, across the mud and grass.", "boxes": [[120, 144, 7, 7]]},
+  {"name": "Route 213 (by the beach)", "desc": "On Route 213, by the beach. Rock Smash required.", "boxes": [[143, 137, 7, 7]]},
+  {"name": "Route 214 (by Turnback Cave entrance)", "desc": "On Route 214, by the entrance to Turnback Cave.", "boxes": [[156, 115, 7, 7]]},
+  {"name": "Route 222 (west of Sunyshore City)", "desc": "On Route 222, west of Sunyshore City.", "boxes": [[177, 130, 7, 7]]},
+  {"name": "Route 218 (east of Canalave City)", "desc": "On Route 218, east of Canalave City.", "boxes": [[15, 122, 7, 7]]},
+  {"name": "Route 221 (south of Pal Park)", "desc": "On Route 221, south of Pal Park. Surf required.", "boxes": [[56, 158, 7, 7]]}
+ ]
+}

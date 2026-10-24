@@ -214,7 +214,7 @@ body.selecting .chip{display:none}
 .amaptip[hidden]{display:none}
 .amapimg .nest,.amapimg .mk{pointer-events:none}
 .amaphl{position:absolute;inset:0;z-index:1;pointer-events:none}
-.amaphl i{position:absolute;background:rgba(255,230,0,.45);outline:2px solid #000;box-shadow:0 0 0 1px #fff}
+.amaphl i{position:absolute;background:transparent;outline:2px solid #000;box-shadow:0 0 0 1px #fff}   /* hover: black outline only, no yellow fill */
 /* "AREA UNKNOWN" banner and the "NAME's NEST" heading on the map (js/maps.js) */
 .amapimg{container-type:inline-size}
 .amapimg .unk{position:absolute;display:block;pointer-events:none;image-rendering:pixelated;height:auto}

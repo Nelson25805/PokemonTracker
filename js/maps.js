@@ -4,6 +4,7 @@
 // otherwise it only builds an HTML string.
 //
 //   Maps.init(data)              once, with data/maps.json (null if it isn't installed: no maps are shown)
+//   Maps.addHoney(honey)         once, with data/honey.json (optional): registers every honey tree as a place on the map (see "Honey trees")
 //   Maps.html(gameKeys, entries) HTML for every map that has at least one marked location
 //                                entries = the [area, method, ...] rows from data/locations.json
 //                                With NO entries (Mew, evolution-only, event Pokémon) it shows the first map with an
@@ -34,13 +35,19 @@
 // Flashing area map (Hoenn, FireRed / LeafGreen and Sinnoh, maps.json "flash": true): the Gen 3 Pokédex "Area" screen. Instead of an icon,
 // every box of a location FLASHES (see the .fl rules in style.css). Locations are split in two kinds by name (Maps.kindOf):
 //   land    routes, towns, cities and villages   (name contains Route / Town / City / Village; plus the Sevii "One Island" ...
-//           "Seven Island" towns, Cinnabar Island, Indigo Plateau and Three Isle Port)
+//           "Seven Island" towns, Cinnabar Island, Indigo Plateau and Three Isle Port; and every honey tree)
 //   special everything else: caves, woods, towers, buildings, islands...
 // Ruby / Sapphire: routes and towns flash red; then they stop and the special locations flash red twice; repeat.
 // Emerald:         routes and towns flash yellowish -> orange -> red; the special locations then flash a whitish red twice; repeat.
 // Fire Red / Leaf Green use the Ruby / Sapphire look.
 // The same map image serves all three Hoenn games (the figure gets data-flash="rs" or "emerald"; a group that contains both
 // kinds of game shows one map for each). If the Pokémon is only on one kind, that kind just flashes on its own.
+//
+// Honey trees (Diamond / Pearl / Platinum, data/honey.json): the trees have no boxes of their own in maps.json, so Maps.addHoney()
+// builds them at start-up from honey.json: each tree "Honey Tree: <name>" gets the boxes of the route / place it stands on (or its own
+// "boxes"), and one extra place "Honey Trees" holds the boxes of all of them. A Pokémon with a honey tree row (area "Honey Trees")
+// therefore flashes every route that has a tree, like any other route, and hovering a flashing route says
+// "Honey Tree: Route 205 · found here". The "Show on map" button of an individual tree outlines just that tree's route.
 //
 // Roaming Pokémon (Gen 2 onwards: Raikou / Entei / Suicune, Latios / Latias, Mesprit / Cresselia ...): they have no fixed spot, so
 // their rows ("Roaming Johto", method roaming-grass / roaming-water) have no boxes of their own. Instead every ROUTE of the region
@@ -80,6 +87,28 @@ const Maps = (() => {
   const famOf = id => { const m = data && data.maps[id]; return (m && m.areasOf) || id; };
   const tableOf = id => ((data && data.areas) || {})[famOf(id)] || {};
 
+  // ---- honey trees (data/honey.json, see the header comment) ----
+  const HONEY_PREFIX = "Honey Tree: ";      // one place per tree: "Honey Tree: Route 205"
+  const HONEY_ALL = "Honey Trees";          // one place holding every tree: the row a Pokémon's honey tree encounters use
+  let honeyNames = [];                       // the "Honey Tree: ..." places that were registered
+
+  function addHoney(h) {
+    honeyNames = [];
+    if (!data || !h || !Array.isArray(h.spots) || !h.map || !data.maps[h.map]) return;
+    data.areas = data.areas || {};
+    const fam = famOf(h.map), table = (data.areas[fam] = data.areas[fam] || {});
+    const all = [], seen = new Set();
+    for (const s of h.spots) {
+      const src = Array.isArray(s.boxes) && s.boxes.length ? s.boxes : (table[s.area] || table[placeKey(s.area || "")]);
+      if (!src || !src.length) continue;                               // a tree whose place isn't drawn on the map is skipped
+      const name = HONEY_PREFIX + s.name, boxes = src.map(b => b.slice());
+      table[name] = boxes;
+      honeyNames.push(name);
+      for (const b of boxes) { const sig = JSON.stringify(b); if (!seen.has(sig)) { seen.add(sig); all.push(b.slice()); } }
+    }
+    if (all.length) table[HONEY_ALL] = all;
+  }
+
   const TIMES = ["morning", "day", "night"];
   const TCOL = { morning: "#ffd23f", day: "#ff8a1f", night: "#3b4cc0" };
   const TLABEL = { morning: "Morning", day: "Day", night: "Night" };
@@ -103,6 +132,27 @@ const Maps = (() => {
     return "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" shape-rendering="crispEdges" fill="#d01818">${r}</svg>`);
   })();
 
+
+  // ---- honey tree icon (Diamond / Pearl / Platinum) ----
+  // A 9x9 pixel replica of the golden honey tree from the games, drawn as an SVG so no image file is needed.
+  // Drawn one pixel larger than the tree's 7x7 box on every side, so it reads clearly on the map.
+  const HONEYICON = (() => {
+    const pal = { D: "#3b2506", M: "#e08a10", L: "#ffd23a", T: "#5a3416" };   // dark outline + bright amber: stands out from the map's olive / orange
+    const rows = ["..DDDDD..", ".DLLLLMD.", "DLLLLMMMD", "DLLLMMMMD", "DLLMMMMMD", "DMMMMMMDD", ".DMMMMDD.", "..DTTTD..", "..TT.TT.."];
+    let r = "";
+    rows.forEach((row, y) => [...row].forEach((c, x) => { if (pal[c]) r += `<rect x="${x}" y="${y}" width="1" height="1" fill="${pal[c]}"/>`; }));
+    return "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 9" shape-rendering="crispEdges">${r}</svg>`);
+  })();
+  // One icon per honey tree on this map's table. They carry data-t for all three times so the Morning / Day / Night buttons never hide them.
+  function honeyIcons(table, m) {
+    const p = v => (v * 100).toFixed(3) + "%", seen = new Set();
+    let out = "";
+    for (const n of honeyNames) for (const [x, y, w, h] of (table[n] || [])) {
+      const sig = x + "," + y + "," + w + "," + h; if (seen.has(sig)) continue; seen.add(sig);
+      out += `<i class="honeyicon" data-t="morning day night" style="left:${p((x - 1) / m.w)};top:${p((y - 1) / m.h)};width:${p((w + 2) / m.w)};height:${p((h + 2) / m.h)};background-image:url(${HONEYICON})"></i>`;
+    }
+    return out;
+  }
 
   // ---- the games' pixel fonts, drawn as SVG paths (crisp at any size, no font file needed) ----
   // THIN: the Pokédex title font. 7x7 glyphs on an 8px pitch (copied from the Gold/Silver/Crystal "NEST" screen).
@@ -228,14 +278,26 @@ const Maps = (() => {
 .amap .amappin i{position:absolute;box-sizing:border-box;background:rgba(255,40,40,.3);outline:2px solid #d01818;box-shadow:0 0 0 1px #fff,inset 0 0 0 1px #fff;animation:pinPulse 1.2s ease-in-out infinite}
 @keyframes pinPulse{0%,100%{opacity:.55}50%{opacity:1}}
 @media (prefers-reduced-motion:reduce){.amap .amappin i{animation:none}}
+/* "Show on map" for a honey tree: no fill, just a red outline around the tree itself */
+.amap .amappin i.tree{background:transparent;box-shadow:0 0 0 1px #fff,inset 0 0 0 1px #fff;outline:2px solid #d01818}
 #where li .locbtn{margin-left:auto;padding:2px 8px;font-size:12px;white-space:nowrap}
 #where li .locbtn[aria-pressed=true]{background:var(--ink);color:var(--bg)}
-.amap .roamsw{flex:none;width:14px;height:14px;margin-top:1px;background:rgba(70,150,255,.5);border:1px solid #fff;outline:1px solid #000}`;
+.amap .roamsw{flex:none;width:14px;height:14px;margin-top:1px;background:rgba(70,150,255,.5);border:1px solid #fff;outline:1px solid #000}
+.amapimg .honeyicon{position:absolute;z-index:1;pointer-events:none;background-repeat:no-repeat;background-size:100% 100%;image-rendering:pixelated;filter:drop-shadow(1px 0 0 #fff) drop-shadow(-1px 0 0 #fff) drop-shadow(0 1px 0 #fff) drop-shadow(0 -1px 0 #fff)}
+/* honey tree list under the "Honey Trees" row (js/where.js) */
+#where .honeyinfo{flex:1 1 100%;font-size:13px;line-height:1.4}
+#where .honeyinfo p{margin:4px 0}
+#where .honeyinfo details.honeydet{margin:6px 0 2px}
+#where .honeyinfo ul{padding:0 4px 4px}
+#where .honeyinfo li{align-items:center}
+#where .honeyinfo li strong{flex:0 0 min(100%,20ch)}
+#where .honeyinfo li span{flex:1 1 20ch}`;
 
   // Flashing maps: is this place a route / town (land) or a unique location (special)?
   const LAND = new RegExp("\\b(route|town|city|village)\\b|\\b(one|two|three|four|five|six|seven) island\\b" +
     "|\\bcinnabar island\\b|\\bindigo plateau\\b|\\bthree isle port\\b", "i");
-  const kindOf = place => (LAND.test(String(place)) ? "land" : "special");
+  // Honey trees always flash like routes (the whole route pulses), even the ones that stand in a forest or a factory.
+  const kindOf = place => (String(place).startsWith(HONEY_PREFIX) || place === HONEY_ALL || LAND.test(String(place)) ? "land" : "special");
 
   function placeKey(area) {
     const w = String(area).split(/\s+towards\s+/i)[0].trim().split(/\s+/);
@@ -305,6 +367,9 @@ const Maps = (() => {
     }
     // for the hover tooltip: every area name (and its place name) with its times, e.g. { n: "Johto Route 36", t: "day night" }
     const found = areas.flatMap(a => { const t = TIMES.filter(x => areaTimes.get(a).has(x)).join(" "); return [{ n: a, t }, { n: placeKey(a), t }]; });
+    // honey trees: the tooltip should say "found here" on every route that has a tree (they all share the times of the "Honey Trees" row)
+    const honeyHere = areas.includes(HONEY_ALL);
+    if (honeyHere) { const t = TIMES.filter(x => areaTimes.get(HONEY_ALL).has(x)).join(" "); honeyNames.forEach(n => found.push({ n, t })); }
     const pc = v => (v * 100).toFixed(3) + "%";
     // The in-game "PIKACHU's NEST" heading, if the map defines one (maps.json "title"): { text, x, y, size } in image pixels.
     // {NAME} = upper case name, {name} = as written.
@@ -389,7 +454,7 @@ const Maps = (() => {
           const boxes = table[a] || table[placeKey(a)];
           if (!boxes || !boxes.length) continue;
           const kind = kindOf(placeKey(a));
-          names.add(placeKey(a));
+          if (a === HONEY_ALL) honeyNames.forEach(h => names.add(h)); else names.add(placeKey(a));   // honey trees count one by one
           for (const b of boxes) {
             const sig = kind + JSON.stringify(b);
             let o = seen.get(sig);
@@ -402,10 +467,11 @@ const Maps = (() => {
         // Morning / Day / Night: with a clock in the game (Sinnoh), boxes that only apply at some times get data-t,
         // the figure gets the time buttons, and the picture is tinted to the chosen time (see data-timed in the CSS).
         let timed = false;
-        const marks = (rm ? rm.marks : "") + ["land", "special"].flatMap(k => sets[k].map(({ b: [x, y, w, h], times }) => {
+        let marks = (rm ? rm.marks : "") + ["land", "special"].flatMap(k => sets[k].map(({ b: [x, y, w, h], times }) => {
           if (times.size < TIMES.length) timed = true;
           return `<i class="fl ${k}" data-t="${TIMES.filter(t => times.has(t)).join(" ")}" style="left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(w / m.w)};height:${pc(h / m.h)}"></i>`;
         })).join("");
+        if (honeyHere) marks += honeyIcons(table, m);                  // the tree icons sit on top of the flashing boxes
         const mix = sets.land.length && sets.special.length ? "both" : sets.special.length ? "special" : "land";
         const who = mixed ? (fstyle === "emerald" ? " (Emerald)" : " (Ruby / Sapphire)") : "";
         emit(id, m, names.size, wrap(m, id, marks, `${esc(m.name)}${who}: ${capOf(names.size, rm)}`, rm ? found.concat(rm.found) : found,
@@ -487,6 +553,7 @@ const Maps = (() => {
   // `roam` = a roaming Pokémon could be there (shaded route);
   // `here` = the Pokémon is found there; `when` = "Morning / Night" or "All day" (only when the map has "times": true).
   // `boxes` = every tile of the location, so the caller can outline all of it. Aliases with the same boxes are merged.
+  // The combined "Honey Trees" place is skipped here: each tree is its own place, so the tooltip names the tree.
   function at(id, fx, fy, found = []) {
     const m = data && data.maps[id];
     if (!m || !m.w || !m.h) return [];
@@ -500,6 +567,7 @@ const Maps = (() => {
     }
     const merged = new Map();                                            // box signature -> one location
     for (const [p, all] of Object.entries(tableOf(id))) {
+      if (p === HONEY_ALL) continue;
       if (!all.some(([bx, by, bw, bh]) => x >= bx && x < bx + bw && y >= by && y < by + bh)) continue;
       const sig = JSON.stringify([...all].sort()), k = norm(p);
       if (!merged.has(sig)) merged.set(sig, { names: [], boxes: all, here: false, times: new Set() });
@@ -509,7 +577,9 @@ const Maps = (() => {
       if (byName.has(k)) { g.here = true; byName.get(k).forEach(t => g.times.add(t)); }
     }
     return [...merged.values()].map(g => ({
-      name: g.names.find(s => /['é]/.test(s)) || g.names[0],        // prefer the spelling with the apostrophe / é
+      name: g.names.find(s => s.startsWith(HONEY_PREFIX) && byName.has(norm(s)))   // a honey tree this Pokémon uses: name the tree
+        || g.names.find(s => !s.startsWith(HONEY_PREFIX) && /['é]/.test(s))       // prefer the spelling with the apostrophe / é
+        || g.names.find(s => !s.startsWith(HONEY_PREFIX)) || g.names[0],
       here: g.here,
       roam: !!g.roam && !g.here,                                         // a roamer could be here (and it isn't a fixed spot)
       when: g.here && m.times ? timeText(g.times) : "",
@@ -532,5 +602,5 @@ const Maps = (() => {
     return out;
   }
 
-  return { init, html, placeKey, segment, exact, kindOf, at, drop, locate };
+  return { init, addHoney, html, placeKey, segment, exact, kindOf, at, drop, locate, honeyPrefix: HONEY_PREFIX, honeyIcon: HONEYICON, honeyAll: HONEY_ALL };
 })();
