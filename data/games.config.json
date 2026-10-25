@@ -6,7 +6,8 @@
   "1": { "label": "Gen 1 · Kanto",  "transfer": [2], "pc": { "boxes": 12, "box": 20, "cols": 4 } },
   "2": { "label": "Gen 2 · Johto",  "transfer": [1], "pc": { "boxes": 14, "box": 20, "cols": 4 } },
   "3": { "label": "Gen 3 · Hoenn",  "transfer": [], "pc": { "boxes": 14, "box": 30, "cols": 6 } },
-  "4": { "label": "Gen 4 · Sinnoh", "transfer": [3], "pc": { "boxes": 18, "box": 30, "cols": 6 } }
+  "4": { "label": "Gen 4 · Sinnoh", "transfer": [3], "pc": { "boxes": 18, "box": 30, "cols": 6 } },
+  "5": { "label": "Gen 5 · Unova",  "transfer": [4], "pc": { "boxes": 24, "box": 30, "cols": 6 } }
  },
 
  "extraThemes": [
@@ -38,24 +39,32 @@
  },
 
  "games": [
-  {"key":"red","name":"Red","gen":1,"count":151,"sprites":"Red-Blue","shiny":false,"pokeapi":"red","bulbapedia":"Pokémon Red and Blue Versions","region":{"dex":"kanto","name":"Kanto"},"card":{"layout":"rby","dir":"Red"},"diploma":"rb"},
-  {"key":"blue","name":"Blue","gen":1,"count":151,"sprites":"Red-Blue","shiny":false,"pokeapi":"blue","bulbapedia":"Pokémon Red and Blue Versions","region":{"dex":"kanto","name":"Kanto"},"card":{"layout":"rby","dir":"Blue"},"diploma":"rb"},
-  {"key":"yellow","name":"Yellow","gen":1,"count":151,"sprites":"Yellow","shiny":false,"pokeapi":"yellow","bulbapedia":"Pokémon Yellow Version","region":{"dex":"kanto","name":"Kanto"},"card":{"layout":"rby"},"diploma":"yellow"},
+  {"key":"red","name":"Red","gen":1,"count":151,"spriteSize":100,"sprites":"Red-Blue","shiny":false,"pokeapi":"red","bulbapedia":"Pokémon Red and Blue Versions","region":{"dex":"kanto","name":"Kanto"},"card":{"layout":"rby","dir":"Red"},"diploma":"rb"},
+  {"key":"blue","name":"Blue","gen":1,"count":151,"spriteSize":100,"sprites":"Red-Blue","shiny":false,"pokeapi":"blue","bulbapedia":"Pokémon Red and Blue Versions","region":{"dex":"kanto","name":"Kanto"},"card":{"layout":"rby","dir":"Blue"},"diploma":"rb"},
+  {"key":"yellow","name":"Yellow","gen":1,"count":151,"spriteSize":100,"sprites":"Yellow","shiny":false,"pokeapi":"yellow","bulbapedia":"Pokémon Yellow Version","region":{"dex":"kanto","name":"Kanto"},"card":{"layout":"rby"},"diploma":"yellow"},
 
-  {"key":"gold","name":"Gold","gen":2,"count":251,"sprites":"Gold","shiny":true,"spriteRepo":"generation-ii/gold/transparent","pokeapi":"gold","bulbapedia":"Pokémon Gold and Silver Versions","region":{"dex":"original-johto","name":"Johto"},"card":{"layout":"gs"},"diploma":"gs"},
-  {"key":"silver","name":"Silver","gen":2,"count":251,"sprites":"Silver","shiny":true,"spriteRepo":"generation-ii/silver/transparent","pokeapi":"silver","bulbapedia":"Pokémon Gold and Silver Versions","region":{"dex":"original-johto","name":"Johto"},"card":{"layout":"gs"},"diploma":"gs"},
-  {"key":"crystal","name":"Crystal","gen":2,"count":251,"sprites":"Crystal","shiny":true,"spriteRepo":"generation-ii/crystal/transparent","pokeapi":"crystal","bulbapedia":"Pokémon Crystal Version","region":{"dex":"original-johto","name":"Johto"},"card":{"layout":"gs","gender":true},"diploma":"crystal"},
+  {"key":"gold","name":"Gold","gen":2,"count":251,"spriteSize":100,"sprites":"Gold","shiny":true,"spriteRepo":"generation-ii/gold/transparent","pokeapi":"gold","bulbapedia":"Pokémon Gold and Silver Versions","region":{"dex":"original-johto","name":"Johto"},"card":{"layout":"gs"},"diploma":"gs"},
+  {"key":"silver","name":"Silver","gen":2,"count":251,"spriteSize":100,"sprites":"Silver","shiny":true,"spriteRepo":"generation-ii/silver/transparent","pokeapi":"silver","bulbapedia":"Pokémon Gold and Silver Versions","region":{"dex":"original-johto","name":"Johto"},"card":{"layout":"gs"},"diploma":"gs"},
+  {"key":"crystal","name":"Crystal","gen":2,"count":251,"spriteSize":100,"sprites":"Crystal","shiny":true,"spriteRepo":"generation-ii/crystal/transparent","pokeapi":"crystal","bulbapedia":"Pokémon Crystal Version","region":{"dex":"original-johto","name":"Johto"},"card":{"layout":"gs","gender":true},"diploma":"crystal"},
 
-  {"key":"ruby","name":"Ruby","gen":3,"count":386,"sprites":"Ruby-Sapphire","shiny":true,"spriteRepo":"generation-iii/ruby-sapphire","pokeapi":"ruby","bulbapedia":"Pokémon Ruby and Sapphire Versions","region":{"dex":"hoenn","name":"Hoenn"},"card":{"layout":"rs"},"diploma":"rs"},
-  {"key":"sapphire","name":"Sapphire","gen":3,"count":386,"sprites":"Ruby-Sapphire","shiny":true,"spriteRepo":"generation-iii/ruby-sapphire","pokeapi":"sapphire","bulbapedia":"Pokémon Ruby and Sapphire Versions","region":{"dex":"hoenn","name":"Hoenn"},"card":{"layout":"rs"},"diploma":"rs"},
-  {"key":"emerald","name":"Emerald","gen":3,"count":386,"sprites":"Emerald","shiny":true,"spriteRepo":"generation-iii/emerald","pokeapi":"emerald","bulbapedia":"Pokémon Emerald Version","region":{"dex":"hoenn","name":"Hoenn"},"card":{"layout":"emerald"},"diploma":"emerald"},
-  {"key":"fire-red","name":"Fire Red","gen":3,"count":386,"sprites":"FireRed-LeafGreen","shiny":true,"spriteRepo":"generation-iii/firered-leafgreen","pokeapi":"firered","bulbapedia":"Pokémon FireRed and LeafGreen Versions","region":{"dex":"kanto","name":"Kanto"},"card":{"layout":"frlg"},"diploma":"frlg"},
-  {"key":"leaf-green","name":"Leaf Green","gen":3,"count":386,"sprites":"FireRed-LeafGreen","shiny":true,"spriteRepo":"generation-iii/firered-leafgreen","pokeapi":"leafgreen","bulbapedia":"Pokémon FireRed and LeafGreen Versions","region":{"dex":"kanto","name":"Kanto"},"card":{"layout":"frlg"},"diploma":"frlg"},
+  {"key":"ruby","name":"Ruby","gen":3,"count":386,"spriteSize":100,"sprites":"Ruby-Sapphire","shiny":true,"spriteRepo":"generation-iii/ruby-sapphire","pokeapi":"ruby","bulbapedia":"Pokémon Ruby and Sapphire Versions","region":{"dex":"hoenn","name":"Hoenn"},"card":{"layout":"rs"},"diploma":"rs"},
+  {"key":"sapphire","name":"Sapphire","gen":3,"count":386,"spriteSize":100,"sprites":"Ruby-Sapphire","shiny":true,"spriteRepo":"generation-iii/ruby-sapphire","pokeapi":"sapphire","bulbapedia":"Pokémon Ruby and Sapphire Versions","region":{"dex":"hoenn","name":"Hoenn"},"card":{"layout":"rs"},"diploma":"rs"},
+  {"key":"emerald","name":"Emerald","gen":3,"count":386,"spriteSize":100,"sprites":"Emerald","shiny":true,"spriteRepo":"generation-iii/emerald","pokeapi":"emerald","bulbapedia":"Pokémon Emerald Version","region":{"dex":"hoenn","name":"Hoenn"},"card":{"layout":"emerald"},"diploma":"emerald"},
+  {"key":"fire-red","name":"Fire Red","gen":3,"count":386,"spriteSize":100,"sprites":"FireRed-LeafGreen","shiny":true,"spriteRepo":"generation-iii/firered-leafgreen","pokeapi":"firered","bulbapedia":"Pokémon FireRed and LeafGreen Versions","region":{"dex":"kanto","name":"Kanto"},"card":{"layout":"frlg"},"diploma":"frlg"},
+  {"key":"leaf-green","name":"Leaf Green","gen":3,"count":386,"spriteSize":100,"sprites":"FireRed-LeafGreen","shiny":true,"spriteRepo":"generation-iii/firered-leafgreen","pokeapi":"leafgreen","bulbapedia":"Pokémon FireRed and LeafGreen Versions","region":{"dex":"kanto","name":"Kanto"},"card":{"layout":"frlg"},"diploma":"frlg"},
 
   {"key":"diamond","name":"Diamond","gen":4,"count":493,"sprites":"Diamond-Pearl","shiny":true,"spriteRepo":"generation-iv/diamond-pearl","pokeapi":"diamond","bulbapedia":"Pokémon Diamond and Pearl Versions","region":{"dex":"original-sinnoh","name":"Sinnoh"},"card":{"layout":"gen4"}},
   {"key":"pearl","name":"Pearl","gen":4,"count":493,"sprites":"Diamond-Pearl","shiny":true,"spriteRepo":"generation-iv/diamond-pearl","pokeapi":"pearl","bulbapedia":"Pokémon Diamond and Pearl Versions","region":{"dex":"original-sinnoh","name":"Sinnoh"},"card":{"layout":"gen4"}},
   {"key":"platinum","name":"Platinum","gen":4,"count":493,"sprites":"Platinum","shiny":true,"spriteRepo":"generation-iv/platinum","pokeapi":"platinum","bulbapedia":"Pokémon Platinum Version","region":{"dex":"extended-sinnoh","name":"Sinnoh"},"card":{"layout":"gen4"}},
   {"key":"heart-gold","name":"Heart Gold","gen":4,"count":493,"sprites":"HeartGold-SoulSilver","shiny":true,"spriteRepo":"generation-iv/heartgold-soulsilver","pokeapi":"heartgold","bulbapedia":"Pokémon HeartGold and SoulSilver Versions","region":{"dex":"updated-johto","name":"Johto"},"card":{"layout":"gen4"},"diploma":"leaf"},
-  {"key":"soul-silver","name":"Soul Silver","gen":4,"count":493,"sprites":"HeartGold-SoulSilver","shiny":true,"spriteRepo":"generation-iv/heartgold-soulsilver","pokeapi":"soulsilver","bulbapedia":"Pokémon HeartGold and SoulSilver Versions","region":{"dex":"updated-johto","name":"Johto"},"card":{"layout":"gen4"},"diploma":"leaf"}
+  {"key":"soul-silver","name":"Soul Silver","gen":4,"count":493,"sprites":"HeartGold-SoulSilver","shiny":true,"spriteRepo":"generation-iv/heartgold-soulsilver","pokeapi":"soulsilver","bulbapedia":"Pokémon HeartGold and SoulSilver Versions","region":{"dex":"updated-johto","name":"Johto"},"card":{"layout":"gen4"},"diploma":"leaf"},
+
+  {"key":"black","name":"Black","gen":5,"count":649,"sprites":"Black-White","shiny":true,"spriteRepo":"generation-v/black-white","spriteSize":96,"pokeapi":"black","bulbapedia":"Pokémon Black and White Versions","region":{"dex":"original-unova","name":"Unova"}},
+
+  {"key":"white","name":"White","gen":5,"count":649,"sprites":"Black-White","shiny":true,"spriteRepo":"generation-v/black-white","spriteSize":96,"pokeapi":"white","bulbapedia":"Pokémon Black and White Versions","region":{"dex":"original-unova","name":"Unova"}},
+
+  {"key":"black-2","name":"Black 2","gen":5,"count":649,"sprites":"Black-White","shiny":true,"spriteRepo":"generation-v/black-white","spriteSize":96,"pokeapi":"black-2","bulbapedia":"Pokémon Black 2 and White 2 Versions","region":{"dex":"updated-unova","name":"Unova"}},
+
+  {"key":"white-2","name":"White 2","gen":5,"count":649,"sprites":"Black-White","shiny":true,"spriteRepo":"generation-v/black-white","spriteSize":96,"pokeapi":"white-2","bulbapedia":"Pokémon Black 2 and White 2 Versions","region":{"dex":"updated-unova","name":"Unova"}}
  ]
 }

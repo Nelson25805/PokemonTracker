@@ -97,6 +97,8 @@
         <button class="where" tabindex="-1" data-n="${m.n}" aria-label="Where to find ${m.name}" title="Where to find (or press I on a card)">?</button>${g.shiny ? `<button class="other" tabindex="-1" data-n="${m.n}"></button>` : ""}${fm.has(m.n) ? `<button class="chip" tabindex="-1" data-n="${m.n}"></button>` : ""}</div>`;
     const pc = pcOn(s, g);
     $("#grid").classList.toggle("pc", pc);
+    const px = g.spriteSize || 80;                                    // native sprite size (config "spriteSize"); 80 = the default card art size
+    $("#grid").style.setProperty("--sprite", px + "px"); $("#grid").classList.toggle("big", px > 80);
     if (!pc) $("#grid").innerHTML = rows.map(cell).join("");
     else {                                                            // like the in-game PC: fixed-size boxes filled in Pokédex order
       const { box, boxes, cols } = g.pc, need = Math.ceil(rows.length / box);

@@ -61,13 +61,13 @@ button{cursor:pointer}button:hover{background:var(--hi);color:var(--on-hi)}
 .bar{flex:1 1 140px;min-width:140px;height:14px;border:2px solid var(--line);background:var(--card)}
 #fill{height:100%;width:0;background:var(--ink);transition:width .2s}
 #count{font:400 16px "PKMN",monospace;min-width:7ch;text-align:right}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:0;padding:11px;max-width:1200px;margin:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(calc(var(--sprite,80px) + 24px),1fr));gap:0;padding:11px;max-width:1200px;margin:auto}
 .card{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:30px 4px 6px;background:var(--card);border:2px solid var(--line);border-radius:0;opacity:.5;filter:grayscale(1)} /* top 30px is reserved for the ? button and the caught tick, so they never sit on the artwork */
 .cell{position:relative;display:flex;padding:5px;content-visibility:auto;contain-intrinsic-size:auto 175px} /* off-screen cells skip layout/paint but stay in the DOM; padding replaces the grid gap so focus outlines are not clipped */.cell>.card{flex:1}.cell[hidden]{display:none} /* search hides the whole cell; its display:flex would beat the default [hidden] rule */
 .where{position:absolute;top:7px;left:7px;z-index:1;width:22px;height:22px;padding:0;line-height:1;font:400 12px "PKMN",monospace}
 .card.on{opacity:1;filter:none;background:var(--hi);color:var(--on-hi);border-color:var(--on-hi)}
 .card.on::after{content:"✓";position:absolute;top:2px;right:5px;font-weight:700}
-.card img{width:80px;height:80px;image-rendering:pixelated;object-fit:contain}
+.card img{width:var(--sprite,80px);height:var(--sprite,80px);image-rendering:pixelated;object-fit:contain}
 .card .n{font:400 12px "PKMN",monospace}.card .nm{font-size:12px;text-align:center;overflow-wrap:anywhere}
 .card:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--mid);outline-offset:2px}
 footer{padding:0 16px 32px;max-width:1200px;margin:auto}footer p{font-size:12px;opacity:.8;max-width:70ch}
@@ -170,7 +170,7 @@ body.selecting .chip{display:none}
 .flist{list-style:none;margin:0;padding:0}
 .frow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:4px 6px;margin:0 0 6px;border:2px solid var(--line);background:var(--card)}
 .frow .pair{display:flex;gap:2px}
-.frow img{width:48px;height:48px;image-rendering:pixelated;object-fit:contain}
+.frow img{width:var(--fs,80px);height:var(--fs,80px);image-rendering:pixelated;object-fit:contain}
 .frow .fname{flex:1 1 9ch;display:flex;flex-direction:column;font-weight:600;overflow-wrap:anywhere}
 .frow .fname small{font-weight:400;font-size:12px;opacity:.8}
 .ftogs{display:flex;gap:6px}
@@ -379,3 +379,22 @@ body.selecting .chip{display:none}
 /* form badges that match their sprites (any theme, light or dark): Shellos / Gastrodon West Sea = pink, East Sea = blue */
 .formtag[data-form=west-sea]{background:#f6b3d0;color:#4a1230;border-color:#c9658f}
 .formtag[data-form=east-sea]{background:#9fd0f2;color:#0c2e4d;border-color:#4f8fc4}
+
+/* Generation 5 themes (Black, White, Black 2, White 2) */
+:root[data-theme=black]{--bg:#dcdcdc;--panel:#8c8c8c;--ink:#0e0e0e;--mid:#444444;--hi:#f0f0f0;--card:#ececec;--line:#0e0e0e;--on-hi:#0e0e0e;color-scheme:light}
+:root[data-theme=black][data-mode=dark]{--bg:#121212;--panel:#262626;--ink:#e8e8e8;--mid:#aaaaaa;--hi:#9a9a9a;--card:#333333;--line:#8a8a8a;--on-hi:#111111;color-scheme:dark}
+:root[data-theme=white]{--bg:#f2f5f8;--panel:#c9d3dd;--ink:#14202c;--mid:#4a6178;--hi:#ffffff;--card:#fbfcfd;--line:#14202c;--on-hi:#14202c;color-scheme:light}
+:root[data-theme=white][data-mode=dark]{--bg:#161a1f;--panel:#2a323b;--ink:#e5eaef;--mid:#9db3c7;--hi:#a9bccd;--card:#38424d;--line:#8fa0b1;--on-hi:#101820;color-scheme:dark}
+:root[data-theme=black-2]{--bg:#e8dcd3;--panel:#d98a4e;--ink:#1f1006;--mid:#8a4313;--hi:#ffe0b8;--card:#f6ece4;--line:#1f1006;--on-hi:#1f1006;color-scheme:light}
+:root[data-theme=black-2][data-mode=dark]{--bg:#1b130e;--panel:#3a2a1e;--ink:#f1e2d4;--mid:#e0a874;--hi:#d79b62;--card:#4b3828;--line:#b58e6a;--on-hi:#24150a;color-scheme:dark}
+:root[data-theme=white-2]{--bg:#dbe9f6;--panel:#6fb1e8;--ink:#06182b;--mid:#1b5a9a;--hi:#e8f5ff;--card:#eef6fc;--line:#06182b;--on-hi:#06182b;color-scheme:light}
+:root[data-theme=white-2][data-mode=dark]{--bg:#0e1822;--panel:#1b2e41;--ink:#d6e7f6;--mid:#7fb6e6;--hi:#6ea8d6;--card:#2a4258;--line:#7aa3c6;--on-hi:#0a1622;color-scheme:dark}
+
+/* sprites bigger than 80px (config "spriteSize", e.g. Gen 5 = 96): shown 1:1 on wide screens; on phones scaled down smoothly instead of dropping pixels */
+@media (max-width:759px){
+  .grid.big{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
+  .grid.big .card img{width:80px;height:80px;image-rendering:auto}
+}
+
+/* Forms tab on phones: a little smaller so the name and Normal / Shiny buttons still fit beside the two sprites; scaled smoothly */
+@media (max-width:759px){.frow img{max-width:72px;max-height:72px;image-rendering:auto}}   /* beats the exact size set by Forms.fit */

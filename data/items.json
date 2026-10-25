@@ -1,7 +1,6 @@
 {
  "version": 1,
-
- "generated": "2026-10-05",
+ "generated": "2026-10-24",
  "source": "Bulbapedia (https://bulbapedia.bulbagarden.net), CC BY-NC-SA 2.5",
  "items": {
   "Thunder Stone": {
@@ -141,6 +140,28 @@
       "Route 38 (gift from Lass Dana)",
       "Bug-Catching Contest first prize (post-National Pokédex)",
       "Pokéathlon Dome (2500 Pts.)WeThSa"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Chargestone Cave",
+      "Shopping Mall Nine"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Dust clouds",
+      "Black City/White Forest (Ken)"
      ],
      "k": "repeat"
     }
@@ -286,6 +307,28 @@
       "Pokéathlon Dome (2500 Pts.)SuTuTh"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Castelia City",
+      "Desert Resort"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Dust clouds",
+      "Black City/White Forest (Vincent)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -416,6 +459,28 @@
       "Route 42 (gift from Fisherman Tully)",
       "Bug-Catching Contest first prize (post-National Pokédex)",
       "Pokéathlon Dome (2500 Pts.)MoTuWeFr"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Castelia City",
+      "Driftveil City"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Dust clouds",
+      "Black City/White Forest (Ralph)"
      ],
      "k": "repeat"
     }
@@ -559,6 +624,28 @@
       "Route 34 (gift from Picnicker Gina)",
       "Bug-Catching Contest first prize (post-National Pokédex)",
       "Pokéathlon Dome (2500 Pts.)TuThSa"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 6 (×2)",
+      "Castelia City"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Dust clouds",
+      "Black City/White Forest (Karenna)"
      ],
      "k": "repeat"
     }
@@ -706,6 +793,32 @@
       "Held by wild Clefairy and wild Lunatone (5% chance each)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Pinwheel Forest",
+      "Twist Mountain"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Dust clouds",
+      "Pickup (Lv. 41-100)",
+      "Black City/White Forest (Rosa)",
+      "Held by wild Clefairy",
+      "wild Clefable",
+      "and wild Lunatone (5% chance each)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -786,6 +899,30 @@
       "Bug-Catching Contest first prize",
       "Pokéathlon Dome (post-National Pokédex) (3000 Pts.)SuMoFr",
       "Pickup (Lv. 31-100)",
+      "Held by wild Solrock (5% chance)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Nimbasa City",
+      "Relic Castle"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Dust clouds",
+      "Pickup (Lv. 31-100)",
+      "Black City/White Forest (Lena)",
       "Held by wild Solrock (5% chance)"
      ],
      "k": "repeat"
@@ -920,6 +1057,32 @@
       "Held by wild Slowbro and wild Poliwhirl (5% chance each)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Icirrus City"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13 (treasure hunter)",
+      "Pickup (Lv. 11-30)",
+      "Held by wild Slowbro",
+      "wild Poliwhirl",
+      "wild Poliwrath",
+      "wild Politoed",
+      "and wild Slowking (5% chance each)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1049,6 +1212,30 @@
       "and wild Bronzong (5% chance each)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Twist Mountain"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13 (treasure hunter)",
+      "Held by wild Magnemite",
+      "wild Metang",
+      "wild Metagross",
+      "and wild Bronzong (5% chance each)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1138,6 +1325,32 @@
       "and wild Dragonair (5% chance each)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 18"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13 (treasure hunter)",
+      "Held by wild Horsea",
+      "wild Seadra",
+      "wild Dratini",
+      "wild Dragonair",
+      "wild Dragonite",
+      "and wild Kingdra (5% chance each)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1206,6 +1419,26 @@
       "Silph Co."
      ],
      "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 15"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13 (treasure hunter)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1252,6 +1485,30 @@
       "Route 20"
      ],
      "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 17"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13 (treasure hunter)",
+      "Held by wild Carvanha",
+      "wild Sharpedo",
+      "wild Huntail",
+      "and wild Basculin (Red-Striped) (5% chance each)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1312,6 +1569,31 @@
       "and wild Relicanth (5% chance each)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13 (treasure hunter)",
+      "Held by wild Chinchou",
+      "wild Lanturn",
+      "wild Gorebyss",
+      "wild Relicanth",
+      "and wild Basculin (Blue-Striped) (5% chance each)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1367,6 +1649,28 @@
       "Route 14 (gift from Bird Keeper Josh)",
       "Bug-Catching Contest first prize (post-National Pokédex)",
       "Pokéathlon Dome (post-National Pokédex, 3000 Pts.)SuMoWeThSa"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 6",
+      "Dragonspiral Tower"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Dust clouds",
+      "Black City/White Forest (Molly)"
      ],
      "k": "repeat"
     }
@@ -1427,6 +1731,28 @@
       "Pokéathlon Dome (post-National Pokédex, 3000 Pts.)MoTuThFrSa"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 10",
+      "Mistralton Cave"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Dust clouds",
+      "Black City/White Forest (Herman)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1485,6 +1811,27 @@
       "Pokéathlon Dome (post-National Pokédex) (3000 Pts.)TuWeFrSa"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 10"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Dust clouds",
+      "Black City/White Forest (Grace)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1533,6 +1880,28 @@
       "Held by wild Chansey (50% chance)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Challenger's Cave"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Black City/White Forest (Carlos)",
+      "dust clouds",
+      "Held by wild Happiny (50% chance)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1577,6 +1946,27 @@
      ],
      "t": [
       "Battle Frontier (48 BP)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13 (treasure hunter)",
+      "Battle Subway (48 BP)"
      ],
      "k": "repeat"
     }
@@ -1631,6 +2021,27 @@
       "Battle Frontier (48 BP)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Abundant Shrine"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13 (treasure hunter)",
+      "Battle Subway (48 BP)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1665,6 +2076,26 @@
       "Mt. Mortar"
      ],
      "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 11"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13 (treasure hunter)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1699,6 +2130,26 @@
       "Cerulean Cave"
      ],
      "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13 (treasure hunter)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1733,6 +2184,16 @@
       "Cinnabar Island"
      ],
      "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13 (treasure hunter)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1778,6 +2239,26 @@
       "Mt. Silver"
      ],
      "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 14"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13 (treasure hunter)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1812,6 +2293,51 @@
       "Route 42"
      ],
      "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "P2 Laboratory"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13 (treasure hunter)"
+     ],
+     "k": "repeat"
+    }
+   ]
+  },
+  "Prism Scale": {
+   "where": [
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Route 13",
+      "Undella Town"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black",
+      "white"
+     ],
+     "t": [
+      "Pickup (Lv. 51-100)"
+     ],
+     "k": "repeat"
     }
    ]
   }

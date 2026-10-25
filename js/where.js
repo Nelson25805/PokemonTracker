@@ -45,6 +45,7 @@ const Where = (() => {
     "Deep Sea Tooth": 3, "Deep Sea Scale": 3,
     "Shiny Stone": 4, "Dusk Stone": 4, "Dawn Stone": 4, "Oval Stone": 4, "Razor Claw": 4, "Razor Fang": 4,
     "Protector": 4, "Electirizer": 4, "Magmarizer": 4, "Reaper Cloth": 4, "Dubious Disc": 4,
+    "Prism Scale": 5,
   };
   const STONE_LATER = new Set([462, 470, 476]);   // Magnezone, Leafeon, Probopass: stone methods only arrived in Gen 8
   const COND = { daytime: "during the day", night: "at night", female: "female only", male: "male only" };
@@ -102,6 +103,7 @@ const Where = (() => {
     const from = nameOf(evo[0]), opts = [], need = [];
     for (const raw of String(evo[1]).split(" or ")) {
       const p = parse(raw);
+      if (p.kind === "beauty" && src.gen >= 5) continue;                // Gen 5 has no contests, so no Beauty evolutions
       if (p.item && !(ITEM_GEN[p.item] <= src.gen)) continue;          // item doesn't exist yet in this generation
       if (p.kind === "item" && STONE_LATER.has(n)) continue;           // stone method added in Gen 8
       const text = say(p, from, src);
@@ -112,6 +114,9 @@ const Where = (() => {
     if (hgss && n === 470) return { from: evo[0], opts: ["Level up next to the Moss Rock in Ilex Forest."], items: [] };
     if (hgss && n === 471) return { from: evo[0], opts: ["Level up next to the Ice Rock in the Ice Path."], items: [] };
     if (hgss && (n === 462 || n === 476)) return { from: evo[0], opts: ["Level up at a special magnetic spot. It isn't the same place as in the Sinnoh games, so check Bulbapedia for the exact location."], items: [] };
+    if (src.gen === 5 && n === 470) return { from: evo[0], opts: ["Level up next to the Moss Rock in Pinwheel Forest."], items: [] };
+    if (src.gen === 5 && n === 471) return { from: evo[0], opts: ["Level up next to the Ice Rock in Twist Mountain."], items: [] };
+    if (src.gen === 5 && (n === 462 || n === 476)) return { from: evo[0], opts: ["Level up in Chargestone Cave (the magnetic field there)."], items: [] };
     if (!opts.length) return null;
     return { from: evo[0], opts, items: need.map(name => ({ name, lines: itemLines(items, name, src.key) })) };
   }
@@ -133,6 +138,7 @@ const Where = (() => {
     if (src.gen === game.gen) return "trade";
     if (src.gen <= 2 && game.gen <= 2) return game.gen === 1 ? "Time Capsule (Gen 1 Pokémon with no Gen 2 moves)" : "Time Capsule";
     if (src.gen === 3 && game.gen === 4) return "Pal Park (one-way)";
+    if (src.gen === 4 && game.gen === 5) return "Poké Transfer (one-way)";
     return "";
   }
 

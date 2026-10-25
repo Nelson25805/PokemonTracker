@@ -253,7 +253,7 @@ const Cards = (() => {
     await loadFonts();
     const c = await trainer(game, got.size, st);
     if (my !== tok) return; // a newer update is already running
-    const host = $("#card"); host.style.opacity = 1;
+    const host = $("#card"); host.style.opacity = 1; host.hidden = !c;   // games with no card artwork: hide the canvas instead of showing the previous game's card
     if (c) { host.width = c.width; host.height = c.height; host.getContext("2d").drawImage(c, 0, 0); fit(host, 540); }
     const gendered = !!game.card?.gender;
     document.querySelectorAll("input[name=gender]").forEach(r => { r.disabled = !gendered; r.checked = gendered && r.value === st.gender; });

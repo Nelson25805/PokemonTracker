@@ -86,29 +86,39 @@ const Forms = (() => {
     return left;
   }
 
+  // Once a form sprite has loaded, show it at a WHOLE multiple of its real size (the multiple closest to the target size in
+  // the list's --fs), so pixels stay even whatever size the file is: 64px at a 100px target -> 128px (2x), 80px -> 80px (1x).
+  function fit(img) {
+    const n = img.naturalWidth, list = img.closest(".flist"), t = list ? parseFloat(list.style.getPropertyValue("--fs")) : 0;
+    if (!n || !t) return;
+    const s = n * Math.max(1, Math.round(t / n)) + "px";
+    img.style.width = s; img.style.height = s;
+  }
+
   function html(state, g, n) {
     const sp = forGame(g).get(n);
     if (!sp) return "";
     const dir = `assets/sprites/${g.sprites}`;
+    const ul = `<ul class="flist" style="--fs:${g.spriteSize || 80}px">`;   // form sprites are shown at the game's native sprite size (config "spriteSize")
     const fc = have(state, "caught", g.key), fs = have(state, "shiny", g.key);
     const mc = new Set(state.caught[g.key] || []), ms = new Set(state.shiny[g.key] || []);
     const whereOf = fid => { const r = fa.filter(x => x.n === n && x.form === fid && x.g.includes(g.key)); return r.length ? `<small class="fwhere">Found in: ${r.map(x => areaHtml(x.area)).join(", ")}</small>` : ""; };
     const row = (label, sub, id, src, ssrc, c, s, wh = "") => {
-      const pair = `<img alt="" loading="lazy" src="${src}">` + (g.shiny ? `<img alt="" loading="lazy" src="${ssrc}">` : "");
+      const pair = `<img alt="" loading="lazy" src="${src}" onload="Forms.fit(this)">` + (g.shiny ? `<img alt="" loading="lazy" src="${ssrc}" onload="Forms.fit(this)">` : "");
       const btn = (kind, glyph, word, on) =>
         `<button type="button" class="ftog" data-kind="${kind}" data-id="${esc(id)}" aria-pressed="${on}" aria-label="${word}: ${esc(label)}">${glyph} ${word}</button>`;
       return `<li class="frow"><span class="pair">${pair}</span><span class="fname">${esc(label)}${sub ? `<small>${esc(sub)}</small>` : ""}${wh}</span>` +
         `<span class="ftogs">${btn("caught", "✓", "Normal", c)}${g.shiny ? btn("shiny", "★", "Shiny", s) : ""}</span></li>`;
     };
-    let out = `<ul class="flist">${row(sp.base, "base form, same as the main grid", "", `${dir}/${n}.png`, `${dir}/shiny/${n}.png`, mc.has(n), ms.has(n), whereOf("base"))}</ul>`;
+    let out = `${ul}${row(sp.base, "base form, same as the main grid", "", `${dir}/${n}.png`, `${dir}/shiny/${n}.png`, mc.has(n), ms.has(n), whereOf("base"))}</ul>`;
     for (const [cat, title] of CATS) {
       const list = sp.forms.filter(f => f.cat === cat);
       if (!list.length) continue;
-      out += `<h3>${esc(title)}</h3><ul class="flist">` + list.map(f =>
+      out += `<h3>${esc(title)}</h3>${ul}` + list.map(f =>
         row(f.name, "", f.id, `${dir}/forms/${f.id}.png`, `${dir}/shiny/forms/${f.id}.png`, fc.has(f.id), fs.has(f.id), whereOf(f.id))).join("") + "</ul>";
     }
     return out;
   }
 
-  return { init, setAreas, areasFor, ready: () => !!data, data: () => data, forGame, counts, speciesCounts, catTotals, missing, html };
+  return { fit, init, setAreas, areasFor, ready: () => !!data, data: () => data, forGame, counts, speciesCounts, catTotals, missing, html };
 })();
