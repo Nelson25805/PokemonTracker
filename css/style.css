@@ -229,7 +229,7 @@ body.selecting .chip{display:none}
 .amapimg .nest .tb,.amapimg .mk .tb{animation:none}
 .amapimg .unk.txt.small{font-size:3cqw}
 /* Hoenn's, Sinnoh's and HeartGold / SoulSilver's "AREA UNKNOWN" banners are a shrunken, higher-resolution picture, so let the browser smooth it instead of using hard pixels */
-.amap[data-map=hoenn-rse] .amapimg .unk,.amap[data-map=sinnoh-dp] .amapimg .unk,.amap[data-map=johto-kanto-hgss] .amapimg .unk{image-rendering:auto}
+.amap[data-map=hoenn-rse] .amapimg .unk,.amap[data-map=sinnoh-dp] .amapimg .unk,.amap[data-map=johto-kanto-hgss] .amapimg .unk,.amap[data-map=unova-bw] .amapimg .unk{image-rendering:auto}
 .amapimg .unk.txt[hidden]{display:none}
 
 /* flashing area map (maps.json "flash": true, Hoenn; js/maps.js). Every box of a location is an <i class="fl land|special">.
@@ -404,3 +404,23 @@ body.selecting .chip{display:none}
 .amapsvg .w,.amapsvg .b{fill:none;vector-effect:non-scaling-stroke;stroke-linejoin:round}
 .amapsvg .w{stroke:#fff;stroke-width:4px}
 .amapsvg .b{stroke:#000;stroke-width:2px}
+
+/* Black / White flashing area map (maps.json "fx": "unova"; js/maps.js uxMarks). Colours, sizes and timing measured frame by frame from a
+   screen recording of the game (30 fps, 91 frames, 3 pulses).
+   TIMING: ONE pulse of 1.067 s (32 frames = 64 game frames) shared by routes, towns and places, in four steps:
+             0 - 17 %      rest (the orange line / green dot is shown as drawn on the map)
+             17 - 44 %     routes and towns fade to red (places: 17 - 50 %)
+             44 - 72 %     fully red (places: 50 - 69 %)
+             72 - 100 %    fade back
+   COLOUR: routes and town rings go to rgb(252,72,85); places get a disc of rgb(226,80,115), 1.25x the size of the dot, soft edged.
+   A route is drawn about 1.75x thicker than its orange line (the red band also covers the line's dark shadow): that is the
+   stroke-width below, added to the shape's own width. To tune: change --ux-cycle (speed) or the percentages in the two @keyframes. */
+.uxsvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.amap[data-fx=unova]{--ux-cycle:1.0667s}
+.uxsvg .ux{opacity:0;animation-duration:var(--ux-cycle);animation-iteration-count:infinite;animation-timing-function:linear}
+.uxsvg .route{fill:#fc4855;stroke:#fc4855;stroke-width:1.5px;stroke-linejoin:round;animation-name:uxRoute}
+.uxsvg .town{fill:none;stroke:#fc4855;stroke-width:1.8px;animation-name:uxRoute}
+.uxsvg .spot{animation-name:uxSpot}
+@keyframes uxRoute{0%,17%{opacity:0}43.75%,71.9%{opacity:1}100%{opacity:0}}
+@keyframes uxSpot{0%,17%{opacity:0}50%,68.8%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.uxsvg .ux{animation:none;opacity:.75}}

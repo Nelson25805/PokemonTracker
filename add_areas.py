@@ -336,6 +336,8 @@ def main():
     ap.add_argument("--replace", action="store_true", help="remove the map's existing areas first")
     ap.add_argument("--vector", action="store_true",
                     help="keep outlines that are not rectangles (triangles, slanted routes...) as exact polygons instead of painting them onto tiles")
+    ap.add_argument("--round-squares", action="store_true",
+                    help="store every nearly square box up to 16 map px (towns, cities, caves, buildings: the circles of the game map) as a circle / oval")
     ap.add_argument("--ellipse", metavar="NAMES", help='comma-separated places to store as circles / ovals, e.g. "Nuvema Town,Accumula Town"')
     ap.add_argument("--create", metavar="WxH", help="like --new, with an explicit size, e.g. 192x144")
     ap.add_argument("--dry-run", action="store_true", help="show what would change; write nothing")
@@ -537,6 +539,8 @@ def main():
             rects = cells_to_rects(polygon_to_cells(shape, args.scale, args.tile, yscale), args.tile)
         if name.lower() in round_names:                                 # circles / ovals: ["e", x, y, w, h]
             rects = [r if isinstance(r[0], str) else ["e"] + r for r in rects]
+        elif args.round_squares:                                        # every small, nearly square box is a circle location
+            rects = [["e"] + r if not isinstance(r[0], str) and max(r[2], r[3]) <= 16 and 0.7 <= r[2] / r[3] <= 1.43 else r for r in rects]
         boxes.setdefault(name, []).extend(rects)
     if not boxes:
         sys.exit("No locations found in the input files (looked for <area> tags, JSON and CSV).")

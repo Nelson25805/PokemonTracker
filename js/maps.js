@@ -176,6 +176,26 @@ const Maps = (() => {
   const outline = (boxes, W, H) => layer(boxes, W, H);
   const pin = (boxes, W, H, pad = 0, tree = false) => layer(boxes, W, H, pad, tree);
 
+  // Unova (Black / White) flashing, maps.json "fx": "unova": measured from a screen recording of the game's Pokédex Area screen.
+  // Routes and bridges: a red strip fades in over the orange line (thicker than the line, like the game). Towns and cities: the
+  // orange ring fades to red. Caves, buildings and other places (the green dots): a pink-red disc a little bigger than the dot
+  // fades in. All of them use the same ~1.07 s pulse (see .amap[data-fx=unova] in style.css). Each marker follows its own shape:
+  // a circle for a circle, a strip for a diagonal route, never a square. Returns one SVG (drawn in image pixels).
+  function uxMarks(sets, m) {
+    const f = v => +v.toFixed(2);
+    let out = "";
+    for (const k of ["land", "special"]) for (const { b } of sets[k]) {
+      const [x, y, w, h] = bbox(b), cx = x + w / 2, cy = y + h / 2;
+      const circle = isShape(b) ? b[0] === "e" : true;                    // a plain box that is nearly square is a circle location too
+      const squarish = w <= 16 && h <= 16 && w / h > 0.6 && w / h < 1.67;
+      if (circle && squarish && k === "special") out += `<ellipse class="ux spot" cx="${f(cx)}" cy="${f(cy)}" rx="${f(w / 2 * 1.25)}" ry="${f(h / 2 * 1.25)}" fill="url(#uxdisc)"/>`;
+      else if (circle && squarish) out += `<ellipse class="ux town" cx="${f(cx)}" cy="${f(cy)}" rx="${f(w / 2 - 0.9)}" ry="${f(h / 2 - 0.9)}"/>`;
+      else out += `<polygon class="ux route" points="${verts(b).map(v => v.join(",")).join(" ")}"/>`;
+    }
+    return `<svg class="uxsvg" viewBox="0 0 ${m.w} ${m.h}" preserveAspectRatio="none"><defs><radialGradient id="uxdisc"><stop offset="0.7" stop-color="#e25073"/>` +
+      `<stop offset="1" stop-color="#e25073" stop-opacity="0"/></radialGradient></defs>${out}</svg>`;
+  }
+
   const TIMES = ["morning", "day", "night"];
   const TCOL = { morning: "#ffd23f", day: "#ff8a1f", night: "#3b4cc0" };
   const TLABEL = { morning: "Morning", day: "Day", night: "Night" };
@@ -540,15 +560,15 @@ const Maps = (() => {
         // Morning / Day / Night: with a clock in the game (Sinnoh), boxes that only apply at some times get data-t,
         // the figure gets the time buttons, and the picture is tinted to the chosen time (see data-timed in the CSS).
         let timed = false;
-        let marks = (rm ? rm.marks : "") + ["land", "special"].flatMap(k => sets[k].map(({ b, times }) => {
+        let marks = (rm ? rm.marks : "") + (m.fx === "unova" ? uxMarks(sets, m) : ["land", "special"].flatMap(k => sets[k].map(({ b, times }) => {
           if (times.size < TIMES.length) timed = true;
           return `<i class="fl ${k}" data-t="${TIMES.filter(t => times.has(t)).join(" ")}" style="${boxStyle(b, m)}"></i>`;
-        })).join("");
+        })).join(""));
         if (honeyHere) marks += honeyIcons(table, m);                  // the tree icons sit on top of the flashing boxes
         const mix = sets.land.length && sets.special.length ? "both" : sets.special.length ? "special" : "land";
         const who = mixed ? (fstyle === "emerald" ? " (Emerald)" : " (Ruby / Sapphire)") : "";
         emit(id, m, names.size, wrap(m, id, marks, `${esc(m.name)}${who}: ${capOf(names.size, rm)}`, rm ? found.concat(rm.found) : found,
-          (timed ? filter(m, id) : "") + (rm ? rm.note : ""), ` data-flash="${fstyle}" data-mix="${mix}"${timed ? " data-timed" : ""}`), !names.size);
+          (timed ? filter(m, id) : "") + (rm ? rm.note : ""), ` data-flash="${fstyle}" data-mix="${mix}"${m.fx ? ` data-fx="${esc(m.fx)}"` : ""}${timed ? " data-timed" : ""}`), !names.size);
         continue;
       }
 

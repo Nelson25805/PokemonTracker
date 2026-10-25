@@ -171,7 +171,15 @@
    "w": 256,
    "h": 168,
    "grid": 8,
-   "flash": true
+   "flash": true,
+   "fx": "unova",
+   "unknown": {
+    "img": "assets/maps/area-unknown-bw.png",
+    "x": 64.6,
+    "y": 73.5,
+    "w": 126.8,
+    "h": 28.1
+   }
   }
  },
  "games": {
