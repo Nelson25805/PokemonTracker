@@ -16,6 +16,8 @@
   .toolbar select{max-width:100%}
   .toolbar input[type=number]{font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:0;padding:6px 8px}
   .toolbar .grp{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+  /* the toolbar's display:flex would otherwise beat the hidden attribute */
+  .toolbar [hidden],.toolbar[hidden]{display:none !important}
   .cols{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
   #side{flex:0 0 300px;max-width:100%;min-width:0}
   #wrap{min-width:0}
@@ -47,6 +49,15 @@
   #ov svg .s.pre{fill:rgba(255,220,0,.5);stroke:#000}
   #ov svg .vd{fill:#000;stroke:#fff;stroke-width:1px;vector-effect:non-scaling-stroke}
   #toolhint{margin:-4px 0 8px}
+  /* Edit tool: the picked box / shape, its dashed frame and its handles */
+  #ov i.cur.pick{border:2px solid #ffe000}
+  #ov svg .s.pick{stroke:#ffe000;stroke-width:2px}
+  #ov i.selbox{background:transparent;border:1px dashed #fff;outline:1px dashed #000}
+  #ov i.hd{width:9px;height:9px;transform:translate(-50%,-50%);background:#fff;border:1px solid #000;z-index:3}
+  #ov i.hd.v{background:#ffe000;border-radius:50%}
+  #editui #esel{font-weight:600}
+  #editui input[type=number]{width:5.5em}
+  #editmsg{font-size:13px}
 </style>
 </head>
 <body>
@@ -68,6 +79,11 @@ removes its position, <b>Add honey tree</b> creates a new one and <b>Delete hone
 opposite triangles split one square, like Black City / White Forest), a <b>Line</b> (drag from one end of a route to the other; <b>Thickness</b> is in image pixels, so diagonal routes follow the picture) or a free
 <b>Polygon</b> (click each corner, then click the first point, double-click, press Enter or use <b>Finish polygon</b>; Backspace removes the last point, Esc cancels). Corners and line ends click onto existing corners.
 <b>Circle ⇄ box</b> turns every box of the selected location into a circle, or back. Hover, <b>Alt + click</b> (delete), <b>Shift + click</b> and the arrow keys all work on shapes. A location can mix boxes and shapes.</p>
+<p class="help"><b>Edit tool (move / resize).</b> Choose <b>Edit: move / resize</b> in <b>Draw</b>, then <b>click any box or shape on the map</b> to pick it (the smallest one under the pointer wins; click again elsewhere in it to
+keep it). Drag inside it to <b>move</b> it, drag a white square on its dashed frame to <b>resize</b> it (hold <b>Shift</b> on a corner to keep its proportions), and for a polygon drag a yellow dot to move one corner.
+You can also type exact <b>X / Y / W / H</b> values, <b>Duplicate</b> or <b>Delete</b> the picked box, or turn just that box into a circle and back. <b>Arrow keys</b> nudge only the picked box (Shift = 5 px),
+<b>Delete</b> removes it, <b>Esc</b> drops the selection. Edges and corners snap to the other boxes (the same tick box as above); hold <b>Ctrl</b> while dragging to turn snapping off.
+Many places have <b>alias</b> names that share identical boxes (for example every floor of a cave). With <b>Also update identical names</b> ticked, editing one updates all of them.</p>
 <div class="toolbar">
   <label>Map <select id="map"></select></label>
   <label>Grid (image px per tile, 0 = free) <input id="grid" type="number" min="0" max="64" step="any" value="0" style="width:5em"></label>
@@ -76,7 +92,7 @@ opposite triangles split one square, like Black City / White Forest), a <b>Line<
   <label class="check"><input type="checkbox" id="gridshow"> Show grid</label>
   <label class="check"><input type="checkbox" id="edgesnap" checked> Snap to existing box edges</label>
   <label>Zoom <select id="zoom"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>6</option></select>×</label>
-  <label>Draw <select id="tool"><option value="box">Box</option><option value="ellipse">Circle / oval</option><option value="tri">Triangle</option><option value="line">Line (diagonal route)</option><option value="poly">Polygon</option></select></label>
+  <label>Draw <select id="tool"><option value="box">Box</option><option value="ellipse">Circle / oval</option><option value="tri">Triangle</option><option value="line">Line (diagonal route)</option><option value="poly">Polygon</option><option value="edit">Edit: move / resize</option></select></label>
   <label id="trilab" hidden>Right angle <select id="tricorner"><option value="br">◢ bottom right</option><option value="bl">◣ bottom left</option><option value="tl">◤ top left</option><option value="tr">◥ top right</option></select></label>
   <label id="thicklab" hidden>Thickness <input id="thick" type="number" min="0.5" step="any" value="3" style="width:4em"></label>
   <span id="polyui" hidden><button id="polydone">Finish polygon</button> <button id="polyundo">Undo point</button></span>
@@ -89,6 +105,18 @@ opposite triangles split one square, like Black City / White Forest), a <b>Line<
   <button id="addtree" title="Sinnoh map only">Add honey tree</button>
   <button id="deltree">Delete honey tree</button>
   <button id="savehoney">Download honey.json</button>
+</div>
+<div class="toolbar" id="editui" hidden>
+  <span id="esel"></span>
+  <label>X <input id="ex" type="number" step="any" disabled></label>
+  <label>Y <input id="ey" type="number" step="any" disabled></label>
+  <label>W <input id="ew" type="number" step="any" min="0.5" disabled></label>
+  <label>H <input id="eh" type="number" step="any" min="0.5" disabled></label>
+  <button id="bdup" disabled>Duplicate box</button>
+  <button id="bdel" disabled>Delete box</button>
+  <button id="bround" disabled title="Turn only the picked box into a circle / oval, or back into a box">Circle ⇄ box (this one)</button>
+  <label class="check"><input type="checkbox" id="alias" checked> Also update identical names (aliases)</label>
+  <span id="editmsg" aria-live="polite"></span>
 </div>
 <div id="msg" aria-live="polite"></div>
 <div id="toolhint" class="help"></div>
@@ -107,6 +135,7 @@ const $ = s => document.querySelector(s);
 const DRAFT = "pokedexTracker.mapDraft";
 const HDRAFT = "pokedexTracker.honeyDraft";
 let db, loc, honey = null, mapId, place = null, drag = null, poly = null, cache = {}, hoverNames = new Set();   // poly = a polygon being drawn: { pts: [[x, y]...], cur: [x, y] | null }
+let selBox = null, edit = null;                                // Edit tool: index of the picked box inside `place`; edit = the move / resize in progress
 
 const HP = Maps.honeyPrefix;                                   // "Honey Tree: "
 const isTree = (id, p) => !!honey && honey.map === id && String(p).startsWith(HP);
@@ -129,6 +158,8 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;"
 const pc = v => (v * 100).toFixed(3) + "%";
 const num = s => Number($(s).value) || 0;
 const zoom = () => Number($("#zoom").value) || 1;
+const r1 = v => Math.round(v * 10) / 10;
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
 function placesFor(id) {
   if (cache[id]) return cache[id];
@@ -157,7 +188,7 @@ function renderList() {
     li.textContent = tree ? `🌳 ${trees.indexOf(p) + 1}. ${p.slice(HP.length)}` : stale ? `${p} ⚠ unused` : p;
     li.className = (d ? "done " : "") + (tree ? "tree " : "") + (stale ? "stale " : "") + (p === place ? "sel " : "") + (hoverNames.has(p) ? "hov" : "");
     li.dataset.p = p;
-    li.onclick = () => { place = p; poly = null; renderList(); renderBoxes(); };
+    li.onclick = () => { place = p; selBox = null; poly = null; renderList(); renderBoxes(); };
     // hovering a list entry outlines all of its boxes on the map
     li.onpointerenter = () => { const b = boxes(mapId, p); if (b.length) showOutline(b); };
     li.onpointerleave = () => clearHover();
@@ -168,9 +199,14 @@ function renderList() {
     + (place ? ` · selected: ${isTree(mapId, place) ? "honey tree " + place.slice(HP.length) : place}` : " · pick a location from the list");
 }
 
+// What is drawn for box i of place p: while it is being dragged, the live (not yet saved) shape.
+const shown = (p, i, b) => (edit && edit.live && p === edit.p && i === edit.i ? edit.live : b);
+
 function renderBoxes() {
   const m = map(), ov = $("#ov"); ov.textContent = "";
   if (!m.w) return;
+  const editing = $("#tool").value === "edit";
+  if (selBox !== null && (!place || selBox >= boxes(mapId, place).length)) selBox = null;
   const shapes = [];                                                  // circles, triangles, lines, polygons: drawn as one SVG on top
   const add = (b, cls, icon) => {
     if (Maps.isShape(b)) { shapes.push([b, cls]); return; }
@@ -181,18 +217,206 @@ function renderBoxes() {
     ov.append(i);
   };
   const ents = areaEntries(mapId);
-  for (const [p, list] of ents) for (const b of list) add(b, p === place ? "cur" : "");
-  for (const [p, list] of ents) if (isTree(mapId, p)) for (const b of list) add(b, "ico", true);   // icons on top of the boxes
+  for (const [p, list] of ents) list.forEach((b, i) => add(shown(p, i, b), p === place ? (editing && i === selBox ? "cur pick" : "cur") : ""));
+  for (const [p, list] of ents) if (isTree(mapId, p)) list.forEach((b, i) => add(shown(p, i, b), "ico", true));   // icons on top of the boxes
   if (drag && drag.box) add(drag.box, "pre");
   if (poly && poly.pts.length) add(["p", ...(poly.cur ? [...poly.pts, poly.cur] : poly.pts).flat()], "pre");
-  shapes.sort((a, b) => (a[1] === "cur") - (b[1] === "cur"));       // the selected location on top
+  shapes.sort((a, b) => a[1].includes("cur") - b[1].includes("cur"));       // the selected location on top
   let svg = shapes.map(([b, c]) => svgOf(b, "s " + c)).join("");
   if (poly) svg += poly.pts.map(([x, y]) => `<circle class="vd" cx="${x}" cy="${y}" r="${3 / zoom()}"/>`).join("");
   if (svg) ov.insertAdjacentHTML("beforeend", `<svg class="ovsvg" viewBox="0 0 ${m.w} ${m.h}" preserveAspectRatio="none">${svg}</svg>`);
+  if (editing && place && selBox !== null) {                          // dashed frame + handles of the picked box
+    const b = shown(place, selBox, boxes(mapId, place)[selBox]);
+    if (b) ov.insertAdjacentHTML("beforeend", handlesHtml(b, m));
+  }
+  updateEditUi();
 }
 const svgOf = (b, cls) => b[0] === "e"
   ? `<ellipse class="${cls}" cx="${b[1] + b[3] / 2}" cy="${b[2] + b[4] / 2}" rx="${b[3] / 2}" ry="${b[4] / 2}"/>`
   : `<polygon class="${cls}" points="${Maps.verts(b).map(v => v.join(",")).join(" ")}"/>`;
+
+// ---- Edit tool: handles, picking, move / resize ----
+const isPoly = b => Maps.isShape(b) && b[0] === "p";
+// The 8 resize handles around a box / shape: [key, x, y]. Key letters say which edges move (n s e w).
+function bboxHandles(b) {
+  const [x, y, w, h] = Maps.bbox(b), mx = x + w / 2, my = y + h / 2, x1 = x + w, y1 = y + h;
+  return [["nw", x, y], ["n", mx, y], ["ne", x1, y], ["e", x1, my], ["se", x1, y1], ["s", mx, y1], ["sw", x, y1], ["w", x, my]];
+}
+function handlesHtml(b, m) {
+  const [x, y, w, h] = Maps.bbox(b);
+  let out = `<i class="selbox" style="left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(w / m.w)};height:${pc(h / m.h)}"></i>`;
+  const dot = (px, py, cls) => `<i class="hd ${cls}" style="left:${pc(px / m.w)};top:${pc(py / m.h)}"></i>`;
+  for (const [, px, py] of bboxHandles(b)) out += dot(px, py, "s");
+  if (isPoly(b)) Maps.verts(b).forEach(v => { out += dot(v[0], v[1], "v"); });
+  return out;
+}
+// Is point p (map px) on a handle of box b? -> { kind: "scale", key } | { kind: "vert", vi } | null
+function handleAt(p, b) {
+  const m = map(), k = $("#stage").getBoundingClientRect().width / m.w || 1;      // screen px per map px
+  const [, , w, h] = Maps.bbox(b);
+  const tol = Math.max(3, Math.min(8, 0.3 * Math.min(w, h) * k)) / k;             // small boxes get small handles so the middle stays grabbable
+  let best = null, bd = tol;
+  if (isPoly(b)) Maps.verts(b).forEach((v, vi) => { const d = Math.hypot(v[0] - p[0], v[1] - p[1]); if (d <= bd) { bd = d; best = { kind: "vert", vi }; } });
+  if (best) return best;
+  for (const [key, px, py] of bboxHandles(b)) { const d = Math.hypot(px - p[0], py - p[1]); if (d <= bd) { bd = d; best = { kind: "scale", key }; } }
+  return best;
+}
+// The same shape fitted into a new frame nb = [x, y, w, h] (ob = its old frame).
+function reshape(o, ob, nb) {
+  const [ox, oy, ow, oh] = ob, [nx, ny, nw, nh] = nb;
+  if (!Maps.isShape(o)) return [nx, ny, nw, nh];
+  if (o[0] === "e") return ["e", nx, ny, nw, nh];
+  const out = ["p"];
+  for (let i = 1; i + 1 < o.length; i += 2) out.push(r1(nx + (ow ? (o[i] - ox) / ow : 0.5) * nw), r1(ny + (oh ? (o[i + 1] - oy) / oh : 0.5) * nh));
+  return out;
+}
+const CURSORS = { nw: "nwse-resize", se: "nwse-resize", ne: "nesw-resize", sw: "nesw-resize", n: "ns-resize", s: "ns-resize", e: "ew-resize", w: "ew-resize" };
+function editCursor(e) {
+  let c = "";
+  if ($("#tool").value === "edit") {
+    c = "default";
+    const b = place && selBox !== null ? boxes(mapId, place)[selBox] : null;
+    if (b && map().w) {
+      const p = pos(e), h = handleAt(p, b);
+      c = h ? (h.kind === "vert" ? "crosshair" : CURSORS[h.key]) : (Maps.inBox(b, p[0], p[1]) ? "move" : "default");
+    }
+  }
+  $("#stage").style.cursor = c;
+}
+// Save a new list of boxes for a place. With "aliases" ticked, every other name whose boxes were identical to the old ones gets the new ones too.
+function commitList(p, list) {
+  const old = JSON.stringify(boxes(mapId, p));
+  let n = 0;
+  if (!isTree(mapId, p) && $("#alias").checked) {
+    const t = db.areas[mapId] || {};
+    for (const q of Object.keys(t)) if (q !== p && JSON.stringify(t[q]) === old) {
+      if (list.length) t[q] = JSON.parse(JSON.stringify(list)); else delete t[q];
+      n++;
+    }
+  }
+  setBoxes(mapId, p, list.map(b => b.slice()));
+  persist();
+  $("#editmsg").textContent = n ? `Also updated ${n} identical name${n === 1 ? "" : "s"}.` : "";
+}
+function updateEditUi() {
+  const list = place ? boxes(mapId, place) : [], b = selBox !== null ? list[selBox] : null;
+  for (const id of ["#ex", "#ey", "#ew", "#eh", "#bdel", "#bdup"]) $(id).disabled = !b;
+  $("#bround").disabled = !b || isPoly(b);
+  if (b) {
+    const f = edit && edit.live ? edit.live : b, [x, y, w, h] = Maps.bbox(f);
+    $("#ex").value = r1(x); $("#ey").value = r1(y); $("#ew").value = r1(w); $("#eh").value = r1(h);
+    $("#esel").textContent = `${isTree(mapId, place) ? "Honey tree " + place.slice(HP.length) : place}: box ${selBox + 1} of ${list.length} (${isPoly(b) ? "polygon" : b[0] === "e" ? "circle / oval" : "box"})`;
+  } else {
+    for (const id of ["#ex", "#ey", "#ew", "#eh"]) $(id).value = "";
+    $("#esel").textContent = "Click a box or shape on the map to pick it.";
+  }
+}
+function startEdit(e, mode, extra, p) {
+  e.currentTarget.setPointerCapture(e.pointerId);
+  const ref = boxes(mapId, place)[selBox];
+  edit = { mode, ...extra, p: place, i: selBox, orig: JSON.parse(JSON.stringify(ref)), ref, from: p, live: null,
+           ed: $("#edgesnap").checked && !e.ctrlKey ? edgeLists(ref) : null };
+  renderBoxes();
+}
+function editDown(e) {
+  const p = pos(e);
+  clearHover();
+  if (place && selBox !== null) {                                    // a handle of the picked box?
+    const b = boxes(mapId, place)[selBox], h = b && handleAt(p, b);
+    if (h) return startEdit(e, h.kind, h, p);
+  }
+  const hits = [];
+  for (const [q, list] of areaEntries(mapId)) list.forEach((b, i) => {
+    if (Maps.inBox(b, p[0], p[1], isTree(mapId, q) ? 1 : 0)) { const [, , w, h] = Maps.bbox(b); hits.push({ q, i, a: w * h }); }
+  });
+  // smallest box first (so a town on top of a route is easy to pick); the already picked one wins ties, then the shortest alias name
+  const isSel = h => (h.q === place && h.i === selBox ? 0 : 1);
+  hits.sort((a, b) => a.a - b.a || isSel(a) - isSel(b) || a.q.length - b.q.length);
+  if (!hits.length) { selBox = null; renderBoxes(); return; }
+  const h = hits[0], changed = h.q !== place;
+  place = h.q; selBox = h.i; poly = null;
+  if (changed) { renderList(); const li = document.querySelector("#list li.sel"); if (li) li.scrollIntoView({ block: "nearest" }); }
+  startEdit(e, "move", {}, p);
+}
+// Shift that moves edge a or b onto the nearest edge in `list` within t, or null.
+function edgeShift(a, b, list, t) {
+  let best = null, d = t + 1e-9;
+  for (const e of list) for (const v of [a, b]) { const k = Math.abs(e - v); if (k < d) { d = k; best = e - v; } }
+  return best;
+}
+function editMove(e) {
+  const m = map(), p = pos(e), o = edit.orig, [ox, oy, ow, oh] = Maps.bbox(o), pg = isPoly(o), ed = edit.ed;
+  const step = pg ? 0.5 : 1, rnd = v => Math.round(v / step) * step, t = 6 / zoom();
+  let live;
+  if (edit.mode === "move") {
+    let dx = rnd(p[0] - edit.from[0]), dy = rnd(p[1] - edit.from[1]);
+    if (ed) {
+      const sx = edgeShift(ox + dx, ox + ow + dx, ed[0], t), sy = edgeShift(oy + dy, oy + oh + dy, ed[1], t);
+      if (sx !== null) dx += sx;
+      if (sy !== null) dy += sy;
+    }
+    dx = clamp(dx, -ox, m.w - (ox + ow)); dy = clamp(dy, -oy, m.h - (oy + oh));
+    live = Maps.move(o, dx, dy);
+  } else if (edit.mode === "scale") {
+    const k = edit.key, mn = step;
+    let x0 = ox, x1 = ox + ow, y0 = oy, y1 = oy + oh;
+    const sx = v => { v = rnd(v); return ed ? nearest(v, ed[0], t) : v; }, sy = v => { v = rnd(v); return ed ? nearest(v, ed[1], t) : v; };
+    if (k.includes("w")) x0 = sx(p[0]);
+    if (k.includes("e")) x1 = sx(p[0]);
+    if (k.includes("n")) y0 = sy(p[1]);
+    if (k.includes("s")) y1 = sy(p[1]);
+    if (x1 - x0 < mn) { if (k.includes("w")) x0 = x1 - mn; else if (k.includes("e")) x1 = x0 + mn; }
+    if (y1 - y0 < mn) { if (k.includes("n")) y0 = y1 - mn; else if (k.includes("s")) y1 = y0 + mn; }
+    if (e.shiftKey && k.length === 2 && ow > 0 && oh > 0) {            // corner + Shift: keep the proportions
+      const s = Math.max((x1 - x0) / ow, (y1 - y0) / oh), nw = ow * s, nh = oh * s;
+      if (k.includes("w")) x0 = ox + ow - nw; else x1 = ox + nw;
+      if (k.includes("n")) y0 = oy + oh - nh; else y1 = oy + nh;
+    }
+    x0 = Math.max(0, x0); y0 = Math.max(0, y0); x1 = Math.min(m.w, x1); y1 = Math.min(m.h, y1);
+    live = reshape(o, [ox, oy, ow, oh], [r1(x0), r1(y0), r1(x1 - x0), r1(y1 - y0)]);
+  } else {                                                            // one corner of a polygon
+    const q = e.ctrlKey ? [r1(p[0]), r1(p[1])] : snapPt(p, 0.5, edit.ref);
+    live = o.slice(); live[1 + 2 * edit.vi] = q[0]; live[2 + 2 * edit.vi] = q[1];
+  }
+  edit.live = live;
+  renderBoxes();
+}
+function editUp() {
+  const ed = edit; edit = null;
+  if (ed.live && JSON.stringify(ed.live) !== JSON.stringify(ed.orig)) {
+    const list = boxes(mapId, ed.p).map(b => b.slice());
+    list[ed.i] = ed.live;
+    commitList(ed.p, list);
+  }
+  renderBoxes();
+}
+// Typing exact X / Y / W / H for the picked box
+function numApply() {
+  if (!place || selBox === null) return;
+  const list = boxes(mapId, place), o = list[selBox], m = map(); if (!o) return;
+  const nw = clamp(r1(num("#ew")), 0.5, m.w), nh = clamp(r1(num("#eh")), 0.5, m.h);
+  const nx = clamp(r1(num("#ex")), 0, m.w - nw), ny = clamp(r1(num("#ey")), 0, m.h - nh);
+  const nl = list.map(b => b.slice()); nl[selBox] = reshape(o, Maps.bbox(o), [nx, ny, nw, nh]);
+  commitList(place, nl); renderBoxes();
+}
+for (const id of ["#ex", "#ey", "#ew", "#eh"]) $(id).addEventListener("change", numApply);
+$("#bdel").onclick = () => {
+  if (!place || selBox === null) return;
+  const nl = boxes(mapId, place).filter((_, i) => i !== selBox);
+  selBox = null; commitList(place, nl); renderBoxes(); renderList(); clearHover();
+};
+$("#bdup").onclick = () => {
+  if (!place || selBox === null) return;
+  const list = boxes(mapId, place), o = list[selBox]; if (!o) return;
+  const nl = list.map(b => b.slice()); nl.push(Maps.move(o, 3, 3));
+  selBox = nl.length - 1; commitList(place, nl); renderBoxes();
+};
+$("#bround").onclick = () => {
+  if (!place || selBox === null) return;
+  const list = boxes(mapId, place), o = list[selBox]; if (!o || isPoly(o)) return;
+  const nl = list.map(b => b.slice()); nl[selBox] = o[0] === "e" ? o.slice(1) : ["e", ...o];
+  commitList(place, nl); renderBoxes(); clearHover();
+};
 
 // Grid lines over the map, using the tile size and offset from the toolbar (drawn only when a grid is set).
 function drawGrid() {
@@ -233,7 +457,7 @@ function hitsAt(fx, fy) {
 }
 function hover(e) {
   const m = map();
-  if (drag || poly || !m || !m.w) { clearHover(); return; }
+  if (drag || poly || edit || !m || !m.w) { clearHover(); return; }
   const r = $("#stage").getBoundingClientRect(), tip = $("#tip");
   const fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
   if (fx < 0 || fy < 0 || fx > 1 || fy > 1) { clearHover(); return; }
@@ -269,7 +493,7 @@ function loadImage(src) {
 }
 
 function selectMap(id) {
-  mapId = id; place = null; poly = null; clearHover();
+  mapId = id; place = null; selBox = null; edit = null; poly = null; clearHover();
   const m = map();
   $("#grid").value = m.editGrid !== undefined ? m.editGrid : (m.grid || 0);   // editGrid is only for this editor; "grid" is left alone
   $("#ox").value = m.editOx || 0; $("#oy").value = m.editOy || 0;
@@ -283,9 +507,13 @@ function pos(e) {
 }
 
 // Every box edge already on this map, so new boxes can click onto them: [[x edges], [y edges]].
-function edgeLists() {
-  const xs = new Set(), ys = new Set();
-  for (const list of Object.values(db.areas[mapId] || {})) for (const b of list) for (const [vx, vy] of Maps.verts(b)) { xs.add(vx); ys.add(vy); }
+// `skip` = a box to leave out (the one being edited, and any identical copy of it), so it doesn't snap onto itself.
+function edgeLists(skip) {
+  const xs = new Set(), ys = new Set(), sk = skip ? JSON.stringify(skip) : null;
+  for (const list of Object.values(db.areas[mapId] || {})) for (const b of list) {
+    if (sk && JSON.stringify(b) === sk) continue;
+    for (const [vx, vy] of Maps.verts(b)) { xs.add(vx); ys.add(vy); }
+  }
   return [[...xs], [...ys]];
 }
 const nearest = (v, list, t) => {
@@ -294,20 +522,23 @@ const nearest = (v, list, t) => {
   return best;
 };
 // Every corner of every box / shape on this map (and of the polygon being drawn): ends of lines and polygon points click onto them.
-function vertexList() {
-  const out = [];
-  for (const list of Object.values(db.areas[mapId] || {})) for (const b of list) out.push(...Maps.verts(b));
+function vertexList(skip) {
+  const out = [], sk = skip ? JSON.stringify(skip) : null;
+  for (const list of Object.values(db.areas[mapId] || {})) for (const b of list) {
+    if (sk && JSON.stringify(b) === sk) continue;
+    out.push(...Maps.verts(b));
+  }
   if (poly) out.push(...poly.pts);
   return out;
 }
 // A point from the pointer: onto a nearby existing corner, else onto nearby existing edges (if ticked), else rounded to `step` px.
-function snapPt(p, step = 1) {
+function snapPt(p, step = 1, skip = null) {
   const m = map(), t = 6 / zoom();
   let best = null, d = t;
-  for (const v of vertexList()) { const k = Math.hypot(v[0] - p[0], v[1] - p[1]); if (k < d) { d = k; best = v; } }
+  for (const v of vertexList(skip)) { const k = Math.hypot(v[0] - p[0], v[1] - p[1]); if (k < d) { d = k; best = v; } }
   if (best) return [best[0], best[1]];
   let x = Math.round(p[0] / step) * step, y = Math.round(p[1] / step) * step;
-  if ($("#edgesnap").checked) { const ed = edgeLists(); x = nearest(x, ed[0], t); y = nearest(y, ed[1], t); }
+  if ($("#edgesnap").checked) { const ed = edgeLists(skip); x = nearest(x, ed[0], t); y = nearest(y, ed[1], t); }
   return [Math.max(0, Math.min(m.w, x)), Math.max(0, Math.min(m.h, y))];
 }
 // What the selected tool draws between two pointer positions: a box, ["e", x, y, w, h], ["p", x1, y1, ...] or null (nothing yet).
@@ -356,7 +587,7 @@ $("#stage").addEventListener("pointerdown", e => {
     const hits = hitsAt((e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height);
     if (hits.length) {
       const pick = hits[0].names.includes(place) && hits[0].names.length > 1 ? hits[0].names.find(n => n !== place) : hits[0].names[0];
-      place = pick; renderList(); renderBoxes();
+      place = pick; selBox = null; renderList(); renderBoxes();
       const li = document.querySelector("#list li.sel"); if (li) li.scrollIntoView({ block: "nearest" });
     }
     return;
@@ -368,6 +599,7 @@ $("#stage").addEventListener("pointerdown", e => {
     for (let i = list.length - 1; i >= 0; i--) {
       if (Maps.inBox(list[i], x, y, pad)) {
         list.splice(i, 1);
+        selBox = null;
         setBoxes(mapId, place, list);
         persist(); renderBoxes(); renderList(); clearHover();
         return;
@@ -375,6 +607,7 @@ $("#stage").addEventListener("pointerdown", e => {
     }
     return;
   }
+  if ($("#tool").value === "edit") { if (map().w) editDown(e); return; }   // Edit tool: pick / move / resize
   if (!place) { $("#msg").textContent = "Pick a location from the list first."; return; }
   if (!map().w) return;
   const tool = curTool(), p = pos(e);
@@ -385,12 +618,15 @@ $("#stage").addEventListener("pointerdown", e => {
   drag = { tool, from: p, ed, box: shapeOf(tool, p, p, ed) }; renderBoxes();
 });
 $("#stage").addEventListener("pointermove", e => {
+  if (edit) { editMove(e); return; }
   if (drag) { drag.box = shapeOf(drag.tool, drag.from, pos(e), drag.ed); renderBoxes(); return; }
   if (poly) { poly.cur = snapPt(pos(e)); renderBoxes(); return; }
+  editCursor(e);
   hover(e);
 });
-$("#stage").addEventListener("pointerleave", () => { if (!drag) clearHover(); });
+$("#stage").addEventListener("pointerleave", () => { if (!drag && !edit) clearHover(); });
 $("#stage").addEventListener("pointerup", e => {
+  if (edit) { editUp(); return; }
   if (!drag) return;
   const end = pos(e), from = drag.from, b = shapeOf(drag.tool, from, end, drag.ed); drag = null;
   if (isTree(mapId, place)) {
@@ -402,9 +638,9 @@ $("#stage").addEventListener("pointerup", e => {
   } else if (b) setBoxes(mapId, place, [...boxes(mapId, place), b]);
   persist(); renderBoxes(); renderList(); hover(e);
 });
-$("#stage").addEventListener("pointercancel", () => { drag = null; renderBoxes(); });
+$("#stage").addEventListener("pointercancel", () => { drag = null; edit = null; renderBoxes(); });
 
-// Arrow keys nudge every box of the selected location (Shift = 5 px).
+// Arrow keys nudge every box of the selected location (Shift = 5 px). With the Edit tool and a picked box: only that box.
 document.addEventListener("keydown", e => {
   const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
   if (!d || !place || e.ctrlKey || e.metaKey || e.altKey) return;
@@ -412,8 +648,21 @@ document.addEventListener("keydown", e => {
   const l = boxes(mapId, place); if (!l.length) return;
   e.preventDefault();
   const k = e.shiftKey ? 5 : 1;
-  setBoxes(mapId, place, l.map(b => Maps.move(b, d[0] * k, d[1] * k)));
-  persist(); renderBoxes(); clearHover();
+  if ($("#tool").value === "edit" && selBox !== null && l[selBox]) {
+    const nl = l.map(b => b.slice()); nl[selBox] = Maps.move(l[selBox], d[0] * k, d[1] * k);
+    commitList(place, nl);
+  } else {
+    setBoxes(mapId, place, l.map(b => Maps.move(b, d[0] * k, d[1] * k)));
+    persist();
+  }
+  renderBoxes(); clearHover();
+});
+// Edit tool: Delete removes the picked box, Esc drops the selection.
+document.addEventListener("keydown", e => {
+  if (/^(INPUT|SELECT|TEXTAREA)$/.test((document.activeElement || {}).tagName)) return;
+  if ($("#tool").value !== "edit" || selBox === null) return;
+  if (e.key === "Delete") { e.preventDefault(); $("#bdel").click(); }
+  else if (e.key === "Escape") { selBox = null; renderBoxes(); }
 });
 
 $("#undo").onclick = () => {
@@ -428,7 +677,7 @@ $("#seed").onclick = () => {
   if (boxes(mapId, place).length && !confirm("Replace this segment's boxes?")) return;
   setBoxes(mapId, place, src.map(b => b.slice())); persist(); renderBoxes(); renderList();
 };
-$("#clear").onclick = () => { if (place) { setBoxes(mapId, place, []); persist(); renderBoxes(); renderList(); clearHover(); } };
+$("#clear").onclick = () => { if (place) { selBox = null; setBoxes(mapId, place, []); persist(); renderBoxes(); renderList(); clearHover(); } };
 
 // ---- honey trees: add / delete / download honey.json ----
 $("#addtree").onclick = () => {
@@ -440,7 +689,7 @@ $("#addtree").onclick = () => {
   const desc = (prompt("Short help text shown on the site (optional), e.g. On Route 209, north of the bridge.") || "").trim();
   honey.spots = honey.spots || [];
   honey.spots.push({ name, desc, boxes: [] });
-  place = HP + name; persist(); renderList(); renderBoxes();
+  place = HP + name; selBox = null; persist(); renderList(); renderBoxes();
   $("#msg").textContent = `Added "${name}". Now click the map where the tree stands.`;
   const li = document.querySelector("#list li.sel"); if (li) li.scrollIntoView({ block: "nearest" });
 };
@@ -448,7 +697,7 @@ $("#deltree").onclick = () => {
   if (!isTree(mapId, place)) { $("#msg").textContent = "Select a honey tree (🌳) in the list first."; return; }
   if (!confirm(`Delete the honey tree "${place.slice(HP.length)}" completely? (To only remove its position, use Clear this location.)`)) return;
   honey.spots = honey.spots.filter(s => HP + s.name !== place);
-  place = null; persist(); renderList(); renderBoxes(); clearHover();
+  place = null; selBox = null; persist(); renderList(); renderBoxes(); clearHover();
 };
 $("#savehoney").onclick = () => {
   if (!honey) return;
@@ -513,13 +762,16 @@ const HINTS = {
   tri: "Triangle: drag a box; the triangle fills half of it. Choose which corner has the right angle. Two opposite triangles split a square.",
   line: "Line: drag from one end of the route to the other. Thickness is in image pixels; the ends click onto existing corners.",
   poly: "Polygon: click each corner. Click the first point, double-click, press Enter or use Finish polygon to close it. Backspace removes the last point, Esc cancels.",
+  edit: "Edit: click a box or shape to pick it. Drag inside to move, drag a white square to resize (Shift on a corner keeps the proportions), drag a yellow dot to move a polygon corner. Ctrl turns snapping off. Delete removes the picked box.",
 };
 function toolUi() {
   const t = $("#tool").value;
-  $("#trilab").hidden = t !== "tri"; $("#thicklab").hidden = t !== "line"; $("#polyui").hidden = t !== "poly";
+  $("#trilab").hidden = t !== "tri"; $("#thicklab").hidden = t !== "line"; $("#polyui").hidden = t !== "poly"; $("#editui").hidden = t !== "edit";
   $("#toolhint").textContent = HINTS[t];
+  $("#stage").style.cursor = "";
+  if (t !== "edit") selBox = null;
 }
-$("#tool").onchange = () => { poly = null; toolUi(); renderBoxes(); };
+$("#tool").onchange = () => { poly = null; edit = null; toolUi(); renderBoxes(); };
 toolUi();
 
 (async function start() {

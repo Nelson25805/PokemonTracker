@@ -1,0 +1,426 @@
+@font-face{font-family:"PKMN";src:url("../assets/fonts/pkmn-rbygsc.ttf");font-display:swap}
+@font-face{font-family:"PokeRS";src:url("../assets/fonts/pokemon-rs.ttf");font-display:swap}
+@font-face{font-family:"PokeFRLG";src:url("../assets/fonts/pokemon-frlg.ttf");font-display:swap}
+:root{--bg:#c7d98a;--panel:#b2c66f;--ink:#0f380f;--mid:#306230;--hi:#9bbc0f;--card:#d9e8a4;--line:#0f380f;--on-hi:#0f380f;color-scheme:light}
+/* Themes (js/theme.js sets data-theme / data-mode on <html>).
+   Variables: --bg page, --panel header, --ink text+borders, --mid focus rings, --hi caught cards / hover,
+   --card cards+inputs, --line borders, --on-hi text drawn on --hi.
+   Every theme has light + dark palettes; Classic green is the base set above. */
+@media (prefers-color-scheme:dark){:root:not([data-mode=light]):not([data-theme]){--bg:#0f2a0f;--panel:#173a17;--ink:#c9e27a;--mid:#8bac0f;--hi:#9bbc0f;--card:#1d461d;--line:#8bac0f;--on-hi:#0f380f;color-scheme:dark}}
+:root:not([data-theme])[data-mode=dark]{--bg:#0f2a0f;--panel:#173a17;--ink:#c9e27a;--mid:#8bac0f;--hi:#9bbc0f;--card:#1d461d;--line:#8bac0f;--on-hi:#0f380f;color-scheme:dark}
+:root:not([data-theme])[data-mode=light]{--bg:#c7d98a;--panel:#b2c66f;--ink:#0f380f;--mid:#306230;--hi:#9bbc0f;--card:#d9e8a4;--line:#0f380f;--on-hi:#0f380f;color-scheme:light}
+
+/* Game Boy palettes and one theme per game. Every theme has a light and a dark palette; js/theme.js sets
+   data-mode to "light" or "dark" (Auto resolves to the device setting), so each theme only needs two rules. */
+:root[data-theme=pocket]{--bg:#cfcfc8;--panel:#b4b4ae;--ink:#202020;--mid:#585858;--hi:#f0f0ea;--card:#dcdcd6;--line:#202020;--on-hi:#202020;color-scheme:light}
+:root[data-theme=pocket][data-mode=dark]{--bg:#171716;--panel:#2f2f2d;--ink:#e6e6e5;--mid:#b1b1aa;--hi:#b9b9a2;--card:#41413f;--line:#a0a09c;--on-hi:#26260d;color-scheme:dark}
+:root[data-theme=color]{--bg:#e8defa;--panel:#b9a3ec;--ink:#1c1038;--mid:#5b3fb0;--hi:#d6c2ff;--card:#f4eefd;--line:#1c1038;--on-hi:#1c1038;color-scheme:light}
+:root[data-theme=color][data-mode=dark]{--bg:#3f2f6b;--panel:#2f2354;--ink:#f0e9ff;--mid:#b9a6e8;--hi:#c9b3ff;--card:#4f3d83;--line:#cbb8ff;--on-hi:#241540;color-scheme:dark}
+:root[data-theme=red]{--bg:#fbeceb;--panel:#e4574f;--ink:#140303;--mid:#8f1d17;--hi:#ffe27a;--card:#fffafa;--line:#140303;--on-hi:#140303;color-scheme:light}
+:root[data-theme=red][data-mode=dark]{--bg:#1f100f;--panel:#3e1f1d;--ink:#f4d9d7;--mid:#de827c;--hi:#e7ce74;--card:#532f2d;--line:#c17f7b;--on-hi:#26210d;color-scheme:dark}
+:root[data-theme=blue]{--bg:#e3eefc;--panel:#6fa3e8;--ink:#071530;--mid:#1f4e9c;--hi:#fff3b0;--card:#f4f8ff;--line:#071530;--on-hi:#071530;color-scheme:light}
+:root[data-theme=blue][data-mode=dark]{--bg:#0f161f;--panel:#1d2c3e;--ink:#d7e3f4;--mid:#7ca7de;--hi:#e7d574;--card:#2d3d53;--line:#7b99c1;--on-hi:#26220d;color-scheme:dark}
+:root[data-theme=yellow]{--bg:#fdf4c4;--panel:#f5d33a;--ink:#2a2000;--mid:#8a6d00;--hi:#ff9a8a;--card:#fffbe3;--line:#2a2000;--on-hi:#2a0a05;color-scheme:light}
+:root[data-theme=yellow][data-mode=dark]{--bg:#1f1c0f;--panel:#3e381d;--ink:#f4efd7;--mid:#decd7c;--hi:#e78474;--card:#534c2d;--line:#c1b47b;--on-hi:#26100d;color-scheme:dark}
+:root[data-theme=gold]{--bg:#f3e6b8;--panel:#d9b34a;--ink:#2e2203;--mid:#8a6a14;--hi:#fff0a0;--card:#fbf3d6;--line:#2e2203;--on-hi:#2e2203;color-scheme:light}
+:root[data-theme=gold][data-mode=dark]{--bg:#1f1a0f;--panel:#3e361d;--ink:#f3ecd8;--mid:#dec47c;--hi:#e7d474;--card:#53492d;--line:#c1ae7b;--on-hi:#26220d;color-scheme:dark}
+:root[data-theme=silver]{--bg:#e4e7ec;--panel:#aab4c4;--ink:#161c28;--mid:#55627a;--hi:#ffffff;--card:#f1f3f6;--line:#161c28;--on-hi:#161c28;color-scheme:light}
+:root[data-theme=silver][data-mode=dark]{--bg:#151619;--panel:#292d33;--ink:#e2e5e9;--mid:#9faabc;--hi:#97a8c4;--card:#3a3e46;--line:#949ca9;--on-hi:#0d1726;color-scheme:dark}
+:root[data-theme=crystal]{--bg:#d7f0f4;--panel:#6cc7d8;--ink:#06222b;--mid:#1d7288;--hi:#c9b8ff;--card:#eaf9fb;--line:#06222b;--on-hi:#1a1040;color-scheme:light}
+:root[data-theme=crystal][data-mode=dark]{--bg:#101c1e;--panel:#1e393e;--ink:#daeef1;--mid:#7ecedd;--hi:#9074e7;--card:#2d4c52;--line:#7cb5c0;--on-hi:#130d26;color-scheme:dark}
+:root[data-theme=ruby]{--bg:#f1d4cf;--panel:#d9665c;--ink:#240606;--mid:#8c2a24;--hi:#ffe9c4;--card:#fbe9e6;--line:#240606;--on-hi:#240606;color-scheme:light}
+:root[data-theme=ruby][data-mode=dark]{--bg:#1f110f;--panel:#3e201d;--ink:#f2dbd9;--mid:#de847c;--hi:#e7bc74;--card:#53302d;--line:#c1817b;--on-hi:#261d0d;color-scheme:dark}
+:root[data-theme=sapphire]{--bg:#d4e3f7;--panel:#4f86d6;--ink:#04122e;--mid:#1f4a9a;--hi:#9fe3ff;--card:#e8f1fc;--line:#04122e;--on-hi:#04122e;color-scheme:light}
+:root[data-theme=sapphire][data-mode=dark]{--bg:#0f161f;--panel:#1d2b3e;--ink:#d9e3f2;--mid:#7ca4de;--hi:#74c5e7;--card:#2d3c53;--line:#7b98c1;--on-hi:#0d1f26;color-scheme:dark}
+:root[data-theme=emerald]{--bg:#d3efdc;--panel:#4fb783;--ink:#04281a;--mid:#1c7a52;--hi:#f6f0a8;--card:#e7f7ec;--line:#04281a;--on-hi:#04281a;color-scheme:light}
+:root[data-theme=emerald][data-mode=dark]{--bg:#121c17;--panel:#22392e;--ink:#ddeee6;--mid:#8bd0ad;--hi:#e7de74;--card:#324d40;--line:#86b69e;--on-hi:#26240d;color-scheme:dark}
+:root[data-theme=fire-red]{--bg:#fbe3d0;--panel:#ee7a3c;--ink:#260c02;--mid:#a3340c;--hi:#ffd27a;--card:#fff1e6;--line:#260c02;--on-hi:#260c02;color-scheme:light}
+:root[data-theme=fire-red][data-mode=dark]{--bg:#1f150f;--panel:#3e291d;--ink:#f4e1d7;--mid:#de9f7c;--hi:#e7c074;--card:#533a2d;--line:#c1947b;--on-hi:#261e0d;color-scheme:dark}
+:root[data-theme=leaf-green]{--bg:#e0f3d2;--panel:#7cc45a;--ink:#0b2204;--mid:#2f7a1a;--hi:#f2f09a;--card:#f0fae8;--line:#0b2204;--on-hi:#0b2204;color-scheme:light}
+:root[data-theme=leaf-green][data-mode=dark]{--bg:#151d11;--panel:#293b21;--ink:#e2efdc;--mid:#a0d487;--hi:#e7e474;--card:#3a4f31;--line:#94ba83;--on-hi:#26260d;color-scheme:dark}
+:root[data-theme=diamond]{--bg:#dfe6fb;--panel:#8aa2e6;--ink:#0b1230;--mid:#3c4fa8;--hi:#ffffff;--card:#eff2fd;--line:#0b1230;--on-hi:#0b1230;color-scheme:light}
+:root[data-theme=diamond][data-mode=dark]{--bg:#0f131f;--panel:#1d263e;--ink:#d8dff3;--mid:#7c96de;--hi:#859ad6;--card:#2d3753;--line:#7b8dc1;--on-hi:#0d1326;color-scheme:dark}
+:root[data-theme=pearl]{--bg:#f6e3ee;--panel:#e59bbd;--ink:#2d0a1c;--mid:#9c3a68;--hi:#ffffff;--card:#fbeff5;--line:#2d0a1c;--on-hi:#2d0a1c;color-scheme:light}
+:root[data-theme=pearl][data-mode=dark]{--bg:#1e1016;--panel:#3e1e2d;--ink:#f1dae5;--mid:#dd7daa;--hi:#d685aa;--card:#522d3e;--line:#c07c9b;--on-hi:#260d18;color-scheme:dark}
+:root[data-theme=platinum]{--bg:#e6e9ee;--panel:#aab4c2;--ink:#131820;--mid:#b8650a;--hi:#f6b756;--card:#f3f5f8;--line:#131820;--on-hi:#1a1206;color-scheme:light}
+:root[data-theme=platinum][data-mode=dark]{--bg:#1d232c;--panel:#2b3440;--ink:#e3e8ef;--mid:#f0a23a;--hi:#f0a23a;--card:#364252;--line:#8fa0b5;--on-hi:#1a1206;color-scheme:dark}
+:root[data-theme=heart-gold]{--bg:#f7ecd2;--panel:#d6a63a;--ink:#2a1a02;--mid:#9c2f1a;--hi:#e5654a;--card:#fcf5e4;--line:#2a1a02;--on-hi:#1d0802;color-scheme:light}
+:root[data-theme=heart-gold][data-mode=dark]{--bg:#1f1a0f;--panel:#3e341d;--ink:#f3ebd8;--mid:#dec07c;--hi:#e78874;--card:#53472d;--line:#c1ac7b;--on-hi:#26110d;color-scheme:dark}
+:root[data-theme=soul-silver]{--bg:#dce8f7;--panel:#7e9fcc;--ink:#07121f;--mid:#2a5a9e;--hi:#cfe0f5;--card:#eaf1fa;--line:#07121f;--on-hi:#07121f;color-scheme:light}
+:root[data-theme=soul-silver][data-mode=dark]{--bg:#14202e;--panel:#22344b;--ink:#e6eef7;--mid:#9ec3ee;--hi:#c6d6e8;--card:#2d435f;--line:#9db4cf;--on-hi:#0f1a28;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,sans-serif}
+header{position:sticky;top:0;z-index:2;background:var(--panel);border-bottom:3px solid var(--line);padding:8px 16px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+h1{margin:0;padding:12px 16px 8px;font:400 22px/1 "PKMN",monospace;letter-spacing:.04em} /* outside the sticky header, so it scrolls away */
+.hrow,.controls{display:contents} /* wide screens: everything sits in one wrapping row */
+#optbtn,#gname{display:none}
+select,input[type=search],input[type=text],button{font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:0;padding:6px 8px}
+button{cursor:pointer}button:hover{background:var(--hi);color:var(--on-hi)}
+.check{display:flex;align-items:center;gap:6px}.check:has(:disabled){opacity:.45}
+.progress{flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px} /* always its own line under the controls */
+.bar{flex:1 1 140px;min-width:140px;height:14px;border:2px solid var(--line);background:var(--card)}
+#fill{height:100%;width:0;background:var(--ink);transition:width .2s}
+#count{font:400 16px "PKMN",monospace;min-width:7ch;text-align:right}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(calc(var(--sprite,80px) + 24px),1fr));gap:0;padding:11px;max-width:1200px;margin:auto}
+.card{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:30px 4px 6px;background:var(--card);border:2px solid var(--line);border-radius:0;opacity:.5;filter:grayscale(1)} /* top 30px is reserved for the ? button and the caught tick, so they never sit on the artwork */
+.cell{position:relative;display:flex;padding:5px;content-visibility:auto;contain-intrinsic-size:auto 175px} /* off-screen cells skip layout/paint but stay in the DOM; padding replaces the grid gap so focus outlines are not clipped */.cell>.card{flex:1}.cell[hidden]{display:none} /* search hides the whole cell; its display:flex would beat the default [hidden] rule */
+.where{position:absolute;top:7px;left:7px;z-index:1;width:22px;height:22px;padding:0;line-height:1;font:400 12px "PKMN",monospace}
+.card.on{opacity:1;filter:none;background:var(--hi);color:var(--on-hi);border-color:var(--on-hi)}
+.card.on::after{content:"✓";position:absolute;top:2px;right:5px;font-weight:700}
+.card img{width:var(--sprite,80px);height:var(--sprite,80px);image-rendering:pixelated;object-fit:contain}
+.card .n{font:400 12px "PKMN",monospace}.card .nm{font-size:12px;text-align:center;overflow-wrap:anywhere}
+.card:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--mid);outline-offset:2px}
+footer{padding:0 16px 32px;max-width:1200px;margin:auto}footer p{font-size:12px;opacity:.8;max-width:70ch}
+footer button{margin-right:8px}
+@media (prefers-reduced-motion:reduce){#fill{transition:none}}
+.trainer{max-width:1200px;margin:8px auto 0;padding:0 16px}
+.trainer summary{cursor:pointer;padding:8px 10px;border:2px solid var(--line);background:var(--card);font-weight:600}
+.trainer summary span{font-weight:400;opacity:.85;margin-left:8px}
+.trainer-body{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;padding:12px 0 4px}
+canvas{max-width:100%;height:auto;border:3px solid var(--line);background:var(--card)}canvas.px{image-rendering:pixelated}
+.side{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+fieldset{border:2px solid var(--line);margin:0;padding:6px 10px;display:flex;gap:12px}legend{padding:0 4px}
+fieldset:has(:disabled){opacity:.45}
+#diploma{font:400 16px "PKMN",monospace;padding:10px 14px}#diploma:disabled{opacity:.45;cursor:not-allowed}
+#hint{margin:0;font-size:13px;max-width:28ch}
+dialog{background:var(--bg);color:var(--ink);border:3px solid var(--line);padding:16px;max-width:min(96vw,560px);max-height:92vh}
+dialog::backdrop{background:rgba(0,0,0,.6)}dialog h2{margin:0 0 10px;font:400 18px "PKMN",monospace}
+dialog .row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:0 0 10px}dialog fieldset{border:0;padding:0}
+dialog .row[hidden]{display:none} /* a .row with the hidden attribute (diploma time fields, Leaf Crown picker) must really disappear */
+#where{width:min(96vw,640px);padding:0;overflow:hidden}
+#where[open]{display:flex;flex-direction:column}
+/* title row with the X button: always visible, never overlaps the content (only .dbody scrolls) */
+#where .dhead{flex:none;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:16px 16px 10px;background:var(--bg)}
+#where .dhead h2{margin:0}
+#where .dbody{flex:1 1 auto;min-height:0;overflow:auto;padding:0 16px 16px}
+.xbtn{flex:none;width:32px;height:32px;padding:0;font:400 22px/1 system-ui,sans-serif}
+@media (pointer:coarse){.xbtn{width:40px;height:40px}}
+#where-note{margin:0 0 10px;font-size:13px}#where-body p{margin:0 0 10px}
+#where details{border:2px solid var(--line);background:var(--card);margin:0 0 8px}
+#where summary{cursor:pointer;padding:6px 8px;font-weight:600}#where summary small{font-weight:400;opacity:.8;margin-left:6px}
+#where ul{list-style:none;margin:0;padding:0 8px 6px}
+#where li{display:flex;flex-wrap:wrap;gap:2px 12px;padding:4px 0;border-top:1px dashed var(--mid)}
+#where li strong{flex:0 0 min(100%,22ch)}#where li.evo strong{font-style:italic}
+#where code{font-size:12px}
+
+/* filters + bulk actions */
+button:disabled{opacity:.45;cursor:not-allowed}button:disabled:hover{background:var(--card);color:var(--ink)}
+.tools{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;padding:8px 16px 0;max-width:1200px;margin:auto}
+.seg{display:flex}.seg button{border-right-width:0}.seg button:last-child{border-right-width:2px}
+.seg button[aria-pressed=true],#select[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+#shown{font-size:13px;opacity:.85;margin-left:auto}
+.card.sel{opacity:1;filter:none;box-shadow:inset 0 0 0 3px var(--ink)}
+.card.sel::before{content:"■";position:absolute;bottom:2px;right:5px;font-size:12px}
+body.selecting .grid{-webkit-user-select:none;user-select:none}
+body.selecting footer{padding-bottom:110px}
+#selhint{flex:1 1 100%;margin:0;font-size:13px}
+#selbar{position:fixed;left:0;right:0;bottom:0;z-index:3;display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;background:var(--panel);border-top:3px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px))}
+#selbar[hidden]{display:none}
+#selcount{font:400 14px "PKMN",monospace;min-width:11ch}
+#selrange[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+
+/* shiny / normal corner badge, tracking switch, settings */
+.trk{display:flex;align-items:center;gap:6px}
+.other{position:absolute;bottom:7px;left:7px;z-index:1;display:flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;font:700 14px/1 system-ui,sans-serif;opacity:.6}
+.other[hidden]{display:none}
+.other.on{opacity:1;background:var(--hi);color:var(--on-hi);border-color:var(--on-hi)}
+.has-badges .card{padding-bottom:30px}
+#count2{font-size:12px;white-space:nowrap;opacity:.9}#count2[hidden]{display:none}
+#settings .row>span{font-size:14px}
+
+/* phones and narrow windows: a compact sticky header (search + progress), the rest behind "Options" */
+@media (max-width:759px){
+  h1{font-size:16px;padding:8px 12px 6px}
+  header{padding:6px 10px;gap:6px 8px}
+  .hrow{display:flex;flex:1 1 100%;gap:8px;align-items:center}
+  .hrow #search{flex:1;min-width:0}
+  #optbtn{display:block;flex:none}
+  .controls{display:none;flex:1 1 100%;flex-wrap:wrap;gap:8px 12px;align-items:center}
+  header.open .controls{display:flex}
+  .progress{flex:1 1 100%;gap:8px}
+  #gname{display:block;flex:0 1 auto;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+  .bar{height:10px}
+  #count{font-size:13px;min-width:0}
+  input,select{font-size:16px} /* 16px stops iOS from zooming the page when a field is focused */
+  .trainer,.tools{padding-left:10px;padding-right:10px}
+  .grid{padding:6px}
+  #shown{margin-left:0;flex-basis:100%}
+  #selbar{padding-left:10px;padding-right:10px}
+  #selbar button{padding:6px 8px;font-size:14px}
+}
+/* touch screens: bigger tap targets */
+@media (pointer:coarse){
+  select,input,button{min-height:40px}
+  .card,.where,.other{min-height:0}
+  .where{width:30px;height:30px}
+  .other{width:30px;height:30px}
+  .card{padding-top:38px}                          /* room for the bigger 30px ? button */
+  .has-badges .card,.card.hasform{padding-bottom:40px}   /* room for the bigger badge / chip */
+}
+
+/* forms: card chip, counter, info-dialog tabs, completion rules */
+.chip{position:absolute;bottom:7px;right:7px;z-index:1;height:24px;padding:0 6px;font:400 11px/1 "PKMN",monospace;opacity:.75}
+.chip.done{opacity:1;background:var(--hi);color:var(--on-hi);border-color:var(--on-hi)}
+.card.hasform{padding-bottom:30px}
+body.selecting .chip{display:none}
+#count3{font-size:12px;white-space:nowrap;opacity:.9}#count3[hidden]{display:none}
+#wtabs{margin:0 0 10px}#wtabs[hidden]{display:none}
+#tab-forms h3{margin:12px 0 6px;font:400 13px "PKMN",monospace}
+#forms-note{margin:0 0 10px;font-size:13px}
+.flist{list-style:none;margin:0;padding:0}
+.frow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:4px 6px;margin:0 0 6px;border:2px solid var(--line);background:var(--card)}
+.frow .pair{display:flex;gap:2px}
+.frow img{width:var(--fs,80px);height:var(--fs,80px);image-rendering:pixelated;object-fit:contain}
+.frow .fname{flex:1 1 9ch;display:flex;flex-direction:column;font-weight:600;overflow-wrap:anywhere}
+.frow .fname small{font-weight:400;font-size:12px;opacity:.8}
+.ftogs{display:flex;gap:6px}
+.ftog[aria-pressed=true]{background:var(--hi);color:var(--on-hi);border-color:var(--on-hi)}
+#settings .rules{flex-direction:column;align-items:flex-start;gap:6px;border:2px solid var(--line);padding:8px 10px}
+#settings .rules p{margin:0;font-size:12px;max-width:44ch}#settings .rules .fine{opacity:.8}
+@media (pointer:coarse){.chip{min-height:30px;height:30px}}
+/* region map in the "Where to find" panel (js/maps.js) */
+.amap{margin:0;padding:6px 8px 4px}
+.amapimg{position:relative;line-height:0;border:2px solid var(--line);background:var(--card)}
+.amapimg img{display:block;width:100%;height:auto;image-rendering:pixelated}
+.amapimg .mk{position:absolute;background:rgba(220,30,30,.7);outline:1px solid #fff;animation:mkblink 1s steps(1) infinite}
+@keyframes mkblink{50%{opacity:.2}}
+@media (prefers-reduced-motion:reduce){.amapimg .mk{animation:none}}
+.amap figcaption{font-size:12px;opacity:.85;margin-top:4px}
+/* blinking nest icon (maps.json "icon") and the hover / tap tooltip over the map */
+.amapimg .nest{position:absolute;background-repeat:repeat;image-rendering:pixelated;animation:mkblink 1s steps(1) infinite}
+@media (prefers-reduced-motion:reduce){.amapimg .nest{animation:none}}
+/* Red / Blue / Yellow nest blink (maps "kanto-rby" and "kanto-y"), matched to the game from a screen capture.
+   The game shows every icon for 25 frames, hides them for 25 frames, and repeats: 50 frames at 59.73 Hz = 837 ms per cycle,
+   hard cuts, icons fully gone while hidden, and visible first. The capture also shows one soft frame at each switch (the
+   screen's slow response); those are the 48-50 % and 98-100 % steps below, drawn at --nest-ghost opacity. Set
+   --nest-ghost:0 for pure on/off cuts with no soft frame.
+   Other maps (Gold / Silver / Crystal ...) keep the generic blink above until they get their own. Yellow uses the same timing;
+   if a game ever differs, give its map its own selector and override --nest-cycle or the keyframes there. */
+.amap[data-map=kanto-rby],.amap[data-map=kanto-y]{--nest-cycle:837ms;--nest-ghost:.45}
+@keyframes nestRB{0%{opacity:1}48%{opacity:var(--nest-ghost)}50%{opacity:0}98%{opacity:var(--nest-ghost)}100%{opacity:1}}
+.amap[data-map=kanto-rby] .amapimg .nest,.amap[data-map=kanto-y] .amapimg .nest{animation:nestRB var(--nest-cycle) step-end infinite}
+@media (prefers-reduced-motion:reduce){.amap[data-map=kanto-rby] .amapimg .nest,.amap[data-map=kanto-y] .amapimg .nest{animation:none}}
+.amap[data-map=kanto-y] .amaptitle{color:#060606}
+/* Gold / Silver / Crystal nest blink (map "johto-kanto-gsc"), measured from a screen capture of the game.
+   Each cycle is 16 frames visible then 16 frames hidden at 59.73 Hz = 536 ms (268 ms on, 268 ms off), hard cuts
+   with no fade, visible first. While hidden the icon is fully gone, so the map underneath shows through. */
+.amap[data-map=johto-kanto-gsc]{--nest-cycle-gsc:536ms}
+@keyframes nestGSC{0%{opacity:1}50%{opacity:0}100%{opacity:0}}
+.amap[data-map=johto-kanto-gsc] .amapimg .nest{animation:nestGSC var(--nest-cycle-gsc) step-end infinite}
+@media (prefers-reduced-motion:reduce){.amap[data-map=johto-kanto-gsc] .amapimg .nest{animation:none}}
+                      /* Yellow's black is a little darker than Red / Blue's */
+.amaptip{position:absolute;z-index:2;pointer-events:none;white-space:nowrap;line-height:1.3;font:12px system-ui,sans-serif;
+  background:var(--bg);color:var(--ink);border:2px solid var(--line);padding:3px 6px}
+.amaptip[hidden]{display:none}
+.amapimg .nest,.amapimg .mk{pointer-events:none}
+.amaphl{position:absolute;inset:0;z-index:1;pointer-events:none}
+.amaphl i{position:absolute;background:transparent;outline:2px solid #000;box-shadow:0 0 0 1px #fff}   /* hover: black outline only, no yellow fill */
+/* "AREA UNKNOWN" banner and the "NAME's NEST" heading on the map (js/maps.js) */
+.amapimg{container-type:inline-size}
+.amapimg .unk{position:absolute;display:block;pointer-events:none;image-rendering:pixelated;height:auto}
+.amapimg .unk.txt{left:5%;top:38.9%;width:85%;padding:6px 0;text-align:center;line-height:1.2;font:400 4cqw "PKMN",monospace;background:#f8e8f8;color:#181010;border:2px solid #181010}
+.amaptitle{position:absolute;right:0;z-index:1;pointer-events:none;white-space:nowrap;overflow:hidden;line-height:1;font-family:"PKMN",monospace;color:#181010}
+/* time of day on the region map (js/maps.js): filter bar, M / D / N badges, "not at this time" banner */
+.amaptime{margin:6px 8px 2px;flex-wrap:wrap}
+.amaptime button{font-size:13px;padding:4px 8px}
+.amapimg .tm{outline:2px solid var(--tc,#fff);box-shadow:0 0 0 1px #000,inset 0 0 0 1px #000}
+.amapimg .tm[hidden]{display:none}
+.amapimg .tb{position:absolute;right:-1px;bottom:-1px;padding:.25cqw .5cqw;font:400 2.6cqw/1 "PKMN",monospace;background:#000;color:var(--tc,#fff);letter-spacing:.1cqw}
+.amapimg .nest .tb,.amapimg .mk .tb{animation:none}
+.amapimg .unk.txt.small{font-size:3cqw}
+/* Hoenn's, Sinnoh's and HeartGold / SoulSilver's "AREA UNKNOWN" banners are a shrunken, higher-resolution picture, so let the browser smooth it instead of using hard pixels */
+.amap[data-map=hoenn-rse] .amapimg .unk,.amap[data-map=sinnoh-dp] .amapimg .unk,.amap[data-map=johto-kanto-hgss] .amapimg .unk,.amap[data-map=unova-bw] .amapimg .unk{image-rendering:auto}
+.amapimg .unk.txt[hidden]{display:none}
+
+/* flashing area map (maps.json "flash": true, Hoenn; js/maps.js). Every box of a location is an <i class="fl land|special">.
+   Timing and colours measured frame-by-frame from screen captures of the games (29.97 fps clips).
+   ONE loop of 1.919 s (about 115 game frames at 59.73 Hz):
+     0-52 %    routes / towns: one smooth ~1 s pulse. Pale glow builds up, hits a solid salmon (--peak) at 26 %,
+               fades back through the glow colour, and is gone at 52 %.
+     52-66 %   pause
+     66-78 %   special places (caves, buildings...) flash on  (hard cut, ~0.23 s)
+     78-89 %   off
+     89-99 %   flash on again, then the loop restarts
+   Ruby / Sapphire (data-flash=rs): glow = yellow,        special flash = red       #fc6161
+   Emerald         (data-flash=emerald): glow = cream,    special flash = whitish pink #ffe6e7
+   Fire Red / Leaf Green and Sinnoh use the Ruby / Sapphire look.
+   Tune --glow, --peak (routes) and --sp (special places) below. */
+.amap[data-flash]{--glow:#ffe58a;--peak:#fa8a88;--sp:#fc6161;--flash-cycle:1.919s}
+.amap[data-flash=emerald]{--glow:#fff2c4;--peak:#fa8a88;--sp:#ffe6e7}
+.amapimg .fl{position:absolute;pointer-events:none;opacity:0;background:var(--peak);mix-blend-mode:normal}
+.amapimg .fl.special{background:var(--sp)}
+.amap[data-flash] .fl.land{animation:flLand var(--flash-cycle) linear infinite}
+.amap[data-flash] .fl.special{animation:flSpecial var(--flash-cycle) step-end infinite}
+@keyframes flLand{
+  0%{opacity:0;background:var(--glow)}
+  10%{opacity:.35;background:var(--glow)}
+  20%{opacity:.6;background:var(--glow)}
+  26%{opacity:1;background:var(--peak)}
+  34%{opacity:.7;background:var(--glow)}
+  42%{opacity:.4;background:var(--glow)}
+  52%,100%{opacity:0;background:var(--glow)}
+}
+@keyframes flSpecial{0%{opacity:0}66%{opacity:1}78%{opacity:0}89%{opacity:1}99%,100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  .amapimg .fl{animation:none !important;opacity:.7}
+  .amapimg .fl.special{outline:2px solid #000}
+}
+/* Sinnoh (Diamond / Pearl / Platinum) flashing area map: colour + timing measured frame-by-frame from a screen capture
+   of the game (29.97 fps). Only the "sinnoh-dp" map (shared by Diamond, Pearl and Platinum) uses this; Hoenn and FireRed / LeafGreen keep the rules above.
+   COLOUR: each box is drawn with mix-blend-mode:screen, so the map's own colours show through. The overlay colour is rgb(0, g, b):
+           it starts black (no effect), the BLUE channel rises first (pale lavender), then GREEN catches up and the box peaks as
+           a bright whitish cyan (about #00F0FF on screen), then fades back the same way.
+   TIMING: ONE loop of 2.035 s (about 61 frames of the capture):
+             0 - 49.6 %    routes / towns: one smooth pulse (peak at about 24 %)
+             49.6 - 50 %   tiny gap
+             50 - 100 %    special places (caves, buildings...): the same pulse shape (peak at about 76 %)
+           Both groups use the SAME colour; the special places simply pulse second.
+   To tune: change --sinnoh-cycle (speed), or edit the rgb(0,g,b) steps in the two @keyframes below. */
+.amap[data-map=sinnoh-dp]{--sinnoh-cycle:2.035s}
+.amap[data-map=sinnoh-dp] .amapimg .fl{opacity:1;background:#000;mix-blend-mode:screen}
+.amap[data-map=sinnoh-dp] .fl.land{animation:sinLand var(--sinnoh-cycle) linear infinite}
+.amap[data-map=sinnoh-dp] .fl.special{animation:sinSpecial var(--sinnoh-cycle) linear infinite}
+@keyframes sinLand{
+  0%{background:rgb(0,0,0)}
+  2.5%{background:rgb(0,25,42)}
+  7.4%{background:rgb(0,94,148)}
+  12.3%{background:rgb(0,138,214)}
+  17.3%{background:rgb(0,182,252)}
+  20.5%{background:rgb(0,214,255)}
+  24.3%{background:rgb(0,237,255)}
+  27.2%{background:rgb(0,212,252)}
+  32.1%{background:rgb(0,164,240)}
+  37%{background:rgb(0,114,185)}
+  41.9%{background:rgb(0,69,110)}
+  45.2%{background:rgb(0,36,61)}
+  46.8%{background:rgb(0,25,41)}
+  48.5%{background:rgb(0,11,13)}
+  49.6%,100%{background:rgb(0,0,0)}
+}
+@keyframes sinSpecial{
+  0%,50%{background:rgb(0,0,0)}
+  51.7%{background:rgb(0,15,23)}
+  53.3%{background:rgb(0,27,45)}
+  55%{background:rgb(0,41,70)}
+  58.3%{background:rgb(0,77,123)}
+  64.9%{background:rgb(0,138,214)}
+  71.5%{background:rgb(0,201,250)}
+  76.4%{background:rgb(0,240,255)}
+  81.3%{background:rgb(0,196,255)}
+  87.9%{background:rgb(0,130,204)}
+  94.5%{background:rgb(0,66,105)}
+  96.2%{background:rgb(0,51,79)}
+  97.8%{background:rgb(0,36,56)}
+  99.4%{background:rgb(0,18,29)}
+  100%{background:rgb(0,0,0)}
+}
+@media (prefers-reduced-motion:reduce){
+  .amap[data-map=sinnoh-dp] .amapimg .fl{animation:none !important;background:rgb(0,170,225)}
+}
+/* HeartGold / SoulSilver flashing area map (map "johto-kanto-hgss"): colour + timing measured frame-by-frame from a screen
+   capture of the game's Pokedex Area screen (29.97 fps, 41 frames). Both games share this one map, so both use this rule.
+   COLOUR: each box is drawn with mix-blend-mode:lighten, i.e. every pixel becomes the brighter of the map's own colour and the
+           overlay colour. The overlay starts black (no effect), then runs the colours measured on the map's dark-green route
+           outline: green -> lime -> a pale yellow that peaks at about #FAFC85, then back down the same way. The map's own pale
+           fills stay pale, so routes and towns light up as pale yellow and the outlines glow lime.
+   TIMING: ONE pulse of about 1.04 s (31 frames): about 0.5 s up to the peak, about 0.5 s back down. EVERY flashing location
+           (routes, towns, caves, buildings) pulses at the same time, there is no separate "special places" phase like in Hoenn.
+           The capture is only 1.37 s long, so how long the gap between two pulses is was not measured. --hgss-cycle is the loop
+           length: 1.2 s leaves about 0.16 s of rest after the pulse (the capture shows at least 0.17 s of rest before and after
+           its single pulse). If you time the real game and it differs, change ONLY --hgss-cycle; the pulse shape stretches with
+           it. (Keyframe percentages are for a 1.2 s loop; to keep the pulse at 1.04 s while changing the gap, rescale them.)
+   Not copied: the player's-head marker that also blinks on that screen (16 frames on, 8 off at 29.97 fps, about 0.8 s per blink),
+           because the tracker has no "player location" to show. */
+.amap[data-map=johto-kanto-hgss]{--hgss-cycle:1.2s}
+.amap[data-map=johto-kanto-hgss] .amapimg .fl{opacity:1;background:#000;mix-blend-mode:lighten}
+.amap[data-map=johto-kanto-hgss] .amapimg .fl.land,.amap[data-map=johto-kanto-hgss] .amapimg .fl.special{animation:hgssPulse var(--hgss-cycle) linear infinite}
+@keyframes hgssPulse{
+  0%{background:rgb(0,0,0)}
+  2.8%{background:rgb(36,157,94)}
+  8.3%{background:rgb(68,188,103)}
+  13.9%{background:rgb(99,217,106)}
+  19.5%{background:rgb(132,245,111)}
+  25%{background:rgb(164,252,120)}
+  30.6%{background:rgb(196,253,122)}
+  36.1%{background:rgb(228,253,127)}
+  41.7%{background:rgb(250,252,133)}
+  47.3%{background:rgb(239,253,130)}
+  52.8%{background:rgb(208,253,123)}
+  58.4%{background:rgb(176,253,117)}
+  64%{background:rgb(143,247,111)}
+  69.5%{background:rgb(110,226,103)}
+  75.1%{background:rgb(77,197,98)}
+  80.6%{background:rgb(45,166,92)}
+  83.4%{background:rgb(30,152,90)}
+  86.2%,100%{background:rgb(0,0,0)}
+}
+@media (prefers-reduced-motion:reduce){
+  .amap[data-map=johto-kanto-hgss] .amapimg .fl{animation:none !important;background:rgb(250,252,133)}
+}
+/* PC boxes layout (Layout > PC boxes): Pokémon grouped into boxes like the in-game PC of that generation (js/app.js renderGrid) */
+.grid.pc{display:block}
+.pcnote{margin:0 6px 10px;font-size:13px;opacity:.85}
+.pcbox{max-width:calc(var(--cols) * 150px + 24px);margin:0 auto 14px;border:3px solid var(--line);background:var(--panel)}
+.pcbox[hidden]{display:none}
+.pcbox h2{display:flex;justify-content:space-between;gap:10px;margin:0;padding:8px 12px;font:400 16px "PKMN",monospace;background:var(--ink);color:var(--bg)}
+.pcbox .bcount{font-size:13px}
+.pcbox .boxgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));padding:6px}
+@media (min-width:760px){.pcbox .boxgrid{grid-template-columns:repeat(var(--cols),minmax(0,1fr))}}
+.cell.empty::before{content:"";flex:1;min-height:150px;border:2px dashed var(--line);opacity:.3}
+.pcbox.filtering .cell.empty{display:none}
+/* location segments (North / South / East / West) and form badges (js/where.js, js/forms.js) */
+.segtag,.formtag{display:inline-block;padding:0 6px;margin-left:2px;font:600 11px/1.6 system-ui,sans-serif;border:2px solid var(--line);vertical-align:middle;white-space:nowrap}
+.segtag{background:var(--ink);color:var(--bg)}
+.segtag.approx{background:var(--card);color:var(--ink);border-style:dashed}
+.formtag{background:var(--hi);color:var(--on-hi)}
+.segnote{display:block;font-weight:400;font-size:11px;opacity:.8}
+.fwhere{font-weight:400;font-size:12px;opacity:.9}
+
+/* form badges that match their sprites (any theme, light or dark): Shellos / Gastrodon West Sea = pink, East Sea = blue */
+.formtag[data-form=west-sea]{background:#f6b3d0;color:#4a1230;border-color:#c9658f}
+.formtag[data-form=east-sea]{background:#9fd0f2;color:#0c2e4d;border-color:#4f8fc4}
+
+/* Generation 5 themes (Black, White, Black 2, White 2) */
+:root[data-theme=black]{--bg:#dcdcdc;--panel:#8c8c8c;--ink:#0e0e0e;--mid:#444444;--hi:#f0f0f0;--card:#ececec;--line:#0e0e0e;--on-hi:#0e0e0e;color-scheme:light}
+:root[data-theme=black][data-mode=dark]{--bg:#121212;--panel:#262626;--ink:#e8e8e8;--mid:#aaaaaa;--hi:#9a9a9a;--card:#333333;--line:#8a8a8a;--on-hi:#111111;color-scheme:dark}
+:root[data-theme=white]{--bg:#f2f5f8;--panel:#c9d3dd;--ink:#14202c;--mid:#4a6178;--hi:#ffffff;--card:#fbfcfd;--line:#14202c;--on-hi:#14202c;color-scheme:light}
+:root[data-theme=white][data-mode=dark]{--bg:#161a1f;--panel:#2a323b;--ink:#e5eaef;--mid:#9db3c7;--hi:#a9bccd;--card:#38424d;--line:#8fa0b1;--on-hi:#101820;color-scheme:dark}
+:root[data-theme=black-2]{--bg:#e8dcd3;--panel:#d98a4e;--ink:#1f1006;--mid:#8a4313;--hi:#ffe0b8;--card:#f6ece4;--line:#1f1006;--on-hi:#1f1006;color-scheme:light}
+:root[data-theme=black-2][data-mode=dark]{--bg:#1b130e;--panel:#3a2a1e;--ink:#f1e2d4;--mid:#e0a874;--hi:#d79b62;--card:#4b3828;--line:#b58e6a;--on-hi:#24150a;color-scheme:dark}
+:root[data-theme=white-2]{--bg:#dbe9f6;--panel:#6fb1e8;--ink:#06182b;--mid:#1b5a9a;--hi:#e8f5ff;--card:#eef6fc;--line:#06182b;--on-hi:#06182b;color-scheme:light}
+:root[data-theme=white-2][data-mode=dark]{--bg:#0e1822;--panel:#1b2e41;--ink:#d6e7f6;--mid:#7fb6e6;--hi:#6ea8d6;--card:#2a4258;--line:#7aa3c6;--on-hi:#0a1622;color-scheme:dark}
+
+/* sprites bigger than 80px (config "spriteSize", e.g. Gen 5 = 96): shown 1:1 on wide screens; on phones scaled down smoothly instead of dropping pixels */
+@media (max-width:759px){
+  .grid.big{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
+  .grid.big .card img{width:80px;height:80px;image-rendering:auto}
+}
+
+/* Forms tab on phones: a little smaller so the name and Normal / Shiny buttons still fit beside the two sprites; scaled smoothly */
+@media (max-width:759px){.frow img{max-width:72px;max-height:72px;image-rendering:auto}}   /* beats the exact size set by Forms.fit */
+
+/* circles / triangles / diagonal strips on the region map and in the map editor: drawn as SVG over the picture (js/maps.js) */
+.amapsvg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.amapsvg .w,.amapsvg .b{fill:none;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.amapsvg .w{stroke:#fff;stroke-width:4px}
+.amapsvg .b{stroke:#000;stroke-width:2px}
+
+/* Black / White flashing area map (maps.json "fx": "unova"; js/maps.js uxMarks). Colours, sizes and timing measured frame by frame from a
+   screen recording of the game (30 fps, 91 frames, 3 pulses).
+   TIMING: ONE pulse of 1.067 s (32 frames = 64 game frames) shared by routes, towns and places, in four steps:
+             0 - 17 %      rest (the orange line / green dot is shown as drawn on the map)
+             17 - 44 %     routes and towns fade to red (places: 17 - 50 %)
+             44 - 72 %     fully red (places: 50 - 69 %)
+             72 - 100 %    fade back
+   COLOUR: routes and town rings go to rgb(252,72,85); places get a disc of rgb(226,80,115), 1.25x the size of the dot, soft edged.
+   A route is drawn about 1.75x thicker than its orange line (the red band also covers the line's dark shadow): that is the
+   stroke-width below, added to the shape's own width. To tune: change --ux-cycle (speed) or the percentages in the two @keyframes. */
+.uxsvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.amap[data-fx=unova]{--ux-cycle:1.0667s}
+.uxsvg .ux{opacity:0;animation-duration:var(--ux-cycle);animation-iteration-count:infinite;animation-timing-function:linear}
+.uxsvg .route{fill:#fc4855;stroke:#fc4855;stroke-width:1.5px;stroke-linejoin:round;animation-name:uxRoute}
+.uxsvg .town{fill:none;stroke:#fc4855;stroke-width:1.8px;animation-name:uxRoute}
+.uxsvg .spot{animation-name:uxSpot}
+@keyframes uxRoute{0%,17%{opacity:0}43.75%,71.9%{opacity:1}100%{opacity:0}}
+@keyframes uxSpot{0%,17%{opacity:0}50%,68.8%{opacity:1}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.uxsvg .ux{animation:none;opacity:.75}}
