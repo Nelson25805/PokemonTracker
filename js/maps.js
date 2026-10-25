@@ -109,6 +109,73 @@ const Maps = (() => {
     if (all.length) table[HONEY_ALL] = all;
   }
 
+  // ---- shapes ----
+  // A "box" in maps.json is [x, y, w, h] (a rectangle, as always) or a shape:
+  //   ["e", x, y, w, h]                a circle / oval drawn inside that box
+  //   ["p", x1, y1, x2, y2, x3, y3...] a polygon: triangles, diagonal strips for routes, any outline (in image pixels)
+  // Every helper below accepts either kind. Rectangles behave exactly as before.
+  const P = v => (v * 100).toFixed(3) + "%";
+  const isShape = b => typeof b[0] === "string";
+  const verts = b => {                                                  // corner points: [[x, y], ...]
+    if (!isShape(b)) { const [x, y, w, h] = b; return [[x, y], [x + w, y], [x + w, y + h], [x, y + h]]; }
+    if (b[0] === "e") { const [, x, y, w, h] = b; return [[x, y], [x + w, y], [x + w, y + h], [x, y + h]]; }
+    const out = []; for (let i = 1; i + 1 < b.length; i += 2) out.push([b[i], b[i + 1]]); return out;
+  };
+  const bbox = b => {                                                   // the rectangle around a box / shape
+    if (!isShape(b)) return b;
+    if (b[0] === "e") return b.slice(1, 5);
+    const v = verts(b), xs = v.map(p => p[0]), ys = v.map(p => p[1]), x = Math.min(...xs), y = Math.min(...ys);
+    return [x, y, Math.max(...xs) - x, Math.max(...ys) - y];
+  };
+  const area = b => { const r = bbox(b); return r[2] * r[3]; };
+  function inBox(b, x, y, pad = 0) {                                    // is the point inside the box / shape?
+    if (!isShape(b)) { const [bx, by, bw, bh] = b; return x >= bx - pad && x < bx + bw + pad && y >= by - pad && y < by + bh + pad; }
+    if (b[0] === "e") {
+      const rx = b[3] / 2 + pad, ry = b[4] / 2 + pad; if (!(rx > 0 && ry > 0)) return false;
+      const dx = (x - (b[1] + b[3] / 2)) / rx, dy = (y - (b[2] + b[4] / 2)) / ry; return dx * dx + dy * dy <= 1;
+    }
+    const v = verts(b); let hit = false;
+    for (let i = 0, j = v.length - 1; i < v.length; j = i++) {
+      const [xi, yi] = v[i], [xj, yj] = v[j];
+      if ((yi > y) !== (yj > y) && x < (xj - xi) * (y - yi) / (yj - yi) + xi) hit = !hit;
+    }
+    return hit;
+  }
+  const r1 = v => Math.round(v * 10) / 10;
+  const move = (b, dx, dy) => !isShape(b) ? [b[0] + dx, b[1] + dy, b[2], b[3]]
+    : b[0] === "e" ? ["e", r1(b[1] + dx), r1(b[2] + dy), b[3], b[4]]
+    : ["p", ...b.slice(1).map((v, i) => r1(v + (i % 2 ? dy : dx)))];
+  // CSS for an element that covers a box / shape: its bounding rectangle, clipped to the shape.
+  function boxStyle(b, m) {
+    const [x, y, w, h] = bbox(b);
+    let s = `left:${P(x / m.w)};top:${P(y / m.h)};width:${P(w / m.w)};height:${P(h / m.h)}`;
+    if (isShape(b)) {
+      if (b[0] === "e") s += ";border-radius:50%";
+      else {
+        const bw = Math.max(w, 1e-3), bh = Math.max(h, 1e-3);
+        s += ";clip-path:polygon(" + verts(b).map(([vx, vy]) => `${((vx - x) / bw * 100).toFixed(3)}% ${((vy - y) / bh * 100).toFixed(3)}%`).join(",") + ")";
+      }
+    }
+    return s;
+  }
+  // Outlines (hover and "Show on map"): rectangles stay <i> tags, shapes become one SVG (a white line under a coloured one).
+  const svgShape = b => {
+    const at = b[0] === "e" ? `ellipse cx="${b[1] + b[3] / 2}" cy="${b[2] + b[4] / 2}" rx="${b[3] / 2}" ry="${b[4] / 2}"`
+      : `polygon points="${verts(b).map(v => v.join(",")).join(" ")}"`;
+    return `<${at.split(" ")[0]} class="w" ${at.slice(at.indexOf(" ") + 1)}/><${at.split(" ")[0]} class="b" ${at.slice(at.indexOf(" ") + 1)}/>`;
+  };
+  function layer(boxes, W, H, pad = 0, tree = false) {
+    let out = "", svg = "";
+    for (const b of boxes) {
+      if (isShape(b)) { svg += svgShape(b); continue; }
+      const [x, y, w, h] = b;
+      out += `<i${tree ? ' class="tree"' : ""} style="left:${P((x - pad) / W)};top:${P((y - pad) / H)};width:${P((w + 2 * pad) / W)};height:${P((h + 2 * pad) / H)}"></i>`;
+    }
+    return out + (svg ? `<svg class="amapsvg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${svg}</svg>` : "");
+  }
+  const outline = (boxes, W, H) => layer(boxes, W, H);
+  const pin = (boxes, W, H, pad = 0, tree = false) => layer(boxes, W, H, pad, tree);
+
   const TIMES = ["morning", "day", "night"];
   const TCOL = { morning: "#ffd23f", day: "#ff8a1f", night: "#3b4cc0" };
   const TLABEL = { morning: "Morning", day: "Day", night: "Night" };
@@ -147,7 +214,8 @@ const Maps = (() => {
   function honeyIcons(table, m) {
     const p = v => (v * 100).toFixed(3) + "%", seen = new Set();
     let out = "";
-    for (const n of honeyNames) for (const [x, y, w, h] of (table[n] || [])) {
+    for (const n of honeyNames) for (const hb of (table[n] || [])) {
+      const [x, y, w, h] = bbox(hb);
       const sig = x + "," + y + "," + w + "," + h; if (seen.has(sig)) continue; seen.add(sig);
       out += `<i class="honeyicon" data-t="morning day night" style="left:${p((x - 1) / m.w)};top:${p((y - 1) / m.h)};width:${p((w + 2) / m.w)};height:${p((h + 2) / m.h)};background-image:url(${HONEYICON})"></i>`;
     }
@@ -291,7 +359,12 @@ const Maps = (() => {
 #where .honeyinfo ul{padding:0 4px 4px}
 #where .honeyinfo li{align-items:center}
 #where .honeyinfo li strong{flex:0 0 min(100%,20ch)}
-#where .honeyinfo li span{flex:1 1 20ch}`;
+#where .honeyinfo li span{flex:1 1 20ch}
+/* "Show on map" outline of a circle / triangle / diagonal strip (drawn as SVG): same red pulse as the box outlines */
+.amap .amappin svg{animation:pinPulse 1.2s ease-in-out infinite}
+.amap .amappin .w{stroke:#fff;stroke-width:4px}
+.amap .amappin .b{stroke:#d01818;stroke-width:2px;fill:rgba(255,40,40,.3)}
+@media (prefers-reduced-motion:reduce){.amap .amappin svg{animation:none}}`;
 
   // Flashing maps: is this place a route / town (land) or a unique location (special)?
   const LAND = new RegExp("\\b(route|town|city|village)\\b|\\b(one|two|three|four|five|six|seven) island\\b" +
@@ -418,9 +491,9 @@ const Maps = (() => {
       for (const [p, boxes] of Object.entries(table)) {
         if (!/\broute\b/i.test(p) || !regions.some(r => p.toLowerCase().startsWith(r.toLowerCase() + " "))) continue;
         names.push(p);
-        for (const [x, y, w, h] of boxes) {
-          const sig = x + "," + y + "," + w + "," + h; if (seen.has(sig)) continue; seen.add(sig);
-          marks += `<i class="roam" style="left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(w / m.w)};height:${pc(h / m.h)}"></i>`;
+        for (const b of boxes) {
+          const sig = JSON.stringify(b); if (seen.has(sig)) continue; seen.add(sig);
+          marks += `<i class="roam" style="${boxStyle(b, m)}"></i>`;
         }
       }
       if (!names.length) return null;
@@ -467,9 +540,9 @@ const Maps = (() => {
         // Morning / Day / Night: with a clock in the game (Sinnoh), boxes that only apply at some times get data-t,
         // the figure gets the time buttons, and the picture is tinted to the chosen time (see data-timed in the CSS).
         let timed = false;
-        let marks = (rm ? rm.marks : "") + ["land", "special"].flatMap(k => sets[k].map(({ b: [x, y, w, h], times }) => {
+        let marks = (rm ? rm.marks : "") + ["land", "special"].flatMap(k => sets[k].map(({ b, times }) => {
           if (times.size < TIMES.length) timed = true;
-          return `<i class="fl ${k}" data-t="${TIMES.filter(t => times.has(t)).join(" ")}" style="left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(w / m.w)};height:${pc(h / m.h)}"></i>`;
+          return `<i class="fl ${k}" data-t="${TIMES.filter(t => times.has(t)).join(" ")}" style="${boxStyle(b, m)}"></i>`;
         })).join("");
         if (honeyHere) marks += honeyIcons(table, m);                  // the tree icons sit on top of the flashing boxes
         const mix = sets.land.length && sets.special.length ? "both" : sets.special.length ? "special" : "land";
@@ -490,7 +563,7 @@ const Maps = (() => {
         const rm = roamFor(table, m);
         if (!seen.size && !rm) continue;                                // nothing of this Pokémon on this map
         const g = m.grid || 8;
-        const marks = (rm ? rm.marks : "") + [...seen].map(s => JSON.parse(s)).map(([x, y, w, h]) => {
+        const marks = (rm ? rm.marks : "") + [...seen].map(s => bbox(JSON.parse(s))).map(([x, y, w, h]) => {
           const pos = `left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(w / m.w)};height:${pc(h / m.h)}`;
           return `<i class="nest" style="${pos};background-image:url(${esc(m.icon)});background-size:${pc(g / w)} ${pc(g / h)}"></i>`;
         }).join("");
@@ -515,7 +588,7 @@ const Maps = (() => {
       let timed = false;
       const marks = (rm ? rm.marks : "") + [...groups.values()].map(gr => {
         const part = gr.times.size < TIMES.length; timed = timed || part;
-        const big = gr.boxes.reduce((p, b) => (b[2] * b[3] > p[2] * p[3] ? b : p));      // biggest box of the location
+        const big = bbox(gr.boxes.reduce((p, b) => (area(b) > area(p) ? b : p)));      // biggest box of the location
         const cw = Math.min(ms, big[2]), ch = Math.min(ms, big[3]);
         const cols = Math.max(1, Math.floor(big[2] / cw)), rows = Math.max(1, Math.floor(big[3] / ch));
         const x = big[0] + Math.floor((cols - 1) / 2) * cw, y = big[1] + Math.floor((rows - 1) / 2) * ch;   // middle tile
@@ -568,7 +641,7 @@ const Maps = (() => {
     const merged = new Map();                                            // box signature -> one location
     for (const [p, all] of Object.entries(tableOf(id))) {
       if (p === HONEY_ALL) continue;
-      if (!all.some(([bx, by, bw, bh]) => x >= bx && x < bx + bw && y >= by && y < by + bh)) continue;
+      if (!all.some(b => inBox(b, x, y))) continue;
       const sig = JSON.stringify([...all].sort()), k = norm(p);
       if (!merged.has(sig)) merged.set(sig, { names: [], boxes: all, here: false, times: new Set() });
       const g = merged.get(sig);
@@ -602,5 +675,5 @@ const Maps = (() => {
     return out;
   }
 
-  return { init, addHoney, html, placeKey, segment, exact, kindOf, at, drop, locate, honeyPrefix: HONEY_PREFIX, honeyIcon: HONEYICON, honeyAll: HONEY_ALL };
+  return { init, addHoney, html, placeKey, segment, exact, kindOf, at, drop, locate, bbox, isShape, verts, inBox, move, outline, pin, honeyPrefix: HONEY_PREFIX, honeyIcon: HONEYICON, honeyAll: HONEY_ALL };
 })();

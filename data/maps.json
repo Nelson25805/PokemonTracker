@@ -164,6 +164,14 @@
     "w": 208,
     "h": 28
    }
+  },
+  "unova-bw": {
+   "name": "Unova",
+   "img": "assets/maps/unova-bw.png",
+   "w": 256,
+   "h": 168,
+   "grid": 8,
+   "flash": true
   }
  },
  "games": {
@@ -220,6 +228,12 @@
   ],
   "soul-silver": [
    "johto-kanto-hgss"
+  ],
+  "black": [
+   "unova-bw"
+  ],
+  "white": [
+   "unova-bw"
   ]
  },
  "areas": {
@@ -6926,6 +6940,1210 @@
      98,
      10,
      10
+    ]
+   ]
+  },
+  "unova-bw": {
+   "Nuvema Town": [
+    [
+     226,
+     152,
+     12,
+     12
+    ]
+   ],
+   "Accumula Town": [
+    [
+     226,
+     132,
+     12,
+     12
+    ]
+   ],
+   "Striaton City": [
+    [
+     222,
+     112,
+     12,
+     12
+    ]
+   ],
+   "Nacrene City": [
+    [
+     197,
+     112,
+     11,
+     12
+    ]
+   ],
+   "Castelia City": [
+    [
+     125,
+     124,
+     13,
+     12
+    ]
+   ],
+   "Nimbasa City": [
+    [
+     125,
+     85,
+     13,
+     12
+    ]
+   ],
+   "Driftveil City": [
+    [
+     68,
+     85,
+     12,
+     12
+    ]
+   ],
+   "Mistralton City": [
+    [
+     34,
+     61,
+     12,
+     12
+    ]
+   ],
+   "Icirrus City": [
+    [
+     68,
+     37,
+     12,
+     12
+    ]
+   ],
+   "Opelucid City": [
+    [
+     125,
+     37,
+     13,
+     12
+    ]
+   ],
+   "Lacunosa Town": [
+    [
+     183,
+     37,
+     13,
+     12
+    ]
+   ],
+   "Undella Town": [
+    [
+     218,
+     61,
+     12,
+     12
+    ]
+   ],
+   "Black City": [
+    [
+     "p",
+     196.0,
+     85.1,
+     196.0,
+     97.0,
+     183.4,
+     97.0
+    ]
+   ],
+   "White Forest": [
+    [
+     "p",
+     183.4,
+     85.1,
+     196.0,
+     85.1,
+     183.4,
+     97.0
+    ]
+   ],
+   "Unova Victory Road": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Pokémon League": [
+    [
+     164,
+     9,
+     12,
+     11
+    ]
+   ],
+   "Unity Tower": [
+    [
+     94,
+     153,
+     9,
+     8
+    ]
+   ],
+   "Liberty Garden": [
+    [
+     71,
+     142,
+     6,
+     6
+    ]
+   ],
+   "Relic Castle": [
+    [
+     112,
+     101,
+     5,
+     6
+    ]
+   ],
+   "Cold Storage": [
+    [
+     71,
+     100,
+     6,
+     6
+    ]
+   ],
+   "Chargestone Cave": [
+    [
+     39,
+     77,
+     6,
+     5
+    ]
+   ],
+   "Mistralton Cave": [
+    [
+     66,
+     71,
+     6,
+     6
+    ]
+   ],
+   "Anville Town": [
+    [
+     4,
+     26,
+     6,
+     7
+    ]
+   ],
+   "Celestial Tower": [
+    [
+     51,
+     47,
+     6,
+     6
+    ]
+   ],
+   "Twist Mountain": [
+    [
+     69,
+     51,
+     6,
+     7
+    ]
+   ],
+   "Dragonspiral Tower": [
+    [
+     63,
+     28,
+     6,
+     6
+    ]
+   ],
+   "Moor of Icirrus": [
+    [
+     84,
+     33,
+     6,
+     6
+    ]
+   ],
+   "Challenger's Cave": [
+    [
+     113,
+     46,
+     6,
+     5
+    ]
+   ],
+   "Entralink": [
+    [
+     129,
+     64,
+     6,
+     6
+    ]
+   ],
+   "Lostlorn Forest": [
+    [
+     143,
+     80,
+     5,
+     7
+    ]
+   ],
+   "Poké Transfer Lab": [
+    [
+     174,
+     80,
+     5,
+     7
+    ]
+   ],
+   "Abundant Shrine": [
+    [
+     194,
+     74,
+     6,
+     6
+    ]
+   ],
+   "Giant Chasm": [
+    [
+     195,
+     28,
+     6,
+     6
+    ]
+   ],
+   "Undella Bay": [
+    [
+     245,
+     65,
+     6,
+     6
+    ]
+   ],
+   "Wellspring Cave": [
+    [
+     212,
+     107,
+     6,
+     6
+    ]
+   ],
+   "Pinwheel Forest": [
+    [
+     191,
+     122,
+     6,
+     6
+    ]
+   ],
+   "P2 Laboratory": [
+    [
+     218,
+     148,
+     7,
+     6
+    ]
+   ],
+   "Dreamyard": [
+    [
+     236,
+     115,
+     5,
+     6
+    ]
+   ],
+   "Unova Route 1": [
+    [
+     231,
+     144,
+     2,
+     8
+    ]
+   ],
+   "Unova Route 2": [
+    [
+     "p",
+     229.6,
+     132.0,
+     231.6,
+     132.0,
+     230.9,
+     124.0,
+     228.9,
+     124.0
+    ]
+   ],
+   "Unova Route 3": [
+    [
+     208,
+     117,
+     14,
+     2
+    ]
+   ],
+   "Unova Route 4": [
+    [
+     131,
+     97,
+     2,
+     27
+    ]
+   ],
+   "Unova Route 5": [
+    [
+     113,
+     90,
+     12,
+     2
+    ]
+   ],
+   "Unova Route 6": [
+    [
+     "p",
+     45.5,
+     69.9,
+     45.5,
+     72.6,
+     68.0,
+     87.8,
+     68.0,
+     85.1
+    ]
+   ],
+   "Unova Route 7": [
+    [
+     "p",
+     45.5,
+     64.0,
+     45.5,
+     60.7,
+     68.0,
+     44.9,
+     68.0,
+     47.5
+    ]
+   ],
+   "Unova Route 8": [
+    [
+     80,
+     42,
+     14,
+     2
+    ]
+   ],
+   "Unova Route 9": [
+    [
+     113,
+     42,
+     12,
+     2
+    ]
+   ],
+   "Unova Route 10": [
+    [
+     "p",
+     134.6,
+     36.9,
+     132.6,
+     36.9,
+     134.6,
+     29.7,
+     156.4,
+     29.7,
+     158.4,
+     27.7,
+     161.6,
+     27.7,
+     157.7,
+     31.7,
+     136.6,
+     31.7
+    ]
+   ],
+   "Unova Route 11": [
+    [
+     138,
+     42,
+     12,
+     2
+    ]
+   ],
+   "Unova Route 12": [
+    [
+     171,
+     42,
+     12,
+     2
+    ]
+   ],
+   "Unova Route 13": [
+    [
+     "p",
+     196.0,
+     45.5,
+     196.0,
+     48.8,
+     217.7,
+     64.0,
+     217.7,
+     60.7
+    ]
+   ],
+   "Unova Route 14": [
+    [
+     "p",
+     217.7,
+     69.9,
+     217.7,
+     72.6,
+     196.0,
+     87.8,
+     196.0,
+     85.1
+    ]
+   ],
+   "Unova Route 15": [
+    [
+     170,
+     90,
+     13,
+     2
+    ]
+   ],
+   "Unova Route 16": [
+    [
+     138,
+     90,
+     12,
+     2
+    ]
+   ],
+   "Unova Route 17": [
+    [
+     210,
+     157,
+     16,
+     2
+    ]
+   ],
+   "Unova Route 18": [
+    [
+     202,
+     157,
+     8,
+     2
+    ]
+   ],
+   "Skyarrow Bridge": [
+    [
+     "p",
+     196.6,
+     116.8,
+     196.6,
+     118.8,
+     186.7,
+     118.8,
+     171.5,
+     122.7,
+     171.5,
+     120.7,
+     149.8,
+     124.7,
+     148.5,
+     128.0,
+     137.9,
+     130.0,
+     137.9,
+     128.0,
+     146.5,
+     126.0,
+     147.8,
+     122.7,
+     173.5,
+     118.1,
+     173.5,
+     120.1,
+     185.4,
+     116.8
+    ]
+   ],
+   "Desert Resort": [
+    [
+     117,
+     103,
+     14,
+     2
+    ]
+   ],
+   "Driftveil Drawbridge": [
+    [
+     "p",
+     113.5,
+     91.7,
+     113.5,
+     89.1,
+     112.8,
+     87.8,
+     94.4,
+     87.8,
+     93.7,
+     89.7,
+     79.8,
+     89.7,
+     79.8,
+     91.7,
+     94.4,
+     91.7,
+     95.7,
+     89.7,
+     111.5,
+     89.7
+    ]
+   ],
+   "Tubeline Bridge": [
+    [
+     "p",
+     93.7,
+     40.9,
+     93.7,
+     43.5,
+     95.7,
+     41.6,
+     110.8,
+     41.6,
+     113.5,
+     43.5,
+     113.5,
+     40.9,
+     111.5,
+     39.6,
+     94.4,
+     39.6
+    ]
+   ],
+   "Village Bridge": [
+    [
+     "p",
+     149.8,
+     43.5,
+     149.8,
+     41.6,
+     151.8,
+     39.6,
+     167.6,
+     39.6,
+     170.9,
+     41.6,
+     170.9,
+     43.5,
+     167.6,
+     41.6,
+     151.8,
+     41.6
+    ]
+   ],
+   "Marvelous Bridge": [
+    [
+     "p",
+     149.8,
+     91.7,
+     151.8,
+     89.7,
+     167.6,
+     89.7,
+     169.6,
+     91.7,
+     169.6,
+     89.7,
+     167.6,
+     87.8,
+     151.8,
+     87.8,
+     149.8,
+     89.7
+    ]
+   ],
+   "Challengers Cave 1F": [
+    [
+     113,
+     46,
+     6,
+     5
+    ]
+   ],
+   "Challengers Cave B1F": [
+    [
+     113,
+     46,
+     6,
+     5
+    ]
+   ],
+   "Challengers Cave B2F": [
+    [
+     113,
+     46,
+     6,
+     5
+    ]
+   ],
+   "Unova Victory Road 1F Unknown Room": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road 2 Unknown Area 71": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road 2 Unknown Area 72": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road 2 Unknown Area 73": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road 2 Unknown Area 74": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road 2 Unknown Area 75": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road 2 Unknown Area 76": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road 2 Unknown Area 77": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road 2 Unknown Area 78": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road 2 Unknown Area 79": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road 2 Unknown Area 80": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road 4F Middle Room": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road 7F": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road Outside": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road Unknown Area 53": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road Unknown Area 54": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road Unknown Area 55": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road Unknown Area 57": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road Unknown Area 59": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road Unknown Area 60": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road Unknown Area 61": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road Unknown Area 62": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road Unknown Area 63": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road Unknown Area 64": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road Unknown Area 65": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Victory Road Unknown Area 66": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Trial Chamber": [
+    [
+     158,
+     20,
+     9,
+     8
+    ]
+   ],
+   "Unova Route 10 Victory Road Gate": [
+    [
+     "p",
+     134.6,
+     36.9,
+     132.6,
+     36.9,
+     134.6,
+     29.7,
+     156.4,
+     29.7,
+     158.4,
+     27.7,
+     161.6,
+     27.7,
+     157.7,
+     31.7,
+     136.6,
+     31.7
+    ]
+   ],
+   "Castelia City Game Freak Hq 1F": [
+    [
+     125,
+     124,
+     13,
+     12
+    ]
+   ],
+   "Castelia Sewers": [
+    [
+     125,
+     124,
+     13,
+     12
+    ]
+   ],
+   "Castelia Sewers Unknown Area 38": [
+    [
+     125,
+     124,
+     13,
+     12
+    ]
+   ],
+   "Nacrene City Nacrene Museum": [
+    [
+     197,
+     112,
+     11,
+     12
+    ]
+   ],
+   "Nacrene City West Gate": [
+    [
+     197,
+     112,
+     11,
+     12
+    ]
+   ],
+   "Relic Castle A": [
+    [
+     112,
+     101,
+     5,
+     6
+    ]
+   ],
+   "Relic Castle B": [
+    [
+     112,
+     101,
+     5,
+     6
+    ]
+   ],
+   "Relic Castle C": [
+    [
+     112,
+     101,
+     5,
+     6
+    ]
+   ],
+   "Relic Castle D": [
+    [
+     112,
+     101,
+     5,
+     6
+    ]
+   ],
+   "Chargestone Cave 1F": [
+    [
+     39,
+     77,
+     6,
+     5
+    ]
+   ],
+   "Chargestone Cave B1F": [
+    [
+     39,
+     77,
+     6,
+     5
+    ]
+   ],
+   "Chargestone Cave B2F": [
+    [
+     39,
+     77,
+     6,
+     5
+    ]
+   ],
+   "Twist Mountain B1F 3F": [
+    [
+     69,
+     51,
+     6,
+     7
+    ]
+   ],
+   "Twist Mountain B4F": [
+    [
+     69,
+     51,
+     6,
+     7
+    ]
+   ],
+   "Dragonspiral Tower 1F": [
+    [
+     63,
+     28,
+     6,
+     6
+    ]
+   ],
+   "Dragonspiral Tower 2F": [
+    [
+     63,
+     28,
+     6,
+     6
+    ]
+   ],
+   "Dragonspiral Tower 7F": [
+    [
+     63,
+     28,
+     6,
+     6
+    ]
+   ],
+   "Dragonspiral Tower Entrance": [
+    [
+     63,
+     28,
+     6,
+     6
+    ]
+   ],
+   "Dragonspiral Tower Outside": [
+    [
+     63,
+     28,
+     6,
+     6
+    ]
+   ],
+   "Pinwheel Forest Hidden Grotto Inner": [
+    [
+     191,
+     122,
+     6,
+     6
+    ]
+   ],
+   "Pinwheel Forest Hidden Grotto Outer": [
+    [
+     191,
+     122,
+     6,
+     6
+    ]
+   ],
+   "Pinwheel Forest Inside": [
+    [
+     191,
+     122,
+     6,
+     6
+    ]
+   ],
+   "Pinwheel Forest Outside": [
+    [
+     191,
+     122,
+     6,
+     6
+    ]
+   ],
+   "Pinwheel Forest Rumination Field": [
+    [
+     191,
+     122,
+     6,
+     6
+    ]
+   ],
+   "Giant Chasm Forest": [
+    [
+     195,
+     28,
+     6,
+     6
+    ]
+   ],
+   "Giant Chasm Forest Cave": [
+    [
+     195,
+     28,
+     6,
+     6
+    ]
+   ],
+   "Giant Chasm Hidden Grotto": [
+    [
+     195,
+     28,
+     6,
+     6
+    ]
+   ],
+   "Giant Chasm Outside": [
+    [
+     195,
+     28,
+     6,
+     6
+    ]
+   ],
+   "Celestial Tower 2F": [
+    [
+     51,
+     47,
+     6,
+     6
+    ]
+   ],
+   "Celestial Tower 3F": [
+    [
+     51,
+     47,
+     6,
+     6
+    ]
+   ],
+   "Celestial Tower 4F": [
+    [
+     51,
+     47,
+     6,
+     6
+    ]
+   ],
+   "Celestial Tower 5F": [
+    [
+     51,
+     47,
+     6,
+     6
+    ]
+   ],
+   "Guidance Chamber": [
+    [
+     66,
+     71,
+     6,
+     6
+    ]
+   ],
+   "Lostlorn Forest Hidden Grotto": [
+    [
+     143,
+     80,
+     5,
+     7
+    ]
+   ],
+   "Abundant Shrine Hidden Grotto Near Youngster": [
+    [
+     194,
+     74,
+     6,
+     6
+    ]
+   ],
+   "Abundant Shrine Hidden Grotto Shrine": [
+    [
+     194,
+     74,
+     6,
+     6
+    ]
+   ],
+   "Liberty Garden Lighthouse Basement": [
+    [
+     71,
+     142,
+     6,
+     6
+    ]
+   ],
+   "Dreamyard B1F": [
+    [
+     236,
+     115,
+     5,
+     6
+    ]
+   ],
+   "Desert Resort Entrance": [
+    [
+     117,
+     103,
+     14,
+     2
+    ]
+   ],
+   "Victory Road": [
+    [
+     158,
+     20,
+     9,
+     8
     ]
    ]
   }

@@ -40,6 +40,13 @@
   /* honey tree icons (Sinnoh) */
   #ov i.ico{border:0 !important;background-color:transparent !important;background-repeat:no-repeat;background-size:100% 100%;image-rendering:pixelated}
   #list li.tree{font-weight:600}
+  /* circles, triangles, diagonal lines and polygons are drawn as one SVG over the map */
+  #ov svg.ovsvg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+  #ov svg .s{fill:rgba(40,90,220,.25);stroke:rgba(0,0,0,.5);stroke-width:1px;vector-effect:non-scaling-stroke}
+  #ov svg .s.cur{fill:rgba(220,30,30,.55);stroke:#fff}
+  #ov svg .s.pre{fill:rgba(255,220,0,.5);stroke:#000}
+  #ov svg .vd{fill:#000;stroke:#fff;stroke-width:1px;vector-effect:non-scaling-stroke}
+  #toolhint{margin:-4px 0 8px}
 </style>
 </head>
 <body>
@@ -57,6 +64,10 @@ If the map image isn't in <code>assets/maps/</code> yet, use <b>Preview image…
 <b>click</b> the map to put its icon there (the old position is replaced), or drag a box. <b>Arrow keys</b> nudge it, <b>Alt + click</b> or <b>Clear this location</b>
 removes its position, <b>Add honey tree</b> creates a new one and <b>Delete honey tree</b> removes it completely. Press <b>Download honey.json</b> and put the file in <code>data/</code>
 (separate from maps.json). The order of the list is the order shown on the site.</p>
+<p class="help"><b>Shapes.</b> Pick what to draw in <b>Draw</b>: a <b>Box</b> (as before), a <b>Circle / oval</b> (drag its box), a <b>Triangle</b> (drag a box, choose which corner has the right angle; two
+opposite triangles split one square, like Black City / White Forest), a <b>Line</b> (drag from one end of a route to the other; <b>Thickness</b> is in image pixels, so diagonal routes follow the picture) or a free
+<b>Polygon</b> (click each corner, then click the first point, double-click, press Enter or use <b>Finish polygon</b>; Backspace removes the last point, Esc cancels). Corners and line ends click onto existing corners.
+<b>Circle ⇄ box</b> turns every box of the selected location into a circle, or back. Hover, <b>Alt + click</b> (delete), <b>Shift + click</b> and the arrow keys all work on shapes. A location can mix boxes and shapes.</p>
 <div class="toolbar">
   <label>Map <select id="map"></select></label>
   <label>Grid (image px per tile, 0 = free) <input id="grid" type="number" min="0" max="64" step="any" value="0" style="width:5em"></label>
@@ -65,9 +76,14 @@ removes its position, <b>Add honey tree</b> creates a new one and <b>Delete hone
   <label class="check"><input type="checkbox" id="gridshow"> Show grid</label>
   <label class="check"><input type="checkbox" id="edgesnap" checked> Snap to existing box edges</label>
   <label>Zoom <select id="zoom"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>6</option></select>×</label>
+  <label>Draw <select id="tool"><option value="box">Box</option><option value="ellipse">Circle / oval</option><option value="tri">Triangle</option><option value="line">Line (diagonal route)</option><option value="poly">Polygon</option></select></label>
+  <label id="trilab" hidden>Right angle <select id="tricorner"><option value="br">◢ bottom right</option><option value="bl">◣ bottom left</option><option value="tl">◤ top left</option><option value="tr">◥ top right</option></select></label>
+  <label id="thicklab" hidden>Thickness <input id="thick" type="number" min="0.5" step="any" value="3" style="width:4em"></label>
+  <span id="polyui" hidden><button id="polydone">Finish polygon</button> <button id="polyundo">Undo point</button></span>
   <button id="img">Preview image…</button><input type="file" id="imgfile" accept="image/*" hidden>
   <button id="undo">Undo last box</button>
   <button id="clear">Clear this location</button>
+  <button id="round" title="Turn every box of the selected location into a circle / oval, or back into boxes">Circle ⇄ box</button>
   <button id="seed" title="For a segment like Route 212 North: start from the whole route's boxes, then Alt+click the parts that belong to the other segment">Copy parent route boxes</button>
   <button id="save">Download maps.json</button>
   <button id="addtree" title="Sinnoh map only">Add honey tree</button>
@@ -75,6 +91,7 @@ removes its position, <b>Add honey tree</b> creates a new one and <b>Delete hone
   <button id="savehoney">Download honey.json</button>
 </div>
 <div id="msg" aria-live="polite"></div>
+<div id="toolhint" class="help"></div>
 <div class="cols">
   <div id="side">
     <input type="search" id="q" placeholder="Filter locations" style="width:100%">
@@ -89,7 +106,7 @@ removes its position, <b>Add honey tree</b> creates a new one and <b>Delete hone
 const $ = s => document.querySelector(s);
 const DRAFT = "pokedexTracker.mapDraft";
 const HDRAFT = "pokedexTracker.honeyDraft";
-let db, loc, honey = null, mapId, place = null, drag = null, cache = {}, hoverNames = new Set();
+let db, loc, honey = null, mapId, place = null, drag = null, poly = null, cache = {}, hoverNames = new Set();   // poly = a polygon being drawn: { pts: [[x, y]...], cur: [x, y] | null }
 
 const HP = Maps.honeyPrefix;                                   // "Honey Tree: "
 const isTree = (id, p) => !!honey && honey.map === id && String(p).startsWith(HP);
@@ -140,7 +157,7 @@ function renderList() {
     li.textContent = tree ? `🌳 ${trees.indexOf(p) + 1}. ${p.slice(HP.length)}` : stale ? `${p} ⚠ unused` : p;
     li.className = (d ? "done " : "") + (tree ? "tree " : "") + (stale ? "stale " : "") + (p === place ? "sel " : "") + (hoverNames.has(p) ? "hov" : "");
     li.dataset.p = p;
-    li.onclick = () => { place = p; renderList(); renderBoxes(); };
+    li.onclick = () => { place = p; poly = null; renderList(); renderBoxes(); };
     // hovering a list entry outlines all of its boxes on the map
     li.onpointerenter = () => { const b = boxes(mapId, p); if (b.length) showOutline(b); };
     li.onpointerleave = () => clearHover();
@@ -154,7 +171,9 @@ function renderList() {
 function renderBoxes() {
   const m = map(), ov = $("#ov"); ov.textContent = "";
   if (!m.w) return;
+  const shapes = [];                                                  // circles, triangles, lines, polygons: drawn as one SVG on top
   const add = (b, cls, icon) => {
+    if (Maps.isShape(b)) { shapes.push([b, cls]); return; }
     const i = document.createElement("i"); i.className = cls;
     const [x, y, w, h] = icon ? [b[0] - 1, b[1] - 1, b[2] + 2, b[3] + 2] : b;      // the icon is 1px larger than the tree's box on every side
     Object.assign(i.style, { left: x / m.w * 100 + "%", top: y / m.h * 100 + "%", width: w / m.w * 100 + "%", height: h / m.h * 100 + "%" });
@@ -164,8 +183,16 @@ function renderBoxes() {
   const ents = areaEntries(mapId);
   for (const [p, list] of ents) for (const b of list) add(b, p === place ? "cur" : "");
   for (const [p, list] of ents) if (isTree(mapId, p)) for (const b of list) add(b, "ico", true);   // icons on top of the boxes
-  if (drag) add(drag.box, "pre");
+  if (drag && drag.box) add(drag.box, "pre");
+  if (poly && poly.pts.length) add(["p", ...(poly.cur ? [...poly.pts, poly.cur] : poly.pts).flat()], "pre");
+  shapes.sort((a, b) => (a[1] === "cur") - (b[1] === "cur"));       // the selected location on top
+  let svg = shapes.map(([b, c]) => svgOf(b, "s " + c)).join("");
+  if (poly) svg += poly.pts.map(([x, y]) => `<circle class="vd" cx="${x}" cy="${y}" r="${3 / zoom()}"/>`).join("");
+  if (svg) ov.insertAdjacentHTML("beforeend", `<svg class="ovsvg" viewBox="0 0 ${m.w} ${m.h}" preserveAspectRatio="none">${svg}</svg>`);
 }
+const svgOf = (b, cls) => b[0] === "e"
+  ? `<ellipse class="${cls}" cx="${b[1] + b[3] / 2}" cy="${b[2] + b[4] / 2}" rx="${b[3] / 2}" ry="${b[4] / 2}"/>`
+  : `<polygon class="${cls}" points="${Maps.verts(b).map(v => v.join(",")).join(" ")}"/>`;
 
 // Grid lines over the map, using the tile size and offset from the toolbar (drawn only when a grid is set).
 function drawGrid() {
@@ -184,7 +211,7 @@ function showOutline(bx) {
   const key = JSON.stringify(bx);
   if (hl.dataset.k === key) return;
   hl.dataset.k = key;
-  hl.innerHTML = bx.map(([x, y, w, h]) => `<i style="left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(w / m.w)};height:${pc(h / m.h)}"></i>`).join("");
+  hl.innerHTML = Maps.outline(bx, m.w, m.h);
 }
 function clearHover() {
   const hl = $("#hl"), tip = $("#tip");
@@ -196,7 +223,7 @@ function hitsAt(fx, fy) {
   const m = map(), x = fx * m.w, y = fy * m.h, merged = new Map();
   for (const [p, all] of areaEntries(mapId)) {
     const pad = isTree(mapId, p) ? 1 : 0;                            // a tree's icon is 1px bigger than its box, so hover covers the whole icon
-    if (!all.some(([bx, by, bw, bh]) => x >= bx - pad && x < bx + bw + pad && y >= by - pad && y < by + bh + pad)) continue;
+    if (!all.some(b => Maps.inBox(b, x, y, pad))) continue;
     const sig = JSON.stringify([...all].sort());
     if (!merged.has(sig)) merged.set(sig, { names: [], boxes: all });
     merged.get(sig).names.push(p);
@@ -206,7 +233,7 @@ function hitsAt(fx, fy) {
 }
 function hover(e) {
   const m = map();
-  if (drag || !m || !m.w) { clearHover(); return; }
+  if (drag || poly || !m || !m.w) { clearHover(); return; }
   const r = $("#stage").getBoundingClientRect(), tip = $("#tip");
   const fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
   if (fx < 0 || fy < 0 || fx > 1 || fy > 1) { clearHover(); return; }
@@ -242,7 +269,7 @@ function loadImage(src) {
 }
 
 function selectMap(id) {
-  mapId = id; place = null; clearHover();
+  mapId = id; place = null; poly = null; clearHover();
   const m = map();
   $("#grid").value = m.editGrid !== undefined ? m.editGrid : (m.grid || 0);   // editGrid is only for this editor; "grid" is left alone
   $("#ox").value = m.editOx || 0; $("#oy").value = m.editOy || 0;
@@ -258,7 +285,7 @@ function pos(e) {
 // Every box edge already on this map, so new boxes can click onto them: [[x edges], [y edges]].
 function edgeLists() {
   const xs = new Set(), ys = new Set();
-  for (const list of Object.values(db.areas[mapId] || {})) for (const [x, y, w, h] of list) { xs.add(x); xs.add(x + w); ys.add(y); ys.add(y + h); }
+  for (const list of Object.values(db.areas[mapId] || {})) for (const b of list) for (const [vx, vy] of Maps.verts(b)) { xs.add(vx); ys.add(vy); }
   return [[...xs], [...ys]];
 }
 const nearest = (v, list, t) => {
@@ -266,6 +293,41 @@ const nearest = (v, list, t) => {
   for (const e of list) { const k = Math.abs(e - v); if (k < d) { d = k; best = e; } }
   return best;
 };
+// Every corner of every box / shape on this map (and of the polygon being drawn): ends of lines and polygon points click onto them.
+function vertexList() {
+  const out = [];
+  for (const list of Object.values(db.areas[mapId] || {})) for (const b of list) out.push(...Maps.verts(b));
+  if (poly) out.push(...poly.pts);
+  return out;
+}
+// A point from the pointer: onto a nearby existing corner, else onto nearby existing edges (if ticked), else rounded to `step` px.
+function snapPt(p, step = 1) {
+  const m = map(), t = 6 / zoom();
+  let best = null, d = t;
+  for (const v of vertexList()) { const k = Math.hypot(v[0] - p[0], v[1] - p[1]); if (k < d) { d = k; best = v; } }
+  if (best) return [best[0], best[1]];
+  let x = Math.round(p[0] / step) * step, y = Math.round(p[1] / step) * step;
+  if ($("#edgesnap").checked) { const ed = edgeLists(); x = nearest(x, ed[0], t); y = nearest(y, ed[1], t); }
+  return [Math.max(0, Math.min(m.w, x)), Math.max(0, Math.min(m.h, y))];
+}
+// What the selected tool draws between two pointer positions: a box, ["e", x, y, w, h], ["p", x1, y1, ...] or null (nothing yet).
+function shapeOf(tool, a, b, ed) {
+  if (tool === "line") {                                              // a strip of the chosen thickness along the dragged line
+    const A = snapPt(a, 0.5), B = snapPt(b, 0.5), dx = B[0] - A[0], dy = B[1] - A[1], len = Math.hypot(dx, dy);
+    if (len < 1) return null;
+    const t = Math.max(0.5, Number($("#thick").value) || 3) / 2, nx = -dy / len * t, ny = dx / len * t, r = v => Math.round(v * 10) / 10;
+    return ["p", r(A[0] + nx), r(A[1] + ny), r(B[0] + nx), r(B[1] + ny), r(B[0] - nx), r(B[1] - ny), r(A[0] - nx), r(A[1] - ny)];
+  }
+  const box = boxOf(a, b, ed);
+  if (tool === "ellipse") return ["e", ...box];
+  if (tool === "tri") {
+    const [x, y, w, h] = box, x1 = x + w, y1 = y + h;
+    const pts = { br: [[x1, y], [x1, y1], [x, y1]], bl: [[x, y], [x, y1], [x1, y1]], tl: [[x, y], [x1, y], [x, y1]], tr: [[x, y], [x1, y], [x1, y1]] }[$("#tricorner").value];
+    return ["p", ...pts.flat()];
+  }
+  return box;
+}
+const curTool = () => (isTree(mapId, place) ? "box" : $("#tool").value);   // a honey tree is always one box
 
 // Two pointer positions -> a box [x, y, w, h] in whole image pixels.
 // Grid 0: the corners as dragged. Grid > 0: whole tiles of that size (decimals allowed) from the offset. Each EDGE is rounded
@@ -304,8 +366,7 @@ $("#stage").addEventListener("pointerdown", e => {
     const m = map(), x = (e.clientX - r.left) / r.width * m.w, y = (e.clientY - r.top) / r.height * m.h;
     const list = boxes(mapId, place).slice(), pad = isTree(mapId, place) ? 1 : 0;
     for (let i = list.length - 1; i >= 0; i--) {
-      const [bx, by, bw, bh] = list[i];
-      if (x >= bx - pad && x < bx + bw + pad && y >= by - pad && y < by + bh + pad) {
+      if (Maps.inBox(list[i], x, y, pad)) {
         list.splice(i, 1);
         setBoxes(mapId, place, list);
         persist(); renderBoxes(); renderList(); clearHover();
@@ -316,26 +377,29 @@ $("#stage").addEventListener("pointerdown", e => {
   }
   if (!place) { $("#msg").textContent = "Pick a location from the list first."; return; }
   if (!map().w) return;
+  const tool = curTool(), p = pos(e);
+  if (tool === "poly") { clearHover(); addVertex(p); return; }
   e.currentTarget.setPointerCapture(e.pointerId);
   clearHover();
-  const p = pos(e), ed = edgeLists();
-  drag = { from: p, ed, box: boxOf(p, p, ed) }; renderBoxes();
+  const ed = edgeLists();
+  drag = { tool, from: p, ed, box: shapeOf(tool, p, p, ed) }; renderBoxes();
 });
 $("#stage").addEventListener("pointermove", e => {
-  if (drag) { drag.box = boxOf(drag.from, pos(e), drag.ed); renderBoxes(); return; }
+  if (drag) { drag.box = shapeOf(drag.tool, drag.from, pos(e), drag.ed); renderBoxes(); return; }
+  if (poly) { poly.cur = snapPt(pos(e)); renderBoxes(); return; }
   hover(e);
 });
 $("#stage").addEventListener("pointerleave", () => { if (!drag) clearHover(); });
 $("#stage").addEventListener("pointerup", e => {
   if (!drag) return;
-  const end = pos(e), from = drag.from, b = boxOf(from, end, drag.ed); drag = null;
+  const end = pos(e), from = drag.from, b = shapeOf(drag.tool, from, end, drag.ed); drag = null;
   if (isTree(mapId, place)) {
     // a honey tree is ONE box. A plain click puts a tile-sized box (same size as before, else 7x7) centred on the pointer; a drag draws the box.
     const m = map(), old = boxes(mapId, place)[0], w = old ? old[2] : 7, h = old ? old[3] : 7;
     const click = Math.abs(end[0] - from[0]) < 3 && Math.abs(end[1] - from[1]) < 3;
     const nb = click ? [Math.max(0, Math.min(m.w - w, Math.round(end[0] - w / 2))), Math.max(0, Math.min(m.h - h, Math.round(end[1] - h / 2))), w, h] : b;
     setBoxes(mapId, place, [nb]);
-  } else setBoxes(mapId, place, [...boxes(mapId, place), b]);
+  } else if (b) setBoxes(mapId, place, [...boxes(mapId, place), b]);
   persist(); renderBoxes(); renderList(); hover(e);
 });
 $("#stage").addEventListener("pointercancel", () => { drag = null; renderBoxes(); });
@@ -348,7 +412,7 @@ document.addEventListener("keydown", e => {
   const l = boxes(mapId, place); if (!l.length) return;
   e.preventDefault();
   const k = e.shiftKey ? 5 : 1;
-  setBoxes(mapId, place, l.map(([x, y, w, h]) => [x + d[0] * k, y + d[1] * k, w, h]));
+  setBoxes(mapId, place, l.map(b => Maps.move(b, d[0] * k, d[1] * k)));
   persist(); renderBoxes(); clearHover();
 });
 
@@ -409,6 +473,54 @@ $("#save").onclick = () => {
   a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 1)], { type: "application/json" }));
   a.download = "maps.json"; a.click(); URL.revokeObjectURL(a.href);
 };
+
+// ---- tools: polygon drawing, circle <-> box, hints ----
+function finishPoly() {
+  if (!poly) return;
+  if (poly.pts.length < 3) { $("#msg").textContent = "A polygon needs at least 3 points."; return; }
+  setBoxes(mapId, place, [...boxes(mapId, place), ["p", ...poly.pts.flat()]]);
+  poly = null; persist(); renderBoxes(); renderList();
+}
+function addVertex(p) {
+  if (poly && poly.pts.length >= 3 && Math.hypot(p[0] - poly.pts[0][0], p[1] - poly.pts[0][1]) < 6 / zoom()) return finishPoly();   // click the first point to close
+  (poly = poly || { pts: [], cur: null }).pts.push(snapPt(p));
+  poly.cur = null; renderBoxes();
+}
+$("#stage").addEventListener("dblclick", () => {                      // double-click closes (its two clicks each added a point: drop the duplicates)
+  if (!poly) return;
+  const same = (a, b) => a && b && a[0] === b[0] && a[1] === b[1];
+  while (poly.pts.length > 1 && same(poly.pts[poly.pts.length - 1], poly.pts[poly.pts.length - 2])) poly.pts.pop();
+  finishPoly();
+});
+document.addEventListener("keydown", e => {
+  if (!poly || /^(INPUT|SELECT|TEXTAREA)$/.test((document.activeElement || {}).tagName)) return;
+  if (e.key === "Enter") { e.preventDefault(); finishPoly(); }
+  else if (e.key === "Escape") { poly = null; renderBoxes(); }
+  else if (e.key === "Backspace") { e.preventDefault(); poly.pts.pop(); if (!poly.pts.length) poly = null; renderBoxes(); }
+});
+$("#polydone").onclick = finishPoly;
+$("#polyundo").onclick = () => { if (!poly) return; poly.pts.pop(); if (!poly.pts.length) poly = null; renderBoxes(); };
+$("#round").onclick = () => {
+  if (!place || isTree(mapId, place)) return;
+  const l = boxes(mapId, place); if (!l.length) return;
+  const toRound = l.some(b => !Maps.isShape(b));                       // any plain box: make boxes round; all round already: back to boxes
+  setBoxes(mapId, place, l.map(b => (toRound ? (Maps.isShape(b) ? b : ["e", ...b]) : (b[0] === "e" ? b.slice(1) : b))));
+  persist(); renderBoxes(); renderList(); clearHover();
+};
+const HINTS = {
+  box: "Box: drag to draw a box.",
+  ellipse: "Circle / oval: drag a box; the circle is drawn inside it.",
+  tri: "Triangle: drag a box; the triangle fills half of it. Choose which corner has the right angle. Two opposite triangles split a square.",
+  line: "Line: drag from one end of the route to the other. Thickness is in image pixels; the ends click onto existing corners.",
+  poly: "Polygon: click each corner. Click the first point, double-click, press Enter or use Finish polygon to close it. Backspace removes the last point, Esc cancels.",
+};
+function toolUi() {
+  const t = $("#tool").value;
+  $("#trilab").hidden = t !== "tri"; $("#thicklab").hidden = t !== "line"; $("#polyui").hidden = t !== "poly";
+  $("#toolhint").textContent = HINTS[t];
+}
+$("#tool").onchange = () => { poly = null; toolUi(); renderBoxes(); };
+toolUi();
 
 (async function start() {
   try {

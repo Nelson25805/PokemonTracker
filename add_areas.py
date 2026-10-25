@@ -40,6 +40,9 @@ How it works
   * --tile auto works out the map's grid from the shapes themselves (use it when boxes look slightly off), and
     --preview check.html writes a page that draws every box over the map picture so you can see the result at once.
   * --times marks the map as having a Morning / Day / Night clock (Sinnoh): the hover tooltip then says when a Pokemon is there.
+  * --vector keeps every drawn outline that is not a plain rectangle (triangles, slanted routes, L-shaped routes...) as an exact
+    polygon ["p", x1, y1, x2, y2, ...] instead of painting it onto tiles. --ellipse "Nuvema Town,Accumula Town" stores the named
+    places as circles / ovals ["e", x, y, w, h] drawn inside their box. The site and map-editor.html draw both kinds.
   * A backup (maps.json.bak) is written before saving. Nothing is written with --dry-run.
 """
 import argparse, base64, csv, difflib, fnmatch, json, os, re, shutil, struct, sys
@@ -247,22 +250,39 @@ def detect_tile(shapes, sx, sy):
     return max(t for t, v in score.items() if v >= max(0.75, best - 0.2))
 
 
+def bbox(b):
+    """[x, y, w, h] around a box ([x,y,w,h]) or a shape (["e", x, y, w, h] / ["p", x1, y1, x2, y2, ...])."""
+    if b and isinstance(b[0], str):
+        if b[0] == "e":
+            return list(b[1:5])
+        xs, ys = b[1::2], b[2::2]
+        return [min(xs), min(ys), max(xs) - min(xs), max(ys) - min(ys)]
+    return list(b)
+
+
 def preview_html(mp, boxes, path):
-    """A stand-alone page: the map picture with every imported box drawn on it (hover a box for its name)."""
+    """A stand-alone page: the map picture with every imported box / shape drawn on it (hover one for its name)."""
     w, h = mp["w"], mp["h"]
     items = []
     for name, rs in sorted(boxes.items()):
-        for x, y, bw, bh in rs:
-            nm = name.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;")
-            items.append(f'<i title="{nm}" data-n="{nm}" style="left:{x / w * 100:.3f}%;top:{y / h * 100:.3f}%;'
-                         f'width:{bw / w * 100:.3f}%;height:{bh / h * 100:.3f}%"></i>')
+        nm = name.replace("&", "&amp;").replace('"', "&quot;").replace("<", "&lt;")
+        for b in rs:
+            if b and isinstance(b[0], str):
+                if b[0] == "e":
+                    el = f'<ellipse cx="{b[1] + b[3] / 2}" cy="{b[2] + b[4] / 2}" rx="{b[3] / 2}" ry="{b[4] / 2}"'
+                else:
+                    el = '<polygon points="' + " ".join(f"{b[i]},{b[i + 1]}" for i in range(1, len(b) - 1, 2)) + '"'
+            else:
+                el = f'<rect x="{b[0]}" y="{b[1]}" width="{b[2]}" height="{b[3]}"'
+            items.append(f'{el} data-n="{nm}"/>')
     page = ("<!doctype html><meta charset=utf-8><title>Import preview</title>"
             "<style>body{font:14px sans-serif;margin:12px}#m{position:relative;max-width:900px;line-height:0}#m img{width:100%;image-rendering:pixelated}"
-            "#m i{position:absolute;background:rgba(255,0,0,.35);outline:1px solid rgba(255,255,255,.9);box-sizing:border-box}"
-            "#m i:hover{background:rgba(255,230,0,.7);z-index:2}#t{margin:8px 0;min-height:1.4em;font-weight:600}</style>"
-            f"<p>Every box the import made, over <code>{mp['img']}</code>. They should sit exactly on the routes and places of the picture. "
+            "#m svg{position:absolute;inset:0;width:100%;height:100%}"
+            "#m svg *{fill:rgba(255,0,0,.35);stroke:#fff;stroke-width:1px;vector-effect:non-scaling-stroke}"
+            "#m svg *:hover{fill:rgba(255,230,0,.7)}#t{margin:8px 0;min-height:1.4em;font-weight:600}</style>"
+            f"<p>Every box and shape the import made, over <code>{mp['img']}</code>. They should sit exactly on the routes and places of the picture. "
             f"({len(boxes)} places, map {w}x{h})</p><label><input type=range min=0 max=100 value=100 oninput=\"m.querySelector('img').style.opacity=this.value/100\"> picture opacity</label>"
-            f"<div id=t>Hover a box</div><div id=m><img src=\"{mp['img']}\">{''.join(items)}</div>"
+            f"<div id=t>Hover a box</div><div id=m><img src=\"{mp['img']}\"><svg viewBox=\"0 0 {w} {h}\" preserveAspectRatio=\"none\">{''.join(items)}</svg></div>"
             "<script>m.onmouseover=e=>{if(e.target.dataset.n)t.textContent=e.target.dataset.n}</script>")
     with open(path, "w", encoding="utf-8") as f:
         f.write(page)
@@ -314,6 +334,9 @@ def main():
     ap.add_argument("--games", help="comma-separated game keys that use this map, e.g. fire-red,leaf-green (added to maps.json \"games\")")
     ap.add_argument("--aliases", help="JSON file: {name: [extra names sharing the same boxes]}")
     ap.add_argument("--replace", action="store_true", help="remove the map's existing areas first")
+    ap.add_argument("--vector", action="store_true",
+                    help="keep outlines that are not rectangles (triangles, slanted routes...) as exact polygons instead of painting them onto tiles")
+    ap.add_argument("--ellipse", metavar="NAMES", help='comma-separated places to store as circles / ovals, e.g. "Nuvema Town,Accumula Town"')
     ap.add_argument("--create", metavar="WxH", help="like --new, with an explicit size, e.g. 192x144")
     ap.add_argument("--dry-run", action="store_true", help="show what would change; write nothing")
     args = ap.parse_args()
@@ -500,14 +523,20 @@ def main():
             print(f"  ! the shapes look like they were drawn at scale {guess:.2f}, but the scale in use is {args.scale:.2f}. "
                   f"Try --scale {guess:.3f}")
 
+    round_names = {clean_name(n.strip(), args.prefix, args.prefix_pattern).lower() for n in (args.ellipse or "").split(",") if n.strip()}
     boxes = {}
     for name, shape in shapes:
         name = clean_name(renames.get(name, name), args.prefix, args.prefix_pattern)
         if isinstance(shape, tuple):
             rects = [list(map(int, r)) for r in shape[1]]
+        elif is_rect(shape):
+            rects = snapped_rect(shape, args.scale, args.tile, yscale)
+        elif args.vector:                                               # keep the drawn outline: ["p", x1, y1, x2, y2, ...] in map px
+            rects = [["p"] + [round(v, 1) for x, y in shape for v in (x / args.scale, y / yscale)]]
         else:
-            rects = (snapped_rect(shape, args.scale, args.tile, yscale) if is_rect(shape)
-                     else cells_to_rects(polygon_to_cells(shape, args.scale, args.tile, yscale), args.tile))
+            rects = cells_to_rects(polygon_to_cells(shape, args.scale, args.tile, yscale), args.tile)
+        if name.lower() in round_names:                                 # circles / ovals: ["e", x, y, w, h]
+            rects = [r if isinstance(r[0], str) else ["e"] + r for r in rects]
         boxes.setdefault(name, []).extend(rects)
     if not boxes:
         sys.exit("No locations found in the input files (looked for <area> tags, JSON and CSV).")
@@ -554,7 +583,7 @@ def main():
             if name.startswith(args.prefix + " ") and not re.match(r"^\S+ Route \d", name):
                 result.setdefault(name[len(args.prefix) + 1:], [list(r) for r in boxes[name]])
 
-    warns = [n for n, rs in result.items() for x, y, w, h in rs
+    warns = [n for n, rs in result.items() for x, y, w, h in map(bbox, rs)
              if mw and mh and (x < 0 or y < 0 or x + w > mw + args.tile or y + h > mh + args.tile)]
     if warns:
         print(f"  ! {len(set(warns))} location(s) fall outside the {mw}x{mh} map - is --scale right? e.g. {sorted(set(warns))[:3]}")

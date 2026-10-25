@@ -398,3 +398,9 @@ body.selecting .chip{display:none}
 
 /* Forms tab on phones: a little smaller so the name and Normal / Shiny buttons still fit beside the two sprites; scaled smoothly */
 @media (max-width:759px){.frow img{max-width:72px;max-height:72px;image-rendering:auto}}   /* beats the exact size set by Forms.fit */
+
+/* circles / triangles / diagonal strips on the region map and in the map editor: drawn as SVG over the picture (js/maps.js) */
+.amapsvg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.amapsvg .w,.amapsvg .b{fill:none;vector-effect:non-scaling-stroke;stroke-linejoin:round}
+.amapsvg .w{stroke:#fff;stroke-width:4px}
+.amapsvg .b{stroke:#000;stroke-width:2px}

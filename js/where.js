@@ -379,7 +379,7 @@ const Where = (() => {
         if (hl.dataset.k !== key) {
           const W = Number(fig.dataset.w), H = Number(fig.dataset.h);
           hl.dataset.k = key;
-          hl.innerHTML = bx.map(([x, y, w, h]) => `<i style="left:${pc(x / W)};top:${pc(y / H)};width:${pc(w / W)};height:${pc(h / H)}"></i>`).join("");
+          hl.innerHTML = Maps.outline(bx, W, H);                                // boxes and shapes (circles, triangles, diagonal strips)
         }
       }
       // name; if a roamer could be on that route: "could be roaming here"; if the Pokémon is found there: "found here", plus the time of day on maps that have one (Gold / Silver / Crystal)
@@ -411,7 +411,7 @@ const Where = (() => {
       if (tab && tab.getAttribute("aria-selected") !== "true") tab.click();
       const times = btn.dataset.times ? btn.dataset.times.split(" ") : [];
       const tree = btn.dataset.area.startsWith(Maps.honeyPrefix) || btn.dataset.area === Maps.honeyAll, g = tree ? 2 : 0;   // a honey tree: red outline a little outside the icon
-      const boxes = hit.boxes.map(([x, y, w, h]) => `<i${tree ? ' class="tree"' : ""} style="left:${pc((x - g) / hit.w)};top:${pc((y - g) / hit.h)};width:${pc((w + 2 * g) / hit.w)};height:${pc((h + 2 * g) / hit.h)}"></i>`).join("");
+      const boxes = Maps.pin(hit.boxes, hit.w, hit.h, g, tree);
       for (const f of figs) {
         // time of day: only when the entry applies to some times and not others, and the filter doesn't already match
         if (times.length && times.length < 3 && f.querySelector(".tfilter")) {
