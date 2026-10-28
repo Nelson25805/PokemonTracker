@@ -82,6 +82,8 @@ def pretty_cond(slug):
     """Encounter condition -> short label, or None for the default / 'off' case (nothing worth showing)."""
     if slug.startswith("time-"):
         return slug[5:].capitalize()
+    if slug.startswith("season-"):                    # Gen 5: season-spring -> "Spring" (where.js turns these into the season filter)
+        return slug[7:].capitalize()
     if slug == "swarm-yes":
         return "Swarm"
     if slug == "radar-on":
