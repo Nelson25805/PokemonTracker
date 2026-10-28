@@ -265,9 +265,34 @@ const Where = (() => {
       const s = typeof Maps !== "undefined" ? Maps.segment(area) : { base: area, seg: "" };
       return { area, base: s.base, seg: s.seg, best: a.best, times: TIMES.filter(t => a.times.has(t)), html: body(a) };
     });
+    // Floors of one place (Mt. Moon 1F / B1F / B2F ...) with exactly the same encounters (under the current filters) become ONE record
+    // that lists the floors it covers. Floors with different encounters stay separate records.
+    const floorOf = a => {
+      const m = /(^|\s)(b?\d+f)(?=\s|$)/i.exec(a);
+      return m ? { floor: m[2].toUpperCase(), key: (a.slice(0, m.index + m[1].length) + a.slice(m.index + m[0].length)).replace(/\s+/g, " ").trim() } : null;
+    };
+    const fval = f => (f[0] === "B" ? -1 : 1) * parseInt(f.replace(/\D/g, ""), 10);          // B2F = -2, B1F = -1, 1F = 1 ...
+    const floorText = fl => {                                                                  // "Floors 1F–3F" / "Floors B1F, 1F, 5F"
+      const v = [...new Set(fl)].sort((x, y) => fval(x) - fval(y)), runs = [];
+      for (const f of v) {
+        const run = runs[runs.length - 1], p = run && fval(run[run.length - 1]);
+        if (run && (fval(f) - p === 1 || (p === -1 && fval(f) === 1))) run.push(f); else runs.push([f]);
+      }
+      return "Floors " + runs.map(r => (r.length >= 3 ? `${r[0]}–${r[r.length - 1]}` : r.join(", "))).join(", ");
+    };
+    const list = [], same = new Map();
+    for (const r of rows) {
+      const f = r.seg ? null : floorOf(r.area);
+      if (!f) { list.push(r); continue; }
+      const k = f.key + "\u0001" + r.html, o = same.get(k);
+      if (o) { o.floors.push(f.floor); continue; }
+      const n = { ...r, floors: [f.floor], title: f.key };
+      same.set(k, n); list.push(n);
+    }
+    for (const o of list) if (o.floors) { if (o.floors.length > 1) o.floorTag = floorText(o.floors); else { delete o.floors; delete o.title; } }
     const top = new Map();                                      // North / South of one route stay together, ranked by the better one
-    rows.forEach(r => top.set(r.base, Math.max(top.get(r.base) || 0, r.best)));
-    return rows.sort((x, y) => top.get(y.base) - top.get(x.base) || x.base.localeCompare(y.base, undefined, { numeric: true }) || x.seg.localeCompare(y.seg));
+    list.forEach(r => top.set(r.base, Math.max(top.get(r.base) || 0, r.best)));
+    return list.sort((x, y) => top.get(y.base) - top.get(x.base) || x.base.localeCompare(y.base, undefined, { numeric: true }) || x.seg.localeCompare(y.seg));
   }
 
   // Which segments (North, South, East...) exist for each place in a game, from the location data itself.
@@ -284,7 +309,7 @@ const Where = (() => {
   }
   // Location name + segment badge ("North only", "not in South") + form badges ("East Sea").
   function nameHtml(l, keys, mine, n) {
-    let out = esc(l.seg ? l.base : l.area);
+    let out = esc(l.title || (l.seg ? l.base : l.area)) + (l.floorTag ? ` <mark class="floortag" title="Same encounters on each of these floors">${esc(l.floorTag)}</mark>` : "");
     if (l.seg) {
       const all = new Set(); keys.forEach(k => (segIndex(k).get(l.base) || []).forEach(s => all.add(s)));
       const have = mine[l.base], rest = [...all].filter(s => !have.has(s)), only = rest.length > 0;
@@ -536,6 +561,7 @@ const Where = (() => {
 #where .amap[data-season=summer] .amapimg img{filter:sepia(.2) saturate(1.45) brightness(1.08) contrast(1.04)}
 #where .amap[data-season=autumn] .amapimg img{filter:sepia(.18) saturate(1.1) hue-rotate(-9deg) brightness(.98)}
 #where .amap[data-season=winter] .amapimg img{filter:saturate(.72) brightness(1.07) contrast(.97) hue-rotate(8deg)}
+#where .floortag{display:inline-block;padding:0 6px;margin-left:4px;font:600 11px/1.6 system-ui,sans-serif;border:2px solid var(--line);background:var(--card);color:var(--ink);vertical-align:middle;white-space:nowrap}
 #where .amap .tfilter{display:none}   /* the map's own time buttons are replaced by the filter under each map, which also filters the list */`;
       document.head.append(st);
     }
