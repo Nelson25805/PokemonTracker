@@ -21,7 +21,7 @@
 const Where = (() => {
   const $ = s => document.querySelector(s);
   let games = [], mons = [], byKey = {}, data = null, loading = null, honey = null;
-  let last = null, season = "all";                              // last = what the open dialog shows (for the season buttons); season = the chosen season filter ("all" or spring / summer / autumn / winter)
+  let last = null, season = "all", tod = "all";                              // last = what the open dialog shows (for the season buttons); season = the chosen season filter ("all" or spring / summer / autumn / winter)
 
   const HONEY = "Honey Trees", HONEY_PRE = "Honey Tree: ";     // same names as in maps.js
 
@@ -42,11 +42,25 @@ const Where = (() => {
   const SEASON_NAME = { spring: "Spring", summer: "Summer", autumn: "Autumn", winter: "Winter" };
   const SEASON_MONTHS = { spring: "Jan · May · Sep", summer: "Feb · Jun · Oct", autumn: "Mar · Jul · Nov", winter: "Apr · Aug · Dec" };
   const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  // ---- time of day (Gold / Silver / Crystal / HeartGold / SoulSilver and Diamond / Pearl / Platinum) ----
+  const TNAME = { morning: "Morning", day: "Day", night: "Night" };
+  const TPHRASE = { morning: "in the morning", day: "during the day", night: "at night" };
+  const TCOL = { morning: "#ffd23f", day: "#ff8a1f", night: "#3b4cc0" };
+  const CLOCK_GS = { morning: "4:00–9:59 AM", day: "10:00 AM–5:59 PM", night: "6:00 PM–3:59 AM" };
+  const CLOCK_DP = { morning: "4:00–9:59 AM", day: "10:00 AM–7:59 PM", night: "8:00 PM–3:59 AM" };
+  const CLOCK_OF = { gold: CLOCK_GS, silver: CLOCK_GS, crystal: CLOCK_GS, "heart-gold": CLOCK_GS, "soul-silver": CLOCK_GS, diamond: CLOCK_DP, pearl: CLOCK_DP, platinum: CLOCK_DP };
+  const timesIn = cond => TIMES.filter(t => String(cond || "").split(",").some(p => p.trim().toLowerCase() === t));   // [] = the row applies at every time of day
+  function timeBar(clock) {
+    const btn = (id, name, sub) => `<button type="button" class="sbtn" data-k="time" data-s="${id}" aria-pressed="${tod === id}">${name}${sub}</button>`;
+    const buttons = btn("all", "All day", "") + TIMES.map(t => btn(t, TNAME[t], clock ? `<small>${clock[t]}</small>` : "")).join("");
+    return `<div class="seasonwrap"><div class="seg seasonbar" role="group" aria-label="Time of day">${buttons}</div>` +
+      `<p class="seasonnote">What appears here depends on the time of day on the game's own clock. The hours are shown on each button. Pick one to see only what appears then.</p></div>`;
+  }
   const seasonWord = p => { const m = /^(?:season[\s-]+)?(spring|summer|autumn|winter)$/i.exec(String(p).trim()); return m ? m[1].toLowerCase() : null; };
   const seasonsIn = cond => [...new Set(String(cond || "").split(",").map(seasonWord).filter(Boolean))];   // [] = the row applies in every season
   function seasonBar() {
     const d = new Date(), now = SEASONS[d.getMonth() % 4];
-    const btn = (id, name, sub) => `<button type="button" class="sbtn" data-s="${id}" aria-pressed="${season === id}">${name}${sub}</button>`;
+    const btn = (id, name, sub) => `<button type="button" class="sbtn" data-k="season" data-s="${id}" aria-pressed="${season === id}">${name}${sub}</button>`;
     const buttons = btn("all", "All seasons", "") + SEASONS.map(s => btn(s, SEASON_NAME[s], `<small>${SEASON_MONTHS[s]}${s === now ? " · now" : ""}</small>`)).join("");
     return `<div class="seasonwrap"><div class="seg seasonbar" role="group" aria-label="Season">${buttons}</div>` +
       `<p class="seasonnote">The season follows the calendar month on the DS clock and repeats every four months (months are shown on each button). ` +
@@ -187,61 +201,55 @@ const Where = (() => {
   // `chance` is the encounter rate within that area (several slots of one method are already added up in
   // build_locations.py). An area is ranked by its best method; entries with no recorded rate (0) go last.
   // Within an area the methods are sorted the same way, and ties fall back to the area name.
-  function lines(entries, sel = "all") {
+  function lines(entries, sel = "all", tsel = "all", clock = null) {
     const areas = new Map();
-    const TNAME = { morning: "Morning", day: "Day", night: "Night" };
     for (const [area0, method, lo, hi, chance, cond] of entries) {
       // PokéAPI files HeartGold / SoulSilver's Latias / Latios under Johto, but they roam Kanto (same fix as in maps.js)
       const area = area0 === "Roaming Johto" && /copycat/i.test(cond || "") ? "Roaming Kanto" : area0;
-      // Split the condition text into time of day (Morning / Day / Night) and everything else (Swarm, Poké Radar, ...).
-      // Rows that differ only by time of day are merged into one line that names the times, e.g. "Morning / Day".
+      // Split the condition text into time of day, season and everything else (Swarm, Poké Radar, ...).
       const parts = String(cond || "").split(",").map(x => x.trim()).filter(Boolean);
       const hit = TIMES.filter(t => parts.some(p => p.toLowerCase() === t));
       const sHit = parts.map(seasonWord).filter(Boolean);                  // seasons this row is limited to (none = all four)
       if (sel !== "all" && sHit.length && !sHit.includes(sel)) continue;   // a season is chosen and this row is for other seasons
+      if (tsel !== "all" && hit.length && !hit.includes(tsel)) continue;   // a time of day is chosen and this row is for other times
       const seasons = sHit.length ? sHit : SEASONS;
+      const times = hit.length ? hit : TIMES;                              // a row with no time condition applies all day
       const other = parts.filter(p => !TIMES.includes(p.toLowerCase()) && !seasonWord(p)).join(", ");
-      const times = hit.length ? hit : TIMES;                      // a row with no time condition applies all day
-      if (!areas.has(area)) areas.set(area, { rows: new Map(), best: 0, times: new Set(), grid: new Map(), seasonal: false });
+      if (!areas.has(area)) areas.set(area, { best: 0, times: new Set(), grid: new Map(), seasonal: false, timed: false });
       const a = areas.get(area);
       times.forEach(t => a.times.add(t));
-      const key = [method, other, lo, hi, chance || 0].join("|");
-      let r = a.rows.get(key);
-      if (!r) a.rows.set(key, r = { method, other, lo, hi, chance: chance || 0, times: new Set(), seasons: new Set() });
-      times.forEach(t => r.times.add(t));
-      seasons.forEach(x => r.seasons.add(x));
       a.best = Math.max(a.best, chance || 0);
-      // season table data: one line per method + level range, with that method's rate in each season it exists
       if (sHit.length) a.seasonal = true;
+      if (hit.length && hit.length < TIMES.length) a.timed = true;
+      // one line per method + level range, with that method's rate in every season / time of day it exists
       const gk = [method, other, lo, hi].join("|");
       let g = a.grid.get(gk);
-      if (!g) a.grid.set(gk, g = { method, other, lo, hi, per: {} });
+      if (!g) a.grid.set(gk, g = { method, other, lo, hi, per: {}, tper: {} });
       for (const x of seasons) g.per[x] = Math.min(100, (g.per[x] || 0) + (chance || 0));
+      for (const t of times) g.tper[t] = Math.min(100, (g.tper[t] || 0) + (chance || 0));
     }
     const lvl = r => (r.lo ? (r.lo === r.hi ? `Lv ${r.lo}` : `Lv ${r.lo}–${r.hi}`) : "");
-    // Places whose Pokémon changes with the season: "All seasons" = a small table (one column per season, so you can compare at a glance);
-    // one season chosen = one short line per method with its rate.
-    const seasonHtml = a => {
-      const g = [...a.grid.values()].sort((x, y) => Math.max(0, ...Object.values(y.per)) - Math.max(0, ...Object.values(x.per)));
-      const name = x => `${esc(label(x.method))}<small>${esc([lvl(x), x.other].filter(Boolean).join(" · "))}</small>`;
-      if (sel === "all") {
-        return `<table class="stable"><thead><tr><th><span class="vh">Method</span></th>${SEASONS.map(x => `<th class="s-${x}">${SEASON_NAME[x]}</th>`).join("")}</tr></thead><tbody>` +
-          g.map(x => `<tr><td>${name(x)}</td>${SEASONS.map(z => (z in x.per ? `<td class="yes">${x.per[z] ? x.per[z] + "%" : "✓"}</td>` : `<td class="na">—</td>`)).join("")}</tr>`).join("") + `</tbody></table>`;
-      }
-      return g.map(x => `<div class="srow"><b>${esc(label(x.method))}</b><span>${esc([lvl(x), x.other].filter(Boolean).join(" · "))}</span>${x.per[sel] ? `<em>${x.per[sel]}%</em>` : ""}</div>`).join("");
-    };
-    const rowText = r => {
-      const tl = TIMES.filter(t => r.times.has(t));
-      const when = tl.length < TIMES.length ? tl.map(t => TNAME[t]).join(" / ") : "";   // all three = all day, nothing to say
-      const sl = SEASONS.filter(x => r.seasons.has(x));
-      const sw = sel === "all" && sl.length < SEASONS.length ? sl.map(x => SEASON_NAME[x]).join(" / ") : "";   // e.g. "Spring / Summer"
-      return [label(r.method), sw, when, r.other, r.lo ? (r.lo === r.hi ? `Lv ${r.lo}` : `Lv ${r.lo}–${r.hi}`) : "", r.chance && r.chance < 100 ? `${r.chance}%` : ""].filter(Boolean).join(" · ");
+    const mclass = m => (/surf|rod/.test(m) ? "water" : /^(gift|only-one)/.test(m) ? "static" : "land");
+    const tags = x => (x.other ? x.other.split(", ").map(c => `<span class="ctag">${esc(c)}</span>`).join("") : "");
+    const best = x => Math.max(0, ...Object.values(x.per));
+    const rate = c => (c && c < 100 ? `<span class="rate"><b>${c}%</b><i><u style="width:${c}%"></u></i></span>` : "");
+    // The body of one location: a table with one column per season / time of day when the Pokémon changes with it
+    // (so the columns can be compared at a glance), otherwise one tidy line per method.
+    const body = a => {
+      const g = [...a.grid.values()].sort((x, y) => best(y) - best(x));
+      const table = (cols, key, cls, head) => `<table class="stable"><thead><tr><th><span class="vh">Method</span></th>${cols.map(x => `<th class="${cls}-${x}">${head(x)}</th>`).join("")}</tr></thead><tbody>` +
+        g.map(x => `<tr><td><b class="mchip m-${mclass(x.method)}">${esc(label(x.method))}</b><small>${esc(lvl(x))}</small>${tags(x)}</td>` +
+          cols.map(c => (c in x[key] ? `<td class="yes">${x[key][c] ? x[key][c] + "%" : "✓"}</td>` : `<td class="na">—</td>`)).join("") + `</tr>`).join("") + `</tbody></table>`;
+      if (a.seasonal && sel === "all") return table(SEASONS, "per", "s", x => SEASON_NAME[x]);
+      if (a.timed && tsel === "all") return table(TIMES, "tper", "t", x => TNAME[x] + (clock ? `<small>${clock[x]}</small>` : ""));
+      return g.map(x => {
+        const c = sel !== "all" ? x.per[sel] : tsel !== "all" ? x.tper[tsel] : best(x);
+        return `<div class="mrow"><b class="mchip m-${mclass(x.method)}">${esc(label(x.method))}</b><span class="lv">${esc(lvl(x))}</span>${tags(x)}${rate(c)}</div>`;
+      }).join("");
     };
     const rows = [...areas].map(([area, a]) => {
       const s = typeof Maps !== "undefined" ? Maps.segment(area) : { base: area, seg: "" };
-      return { area, base: s.base, seg: s.seg, best: a.best, times: TIMES.filter(t => a.times.has(t)),
-        html: a.seasonal ? seasonHtml(a) : "",
-        how: [...a.rows.values()].sort((x, y) => y.chance - x.chance).map(rowText).join("; ") };
+      return { area, base: s.base, seg: s.seg, best: a.best, times: TIMES.filter(t => a.times.has(t)), html: body(a) };
     });
     const top = new Map();                                      // North / South of one route stay together, ranked by the better one
     rows.forEach(r => top.set(r.base, Math.max(top.get(r.base) || 0, r.best)));
@@ -350,19 +358,28 @@ const Where = (() => {
     // Season filter: only for Black / White / Black 2 / White 2, and only when this Pokémon has season-dependent rows
     const seasonal = groups.some(g => g.games.some(x => SEASON_GAMES.has(x.key)) && g.entries.some(e => seasonsIn(e[5]).length));
     const sel = seasonal ? season : "all";
-    return (seasonal ? seasonBar() : "") + groups.map(g => {
-      const entries = sel === "all" ? g.entries : g.entries.filter(e => { const s = seasonsIn(e[5]); return !s.length || s.includes(sel); });
+    // Time-of-day filter: only for games with a clock, and only when this Pokémon has time-dependent rows
+    const clockOf = g => g.games.map(x => CLOCK_OF[x.key]).find(Boolean) || null;
+    const timed = groups.some(g => clockOf(g) && g.entries.some(e => timesIn(e[5]).length));
+    const tsel = timed ? tod : "all";
+    const keep = e => {
+      if (sel !== "all") { const s = seasonsIn(e[5]); if (s.length && !s.includes(sel)) return false; }
+      if (tsel !== "all") { const t = timesIn(e[5]); if (t.length && !t.includes(tsel)) return false; }
+      return true;
+    };
+    return (seasonal ? seasonBar() : "") + (timed ? timeBar(groups.map(clockOf).find(Boolean)) : "") + groups.map(g => {
+      const entries = sel === "all" && tsel === "all" ? g.entries : g.entries.filter(keep);
       const keys = g.games.map(x => x.key);
-      const ls = lines(entries, sel), mine = {};
+      const ls = lines(entries, sel, tsel, clockOf(g)), mine = {};
       ls.forEach(l => { if (l.seg) (mine[l.base] = mine[l.base] || new Set()).add(l.seg); });
       const rows = ls.map(l => {
         // "Show on map" button: only when this location has a box on one of the maps shown for this group
         const ok = typeof Maps !== "undefined" && Maps.locate(keys, l.area).length;
         const btn = ok ? `<button type="button" class="locbtn" data-area="${esc(l.area)}" data-keys="${esc(keys.join(","))}" data-times="${l.times.join(" ")}" aria-pressed="false" aria-label="Outline ${esc(l.area)} on the map">Show on map</button>` : "";
         const extra = l.area === HONEY && honey ? honeyHtml(keys, n) : "";
-        return `<li><strong>${nameHtml(l, keys, mine, n)}</strong><span${l.html ? ' class="wide"' : ""}>${l.html || esc(l.how)}</span>${btn}${extra}</li>`;
+        return `<li><strong>${nameHtml(l, keys, mine, n)}</strong><span class="wide">${l.html}</span>${btn}${extra}</li>`;
       });
-      if (!entries.length && sel !== "all") rows.push(`<li><span>Not found here in ${SEASON_NAME[sel]}.</span></li>`);
+      if (!entries.length && (sel !== "all" || tsel !== "all")) rows.push(`<li><span>Not found here ${sel !== "all" ? "in " + SEASON_NAME[sel] : TPHRASE[tsel]}.</span></li>`);
       if (g.evolve) rows.unshift(...evoRows(g.evolve));
       const open = g.games.some(x => x.key === game.key) || rows.length <= 6;
       const sub = g.vias.length ? `<small>reaches ${esc(game.name)} by ${esc(g.vias.join(" / "))}</small>` : "";
@@ -472,15 +489,34 @@ const Where = (() => {
 #where .stable td small{display:block;font-weight:400;opacity:.85}
 #where .stable td.yes{background:var(--hi);color:var(--on-hi);font-weight:700}
 #where .stable td.na{opacity:.35}
-#where .srow{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
-#where .srow b{flex:0 1 auto}
-#where .srow span{opacity:.85}
-#where .srow em{font-style:normal;font-weight:700;margin-left:auto;padding:0 6px;background:var(--hi);color:var(--on-hi);border:2px solid var(--on-hi)}`;
+#where .seasonbar .sbtn[data-k=time][data-s=morning]{border-bottom:5px solid #ffd23f}
+#where .seasonbar .sbtn[data-k=time][data-s=day]{border-bottom:5px solid #ff8a1f}
+#where .seasonbar .sbtn[data-k=time][data-s=night]{border-bottom:5px solid #3b4cc0}
+#where .stable th.t-morning{border-bottom-color:#ffd23f}
+#where .stable th.t-day{border-bottom-color:#ff8a1f}
+#where .stable th.t-night{border-bottom-color:#3b4cc0}
+#where .stable th small{display:block;font-weight:400;font-size:10px;opacity:.85;line-height:1.2}
+#where .stable td .mchip{display:inline-block;margin-bottom:2px}
+#where .stable td .ctag{margin-left:4px}
+#where li:has(span.wide){padding:8px 0;row-gap:6px}
+#where li:has(span.wide)>strong{font-size:14px}
+#where .mrow{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;padding:3px 0}
+#where .mrow+.mrow{border-top:1px dotted var(--mid)}
+#where .mchip{font-size:11px;font-weight:600;padding:1px 7px;border:2px solid var(--line);background:var(--card);white-space:nowrap}
+#where .mchip.m-land{background:#e3f1cf;border-color:#6a9a3a;color:#1d3a0c}
+#where .mchip.m-water{background:#d9ebfa;border-color:#4f8fc4;color:#0c2e4d}
+#where .mchip.m-static{background:#ebe1fa;border-color:#8a63c9;color:#2a1250}
+#where .mrow .lv{font-size:13px}
+#where .ctag{display:inline-block;font-size:11px;padding:0 6px;border:1px dashed var(--line);white-space:nowrap}
+#where .rate{margin-left:auto;display:inline-flex;flex-direction:column;align-items:flex-end;gap:1px;min-width:60px}
+#where .rate b{font-size:12px;font-weight:700;line-height:1.1}
+#where .rate i{display:block;width:60px;height:5px;border:1px solid var(--line);background:var(--card)}
+#where .rate u{display:block;height:100%;background:var(--ink)}`;
       document.head.append(st);
     }
     wb.addEventListener("click", e => {
       const sb = e.target.closest && e.target.closest(".sbtn"); if (!sb || !last) return;
-      season = sb.dataset.s;
+      if (sb.dataset.k === "time") tod = sb.dataset.s; else season = sb.dataset.s;
       const sc = $("#where .dbody"), top = sc ? sc.scrollTop : 0;
       const dets = [...wb.querySelectorAll("details")].map(d => d.open);          // which games / lists you had open or folded
       const pinned = wb.querySelector(".locbtn[aria-pressed=true]");
