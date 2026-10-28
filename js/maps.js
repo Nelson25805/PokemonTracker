@@ -446,9 +446,10 @@ const Maps = (() => {
     if (tabs.length < 2) { const strip = box.querySelector(".amaptabs"); if (strip) strip.remove(); }
   }
 
-  function html(keys, entries, name = "") {
+  // blank (a short text, e.g. "not found in Summer"): show the maps with nothing marked instead of "AREA UNKNOWN" (used when a season / time filter leaves no locations)
+  function html(keys, entries, name = "", blank = "") {
     if (!data) return "";
-    const areas = [...new Set(entries.map(e => e[0]))], done = new Set(), out = [], none = !areas.length;
+    const areas = [...new Set(entries.map(e => e[0]))], done = new Set(), out = [], none = !areas.length && !blank;
     const meta = [];                                                    // one { id, name, n } per figure in `out`, for the tabs
     const emit = (id, m, n, markup, roamOnly = false) => { out.push(markup); meta.push({ id, name: m.name, n, roamOnly }); };
     // times per area name: the union over all of that area's rows
@@ -540,6 +541,10 @@ const Maps = (() => {
         return wrap(m, id, banner, `${esc(m.name)}: area unknown`);       // only the first map; one banner is enough
       }
       const table = tableOf(id);
+      if (blank) {                                                      // an empty map: the picture stays open, no markers
+        emit(id, m, 0, wrap(m, id, "", `${esc(m.name)}: ${esc(blank)}`, [], "", m.flash ? ` data-flash="${fstyle}"` : ""), false);
+        continue;
+      }
 
       if (m.flash) {                                                    // style 3: the locations themselves flash (Hoenn, FireRed / LeafGreen)
         const seen = new Map(), sets = { land: [], special: [] }, names = new Set();   // seen: kind + box -> { b, times }
