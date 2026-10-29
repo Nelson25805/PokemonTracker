@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 """
-Build data/locations.json: where each Pokémon can be found in each game (Gen 1-4), plus what it
+Build data/locations.json: where each Pokémon can be found in each game (Gen 1-5), plus what it
 evolves from. The data comes from PokéAPI (https://pokeapi.co), which is free and needs no key.
 
-    python3 build_locations.py                  # all 493 Pokémon -> data/locations.json
+    python3 build_locations.py                  # every game in games.config.json -> data/locations.json
     python3 build_locations.py --limit 30       # quick trial run (first 30 Pokémon)
     python3 build_locations.py --no-evo         # skip evolution info (about half the requests)
+    python3 build_locations.py --games black,white,black-2,white-2
+                                                # rebuild ONLY these games and merge them into the existing
+                                                # data/locations.json (other games are left exactly as they are)
 
 Needs internet and only the Python standard library. It makes about 1,000 requests, so the first run
 takes a few minutes. Every response is cached in .cache/pokeapi/, so an interrupted run picks up where
@@ -17,7 +20,7 @@ Output format (what js/where.js reads):
       "loc": { "<game key>": { "<national dex number>": [[area, method, minLevel, maxLevel, chance, conditions], ...] } },
       "evo": { "<national dex number>": [<number it evolves from>, "Level 16"] }
     }
-Game keys match data/games.config.json (red, fire-red, heart-gold, ...).
+Game keys match data/games.config.json (red, fire-red, heart-gold, black, ...).
 
 Known gaps: PokéAPI records wild encounters, gifts and one-time (static) encounters, but not every
 trade NPC, Game Corner prize, fossil or event Pokémon. The site's panel links to Bulbapedia for those.
@@ -162,15 +165,17 @@ def species_id(url):
 
 # ---------------------------------------------------------------- the build
 
-def build(get, limit=MAX_POKEMON, with_evo=True, log=print):
-    """get(path_or_url) -> parsed JSON. Kept separate from the network code so it can be tested."""
-    loc = {key: {} for key in VERSIONS.values()}
+def build(get, limit=MAX_POKEMON, with_evo=True, log=print, games=None):
+    """get(path_or_url) -> parsed JSON. Kept separate from the network code so it can be tested.
+    games: optional set of game keys; only those are collected (default: every game in the config)."""
+    versions = {v: k for v, k in VERSIONS.items() if games is None or k in games}
+    loc = {key: {} for key in versions.values()}
     for n in range(1, limit + 1):
         per_game = {}  # game key -> {(area, method, conditions): [minLv, maxLv, chance]}
         for entry in get(f"pokemon/{n}/encounters"):
             area = pretty_area(entry["location_area"]["name"])
             for vd in entry["version_details"]:
-                key = VERSIONS.get(vd["version"]["name"])
+                key = versions.get(vd["version"]["name"])
                 if not key:
                     continue
                 rows = per_game.setdefault(key, {})
@@ -208,6 +213,18 @@ def build(get, limit=MAX_POKEMON, with_evo=True, log=print):
     }
 
 
+def merge(old, new, with_evo):
+    """Put the freshly built games into an existing locations.json, leaving every other game as it was."""
+    out = dict(old)
+    out["loc"] = dict(old.get("loc", {}))
+    out["loc"].update(new["loc"])
+    if with_evo:
+        out["evo"] = new["evo"]          # a full rebuild of evolutions, so Gen 5 evolutions are included
+    out["generated"] = new["generated"]
+    out["source"] = new["source"]
+    return out
+
+
 # ---------------------------------------------------------------- network + cache
 
 def make_getter(cache_dir, delay):
@@ -241,13 +258,27 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--out", default=os.path.join("data", "locations.json"))
     ap.add_argument("--cache", default=os.path.join(".cache", "pokeapi"))
-    ap.add_argument("--limit", type=int, default=MAX_POKEMON, help="only the first N Pokémon (default 493)")
+    ap.add_argument("--limit", type=int, default=MAX_POKEMON, help=f"only the first N Pokémon (default {MAX_POKEMON})")
     ap.add_argument("--delay", type=float, default=0.05, help="seconds to wait after each uncached request")
-    ap.add_argument("--no-evo", action="store_true", help="skip evolution info")
+    ap.add_argument("--no-evo", action="store_true", help="skip evolution info (with --games: keep the existing evolution info)")
+    ap.add_argument("--games", help="comma-separated game keys to rebuild and merge into the existing file, e.g. black,white,black-2,white-2")
     args = ap.parse_args()
 
+    games = None
+    if args.games:
+        games = {g.strip() for g in args.games.split(",") if g.strip()}
+        unknown = games - set(VERSIONS.values())
+        if unknown:
+            raise SystemExit(f"Unknown game key(s): {', '.join(sorted(unknown))}. Valid: {', '.join(sorted(VERSIONS.values()))}")
+
     print(f"Fetching from PokéAPI (cached in {args.cache}) ...")
-    data = build(make_getter(args.cache, args.delay), args.limit, not args.no_evo)
+    data = build(make_getter(args.cache, args.delay), args.limit, not args.no_evo, games=games)
+
+    if games:
+        if not os.path.exists(args.out):
+            raise SystemExit(f"--games merges into an existing {args.out}, which was not found. Run without --games first.")
+        with open(args.out, encoding="utf-8") as f:
+            data = merge(json.load(f), data, not args.no_evo)
 
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:
@@ -255,7 +286,8 @@ def main():
     kb = os.path.getsize(args.out) / 1024
     print(f"Wrote {args.out} ({kb:,.0f} KB)")
     for key, mons in data["loc"].items():
-        print(f"  {key:<12} {len(mons):>3} Pokémon with at least one location")
+        mark = "  <- rebuilt" if games and key in games else ""
+        print(f"  {key:<12} {len(mons):>3} Pokémon with at least one location{mark}")
     print(f"  evolution info for {len(data['evo'])} Pokémon")
 
 

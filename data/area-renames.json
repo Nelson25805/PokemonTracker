@@ -1,5 +1,18 @@
 {
  "renames": {
+  "Unova Victory Road 1F Unknown Room": "Unova Victory Road 1F Middle and Rightmost Rooms",
+  "Unova Victory Road Unknown Area 53": "Unova Victory Road 1F Middle and Rightmost Rooms",
+  "Unova Victory Road Unknown Area 54": "Unova Victory Road 1F Leftmost Room and 2F-3F",
+  "Unova Victory Road Unknown Area 55": "Unova Victory Road 1F Leftmost Room and 2F-3F",
+  "Unova Victory Road Unknown Area 57": "Unova Victory Road 1F Leftmost Room and 2F-3F",
+  "Unova Victory Road Unknown Area 59": "Unova Victory Road 1F Leftmost Room and 2F-3F",
+  "Unova Victory Road Unknown Area 60": "Unova Victory Road 1F Leftmost Room and 2F-3F",
+  "Unova Victory Road Unknown Area 61": "Unova Victory Road 1F Leftmost Room and 2F-3F",
+  "Unova Victory Road Unknown Area 62": "Unova Victory Road 4F Leftmost and Rightmost Rooms and 5F-7F",
+  "Unova Victory Road Unknown Area 63": "Unova Victory Road 4F Leftmost and Rightmost Rooms and 5F-7F",
+  "Unova Victory Road Unknown Area 64": "Unova Victory Road 4F Leftmost and Rightmost Rooms and 5F-7F",
+  "Unova Victory Road Unknown Area 65": "Unova Victory Road 4F Leftmost and Rightmost Rooms and 5F-7F",
+  "Unova Victory Road Unknown Area 66": "Unova Victory Road 4F Leftmost and Rightmost Rooms and 5F-7F",
   "Unova Victory Road 2 Unknown Area 71": "Unova Victory Road 1F",
   "Unova Victory Road 2 Unknown Area 72": "Unova Victory Road Grove",
   "Unova Victory Road 2 Unknown Area 73": "Unova Victory Road Outside 1",
@@ -8,9 +21,35 @@
   "Unova Victory Road 2 Unknown Area 76": "Unova Victory Road Outside 2",
   "Unova Victory Road 2 Unknown Area 77": "Unova Victory Road 3F Both Rooms",
   "Unova Victory Road 2 Unknown Area 79": "Unova Victory Road Outside 1",
-  "Unova Victory Road 2 Unknown Area 80": "Unova Victory Road 3F Both Rooms"
+  "Unova Victory Road 2 Unknown Area 80": "Unova Victory Road 3F Both Rooms",
+  "Reversal Mountain Unknown Area 48": "Reversal Mountain Outside",
+  "Reversal Mountain Unknown Area 49": "Reversal Mountain Interior",
+  "Reversal Mountain Unknown Area 50": "Reversal Mountain Interior",
+  "Reversal Mountain Unknown Area 51": "Reversal Mountain Interior",
+  "Reversal Mountain Unknown Area 52": "Reversal Mountain Interior",
+  "Reversal Mountain Unknown Area 53": "Reversal Mountain Interior",
+  "Reversal Mountain Unknown Area 54": "Reversal Mountain Interior",
+  "Reversal Mountain Unknown Area 55": "Reversal Mountain Interior",
+  "Reversal Mountain Unknown Area 56": "Reversal Mountain Interior",
+  "Reversal Mountain Unknown Area 57": "Reversal Mountain Interior",
+  "Reversal Mountain Unknown Area 58": "Reversal Mountain Interior",
+  "Reversal Mountain Unknown Area 59": "Reversal Mountain Interior",
+  "Reversal Mountain Unknown Area 60": "Reversal Mountain Interior",
+  "Castelia Sewers Unknown Area 38": "Castelia Sewers"
  },
  "games": {
+  "Unova Victory Road 1F Middle and Rightmost Rooms": [
+   "black",
+   "white"
+  ],
+  "Unova Victory Road 1F Leftmost Room and 2F-3F": [
+   "black",
+   "white"
+  ],
+  "Unova Victory Road 4F Leftmost and Rightmost Rooms and 5F-7F": [
+   "black",
+   "white"
+  ],
   "Unova Victory Road 1F": [
    "black-2",
    "white-2"
@@ -36,6 +75,18 @@
    "white-2"
   ],
   "Unova Victory Road 3F Both Rooms": [
+   "black-2",
+   "white-2"
+  ],
+  "Reversal Mountain Outside": [
+   "black-2",
+   "white-2"
+  ],
+  "Reversal Mountain Interior": [
+   "black-2",
+   "white-2"
+  ],
+  "Castelia Sewers": [
    "black-2",
    "white-2"
   ]

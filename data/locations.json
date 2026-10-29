@@ -1,6 +1,6 @@
 {
     "version": 1,
-    "generated": "2026-10-26",
+    "generated": "2026-10-28",
     "source": "PokéAPI (https://pokeapi.co)",
     "loc": {
         "red": {
@@ -212600,7 +212600,7 @@
             ],
             "227": [
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "dark-grass",
                     36,
                     38,
@@ -212608,7 +212608,7 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "walk",
                     34,
                     34,
@@ -213152,7 +213152,7 @@
             ],
             "325": [
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Interior",
                     "walk",
                     31,
                     31,
@@ -213160,95 +213160,7 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 49",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 50",
-                    "walk",
-                    31,
-                    31,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 51",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 52",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 53",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 54",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 55",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 56",
-                    "walk",
-                    31,
-                    31,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 57",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 58",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 59",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 60",
+                    "Reversal Mountain Outside",
                     "walk",
                     31,
                     31,
@@ -213258,7 +213170,15 @@
             ],
             "326": [
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Interior",
+                    "walk",
+                    35,
+                    35,
+                    20,
+                    ""
+                ],
+                [
+                    "Reversal Mountain Outside",
                     "dark-grass",
                     35,
                     37,
@@ -213266,107 +213186,11 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "walk",
                     33,
                     33,
                     10,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 49",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 50",
-                    "walk",
-                    35,
-                    35,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 51",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 52",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 53",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 54",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 55",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 56",
-                    "walk",
-                    35,
-                    35,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 57",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 58",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 59",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 60",
-                    "walk",
-                    35,
-                    35,
-                    5,
                     ""
                 ]
             ],
@@ -213380,7 +213204,7 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "walk",
                     32,
                     34,
@@ -213390,7 +213214,7 @@
             ],
             "329": [
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "dark-grass",
                     38,
                     38,
@@ -214200,14 +214024,6 @@
                     50,
                     70,
                     ""
-                ],
-                [
-                    "Unova Victory Road 2 Unknown Area 78",
-                    "walk",
-                    47,
-                    50,
-                    70,
-                    ""
                 ]
             ],
             "357": [
@@ -214826,7 +214642,7 @@
             ],
             "426": [
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "dark-grass",
                     36,
                     37,
@@ -214834,7 +214650,7 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "walk",
                     32,
                     33,
@@ -214972,7 +214788,15 @@
             ],
             "451": [
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Interior",
+                    "walk",
+                    33,
+                    35,
+                    15,
+                    ""
+                ],
+                [
+                    "Reversal Mountain Outside",
                     "dark-grass",
                     35,
                     37,
@@ -214980,107 +214804,11 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "walk",
                     31,
                     33,
                     30,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 49",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 50",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 51",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 52",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 53",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 54",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 55",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 56",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 57",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 58",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 59",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 60",
-                    "walk",
-                    33,
-                    35,
-                    15,
                     ""
                 ],
                 [
@@ -216684,95 +216412,7 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 49",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 50",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 51",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 52",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 53",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 54",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 55",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 56",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 57",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 58",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 59",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 60",
+                    "Reversal Mountain Interior",
                     "walk",
                     32,
                     35,
@@ -216952,95 +216592,7 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 49",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 50",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 51",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 52",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 53",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 54",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 55",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 56",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 57",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 58",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 59",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 60",
+                    "Reversal Mountain Interior",
                     "walk",
                     32,
                     35,
@@ -217212,95 +216764,7 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 49",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 50",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 51",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 52",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 53",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 54",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 55",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 56",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 57",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 58",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 59",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 60",
+                    "Reversal Mountain Interior",
                     "cave-spots",
                     32,
                     35,
@@ -217502,7 +216966,7 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "grass-spots",
                     31,
                     34,
@@ -218799,22 +218263,6 @@
                 ],
                 [
                     "Unova Victory Road 1F",
-                    "surf",
-                    35,
-                    50,
-                    70,
-                    ""
-                ],
-                [
-                    "Unova Victory Road 2 Unknown Area 78",
-                    "super-rod",
-                    40,
-                    60,
-                    40,
-                    ""
-                ],
-                [
-                    "Unova Victory Road 2 Unknown Area 78",
                     "surf",
                     35,
                     50,
@@ -221408,14 +220856,6 @@
                     50,
                     30,
                     ""
-                ],
-                [
-                    "Unova Victory Road 2 Unknown Area 78",
-                    "walk",
-                    48,
-                    50,
-                    30,
-                    ""
                 ]
             ],
             "624": [
@@ -221707,14 +221147,6 @@
                 ],
                 [
                     "Castelia Sewers",
-                    "walk",
-                    14,
-                    17,
-                    45,
-                    ""
-                ],
-                [
-                    "Castelia Sewers Unknown Area 38",
                     "walk",
                     14,
                     17,
@@ -222064,14 +221496,6 @@
                     17,
                     45,
                     ""
-                ],
-                [
-                    "Castelia Sewers Unknown Area 38",
-                    "walk",
-                    14,
-                    17,
-                    45,
-                    ""
                 ]
             ],
             "42": [
@@ -222414,14 +221838,6 @@
                     ""
                 ],
                 [
-                    "Unova Victory Road 2 Unknown Area 78",
-                    "super-rod",
-                    40,
-                    70,
-                    60,
-                    ""
-                ],
-                [
                     "Unova Victory Road 2F Back",
                     "super-rod",
                     40,
@@ -222544,14 +221960,6 @@
                     ""
                 ],
                 [
-                    "Unova Victory Road 2 Unknown Area 78",
-                    "super-rod-spots",
-                    40,
-                    70,
-                    55,
-                    ""
-                ],
-                [
                     "Unova Victory Road 2F Back",
                     "super-rod-spots",
                     40,
@@ -222614,14 +222022,6 @@
                     "super-rod-spots",
                     50,
                     60,
-                    5,
-                    ""
-                ],
-                [
-                    "Unova Victory Road 2 Unknown Area 78",
-                    "super-rod-spots",
-                    50,
-                    70,
                     5,
                     ""
                 ],
@@ -222788,46 +222188,6 @@
                     17,
                     10,
                     ""
-                ],
-                [
-                    "Castelia Sewers Unknown Area 38",
-                    "super-rod",
-                    40,
-                    70,
-                    100,
-                    ""
-                ],
-                [
-                    "Castelia Sewers Unknown Area 38",
-                    "super-rod-spots",
-                    60,
-                    60,
-                    80,
-                    ""
-                ],
-                [
-                    "Castelia Sewers Unknown Area 38",
-                    "surf",
-                    5,
-                    15,
-                    100,
-                    ""
-                ],
-                [
-                    "Castelia Sewers Unknown Area 38",
-                    "surf-spots",
-                    5,
-                    20,
-                    95,
-                    ""
-                ],
-                [
-                    "Castelia Sewers Unknown Area 38",
-                    "walk",
-                    15,
-                    17,
-                    10,
-                    ""
                 ]
             ],
             "89": [
@@ -222841,22 +222201,6 @@
                 ],
                 [
                     "Castelia Sewers",
-                    "surf-spots",
-                    5,
-                    20,
-                    5,
-                    ""
-                ],
-                [
-                    "Castelia Sewers Unknown Area 38",
-                    "super-rod-spots",
-                    70,
-                    70,
-                    20,
-                    ""
-                ],
-                [
-                    "Castelia Sewers Unknown Area 38",
                     "surf-spots",
                     5,
                     20,
@@ -224146,22 +223490,6 @@
                     ""
                 ],
                 [
-                    "Unova Victory Road 2 Unknown Area 78",
-                    "surf",
-                    35,
-                    50,
-                    30,
-                    ""
-                ],
-                [
-                    "Unova Victory Road 2 Unknown Area 78",
-                    "surf-spots",
-                    35,
-                    50,
-                    60,
-                    ""
-                ],
-                [
                     "Unova Victory Road 2F Back",
                     "surf",
                     35,
@@ -224309,14 +223637,6 @@
                 ],
                 [
                     "Unova Victory Road 1F",
-                    "surf-spots",
-                    40,
-                    50,
-                    5,
-                    ""
-                ],
-                [
-                    "Unova Victory Road 2 Unknown Area 78",
                     "surf-spots",
                     40,
                     50,
@@ -225108,7 +224428,7 @@
             ],
             "227": [
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "dark-grass",
                     36,
                     38,
@@ -225116,7 +224436,7 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "walk",
                     34,
                     34,
@@ -225688,7 +225008,7 @@
             ],
             "322": [
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Interior",
                     "walk",
                     31,
                     31,
@@ -225696,95 +225016,7 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 49",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 50",
-                    "walk",
-                    31,
-                    31,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 51",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 52",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 53",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 54",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 55",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 56",
-                    "walk",
-                    31,
-                    31,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 57",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 58",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 59",
-                    "walk",
-                    31,
-                    31,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 60",
+                    "Reversal Mountain Outside",
                     "walk",
                     31,
                     31,
@@ -225794,7 +225026,15 @@
             ],
             "323": [
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Interior",
+                    "walk",
+                    35,
+                    35,
+                    20,
+                    ""
+                ],
+                [
+                    "Reversal Mountain Outside",
                     "dark-grass",
                     35,
                     37,
@@ -225802,107 +225042,11 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "walk",
                     33,
                     33,
                     10,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 49",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 50",
-                    "walk",
-                    35,
-                    35,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 51",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 52",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 53",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 54",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 55",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 56",
-                    "walk",
-                    35,
-                    35,
-                    20,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 57",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 58",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 59",
-                    "walk",
-                    35,
-                    35,
-                    5,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 60",
-                    "walk",
-                    35,
-                    35,
-                    5,
                     ""
                 ]
             ],
@@ -225916,7 +225060,7 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "walk",
                     32,
                     34,
@@ -225926,7 +225070,7 @@
             ],
             "329": [
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "dark-grass",
                     38,
                     38,
@@ -226736,14 +225880,6 @@
                     50,
                     70,
                     ""
-                ],
-                [
-                    "Unova Victory Road 2 Unknown Area 78",
-                    "walk",
-                    47,
-                    50,
-                    70,
-                    ""
                 ]
             ],
             "357": [
@@ -227362,7 +226498,7 @@
             ],
             "426": [
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "dark-grass",
                     36,
                     37,
@@ -227370,7 +226506,7 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "walk",
                     32,
                     33,
@@ -227470,7 +226606,15 @@
             ],
             "451": [
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Interior",
+                    "walk",
+                    33,
+                    35,
+                    15,
+                    ""
+                ],
+                [
+                    "Reversal Mountain Outside",
                     "dark-grass",
                     35,
                     37,
@@ -227478,107 +226622,11 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "walk",
                     31,
                     33,
                     30,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 49",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 50",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 51",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 52",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 53",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 54",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 55",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 56",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 57",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 58",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 59",
-                    "walk",
-                    33,
-                    35,
-                    15,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 60",
-                    "walk",
-                    33,
-                    35,
-                    15,
                     ""
                 ],
                 [
@@ -229182,95 +228230,7 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 49",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 50",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 51",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 52",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 53",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 54",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 55",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 56",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 57",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 58",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 59",
-                    "walk",
-                    32,
-                    35,
-                    25,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 60",
+                    "Reversal Mountain Interior",
                     "walk",
                     32,
                     35,
@@ -229450,95 +228410,7 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 49",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 50",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 51",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 52",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 53",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 54",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 55",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 56",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 57",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 58",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 59",
-                    "walk",
-                    32,
-                    35,
-                    35,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 60",
+                    "Reversal Mountain Interior",
                     "walk",
                     32,
                     35,
@@ -229710,95 +228582,7 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 49",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 50",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 51",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 52",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 53",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 54",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 55",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 56",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 57",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 58",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 59",
-                    "cave-spots",
-                    32,
-                    35,
-                    100,
-                    ""
-                ],
-                [
-                    "Reversal Mountain Unknown Area 60",
+                    "Reversal Mountain Interior",
                     "cave-spots",
                     32,
                     35,
@@ -230000,7 +228784,7 @@
                     ""
                 ],
                 [
-                    "Reversal Mountain Unknown Area 48",
+                    "Reversal Mountain Outside",
                     "grass-spots",
                     31,
                     34,
@@ -231297,22 +230081,6 @@
                 ],
                 [
                     "Unova Victory Road 1F",
-                    "surf-spots",
-                    35,
-                    50,
-                    35,
-                    ""
-                ],
-                [
-                    "Unova Victory Road 2 Unknown Area 78",
-                    "super-rod-spots",
-                    40,
-                    60,
-                    40,
-                    ""
-                ],
-                [
-                    "Unova Victory Road 2 Unknown Area 78",
                     "surf-spots",
                     35,
                     50,
@@ -233901,14 +232669,6 @@
                 ],
                 [
                     "Unova Victory Road 1F",
-                    "walk",
-                    48,
-                    50,
-                    30,
-                    ""
-                ],
-                [
-                    "Unova Victory Road 2 Unknown Area 78",
                     "walk",
                     48,
                     50,
