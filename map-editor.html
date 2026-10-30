@@ -27,6 +27,7 @@
   #list li.sel{background:var(--ink);color:var(--bg)}
   #list li.done::after{content:"✓"}
   #list li.stale{font-style:italic;opacity:.8}
+  #list li.inherit::after{content:"✓ via parent";font-size:12px;opacity:.8}
   #list li.hov{outline:2px solid var(--mid);outline-offset:-2px}
   #wrap{flex:1 1 400px;overflow:auto;max-height:80vh;border:2px solid var(--line);background:var(--card)}
   #stage{position:relative;line-height:0;cursor:crosshair;touch-action:none;user-select:none}
@@ -38,7 +39,7 @@
   #msg{font-weight:600;margin:6px 0}
   /* hover outline + name tooltip: same look as the site's "Where to find" map (.amaphl / .amaptip in style.css) */
   #hl{z-index:1}
-  #tip{line-height:1.3}
+  #tip{line-height:1.3;white-space:normal;width:max-content;max-width:min(260px,70%)}
   /* honey tree icons (Sinnoh) */
   #ov i.ico{border:0 !important;background-color:transparent !important;background-repeat:no-repeat;background-size:100% 100%;image-rendering:pixelated}
   #list li.tree{font-weight:600}
@@ -84,6 +85,9 @@ keep it). Drag inside it to <b>move</b> it, drag a white square on its dashed fr
 You can also type exact <b>X / Y / W / H</b> values, <b>Duplicate</b> or <b>Delete</b> the picked box, or turn just that box into a circle and back. <b>Arrow keys</b> nudge only the picked box (Shift = 5 px),
 <b>Delete</b> removes it, <b>Esc</b> drops the selection. Edges and corners snap to the other boxes (the same tick box as above); hold <b>Ctrl</b> while dragging to turn snapping off.
 Many places have <b>alias</b> names that share identical boxes (for example every floor of a cave). With <b>Also update identical names</b> ticked, editing one updates all of them.</p>
+<p class="help"><b>Places inside other places.</b> Select a place (say <i>Silph Co.</i>) and choose its parent in <b>Inside of</b> (say <i>Saffron City</i>). It then needs no box of its own: the site draws it with its parent's boxes,
+and shows it indented under the parent in the list. If you also want it to have its own spot, leave it linked and draw a small box for it inside the parent (that box is used instead).
+Places linked this way show <i>↳ parent</i> in the list and <i>✓ via parent</i> when they have no box. Floors are covered too: <i>Silph Co.</i> covers <i>Silph Co. 5F</i>. Saved in <code>maps.json</code> under <code>"inside"</code>.</p>
 <div class="toolbar">
   <label>Map <select id="map"></select></label>
   <label>Grid (image px per tile, 0 = free) <input id="grid" type="number" min="0" max="64" step="any" value="0" style="width:5em"></label>
@@ -101,6 +105,7 @@ Many places have <b>alias</b> names that share identical boxes (for example ever
   <button id="clear">Clear this location</button>
   <button id="round" title="Turn every box of the selected location into a circle / oval, or back into boxes">Circle ⇄ box</button>
   <button id="seed" title="For a segment like Route 212 North: start from the whole route's boxes, then Alt+click the parts that belong to the other segment">Copy parent route boxes</button>
+  <label id="parentlab" title="Draw this place with another place's boxes (Silph Co. inside Saffron City)">Inside of <select id="parent" style="max-width:240px"></select></label>
   <button id="save">Download maps.json</button>
   <button id="addtree" title="Sinnoh map only">Add honey tree</button>
   <button id="deltree">Delete honey tree</button>
@@ -154,6 +159,15 @@ function areaEntries(id) {
   return out;
 }
 const map = () => db.maps[mapId];
+// ---- places inside other places (maps.json "inside": { mapId: { child: parent } }) ----
+const insideTbl = () => ((db.inside = db.inside || {})[mapId] = db.inside[mapId] || {});
+const parentOf = p => insideTbl()[p] || "";
+// The boxes a place is drawn with: its own, else its parent's, else the grandparent's ...
+function effBoxes(p) {
+  for (let i = 0, q = p; q && i < 5; i++, q = parentOf(q)) { const b = boxes(mapId, q); if (b.length) return b; }
+  return [];
+}
+const isDescendant = (p, anc) => { for (let i = 0, q = parentOf(p); q && i < 6; i++, q = parentOf(q)) if (q === anc) return true; return false; };
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const pc = v => (v * 100).toFixed(3) + "%";
 const num = s => Number($(s).value) || 0;
@@ -171,7 +185,23 @@ function placesFor(id) {
 
 function persist() { try { localStorage.setItem(DRAFT, JSON.stringify(db)); if (honey) localStorage.setItem(HDRAFT, JSON.stringify(honey)); } catch {} }
 
+function renderParent() {                                           // the "Inside of" drop-down for the selected place
+  const sel = $("#parent"), ok = !!place && !isTree(mapId, place), cur = ok ? parentOf(place) : "";
+  sel.disabled = !ok;
+  const names = new Set([...placesFor(mapId), ...Object.keys(db.areas[mapId] || {})]);
+  const list = ok ? [...names].filter(n => n !== place && !isDescendant(n, place) && (n === cur || effBoxes(n).length))
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true })) : [];
+  sel.innerHTML = '<option value="">— none (top level) —</option>' + list.map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join("");
+  sel.value = cur;
+}
+$("#parent").onchange = e => {
+  if (!place || isTree(mapId, place)) return;
+  const t = insideTbl(), v = e.target.value;
+  if (v) t[place] = v; else delete t[place];
+  persist(); renderList(); renderBoxes();
+};
 function renderList() {
+  renderParent();
   const q = $("#q").value.trim().toLowerCase(), todo = $("#todo").checked, ul = $("#list");
   ul.textContent = "";
   let done = 0, tdone = 0;
@@ -181,12 +211,12 @@ function renderList() {
   const extra = Object.keys(db.areas[mapId] || {}).filter(p => !all.includes(p)).sort();
   const trees = honey && honey.map === mapId ? (honey.spots || []).map(s => HP + s.name) : [];
   for (const p of [...trees, ...all, ...extra]) {
-    const tree = trees.includes(p), stale = !tree && !all.includes(p), d = boxes(mapId, p).length > 0;
-    if (d && tree) tdone++; else if (d && !stale) done++;
-    if ((q && !p.toLowerCase().includes(q)) || (todo && d)) continue;
+    const tree = trees.includes(p), stale = !tree && !all.includes(p), d = boxes(mapId, p).length > 0, inh = !d && !tree && effBoxes(p).length > 0;
+    if (d && tree) tdone++; else if ((d || inh) && !stale) done++;
+    if ((q && !p.toLowerCase().includes(q)) || (todo && (d || inh))) continue;
     const li = document.createElement("li");
-    li.textContent = tree ? `🌳 ${trees.indexOf(p) + 1}. ${p.slice(HP.length)}` : stale ? `${p} ⚠ unused` : p;
-    li.className = (d ? "done " : "") + (tree ? "tree " : "") + (stale ? "stale " : "") + (p === place ? "sel " : "") + (hoverNames.has(p) ? "hov" : "");
+    li.textContent = tree ? `🌳 ${trees.indexOf(p) + 1}. ${p.slice(HP.length)}` : stale ? `${p} ⚠ unused` : parentOf(p) ? `${p}  ↳ ${parentOf(p)}` : p;
+    li.className = (d || inh ? "done " : "") + (inh ? "inherit " : "") + (tree ? "tree " : "") + (stale ? "stale " : "") + (p === place ? "sel " : "") + (hoverNames.has(p) ? "hov" : "");
     li.dataset.p = p;
     li.onclick = () => { place = p; selBox = null; poly = null; renderList(); renderBoxes(); };
     // hovering a list entry outlines all of its boxes on the map
@@ -196,7 +226,7 @@ function renderList() {
   }
   $("#msg").textContent = `${map().name} (${mapId}): ${done} of ${all.length} locations marked`
     + (trees.length ? ` · ${tdone} of ${trees.length} honey trees placed` : "")
-    + (place ? ` · selected: ${isTree(mapId, place) ? "honey tree " + place.slice(HP.length) : place}` : " · pick a location from the list");
+    + (place ? ` · selected: ${isTree(mapId, place) ? "honey tree " + place.slice(HP.length) : place}${parentOf(place) ? " (inside " + parentOf(place) + ")" : ""}` : " · pick a location from the list");
 }
 
 // What is drawn for box i of place p: while it is being dragged, the live (not yet saved) shape.
@@ -218,6 +248,7 @@ function renderBoxes() {
   };
   const ents = areaEntries(mapId);
   for (const [p, list] of ents) list.forEach((b, i) => add(shown(p, i, b), p === place ? (editing && i === selBox ? "cur pick" : "cur") : ""));
+  if (place && !isTree(mapId, place) && !boxes(mapId, place).length) effBoxes(place).forEach(b => add(b, "cur"));   // no box of its own: show the parent's
   for (const [p, list] of ents) if (isTree(mapId, p)) list.forEach((b, i) => add(shown(p, i, b), "ico", true));   // icons on top of the boxes
   if (drag && drag.box) add(drag.box, "pre");
   if (poly && poly.pts.length) add(["p", ...(poly.cur ? [...poly.pts, poly.cur] : poly.pts).flat()], "pre");
@@ -470,11 +501,12 @@ function hover(e) {
     hoverNames = next;
     document.querySelectorAll("#list li").forEach(li => li.classList.toggle("hov", next.has(li.dataset.p)));
   }
-  tip.innerHTML = hits.map(h => {
-    const label = h.names.find(s => /['é]/.test(s)) || h.names[0];                   // same spelling choice as the site
-    const n = h.boxes.length;
-    return `<b>${esc(label)}</b> · ${n} box${n === 1 ? "" : "es"}${h.names.includes(place) ? " · selected" : ""}`;
-  }).join("<br>");
+  const shownHits = [...hits].sort((a, b) => (b.names.includes(place) ? 1 : 0) - (a.names.includes(place) ? 1 : 0)), MAXTIP = 5, rest = shownHits.length - MAXTIP;
+  tip.innerHTML = shownHits.slice(0, MAXTIP).map(h => {
+    const sel = h.names.includes(place), label = sel ? place : Maps.label(h.names);   // names that share a spot are shown by their common start
+    const n = h.boxes.length, extra = h.names.length > 1 && !sel ? ` <small>(${h.names.length} names)</small>` : "";
+    return `<b>${esc(label)}</b>${extra} · ${n} box${n === 1 ? "" : "es"}${sel ? " · selected" : ""}`;
+  }).join("<br>") + (rest > 0 ? `<br><small>+${rest} more here</small>` : "");
   tip.style.left = fx * 100 + "%"; tip.style.top = fy * 100 + "%";
   const h = fx < 0.3 ? "0" : fx > 0.7 ? "-100%" : "-50%";                          // keep the tooltip inside the map
   tip.style.transform = fy < 0.25 ? `translate(${h}, 16px)` : `translate(${h}, calc(-100% - 8px))`;
@@ -718,6 +750,9 @@ $("#save").onclick = () => {
   const out = JSON.parse(JSON.stringify(db));
   out.generated = new Date().toISOString().slice(0, 10);
   for (const id of Object.keys(out.areas)) if (!Object.keys(out.areas[id]).length) delete out.areas[id];
+  out.inside = out.inside || {};
+  for (const id of Object.keys(out.inside)) if (!Object.keys(out.inside[id]).length) delete out.inside[id];
+  if (!Object.keys(out.inside).length) delete out.inside;
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 1)], { type: "application/json" }));
   a.download = "maps.json"; a.click(); URL.revokeObjectURL(a.href);
@@ -785,6 +820,7 @@ toolUi();
   try { honey = await fetch("data/honey.json").then(r => (r.ok ? r.json() : null)); } catch {}
   try { const d = JSON.parse(localStorage.getItem(HDRAFT)); if (d && Array.isArray(d.spots) && confirm("Continue with the unsaved honey tree draft from this browser? (Cancel = start from data/honey.json)")) honey = d; } catch {}
   db.areas = db.areas || {};
+  db.inside = db.inside || {};
   $("#map").innerHTML = Object.entries(db.maps).map(([id, m]) => `<option value="${id}">${m.name} (${id})</option>`).join("");
   selectMap(Object.keys(db.maps)[0]);
 })();

@@ -71,6 +71,14 @@
 //                             "unknown": { "img": "...", "x": 8, "y": 56, "w": 136, "h": 32 } } },   optional: the AREA UNKNOWN banner art
 //     "games": { "<game key>": ["<mapId>", ...] },                   a game can have several maps
 //     "areas": { "<mapId>": { "<place>": [[x, y, w, h], ...] } } }   boxes in image pixels
+//     "inside": { "<mapId>": { "<child place>": "<parent place>" } }   optional, see "Places inside other places"
+//
+// Places inside other places ("inside"): Silph Co. is inside Saffron City, the Prize Corner inside Celadon City, Mt. Moon's rooms
+// inside Mt. Moon... A child needs NO box of its own: it is drawn with its parent's boxes (the parent flashes / is outlined when
+// the Pokémon is in the child). If the child DOES have a box (a small pin drawn inside the parent in map-editor.html) that box is used
+// instead. Hovering says "Saffron City · found here in Silph Co." and the "Where to find" list indents the child under its parent.
+// Floors work too: an entry for "Silph Co." covers "Silph Co. 5F". Chains (room > building > city) work up to 4 levels.
+//   Maps.parentOf(area)   the parent place name of an area ("" if it is top level)
 // Two games with the same places but a different look (Red / Blue and Yellow use different colours): give the second one its own
 // map (own picture, own "unknown" banner) with "areasOf": "<the map whose boxes it uses>", so the boxes are kept in one place only.
 // "variant" ("Yellow", "Red / Blue") then names each picture in its caption when one list shows both.
@@ -86,6 +94,23 @@ const Maps = (() => {
   // A map's boxes: its own, or those of the map it shares them with (maps.json "areasOf"). famOf = the id those boxes are filed under.
   const famOf = id => { const m = data && data.maps[id]; return (m && m.areasOf) || id; };
   const tableOf = id => ((data && data.areas) || {})[famOf(id)] || {};
+  // ---- places inside other places (maps.json "inside": { mapId: { child: parent } }) ----
+  const insideOf = id => ((data && data.inside) || {})[famOf(id)] || {};
+  const parentIn = (id, area) => { const t = insideOf(id); return t[area] || t[placeKey(area)] || ""; };
+  // The boxes a place is drawn with: its own, else its parent's, else the grandparent's ... (null = none)
+  function boxesFor(id, table, area) {
+    for (let a = area, i = 0; a && i < 5; a = parentIn(id, a), i++) {
+      const b = table[a] || table[placeKey(a)];
+      if (b && b.length) return b;
+    }
+    return null;
+  }
+  // The parent of a place on any map ("" = top level). Place names are unique enough per region that no map id is needed.
+  function parentOf(area) {
+    if (!data || !data.inside) return "";
+    for (const id of Object.keys(data.maps)) { const p = parentIn(id, area); if (p) return p; }
+    return "";
+  }
 
   // ---- honey trees (data/honey.json, see the header comment) ----
   const HONEY_PREFIX = "Honey Tree: ";      // one place per tree: "Honey Tree: Route 205"
@@ -384,7 +409,13 @@ const Maps = (() => {
 .amap .amappin svg{animation:pinPulse 1.2s ease-in-out infinite}
 .amap .amappin .w{stroke:#fff;stroke-width:4px}
 .amap .amappin .b{stroke:#d01818;stroke-width:2px;fill:rgba(255,40,40,.3)}
-@media (prefers-reduced-motion:reduce){.amap .amappin svg{animation:none}}`;
+@media (prefers-reduced-motion:reduce){.amap .amappin svg{animation:none}}
+/* hover tooltip: wraps and stays narrow instead of one long line that runs off the map */
+.amap .amaptip{white-space:normal;width:max-content;max-width:min(230px,70cqw)}
+.amaptip small{opacity:.8}
+/* a place inside another place (maps.json "inside"): indented under its parent in the "Where to find" list */
+#where li.inside{margin-left:14px;padding-left:8px;border-left:4px solid var(--mid)}
+#where .insidetag{display:inline-block;padding:0 6px;margin-left:4px;font:600 11px/1.6 system-ui,sans-serif;border:2px dashed var(--line);background:var(--card);color:var(--ink);vertical-align:middle;white-space:nowrap}`;
 
   // Flashing maps: is this place a route / town (land) or a unique location (special)?
   const LAND = new RegExp("\\b(route|town|city|village)\\b|\\b(one|two|three|four|five|six|seven) island\\b" +
@@ -549,7 +580,7 @@ const Maps = (() => {
       if (m.flash) {                                                    // style 3: the locations themselves flash (Hoenn, FireRed / LeafGreen)
         const seen = new Map(), sets = { land: [], special: [] }, names = new Set();   // seen: kind + box -> { b, times }
         for (const a of areas) {
-          const boxes = table[a] || table[placeKey(a)];
+          const boxes = boxesFor(id, table, a);
           if (!boxes || !boxes.length) continue;
           const kind = kindOf(placeKey(a));
           if (a === HONEY_ALL) honeyNames.forEach(h => names.add(h)); else names.add(placeKey(a));   // honey trees count one by one
@@ -580,7 +611,7 @@ const Maps = (() => {
       if (m.icon && !m.single) {                                        // style 1: the game's sprite on every tile
         const seen = new Set(), places = new Set();
         for (const a of areas) {
-          const boxes = table[a] || table[placeKey(a)];
+          const boxes = boxesFor(id, table, a);
           if (!boxes || !boxes.length) continue;
           places.add(placeKey(a));
           for (const b of boxes) seen.add(JSON.stringify(b));
@@ -601,7 +632,7 @@ const Maps = (() => {
       const sprite = m.icon ? esc(m.icon) : BUG;
       const groups = new Map();
       for (const a of areas) {
-        const boxes = table[a] || table[placeKey(a)];
+        const boxes = boxesFor(id, table, a);
         if (!boxes || !boxes.length) continue;
         const sig = JSON.stringify([...boxes].sort()), gr = groups.get(sig) || { boxes, times: new Set() };
         for (const t of areaTimes.get(a)) gr.times.add(t);
@@ -646,6 +677,19 @@ const Maps = (() => {
   const norm = s => String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
     .replace(/^kanto/, "").replace(/[^a-z0-9]/g, "");
 
+  // Short label for places that share one spot: their common start if it is meaningful, else the apostrophe spelling / the first name.
+  const wordsOf = s => String(s).split(/\s+/);
+  const commonWords = (p, q) => { const x = wordsOf(p), y = wordsOf(q); let i = 0; while (i < x.length && i < y.length && x[i].toLowerCase() === y[i].toLowerCase()) i++; return i; };
+  function label(names) {
+    const list = names.filter(Boolean);
+    if (!list.length) return "";
+    if (list.length > 1) {
+      const c = list.reduce((n, s) => Math.min(n, commonWords(list[0], s)), 99);
+      if (c >= 2 || (c >= 1 && list.some(s => wordsOf(s).length === c))) return wordsOf(list[0]).slice(0, c).join(" ");
+    }
+    return list.find(s => /['é]/.test(s)) || list[0];
+  }
+
   // Which locations cover the point (fx, fy) (0..1 across the map image)? -> [{ name, here, when, boxes }]
   // `found` = what Maps.html put in data-found: { n: area name, t: "day night" } (plain strings count as all day).
   // `roam` = a roaming Pokémon could be there (shaded route);
@@ -657,32 +701,55 @@ const Maps = (() => {
     if (!m || !m.w || !m.h) return [];
     const x = fx * m.w, y = fy * m.h, byName = new Map();
     const roamKeys = new Set();                                          // routes a roaming Pokémon can be on (found entries with r: 1)
+    const via = new Map(), own = tableOf(id);                            // via: parent key -> names of the places inside it the Pokémon is in
     for (const f of found) {
       if (f && f.r) { roamKeys.add(norm(f.n)); continue; }
-      const k = norm(typeof f === "string" ? f : f.n), set = byName.get(k) || new Set();
+      const nm = typeof f === "string" ? f : f.n, k = norm(nm), set = byName.get(k) || new Set();
       const t = typeof f === "string" || !f.t ? TIMES : f.t.split(" ");
       t.forEach(v => set.add(v)); byName.set(k, set);
+      if (own[nm] || own[placeKey(nm)]) continue;                        // it has its own box, so its parent is not lit up
+      for (let p = parentIn(id, nm), hops = 0; p && hops < 4; p = parentIn(id, p), hops++) {   // it is drawn with its parent's boxes
+        const pk = norm(p), ps = byName.get(pk) || new Set();
+        t.forEach(v => ps.add(v)); byName.set(pk, ps);
+        if (nm === placeKey(nm)) { const l = via.get(pk) || new Set(); l.add(nm); via.set(pk, l); }
+      }
     }
     const merged = new Map();                                            // box signature -> one location
     for (const [p, all] of Object.entries(tableOf(id))) {
       if (p === HONEY_ALL) continue;
       if (!all.some(b => inBox(b, x, y))) continue;
       const sig = JSON.stringify([...all].sort()), k = norm(p);
-      if (!merged.has(sig)) merged.set(sig, { names: [], boxes: all, here: false, times: new Set() });
+      if (!merged.has(sig)) merged.set(sig, { names: [], boxes: all, here: false, times: new Set(), via: new Set() });
       const g = merged.get(sig);
       g.names.push(p);
       if (roamKeys.has(k)) g.roam = true;
       if (byName.has(k)) { g.here = true; byName.get(k).forEach(t => g.times.add(t)); }
+      if (via.has(k)) via.get(k).forEach(x => g.via.add(x));
     }
-    return [...merged.values()].map(g => ({
+    // One line per place, but not one line per room: names that share a box set are labelled by their common start
+    // ("Kanto Safari Zone Area 1 / 2 / 3 / Middle" -> "Kanto Safari Zone"), and different box sets whose names share a long start
+    // (or one name is the start of the other) are merged into one entry. Places the Pokémon is in come first.
+    const items = [...merged.values()].map(g => ({
       name: g.names.find(s => s.startsWith(HONEY_PREFIX) && byName.has(norm(s)))   // a honey tree this Pokémon uses: name the tree
-        || g.names.find(s => !s.startsWith(HONEY_PREFIX) && /['é]/.test(s))       // prefer the spelling with the apostrophe / é
-        || g.names.find(s => !s.startsWith(HONEY_PREFIX)) || g.names[0],
-      here: g.here,
-      roam: !!g.roam && !g.here,                                         // a roamer could be here (and it isn't a fixed spot)
-      when: g.here && m.times ? timeText(g.times) : "",
-      boxes: g.boxes,
+        || label(g.names.filter(s => !s.startsWith(HONEY_PREFIX))) || g.names[0],
+      here: g.here, roam: !!g.roam, times: new Set(g.times), boxes: g.boxes.slice(), via: new Set(g.via),
+      inside: g.names.map(n => parentIn(id, n)).find(Boolean) || "",           // this place is inside ...
+      count: 1,
     }));
+    const out = [];
+    for (const it of items) {
+      const o = out.find(x => { const c = commonWords(x.name, it.name); return c >= 3 || (c >= 1 && (c === wordsOf(x.name).length || c === wordsOf(it.name).length)); });
+      if (!o) { out.push(it); continue; }
+      o.name = wordsOf(o.name).slice(0, commonWords(o.name, it.name)).join(" ");
+      o.here = o.here || it.here; o.roam = o.roam || it.roam; o.count++;
+      it.times.forEach(t => o.times.add(t)); it.via.forEach(v => o.via.add(v));
+      o.boxes.push(...it.boxes.filter(b => !o.boxes.some(x => JSON.stringify(x) === JSON.stringify(b))));
+      o.inside = o.inside || it.inside;
+    }
+    return out.map(o => ({
+      name: o.name, here: o.here, roam: o.roam && !o.here,                  // a roamer could be here (and it isn't a fixed spot)
+      when: o.here && m.times ? timeText(o.times) : "", boxes: o.boxes, inside: o.inside, via: [...o.via], count: o.count,
+    })).sort((x, y) => (y.here ? 1 : 0) - (x.here ? 1 : 0));
   }
 
   // Which maps (of the given games) have boxes for this location? -> [{ id, boxes, w, h }] (used by the "Show on map" buttons in where.js)
@@ -694,11 +761,11 @@ const Maps = (() => {
       seen.add(id);
       const m = data.maps[id];
       if (!m || !m.w || !m.h) continue;
-      const t = tableOf(id), b = t[area] || t[placeKey(area)];
+      const t = tableOf(id), b = boxesFor(id, t, area);
       if (b && b.length) out.push({ id, boxes: b, w: m.w, h: m.h });
     }
     return out;
   }
 
-  return { init, addHoney, html, placeKey, segment, exact, kindOf, at, drop, locate, bbox, isShape, verts, inBox, move, outline, pin, honeyPrefix: HONEY_PREFIX, honeyIcon: HONEYICON, honeyAll: HONEY_ALL };
+  return { init, addHoney, html, placeKey, parentOf, label, segment, exact, kindOf, at, drop, locate, bbox, isShape, verts, inBox, move, outline, pin, honeyPrefix: HONEY_PREFIX, honeyIcon: HONEYICON, honeyAll: HONEY_ALL };
 })();

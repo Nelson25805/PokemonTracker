@@ -263,7 +263,7 @@ const Where = (() => {
     };
     const rows = [...areas].map(([area, a]) => {
       const s = typeof Maps !== "undefined" ? Maps.segment(area) : { base: area, seg: "" };
-      return { area, base: s.base, seg: s.seg, best: a.best, times: TIMES.filter(t => a.times.has(t)), html: body(a) };
+      return { area, base: s.base, seg: s.seg, grp: (typeof Maps !== "undefined" && Maps.parentOf(s.base)) || s.base, best: a.best, times: TIMES.filter(t => a.times.has(t)), html: body(a) };
     });
     // Floors of one place (Mt. Moon 1F / B1F / B2F ...) with exactly the same encounters (under the current filters) become ONE record
     // that lists the floors it covers. Floors with different encounters stay separate records.
@@ -291,8 +291,9 @@ const Where = (() => {
     }
     for (const o of list) if (o.floors) { if (o.floors.length > 1) o.floorTag = floorText(o.floors); else { delete o.floors; delete o.title; } }
     const top = new Map();                                      // North / South of one route stay together, ranked by the better one
-    list.forEach(r => top.set(r.base, Math.max(top.get(r.base) || 0, r.best)));
-    return list.sort((x, y) => top.get(y.base) - top.get(x.base) || x.base.localeCompare(y.base, undefined, { numeric: true }) || x.seg.localeCompare(y.seg));
+    list.forEach(r => top.set(r.grp, Math.max(top.get(r.grp) || 0, r.best)));   // grp = the parent place, so a building sits right under its city
+    return list.sort((x, y) => top.get(y.grp) - top.get(x.grp) || x.grp.localeCompare(y.grp, undefined, { numeric: true })
+      || (x.base === x.grp ? 0 : 1) - (y.base === y.grp ? 0 : 1) || x.base.localeCompare(y.base, undefined, { numeric: true }) || x.seg.localeCompare(y.seg));
   }
 
   // Which segments (North, South, East...) exist for each place in a game, from the location data itself.
@@ -317,6 +318,8 @@ const Where = (() => {
       out += ` <mark class="segtag${drawn ? "" : " approx"}" title="${drawn ? "Only this part of the route." : "This part isn't drawn on the map yet, so Show on map outlines the whole route."}">${esc(l.seg)}${only ? " only" : ""}</mark>`;
       if (only) out += `<small class="segnote">not in ${esc(rest.join(" / "))}</small>`;
     }
+    const par = Maps.parentOf(l.title || l.area);                       // a place inside another place (maps.json "inside")
+    if (par) out += ` <mark class="insidetag" title="This place is inside ${esc(par)}">inside ${esc(par)}</mark>`;
     const forms = typeof Forms !== "undefined" ? Forms.areasFor(n, keys, l.area, l.base) : [];
     return out + forms.map(f => ` <mark class="formtag" data-form="${esc(f.toLowerCase().replace(/[^a-z0-9]+/g, "-"))}" title="Form found here">${esc(f)}</mark>`).join("");
   }
@@ -416,7 +419,7 @@ const Where = (() => {
         const ok = typeof Maps !== "undefined" && Maps.locate(keys, l.area).length;
         const btn = ok ? `<button type="button" class="locbtn" data-area="${esc(l.area)}" data-keys="${esc(keys.join(","))}" data-times="${l.times.join(" ")}" aria-pressed="false" aria-label="Outline ${esc(l.area)} on the map">Show on map</button>` : "";
         const extra = l.area === HONEY && honey ? honeyHtml(keys, n) : "";
-        return `<li><strong>${nameHtml(l, keys, mine, n)}</strong><span class="wide">${l.html}</span>${btn}${extra}</li>`;
+        return `<li${l.grp !== l.base ? ' class="inside"' : ""}><strong>${nameHtml(l, keys, mine, n)}</strong><span class="wide">${l.html}</span>${btn}${extra}</li>`;
       });
       if (!entries.length && (sel !== "all" || tsel !== "all")) rows.push(`<li><span>Not found here ${sel !== "all" ? "in " + SEASON_NAME[sel] : TPHRASE[tsel]}.</span></li>`);
       if (g.evolve) rows.unshift(...evoRows(g.evolve));
@@ -497,8 +500,12 @@ const Where = (() => {
         }
       }
       // name; if a roamer could be on that route: "could be roaming here"; if the Pokémon is found there: "found here", plus the time of day on maps that have one (Gold / Silver / Crystal)
-      tip.innerHTML = hits.map(h => h.here ? `<b>${esc(h.name)}</b> · found here${h.when ? ` · ${esc(h.when)}` : ""}`
-        : h.roam ? `<b>${esc(h.name)}</b> · could be roaming here` : esc(h.name)).join("<br>");
+      const sub = h => (h.inside ? ` <small>(inside ${esc(h.inside)})</small>` : "");
+      const inn = h => (h.via && h.via.length ? ` in ${esc(h.via.slice(0, 2).join(", "))}${h.via.length > 2 ? ` +${h.via.length - 2}` : ""}` : "");
+      const line = h => h.here ? `<b>${esc(h.name)}</b>${sub(h)} · found here${inn(h)}${h.when ? ` · ${esc(h.when)}` : ""}`
+        : h.roam ? `<b>${esc(h.name)}</b>${sub(h)} · could be roaming here` : `${esc(h.name)}${sub(h)}`;
+      const MAXTIP = 4, rest = hits.length - MAXTIP;                           // a tile with many places: show the first few, count the rest
+      tip.innerHTML = hits.slice(0, MAXTIP).map(line).join("<br>") + (rest > 0 ? `<br><small>+${rest} more place${rest === 1 ? "" : "s"} here</small>` : "");
       tip.style.left = fx * 100 + "%"; tip.style.top = fy * 100 + "%";
       const h = fx < 0.3 ? "0" : fx > 0.7 ? "-100%" : "-50%";                  // keep the tooltip inside the map
       tip.style.transform = fy < 0.25 ? `translate(${h}, 16px)` : `translate(${h}, calc(-100% - 8px))`;
