@@ -202135,6 +202135,192 @@
           100,
           ""
         ]
+      ],
+      "56": [
+        [
+          "Unova Route 15",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "83": [
+        [
+          "Unova Route 1",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "84": [
+        [
+          "Unova Route 12",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "102": [
+        [
+          "Unova Route 18",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "161": [
+        [
+          "Unova Route 7",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "193": [
+        [
+          "Unova Route 14",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "204": [
+        [
+          "Unova Route 16",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "228": [
+        [
+          "Unova Route 9",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "235": [
+        [
+          "Unova Route 5",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "236": [
+        [
+          "Unova Route 10",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "285": [
+        [
+          "Unova Route 11",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "311": [
+        [
+          "Unova Route 6",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "313": [
+        [
+          "Unova Route 3",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "353": [
+        [
+          "Unova Route 13",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "360": [
+        [
+          "Unova Route 2",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "449": [
+        [
+          "Unova Route 4",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "453": [
+        [
+          "Unova Route 8",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm, Spring"
+        ],
+        [
+          "Unova Route 8",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm, Summer"
+        ],
+        [
+          "Unova Route 8",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm, Autumn"
+        ]
       ]
     },
     "white": {
@@ -209775,6 +209961,192 @@
           100,
           ""
         ]
+      ],
+      "46": [
+        [
+          "Unova Route 11",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "56": [
+        [
+          "Unova Route 15",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "83": [
+        [
+          "Unova Route 1",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "84": [
+        [
+          "Unova Route 12",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "102": [
+        [
+          "Unova Route 18",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "161": [
+        [
+          "Unova Route 7",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "193": [
+        [
+          "Unova Route 14",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "204": [
+        [
+          "Unova Route 16",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "235": [
+        [
+          "Unova Route 5",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "236": [
+        [
+          "Unova Route 10",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "261": [
+        [
+          "Unova Route 9",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "312": [
+        [
+          "Unova Route 6",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "314": [
+        [
+          "Unova Route 3",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "353": [
+        [
+          "Unova Route 13",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "360": [
+        [
+          "Unova Route 2",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "449": [
+        [
+          "Unova Route 4",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "453": [
+        [
+          "Unova Route 8",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm, Spring"
+        ],
+        [
+          "Unova Route 8",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm, Summer"
+        ],
+        [
+          "Unova Route 8",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm, Autumn"
+        ]
       ]
     },
     "black-2": {
@@ -213640,31 +214012,31 @@
       ],
       "325": [
         [
-          "Reversal Mountain Interior",
-          "walk",
-          31,
-          31,
-          20,
-          ""
-        ],
-        [
           "Reversal Mountain Outside",
           "walk",
           31,
           31,
           20,
           ""
-        ]
-      ],
-      "326": [
+        ],
         [
-          "Reversal Mountain Interior",
+          "Reversal Mountain Interior Entrances",
           "walk",
-          35,
-          35,
+          31,
+          31,
           20,
           ""
         ],
+        [
+          "Reversal Mountain Interior Main",
+          "walk",
+          31,
+          31,
+          5,
+          ""
+        ]
+      ],
+      "326": [
         [
           "Reversal Mountain Outside",
           "dark-grass",
@@ -213679,6 +214051,22 @@
           33,
           33,
           10,
+          ""
+        ],
+        [
+          "Reversal Mountain Interior Entrances",
+          "walk",
+          35,
+          35,
+          5,
+          ""
+        ],
+        [
+          "Reversal Mountain Interior Main",
+          "walk",
+          35,
+          35,
+          20,
           ""
         ]
       ],
@@ -215276,14 +215664,6 @@
       ],
       "451": [
         [
-          "Reversal Mountain Interior",
-          "walk",
-          33,
-          35,
-          15,
-          ""
-        ],
-        [
           "Reversal Mountain Outside",
           "dark-grass",
           35,
@@ -215305,6 +215685,22 @@
           35,
           39,
           5,
+          ""
+        ],
+        [
+          "Reversal Mountain Interior Entrances",
+          "walk",
+          33,
+          35,
+          15,
+          ""
+        ],
+        [
+          "Reversal Mountain Interior Main",
+          "walk",
+          33,
+          35,
+          15,
           ""
         ]
       ],
@@ -216900,14 +217296,6 @@
           ""
         ],
         [
-          "Reversal Mountain Interior",
-          "walk",
-          32,
-          35,
-          25,
-          ""
-        ],
-        [
           "Rocky Mountain Room",
           "walk",
           54,
@@ -217002,6 +217390,22 @@
           50,
           80,
           ""
+        ],
+        [
+          "Reversal Mountain Interior Entrances",
+          "walk",
+          32,
+          35,
+          25,
+          ""
+        ],
+        [
+          "Reversal Mountain Interior Main",
+          "walk",
+          32,
+          35,
+          25,
+          ""
         ]
       ],
       "526": [
@@ -217080,14 +217484,6 @@
           ""
         ],
         [
-          "Reversal Mountain Interior",
-          "walk",
-          32,
-          35,
-          35,
-          ""
-        ],
-        [
           "Rocky Mountain Room",
           "walk",
           54,
@@ -217149,6 +217545,22 @@
           55,
           58,
           50,
+          ""
+        ],
+        [
+          "Reversal Mountain Interior Entrances",
+          "walk",
+          32,
+          35,
+          35,
+          ""
+        ],
+        [
+          "Reversal Mountain Interior Main",
+          "walk",
+          32,
+          35,
+          35,
           ""
         ]
       ],
@@ -221995,6 +222407,196 @@
           100,
           "Other captured reshiram or zekrom"
         ]
+      ],
+      "22": [
+        [
+          "Unova Route 15",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "79": [
+        [
+          "Abundant Shrine",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "83": [
+        [
+          "Unova Route 1",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "84": [
+        [
+          "Unova Route 12",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "97": [
+        [
+          "Dreamyard",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "162": [
+        [
+          "Unova Route 7",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "168": [
+        [
+          "Unova Route 22",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "177": [
+        [
+          "Unova Route 5",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "185": [
+        [
+          "Unova Route 20",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "187": [
+        [
+          "Unova Route 18",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "195": [
+        [
+          "Unova Route 8",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "204": [
+        [
+          "Unova Route 16",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "277": [
+        [
+          "Unova Route 13",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "284": [
+        [
+          "Unova Route 11",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "311": [
+        [
+          "Unova Route 6",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "313": [
+        [
+          "Unova Route 3",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "317": [
+        [
+          "Unova Route 9",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "332": [
+        [
+          "Reversal Mountain Outside",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "450": [
+        [
+          "Desert Resort",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
       ]
     },
     "white-2": {
@@ -225904,31 +226506,31 @@
       ],
       "322": [
         [
-          "Reversal Mountain Interior",
-          "walk",
-          31,
-          31,
-          20,
-          ""
-        ],
-        [
           "Reversal Mountain Outside",
           "walk",
           31,
           31,
           20,
           ""
-        ]
-      ],
-      "323": [
+        ],
         [
-          "Reversal Mountain Interior",
+          "Reversal Mountain Interior Entrances",
           "walk",
-          35,
-          35,
+          31,
+          31,
           20,
           ""
         ],
+        [
+          "Reversal Mountain Interior Main",
+          "walk",
+          31,
+          31,
+          5,
+          ""
+        ]
+      ],
+      "323": [
         [
           "Reversal Mountain Outside",
           "dark-grass",
@@ -225943,6 +226545,22 @@
           33,
           33,
           10,
+          ""
+        ],
+        [
+          "Reversal Mountain Interior Entrances",
+          "walk",
+          35,
+          35,
+          5,
+          ""
+        ],
+        [
+          "Reversal Mountain Interior Main",
+          "walk",
+          35,
+          35,
+          20,
           ""
         ]
       ],
@@ -227502,14 +228120,6 @@
       ],
       "451": [
         [
-          "Reversal Mountain Interior",
-          "walk",
-          33,
-          35,
-          15,
-          ""
-        ],
-        [
           "Reversal Mountain Outside",
           "dark-grass",
           35,
@@ -227531,6 +228141,22 @@
           35,
           39,
           5,
+          ""
+        ],
+        [
+          "Reversal Mountain Interior Entrances",
+          "walk",
+          33,
+          35,
+          15,
+          ""
+        ],
+        [
+          "Reversal Mountain Interior Main",
+          "walk",
+          33,
+          35,
+          15,
           ""
         ]
       ],
@@ -229126,14 +229752,6 @@
           ""
         ],
         [
-          "Reversal Mountain Interior",
-          "walk",
-          32,
-          35,
-          25,
-          ""
-        ],
-        [
           "Rocky Mountain Room",
           "walk",
           54,
@@ -229228,6 +229846,22 @@
           50,
           80,
           ""
+        ],
+        [
+          "Reversal Mountain Interior Entrances",
+          "walk",
+          32,
+          35,
+          25,
+          ""
+        ],
+        [
+          "Reversal Mountain Interior Main",
+          "walk",
+          32,
+          35,
+          25,
+          ""
         ]
       ],
       "526": [
@@ -229306,14 +229940,6 @@
           ""
         ],
         [
-          "Reversal Mountain Interior",
-          "walk",
-          32,
-          35,
-          35,
-          ""
-        ],
-        [
           "Rocky Mountain Room",
           "walk",
           54,
@@ -229375,6 +230001,22 @@
           55,
           58,
           50,
+          ""
+        ],
+        [
+          "Reversal Mountain Interior Entrances",
+          "walk",
+          32,
+          35,
+          35,
+          ""
+        ],
+        [
+          "Reversal Mountain Interior Main",
+          "walk",
+          32,
+          35,
+          35,
           ""
         ]
       ],
@@ -234220,6 +234862,196 @@
           70,
           100,
           "Other captured reshiram or zekrom"
+        ]
+      ],
+      "22": [
+        [
+          "Unova Route 15",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "79": [
+        [
+          "Abundant Shrine",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "83": [
+        [
+          "Unova Route 1",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "84": [
+        [
+          "Unova Route 12",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "97": [
+        [
+          "Dreamyard",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "122": [
+        [
+          "Unova Route 20",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "162": [
+        [
+          "Unova Route 7",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "166": [
+        [
+          "Unova Route 22",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "177": [
+        [
+          "Unova Route 5",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "187": [
+        [
+          "Unova Route 18",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "195": [
+        [
+          "Unova Route 8",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "204": [
+        [
+          "Unova Route 16",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "277": [
+        [
+          "Unova Route 13",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "284": [
+        [
+          "Unova Route 11",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "312": [
+        [
+          "Unova Route 6",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "314": [
+        [
+          "Unova Route 3",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "317": [
+        [
+          "Unova Route 9",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "332": [
+        [
+          "Reversal Mountain Outside",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "450": [
+        [
+          "Desert Resort",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ]
     }
