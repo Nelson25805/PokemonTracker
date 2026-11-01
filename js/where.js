@@ -30,6 +30,9 @@ const Where = (() => {
     "rock-smash": "Rock Smash", headbutt: "Headbutt", gift: "Gift", "gift-egg": "Gift (Egg)", "only-one": "Static (one-time)",
     pokeflute: "Poké Flute", "bug-catching-contest": "Bug-Catching Contest", "roaming-grass": "Roaming (grass / land)", "roaming-water": "Roaming (surfing)",
     "honey-tree": "Honey tree",
+    // Gen 5 special encounter spots: friendlier names for the player (locations.json keeps the raw method names)
+    "grass-spots": "Rustling grass", "cave-spots": "Dust clouds", "bridge-spots": "Bridge shadows",
+    "surf-spots": "Surfing in rippling water", "super-rod-spots": "Fishing in rippling water",
   };
   const TIMES = ["morning", "day", "night"];
 
