@@ -401,7 +401,17 @@ const Where = (() => {
         It may be an evolution, a breeding result, an event Pokémon, or a trade. Check the full page below.</p>`;
     }
     const clockOf = g => g.games.map(x => CLOCK_OF[x.key]).find(Boolean) || null;
-    return groups.map(g => {
+    // Which group starts open: the one with the game you are tracking. If this Pokémon isn't available in that game,
+    // open only the group from the closest generation instead (the first one wins a tie); every other group stays folded.
+    let openAt = groups.findIndex(g => g.games.some(x => x.key === game.key));
+    if (openAt < 0) {
+      let bestGap = Infinity;
+      groups.forEach((g, i) => {
+        const gap = Math.min(...g.games.map(x => Math.abs(x.gen - game.gen)));
+        if (gap < bestGap) { bestGap = gap; openAt = i; }
+      });
+    }
+    return groups.map((g, gi) => {
       // Filters sit under that group's map, and only exist when they change something for these games:
       // a time-of-day filter for games with a clock, a season filter for Black / White / Black 2 / White 2.
       const gk = g.games[0].key, st = fs(gk), clock = clockOf(g);
@@ -426,7 +436,9 @@ const Where = (() => {
       });
       if (!entries.length && (sel !== "all" || tsel !== "all")) rows.push(`<li><span>Not found here ${sel !== "all" ? "in " + SEASON_NAME[sel] : TPHRASE[tsel]}.</span></li>`);
       if (g.evolve) rows.unshift(...evoRows(g.evolve));
-      const open = g.games.some(x => x.key === game.key) || rows.length <= 6;
+      // Only one group starts open (see openAt above); every other game's group starts folded
+      // (click its heading to open it), so the panel isn't cluttered right away.
+      const open = gi === openAt;
       const sub = g.vias.length ? `<small>reaches ${esc(game.name)} by ${esc(g.vias.join(" / "))}</small>` : "";
       const none = !entries.length && g.entries.length ? `nothing marked ${sel !== "all" ? "in " + SEASON_NAME[sel] : TPHRASE[tsel]}` : "";   // a filter left no locations: keep the map open, just empty
       let maps = typeof Maps !== "undefined" ? Maps.html(g.games.map(x => x.key), entries, nameOf(n), none) : "";   // region map with the locations marked
