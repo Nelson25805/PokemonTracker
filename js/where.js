@@ -440,8 +440,14 @@ const Where = (() => {
       // (click its heading to open it), so the panel isn't cluttered right away.
       const open = gi === openAt;
       const sub = g.vias.length ? `<small>reaches ${esc(game.name)} by ${esc(g.vias.join(" / "))}</small>` : "";
-      const none = !entries.length && g.entries.length ? `nothing marked ${sel !== "all" ? "in " + SEASON_NAME[sel] : TPHRASE[tsel]}` : "";   // a filter left no locations: keep the map open, just empty
-      let maps = typeof Maps !== "undefined" ? Maps.html(g.games.map(x => x.key), entries, nameOf(n), none) : "";   // region map with the locations marked
+      // Region map with the locations marked. When a season / time filter leaves nothing to mark (or nothing that is drawn on
+      // a map), the map stays on screen and shows the in-game "AREA UNKNOWN" banner instead of disappearing.
+      let maps = "";
+      if (typeof Maps !== "undefined") {
+        const mk = g.games.map(x => x.key);
+        maps = entries.length ? Maps.html(mk, entries, nameOf(n)) : "";
+        if (!maps) maps = Maps.html(mk, [], nameOf(n));
+      }
       if (tsel !== "all") {                                                                   // tint the map picture to the chosen time of day
         maps = maps.replace(/data-time="all"/g, `data-time="${tsel}"`);
         maps = maps.replace(/<figure class="amap"(?![^>]*data-timed)/g, '<figure class="amap" data-timed');   // maps.js only tints maps it thinks are time-dependent; the filter makes every one of them so
