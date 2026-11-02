@@ -59,12 +59,12 @@
   {"key":"heart-gold","name":"Heart Gold","gen":4,"count":493,"sprites":"HeartGold-SoulSilver","shiny":true,"spriteRepo":"generation-iv/heartgold-soulsilver","pokeapi":"heartgold","bulbapedia":"Pokémon HeartGold and SoulSilver Versions","region":{"dex":"updated-johto","name":"Johto"},"card":{"layout":"gen4"},"diploma":"leaf"},
   {"key":"soul-silver","name":"Soul Silver","gen":4,"count":493,"sprites":"HeartGold-SoulSilver","shiny":true,"spriteRepo":"generation-iv/heartgold-soulsilver","pokeapi":"soulsilver","bulbapedia":"Pokémon HeartGold and SoulSilver Versions","region":{"dex":"updated-johto","name":"Johto"},"card":{"layout":"gen4"},"diploma":"leaf"},
 
-  {"key":"black","name":"Black","gen":5,"count":649,"sprites":"Black-White","shiny":true,"spriteRepo":"generation-v/black-white","spriteSize":96,"pokeapi":"black","bulbapedia":"Pokémon Black and White Versions","region":{"dex":"original-unova","name":"Unova"}},
+  {"key":"black","name":"Black","gen":5,"count":649,"sprites":"Black-White","shiny":true,"spriteRepo":"generation-v/black-white","spriteSize":96,"pokeapi":"black","bulbapedia":"Pokémon Black and White Versions","region":{"dex":"original-unova","name":"Unova","start":0}},
 
-  {"key":"white","name":"White","gen":5,"count":649,"sprites":"Black-White","shiny":true,"spriteRepo":"generation-v/black-white","spriteSize":96,"pokeapi":"white","bulbapedia":"Pokémon Black and White Versions","region":{"dex":"original-unova","name":"Unova"}},
+  {"key":"white","name":"White","gen":5,"count":649,"sprites":"Black-White","shiny":true,"spriteRepo":"generation-v/black-white","spriteSize":96,"pokeapi":"white","bulbapedia":"Pokémon Black and White Versions","region":{"dex":"original-unova","name":"Unova","start":0}},
 
-  {"key":"black-2","name":"Black 2","gen":5,"count":649,"sprites":"Black-White","shiny":true,"spriteRepo":"generation-v/black-white","spriteSize":96,"pokeapi":"black-2","bulbapedia":"Pokémon Black 2 and White 2 Versions","region":{"dex":"updated-unova","name":"Unova"}},
+  {"key":"black-2","name":"Black 2","gen":5,"count":649,"sprites":"Black-White","shiny":true,"spriteRepo":"generation-v/black-white","spriteSize":96,"pokeapi":"black-2","bulbapedia":"Pokémon Black 2 and White 2 Versions","region":{"dex":"updated-unova","name":"Unova","start":0}},
 
-  {"key":"white-2","name":"White 2","gen":5,"count":649,"sprites":"Black-White","shiny":true,"spriteRepo":"generation-v/black-white","spriteSize":96,"pokeapi":"white-2","bulbapedia":"Pokémon Black 2 and White 2 Versions","region":{"dex":"updated-unova","name":"Unova"}}
+  {"key":"white-2","name":"White 2","gen":5,"count":649,"sprites":"Black-White","shiny":true,"spriteRepo":"generation-v/black-white","spriteSize":96,"pokeapi":"white-2","bulbapedia":"Pokémon Black 2 and White 2 Versions","region":{"dex":"updated-unova","name":"Unova","start":0}}
  ]
 }

@@ -90,7 +90,7 @@
 
   function renderGrid(s) {
     const g = gameOf(s), got = caughtSet(s, g), dir = spriteDir(s, g), list = dexList(s, g), fm = Forms.forGame(g);
-    const rows = (list ? list.map((n, i) => [monByN.get(n), i + 1]) : mons.slice(0, g.count).map(m => [m, m.n])).filter(([m]) => m);
+    const rows = (list ? list.map((n, i) => [monByN.get(n), i + (g.region.start ?? 1)]) : mons.slice(0, g.count).map(m => [m, m.n])).filter(([m]) => m);
     const cell = ([m, pos]) => `<div class="cell"><button class="card${got.has(m.n) ? " on" : ""}${fm.has(m.n) ? " hasform" : ""}" data-n="${m.n}" data-pos="${pos}" data-name="${m.name.toLowerCase()}" aria-pressed="${got.has(m.n)}" aria-keyshortcuts="${["I", g.shiny && "S", fm.has(m.n) && "F"].filter(Boolean).join(" ")}">
         <img loading="lazy" decoding="async" alt="" src="${spriteSrc(dir, m.n)}">
         <span class="n">#${String(pos).padStart(3, "0")}</span><span class="nm">${m.name}</span></button>
