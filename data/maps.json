@@ -287,16 +287,16 @@
    ],
    "Mt. Moon": [
     [
-     56,
+     64,
      24,
-     16,
+     8,
      8
     ]
    ],
    "Rock Tunnel": [
     [
      128,
-     40,
+     32,
      8,
      8
     ]
@@ -652,7 +652,7 @@
     ],
     [
      32,
-     80,
+     40,
      8,
      8
     ]
@@ -666,7 +666,7 @@
     ],
     [
      32,
-     80,
+     40,
      8,
      8
     ]
@@ -680,7 +680,7 @@
     ],
     [
      32,
-     80,
+     40,
      8,
      8
     ]
@@ -705,6 +705,36 @@
     [
      72,
      48,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 2 North towards Pewter City": [
+    [
+     32,
+     40,
+     8,
+     8
+    ]
+   ],
+   "Kanto Route 3 Pokemon Center": [
+    [
+     56,
+     24,
+     8,
+     8
+    ]
+   ],
+   "Kanto Underground Path": [
+    [
+     96,
+     40,
+     8,
+     8
+    ],
+    [
+     96,
+     56,
      8,
      8
     ]
@@ -9848,7 +9878,7 @@
    ]
   }
  },
- "generated": "2026-10-29",
+ "generated": "2026-11-02",
  "inside": {
   "kanto-rby": {
    "Celadon City Celadon Mansion": "Celadon City",
@@ -9863,7 +9893,8 @@
    "Kanto Safari Zone Middle": "Kanto Safari Zone",
    "Vermilion City S.S. Anne Dock": "Vermilion City",
    "Saffron City Silph Co": "Saffron City",
-   "Saffron City Fighting Dojo": "Saffron City"
+   "Saffron City Fighting Dojo": "Saffron City",
+   "Kanto Route 4 Pokemon Center": "Cerulean City"
   }
  }
 }
