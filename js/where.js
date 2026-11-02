@@ -249,7 +249,7 @@ const Where = (() => {
     const mclass = m => (/surf|rod/.test(m) ? "water" : /^(gift|only-one)/.test(m) ? "static" : "land");
     const tags = x => (x.other ? x.other.split(", ").map(c => `<span class="ctag">${esc(c)}</span>`).join("") : "");
     const best = x => Math.max(0, ...Object.values(x.per));
-    const rate = c => (c && c < 100 ? `<span class="rate">${c}%</span>` : "");
+    const rate = c => (c > 0 ? `<span class="rate">${c}%</span>` : "");   // 100% is shown too (gifts, static encounters, guaranteed spots); 0 = no rate recorded, so nothing
     // The body of one location: a table with one column per season / time of day when the Pokémon changes with it
     // (so the columns can be compared at a glance), otherwise one tidy line per method.
     const body = a => {
