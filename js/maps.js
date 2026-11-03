@@ -767,5 +767,21 @@ const Maps = (() => {
     return out;
   }
 
-  return { init, addHoney, html, placeKey, parentOf, label, segment, exact, kindOf, at, drop, locate, bbox, isShape, verts, inBox, move, outline, pin, honeyPrefix: HONEY_PREFIX, honeyIcon: HONEYICON, honeyAll: HONEY_ALL };
+  // ---- PokeAPI naming fix: "Kanto Victory Road 1" / "2" ----
+  // PokeAPI uses two location names for the same place: "Kanto Victory Road 1" holds the Gold / Silver / Crystal /
+  // HeartGold / SoulSilver data and "Kanto Victory Road 2" holds the Red / Blue / Yellow / FireRed / LeafGreen data.
+  // Each game only ever has one of them, so the number means nothing to the player. Strip it (floors are kept:
+  // "Kanto Victory Road 1 2F" -> "Kanto Victory Road 2F") so the rows match the map boxes and read naturally.
+  const VR_NUM = { gold: 1, silver: 1, crystal: 1, "heart-gold": 1, "soul-silver": 1, red: 2, blue: 2, yellow: 2, "fire-red": 2, "leaf-green": 2 };
+  function fixLoc(d) {
+    if (!d || !d.loc) return d;
+    for (const [g, num] of Object.entries(VR_NUM)) {
+      const byMon = d.loc[g]; if (!byMon) continue;
+      const re = new RegExp("^(Kanto Victory Road) " + num + "(?=\\s|$)");
+      for (const rows of Object.values(byMon)) for (const r of rows) if (typeof r[0] === "string") r[0] = r[0].replace(re, "$1");
+    }
+    return d;
+  }
+
+  return { init, addHoney, fixLoc, html, placeKey, parentOf, label, segment, exact, kindOf, at, drop, locate, bbox, isShape, verts, inBox, move, outline, pin, honeyPrefix: HONEY_PREFIX, honeyIcon: HONEYICON, honeyAll: HONEY_ALL };
 })();

@@ -816,6 +816,7 @@ toolUi();
     $("#msg").textContent = "Couldn't load data/maps.json and data/locations.json. Serve the folder (python3 -m http.server) and run build_locations.py first.";
     return;
   }
+  Maps.fixLoc(loc);                                              // same "Kanto Victory Road 1 / 2" fix as the site, so the list matches
   try { const d = JSON.parse(localStorage.getItem(DRAFT)); if (d && d.maps && confirm("Continue with the unsaved draft from this browser? (Cancel = start from data/maps.json)")) db = d; } catch {}
   try { honey = await fetch("data/honey.json").then(r => (r.ok ? r.json() : null)); } catch {}
   try { const d = JSON.parse(localStorage.getItem(HDRAFT)); if (d && Array.isArray(d.spots) && confirm("Continue with the unsaved honey tree draft from this browser? (Cancel = start from data/honey.json)")) honey = d; } catch {}

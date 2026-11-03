@@ -468,6 +468,7 @@ const Where = (() => {
           Maps.init(maps);                                                         // maps.json is optional too
           if (hon) Maps.addHoney(hon);                                             // honey.json is optional: puts the trees on the map
         }
+        if (d && typeof Maps !== "undefined") Maps.fixLoc(d);                     // PokeAPI's "Kanto Victory Road 1 / 2" -> "Kanto Victory Road"
         if (d && hon) { mergeHoney(d, hon); honey = hon; }
         return (data = d && { ...d, items });
       }));   // items.json and honey.json are optional; a failed load can be retried next time
