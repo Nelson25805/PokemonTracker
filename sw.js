@@ -20,9 +20,9 @@ const ASSET_CACHE = "pokedex-assets-v2";
 // Downloaded when the worker installs. Paths are relative to this file. A missing file is skipped, not fatal.
 const SHELL = [
   "./", "index.html", "manifest.webmanifest", "css/style.css",
-  "js/config.js", "js/cards.js", "js/store.js", "js/storage.js", "js/theme.js", "js/forms.js", "js/maps.js", "js/where.js", "js/app.js",
+  "js/config.js", "js/cards.js", "js/store.js", "js/storage.js", "js/theme.js", "js/forms.js", "js/maps.js", "js/where.js", "js/eggs.js", "js/app.js",
   "data/games.config.json", "data/pokemon.json", "data/regional.json", "data/forms.json",
-  "data/locations.json", "data/items.json", "data/maps.json", "data/form-areas.json", "data/honey.json",   // so "where to find" works offline; remove this line if the file gets too big
+  "data/locations.json", "data/items.json", "data/maps.json", "data/form-areas.json", "data/honey.json", "data/egg-words.json",   // so "where to find" works offline; remove this line if the file gets too big
   "icons/icon-192.png", "icons/icon-512.png",
 ];
 const ASSETS = ["assets/fonts/pkmn-rbygsc.ttf", "assets/fonts/pokemon-rs.ttf", "assets/fonts/pokemon-frlg.ttf"];

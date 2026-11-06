@@ -189183,7 +189183,7 @@
           5,
           5,
           100,
-          "Other received kanto starter, Story progress beat red"
+          "Talk to Steven, Story progress beat red"
         ]
       ],
       "255": [
@@ -189193,7 +189193,7 @@
           5,
           5,
           100,
-          "Other received kanto starter, Story progress beat red"
+          "Talk to Steven, Story progress beat red"
         ]
       ],
       "258": [
@@ -189203,7 +189203,7 @@
           5,
           5,
           100,
-          "Other received kanto starter, Story progress beat red"
+          "Talk to Steven, Story progress beat red"
         ]
       ],
       "261": [
@@ -194455,7 +194455,7 @@
           1,
           1,
           100,
-          "Other event arceus in party"
+          "Event arceus in party"
         ]
       ],
       "484": [
@@ -194465,7 +194465,7 @@
           1,
           1,
           100,
-          "Other event arceus in party"
+          "Event arceus in party"
         ]
       ],
       "487": [
@@ -194475,7 +194475,7 @@
           1,
           1,
           100,
-          "Other event arceus in party"
+          "Event arceus in party"
         ]
       ],
       "490": [
@@ -194758,6 +194758,16 @@
           ""
         ]
       ],
+      "56": [
+        [
+          "Unova Route 15",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "60": [
         [
           "Challengers Cave B2F",
@@ -195020,6 +195030,26 @@
           ""
         ]
       ],
+      "83": [
+        [
+          "Unova Route 1",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "84": [
+        [
+          "Unova Route 12",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "86": [
         [
           "Giant Chasm",
@@ -195208,6 +195238,16 @@
           70,
           15,
           ""
+        ]
+      ],
+      "102": [
+        [
+          "Unova Route 18",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "105": [
@@ -195700,6 +195740,16 @@
           ""
         ]
       ],
+      "161": [
+        [
+          "Unova Route 7",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "164": [
         [
           "Abundant Shrine",
@@ -195846,6 +195896,16 @@
           ""
         ]
       ],
+      "193": [
+        [
+          "Unova Route 14",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "198": [
         [
           "Abundant Shrine",
@@ -195872,6 +195932,16 @@
           70,
           5,
           ""
+        ]
+      ],
+      "204": [
+        [
+          "Unova Route 16",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "206": [
@@ -196146,6 +196216,16 @@
           ""
         ]
       ],
+      "228": [
+        [
+          "Unova Route 9",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "230": [
         [
           "P2 Laboratory",
@@ -196188,6 +196268,26 @@
           48,
           10,
           ""
+        ]
+      ],
+      "235": [
+        [
+          "Unova Route 5",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "236": [
+        [
+          "Unova Route 10",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "247": [
@@ -196304,6 +196404,16 @@
           ""
         ]
       ],
+      "285": [
+        [
+          "Unova Route 11",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "302": [
         [
           "Challengers Cave 1F",
@@ -196354,6 +196464,26 @@
           49,
           10,
           ""
+        ]
+      ],
+      "311": [
+        [
+          "Unova Route 6",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "313": [
+        [
+          "Unova Route 3",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "318": [
@@ -196812,6 +196942,16 @@
           ""
         ]
       ],
+      "353": [
+        [
+          "Unova Route 13",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "357": [
         [
           "Unova Route 14",
@@ -196880,6 +197020,16 @@
           50,
           10,
           ""
+        ]
+      ],
+      "360": [
+        [
+          "Unova Route 2",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "363": [
@@ -197300,6 +197450,42 @@
           50,
           10,
           ""
+        ]
+      ],
+      "449": [
+        [
+          "Unova Route 4",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "453": [
+        [
+          "Unova Route 8",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm, Spring"
+        ],
+        [
+          "Unova Route 8",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm, Summer"
+        ],
+        [
+          "Unova Route 8",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm, Autumn"
         ]
       ],
       "456": [
@@ -200042,6 +200228,16 @@
           18,
           40,
           ""
+        ]
+      ],
+      "555": [
+        [
+          "Desert Resort",
+          "static",
+          35,
+          35,
+          100,
+          "Item rage candy bar"
         ]
       ],
       "556": [
@@ -202135,192 +202331,6 @@
           100,
           ""
         ]
-      ],
-      "56": [
-        [
-          "Unova Route 15",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "83": [
-        [
-          "Unova Route 1",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "84": [
-        [
-          "Unova Route 12",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "102": [
-        [
-          "Unova Route 18",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "161": [
-        [
-          "Unova Route 7",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "193": [
-        [
-          "Unova Route 14",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "204": [
-        [
-          "Unova Route 16",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "228": [
-        [
-          "Unova Route 9",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "235": [
-        [
-          "Unova Route 5",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "236": [
-        [
-          "Unova Route 10",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "285": [
-        [
-          "Unova Route 11",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "311": [
-        [
-          "Unova Route 6",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "313": [
-        [
-          "Unova Route 3",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "353": [
-        [
-          "Unova Route 13",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "360": [
-        [
-          "Unova Route 2",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "449": [
-        [
-          "Unova Route 4",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "453": [
-        [
-          "Unova Route 8",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm, Spring"
-        ],
-        [
-          "Unova Route 8",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm, Summer"
-        ],
-        [
-          "Unova Route 8",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm, Autumn"
-        ]
       ]
     },
     "white": {
@@ -202532,6 +202542,16 @@
           ""
         ]
       ],
+      "46": [
+        [
+          "Unova Route 11",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "49": [
         [
           "Dreamyard",
@@ -202590,6 +202610,16 @@
           49,
           25,
           ""
+        ]
+      ],
+      "56": [
+        [
+          "Unova Route 15",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "60": [
@@ -202854,6 +202884,26 @@
           ""
         ]
       ],
+      "83": [
+        [
+          "Unova Route 1",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "84": [
+        [
+          "Unova Route 12",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "86": [
         [
           "Giant Chasm",
@@ -203042,6 +203092,16 @@
           70,
           15,
           ""
+        ]
+      ],
+      "102": [
+        [
+          "Unova Route 18",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "105": [
@@ -203534,6 +203594,16 @@
           ""
         ]
       ],
+      "161": [
+        [
+          "Unova Route 7",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "164": [
         [
           "Abundant Shrine",
@@ -203680,6 +203750,16 @@
           ""
         ]
       ],
+      "193": [
+        [
+          "Unova Route 14",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "199": [
         [
           "Abundant Shrine",
@@ -203706,6 +203786,16 @@
           48,
           5,
           ""
+        ]
+      ],
+      "204": [
+        [
+          "Unova Route 16",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "206": [
@@ -204024,6 +204114,26 @@
           ""
         ]
       ],
+      "235": [
+        [
+          "Unova Route 5",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "236": [
+        [
+          "Unova Route 10",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "247": [
         [
           "Unova Route 15",
@@ -204050,6 +204160,16 @@
           50,
           5,
           ""
+        ]
+      ],
+      "261": [
+        [
+          "Unova Route 9",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "277": [
@@ -204188,6 +204308,26 @@
           49,
           10,
           ""
+        ]
+      ],
+      "312": [
+        [
+          "Unova Route 6",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "314": [
+        [
+          "Unova Route 3",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "318": [
@@ -204646,6 +204786,16 @@
           ""
         ]
       ],
+      "353": [
+        [
+          "Unova Route 13",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "357": [
         [
           "Unova Route 14",
@@ -204714,6 +204864,16 @@
           50,
           10,
           ""
+        ]
+      ],
+      "360": [
+        [
+          "Unova Route 2",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "363": [
@@ -205134,6 +205294,42 @@
           50,
           10,
           ""
+        ]
+      ],
+      "449": [
+        [
+          "Unova Route 4",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "453": [
+        [
+          "Unova Route 8",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm, Spring"
+        ],
+        [
+          "Unova Route 8",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm, Summer"
+        ],
+        [
+          "Unova Route 8",
+          "walk",
+          15,
+          55,
+          40,
+          "Swarm, Autumn"
         ]
       ],
       "456": [
@@ -207870,6 +208066,16 @@
           ""
         ]
       ],
+      "555": [
+        [
+          "Desert Resort",
+          "static",
+          35,
+          35,
+          100,
+          "Item rage candy bar"
+        ]
+      ],
       "556": [
         [
           "Desert Resort",
@@ -209961,192 +210167,6 @@
           100,
           ""
         ]
-      ],
-      "46": [
-        [
-          "Unova Route 11",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "56": [
-        [
-          "Unova Route 15",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "83": [
-        [
-          "Unova Route 1",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "84": [
-        [
-          "Unova Route 12",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "102": [
-        [
-          "Unova Route 18",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "161": [
-        [
-          "Unova Route 7",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "193": [
-        [
-          "Unova Route 14",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "204": [
-        [
-          "Unova Route 16",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "235": [
-        [
-          "Unova Route 5",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "236": [
-        [
-          "Unova Route 10",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "261": [
-        [
-          "Unova Route 9",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "312": [
-        [
-          "Unova Route 6",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "314": [
-        [
-          "Unova Route 3",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "353": [
-        [
-          "Unova Route 13",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "360": [
-        [
-          "Unova Route 2",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "449": [
-        [
-          "Unova Route 4",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "453": [
-        [
-          "Unova Route 8",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm, Spring"
-        ],
-        [
-          "Unova Route 8",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm, Summer"
-        ],
-        [
-          "Unova Route 8",
-          "walk",
-          15,
-          55,
-          40,
-          "Swarm, Autumn"
-        ]
       ]
     },
     "black-2": {
@@ -210242,6 +210262,16 @@
           33,
           15,
           ""
+        ]
+      ],
+      "22": [
+        [
+          "Unova Route 15",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "27": [
@@ -211084,6 +211114,16 @@
           "Trade hippowdon"
         ]
       ],
+      "79": [
+        [
+          "Abundant Shrine",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "81": [
         [
           "Virbank Complex Inner",
@@ -211118,6 +211158,26 @@
           59,
           15,
           ""
+        ]
+      ],
+      "83": [
+        [
+          "Unova Route 1",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "84": [
+        [
+          "Unova Route 12",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "86": [
@@ -211564,6 +211624,16 @@
           47,
           20,
           ""
+        ]
+      ],
+      "97": [
+        [
+          "Dreamyard",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "98": [
@@ -212238,6 +212308,16 @@
           ""
         ]
       ],
+      "162": [
+        [
+          "Unova Route 7",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "164": [
         [
           "Nature Sanctuary",
@@ -212254,6 +212334,16 @@
           58,
           10,
           ""
+        ]
+      ],
+      "168": [
+        [
+          "Unova Route 22",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "169": [
@@ -212292,6 +212382,16 @@
           70,
           15,
           ""
+        ]
+      ],
+      "177": [
+        [
+          "Unova Route 5",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "179": [
@@ -212668,6 +212768,16 @@
           ""
         ]
       ],
+      "185": [
+        [
+          "Unova Route 20",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "186": [
         [
           "Floccesy Ranch Inner",
@@ -212724,6 +212834,16 @@
           70,
           5,
           ""
+        ]
+      ],
+      "187": [
+        [
+          "Unova Route 18",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "191": [
@@ -212842,6 +212962,16 @@
           ""
         ]
       ],
+      "195": [
+        [
+          "Unova Route 8",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "198": [
         [
           "Pinwheel Forest Hidden Grotto Inner",
@@ -212868,6 +212998,16 @@
           59,
           15,
           ""
+        ]
+      ],
+      "204": [
+        [
+          "Unova Route 16",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "206": [
@@ -213594,6 +213734,16 @@
           ""
         ]
       ],
+      "277": [
+        [
+          "Unova Route 13",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "279": [
         [
           "Giant Chasm Outside",
@@ -213650,6 +213800,16 @@
           44,
           20,
           ""
+        ]
+      ],
+      "284": [
+        [
+          "Unova Route 11",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "286": [
@@ -213888,6 +214048,26 @@
           ""
         ]
       ],
+      "311": [
+        [
+          "Unova Route 6",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "313": [
+        [
+          "Unova Route 3",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "315": [
         [
           "Lostlorn Forest",
@@ -213936,6 +214116,16 @@
           50,
           30,
           ""
+        ]
+      ],
+      "317": [
+        [
+          "Unova Route 9",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "318": [
@@ -214096,6 +214286,16 @@
           38,
           5,
           ""
+        ]
+      ],
+      "332": [
+        [
+          "Reversal Mountain Outside",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "333": [
@@ -215662,6 +215862,16 @@
           ""
         ]
       ],
+      "450": [
+        [
+          "Desert Resort",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "451": [
         [
           "Reversal Mountain Outside",
@@ -216113,7 +216323,7 @@
           68,
           68,
           100,
-          "Other regirock regice registeel in party"
+          "Regirock Regice Registeel in party"
         ]
       ],
       "488": [
@@ -216582,6 +216792,14 @@
           57,
           10,
           ""
+        ],
+        [
+          "Unova Route 2",
+          "special",
+          7,
+          7,
+          1,
+          "Story progress memory link, One per save file"
         ]
       ],
       "510": [
@@ -216868,6 +217086,14 @@
           13,
           35,
           ""
+        ],
+        [
+          "Pinwheel Forest Outside",
+          "special",
+          13,
+          13,
+          1,
+          "Story progress memory link, Outside area with pools and train tracks, One per save file"
         ]
       ],
       "520": [
@@ -217406,6 +217632,30 @@
           35,
           25,
           ""
+        ],
+        [
+          "Chargestone Cave 1F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
+        ],
+        [
+          "Chargestone Cave B1F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
+        ],
+        [
+          "Chargestone Cave B2F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
         ]
       ],
       "526": [
@@ -217562,6 +217812,14 @@
           35,
           35,
           ""
+        ],
+        [
+          "Wellspring Cave",
+          "special",
+          55,
+          55,
+          1,
+          "Story progress memory link, Top floor no flash needed, One per save file"
         ]
       ],
       "529": [
@@ -218066,6 +218324,14 @@
           18,
           20,
           ""
+        ],
+        [
+          "Pinwheel Forest Outside",
+          "special",
+          13,
+          13,
+          1,
+          "Story progress memory link, Outside area with pools and train tracks, One per save file"
         ]
       ],
       "533": [
@@ -218148,6 +218414,16 @@
           50,
           70,
           ""
+        ]
+      ],
+      "535": [
+        [
+          "Pinwheel Forest Outside",
+          "special",
+          13,
+          13,
+          1,
+          "Story progress memory link, Outside area with pools and train tracks, One per save file"
         ]
       ],
       "536": [
@@ -219666,6 +219942,14 @@
           17,
           35,
           ""
+        ],
+        [
+          "Desert Resort",
+          "special",
+          22,
+          22,
+          1,
+          "Story progress memory link, Main resort not entrance, One per save file"
         ]
       ],
       "552": [
@@ -219702,6 +219986,24 @@
           17,
           35,
           ""
+        ],
+        [
+          "Desert Resort",
+          "special",
+          22,
+          22,
+          1,
+          "Story progress memory link, Main resort not entrance, One per save file"
+        ]
+      ],
+      "555": [
+        [
+          "Desert Resort",
+          "special",
+          35,
+          35,
+          1,
+          "Story progress memory link, Main resort not entrance, One per save file"
         ]
       ],
       "556": [
@@ -219782,6 +220084,14 @@
           17,
           5,
           ""
+        ],
+        [
+          "Desert Resort",
+          "special",
+          22,
+          22,
+          1,
+          "Story progress memory link, Main resort not entrance, One per save file"
         ]
       ],
       "560": [
@@ -219842,6 +220152,14 @@
           19,
           10,
           ""
+        ],
+        [
+          "Desert Resort",
+          "special",
+          22,
+          22,
+          1,
+          "Story progress memory link, Main resort not entrance, One per save file"
         ]
       ],
       "562": [
@@ -221132,6 +221450,30 @@
           31,
           36,
           ""
+        ],
+        [
+          "Chargestone Cave 1F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
+        ],
+        [
+          "Chargestone Cave B1F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
+        ],
+        [
+          "Chargestone Cave B2F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
         ]
       ],
       "597": [
@@ -221158,6 +221500,30 @@
           31,
           20,
           ""
+        ],
+        [
+          "Chargestone Cave 1F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
+        ],
+        [
+          "Chargestone Cave B1F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
+        ],
+        [
+          "Chargestone Cave B2F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
         ]
       ],
       "599": [
@@ -221184,6 +221550,30 @@
           31,
           21,
           ""
+        ],
+        [
+          "Chargestone Cave 1F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
+        ],
+        [
+          "Chargestone Cave B1F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
+        ],
+        [
+          "Chargestone Cave B2F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
         ]
       ],
       "600": [
@@ -222405,197 +222795,7 @@
           70,
           70,
           100,
-          "Other captured reshiram or zekrom"
-        ]
-      ],
-      "22": [
-        [
-          "Unova Route 15",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "79": [
-        [
-          "Abundant Shrine",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "83": [
-        [
-          "Unova Route 1",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "84": [
-        [
-          "Unova Route 12",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "97": [
-        [
-          "Dreamyard",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "162": [
-        [
-          "Unova Route 7",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "168": [
-        [
-          "Unova Route 22",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "177": [
-        [
-          "Unova Route 5",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "185": [
-        [
-          "Unova Route 20",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "187": [
-        [
-          "Unova Route 18",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "195": [
-        [
-          "Unova Route 8",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "204": [
-        [
-          "Unova Route 16",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "277": [
-        [
-          "Unova Route 13",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "284": [
-        [
-          "Unova Route 11",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "311": [
-        [
-          "Unova Route 6",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "313": [
-        [
-          "Unova Route 3",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "317": [
-        [
-          "Unova Route 9",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "332": [
-        [
-          "Reversal Mountain Outside",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "450": [
-        [
-          "Desert Resort",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
+          "Captured Reshiram or Zekrom"
         ]
       ]
     },
@@ -222692,6 +222892,16 @@
           33,
           15,
           ""
+        ]
+      ],
+      "22": [
+        [
+          "Unova Route 15",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "27": [
@@ -223534,6 +223744,16 @@
           "Trade hippowdon"
         ]
       ],
+      "79": [
+        [
+          "Abundant Shrine",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "81": [
         [
           "Virbank Complex Inner",
@@ -223568,6 +223788,26 @@
           59,
           15,
           ""
+        ]
+      ],
+      "83": [
+        [
+          "Unova Route 1",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "84": [
+        [
+          "Unova Route 12",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "86": [
@@ -224014,6 +224254,16 @@
           47,
           20,
           ""
+        ]
+      ],
+      "97": [
+        [
+          "Dreamyard",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "98": [
@@ -224488,6 +224738,16 @@
           ""
         ]
       ],
+      "122": [
+        [
+          "Unova Route 20",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "127": [
         [
           "Lostlorn Forest",
@@ -224728,6 +224988,16 @@
           ""
         ]
       ],
+      "162": [
+        [
+          "Unova Route 7",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "164": [
         [
           "Nature Sanctuary",
@@ -224744,6 +225014,16 @@
           58,
           10,
           ""
+        ]
+      ],
+      "166": [
+        [
+          "Unova Route 22",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "169": [
@@ -224782,6 +225062,16 @@
           70,
           15,
           ""
+        ]
+      ],
+      "177": [
+        [
+          "Unova Route 5",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "179": [
@@ -225224,6 +225514,16 @@
           ""
         ]
       ],
+      "187": [
+        [
+          "Unova Route 18",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "191": [
         [
           "Unova Route 20",
@@ -225340,6 +225640,16 @@
           ""
         ]
       ],
+      "195": [
+        [
+          "Unova Route 8",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "198": [
         [
           "Pinwheel Forest Hidden Grotto Inner",
@@ -225366,6 +225676,16 @@
           59,
           15,
           ""
+        ]
+      ],
+      "204": [
+        [
+          "Unova Route 16",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "206": [
@@ -226060,6 +226380,16 @@
           ""
         ]
       ],
+      "277": [
+        [
+          "Unova Route 13",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "279": [
         [
           "Giant Chasm Outside",
@@ -226116,6 +226446,16 @@
           44,
           20,
           ""
+        ]
+      ],
+      "284": [
+        [
+          "Unova Route 11",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "286": [
@@ -226382,6 +226722,26 @@
           ""
         ]
       ],
+      "312": [
+        [
+          "Unova Route 6",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
+      "314": [
+        [
+          "Unova Route 3",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "315": [
         [
           "Lostlorn Forest",
@@ -226430,6 +226790,16 @@
           50,
           30,
           ""
+        ]
+      ],
+      "317": [
+        [
+          "Unova Route 9",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "318": [
@@ -226590,6 +226960,16 @@
           38,
           5,
           ""
+        ]
+      ],
+      "332": [
+        [
+          "Reversal Mountain Outside",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
         ]
       ],
       "333": [
@@ -228118,6 +228498,16 @@
           ""
         ]
       ],
+      "450": [
+        [
+          "Desert Resort",
+          "walk",
+          40,
+          55,
+          40,
+          "Swarm"
+        ]
+      ],
       "451": [
         [
           "Reversal Mountain Outside",
@@ -228569,7 +228959,7 @@
           68,
           68,
           100,
-          "Other regirock regice registeel in party"
+          "Regirock, Regice, Registeel in party"
         ]
       ],
       "488": [
@@ -229038,6 +229428,14 @@
           57,
           10,
           ""
+        ],
+        [
+          "Unova Route 2",
+          "special",
+          7,
+          7,
+          1,
+          "Story progress memory link, One per save file"
         ]
       ],
       "510": [
@@ -229324,6 +229722,14 @@
           13,
           35,
           ""
+        ],
+        [
+          "Pinwheel Forest Outside",
+          "special",
+          13,
+          13,
+          1,
+          "Story progress memory link, Outside area with pools and train tracks, One per save file"
         ]
       ],
       "520": [
@@ -229862,6 +230268,30 @@
           35,
           25,
           ""
+        ],
+        [
+          "Chargestone Cave 1F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
+        ],
+        [
+          "Chargestone Cave B1F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
+        ],
+        [
+          "Chargestone Cave B2F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
         ]
       ],
       "526": [
@@ -230018,6 +230448,14 @@
           35,
           35,
           ""
+        ],
+        [
+          "Wellspring Cave",
+          "special",
+          55,
+          55,
+          1,
+          "Story progress memory link, Top floor no flash needed, One per save file"
         ]
       ],
       "529": [
@@ -230522,6 +230960,14 @@
           18,
           20,
           ""
+        ],
+        [
+          "Pinwheel Forest Outside",
+          "special",
+          13,
+          13,
+          1,
+          "Story progress memory link, Outside area with pools and train tracks, One per save file"
         ]
       ],
       "533": [
@@ -230604,6 +231050,16 @@
           50,
           70,
           ""
+        ]
+      ],
+      "535": [
+        [
+          "Pinwheel Forest Outside",
+          "special",
+          13,
+          13,
+          1,
+          "Story progress memory link, Outside area with pools and train tracks, One per save file"
         ]
       ],
       "536": [
@@ -232122,6 +232578,14 @@
           17,
           35,
           ""
+        ],
+        [
+          "Desert Resort",
+          "special",
+          22,
+          22,
+          1,
+          "Story progress memory link, Main resort not entrance, One per save file"
         ]
       ],
       "552": [
@@ -232158,6 +232622,24 @@
           17,
           35,
           ""
+        ],
+        [
+          "Desert Resort",
+          "special",
+          22,
+          22,
+          1,
+          "Story progress memory link, Main resort not entrance, One per save file"
+        ]
+      ],
+      "555": [
+        [
+          "Desert Resort",
+          "special",
+          35,
+          35,
+          1,
+          "Story progress memory link, Main resort not entrance, One per save file"
         ]
       ],
       "556": [
@@ -232238,6 +232720,14 @@
           17,
           5,
           ""
+        ],
+        [
+          "Desert Resort",
+          "special",
+          22,
+          22,
+          1,
+          "Story progress memory link, Main resort not entrance, One per save file"
         ]
       ],
       "560": [
@@ -232298,6 +232788,14 @@
           19,
           10,
           ""
+        ],
+        [
+          "Desert Resort",
+          "special",
+          22,
+          22,
+          1,
+          "Story progress memory link, Main resort not entrance, One per save file"
         ]
       ],
       "562": [
@@ -233588,6 +234086,30 @@
           31,
           36,
           ""
+        ],
+        [
+          "Chargestone Cave 1F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
+        ],
+        [
+          "Chargestone Cave B1F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
+        ],
+        [
+          "Chargestone Cave B2F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
         ]
       ],
       "597": [
@@ -233614,6 +234136,30 @@
           31,
           20,
           ""
+        ],
+        [
+          "Chargestone Cave 1F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
+        ],
+        [
+          "Chargestone Cave B1F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
+        ],
+        [
+          "Chargestone Cave B2F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
         ]
       ],
       "599": [
@@ -233640,6 +234186,30 @@
           31,
           21,
           ""
+        ],
+        [
+          "Chargestone Cave 1F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
+        ],
+        [
+          "Chargestone Cave B1F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
+        ],
+        [
+          "Chargestone Cave B2F",
+          "special",
+          28,
+          28,
+          1,
+          "Story progress memory link, Any floor, One per save file"
         ]
       ],
       "600": [
@@ -234862,196 +235432,6 @@
           70,
           100,
           "Other captured reshiram or zekrom"
-        ]
-      ],
-      "22": [
-        [
-          "Unova Route 15",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "79": [
-        [
-          "Abundant Shrine",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "83": [
-        [
-          "Unova Route 1",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "84": [
-        [
-          "Unova Route 12",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "97": [
-        [
-          "Dreamyard",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "122": [
-        [
-          "Unova Route 20",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "162": [
-        [
-          "Unova Route 7",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "166": [
-        [
-          "Unova Route 22",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "177": [
-        [
-          "Unova Route 5",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "187": [
-        [
-          "Unova Route 18",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "195": [
-        [
-          "Unova Route 8",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "204": [
-        [
-          "Unova Route 16",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "277": [
-        [
-          "Unova Route 13",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "284": [
-        [
-          "Unova Route 11",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "312": [
-        [
-          "Unova Route 6",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "314": [
-        [
-          "Unova Route 3",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "317": [
-        [
-          "Unova Route 9",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "332": [
-        [
-          "Reversal Mountain Outside",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
-        ]
-      ],
-      "450": [
-        [
-          "Desert Resort",
-          "walk",
-          40,
-          55,
-          40,
-          "Swarm"
         ]
       ]
     }

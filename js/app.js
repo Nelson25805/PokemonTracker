@@ -340,6 +340,7 @@
     info = { n, game: g.key, hasForms: Forms.forGame(g).has(n), tab };
     $("#wtabs").hidden = !info.hasForms;
     Where.open(g, n);                                                  // fills the Where tab and shows the dialog
+    if (typeof Eggs !== "undefined") Eggs.show(g, n);                  // HG / SS egg passwords (Mareep, Wooper, Slugma); hides itself otherwise
     if (info.hasForms) {
       const need = [rq.gender && "gender differences", rq.alt && "alternate forms"].filter(Boolean);
       $("#forms-note").textContent = need.length ? `Required for completion (Settings): ${need.join(" and ")}.`
