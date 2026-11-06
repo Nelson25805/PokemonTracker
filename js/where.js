@@ -427,12 +427,13 @@ const Where = (() => {
       const keys = g.games.map(x => x.key);
       const ls = lines(entries, sel, tsel, clock), mine = {};
       ls.forEach(l => { if (l.seg) (mine[l.base] = mine[l.base] || new Set()).add(l.seg); });
+      const bases = new Set(ls.map(l => l.base));                          // places that have their own row in this list
       const rows = ls.map(l => {
         // "Show on map" button: only when this location has a box on one of the maps shown for this group
         const ok = typeof Maps !== "undefined" && Maps.locate(keys, l.area).length;
         const btn = ok ? `<button type="button" class="locbtn" data-area="${esc(l.area)}" data-keys="${esc(keys.join(","))}" data-times="${l.times.join(" ")}" aria-pressed="false" aria-label="Outline ${esc(l.area)} on the map">Show on map</button>` : "";
         const extra = l.area === HONEY && honey ? honeyHtml(keys, n) : "";
-        return `<li${l.grp !== l.base ? ' class="inside"' : ""}><strong>${nameHtml(l, keys, mine, n)}</strong><span class="wide">${l.html}</span>${btn}${extra}</li>`;
+        return `<li${l.grp !== l.base && bases.has(l.grp) ? ' class="inside"' : ""}><strong>${nameHtml(l, keys, mine, n)}</strong><span class="wide">${l.html}</span>${btn}${extra}</li>`;
       });
       if (!entries.length && (sel !== "all" || tsel !== "all")) rows.push(`<li><span>Not found here ${sel !== "all" ? "in " + SEASON_NAME[sel] : TPHRASE[tsel]}.</span></li>`);
       if (g.evolve) rows.unshift(...evoRows(g.evolve));
@@ -552,6 +553,7 @@ const Where = (() => {
 #where .seasonnote{margin:6px 0 0;font-size:12px;opacity:.85}
 #where li span.wide{order:3;flex:1 1 100%}
 #where li:has(span.wide) .locbtn{order:2}
+#where li .locbtn{align-self:flex-start}   /* don't stretch to the height of a two-line title */
 #where .stable{width:100%;border-collapse:collapse;font-size:12px;margin:2px 0 4px;table-layout:fixed}
 #where .stable th,#where .stable td{border:1px solid var(--mid);padding:3px 4px;text-align:center}
 #where .stable th:first-child,#where .stable td:first-child{width:38%;text-align:left}

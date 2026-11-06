@@ -9878,7 +9878,7 @@
    ]
   }
  },
- "generated": "2026-11-02",
+ "generated": "2026-11-06",
  "inside": {
   "kanto-rby": {
    "Celadon City Celadon Mansion": "Celadon City",
@@ -9895,6 +9895,9 @@
    "Saffron City Silph Co": "Saffron City",
    "Saffron City Fighting Dojo": "Saffron City",
    "Kanto Route 4 Pokemon Center": "Cerulean City"
+  },
+  "unova-b2w2": {
+   "Unova Route 2 Hidden Grotto": "Unova Route 2"
   }
  }
 }
