@@ -20,7 +20,15 @@ const Forms = (() => {
 
   // data/form-areas.json: which form shows up in which area (and segment). rules: [{ n, g: [game keys], area, form: "base" | form id }]
   let fa = [];
-  const setAreas = d => { fa = d && Array.isArray(d.rules) ? d.rules : []; };
+  let fnotes = [];
+  const setAreas = d => { fa = d && Array.isArray(d.rules) ? d.rules : []; fnotes = d && Array.isArray(d.notes) ? d.notes : []; };
+  // Rules without an "area": by encounter method (Basculin: surfing / fishing vs rippling water) or by season (Deerling, Sawsbuck).
+  // Each returns [{ name: form name, g: [game keys of the group it applies to] }].
+  const merge = list => { const m = new Map(); for (const [name, g] of list) { const e = m.get(name) || { name, g: [] }; g.forEach(k => { if (!e.g.includes(k)) e.g.push(k); }); m.set(name, e); } return [...m.values()]; };
+  const hit = (r, keys) => r.g.filter(k => keys.includes(k));
+  const byMethod = (n, keys, method) => merge(fa.filter(r => r.n === n && r.methods && r.methods.includes(method)).map(r => [formName(n, r.form), hit(r, keys)]).filter(x => x[1].length));
+  const bySeason = (n, keys, season) => merge(fa.filter(r => r.n === n && r.season === season).map(r => [formName(n, r.form), hit(r, keys)]).filter(x => x[1].length));
+  const notesFor = (n, keys) => fnotes.filter(x => x.n === n && x.g.some(k => keys.includes(k))).map(x => x.text);
   const formName = (n, id) => {
     const sp = data && data.species[n]; if (!sp) return id;
     if (id === "base") return sp.base;
@@ -102,7 +110,9 @@ const Forms = (() => {
     const ul = `<ul class="flist" style="--fs:${g.spriteSize || 80}px">`;   // form sprites are shown at the game's native sprite size (config "spriteSize")
     const fc = have(state, "caught", g.key), fs = have(state, "shiny", g.key);
     const mc = new Set(state.caught[g.key] || []), ms = new Set(state.shiny[g.key] || []);
-    const whereOf = fid => { const r = fa.filter(x => x.n === n && x.form === fid && x.g.includes(g.key)); return r.length ? `<small class="fwhere">Found in: ${r.map(x => areaHtml(x.area)).join(", ")}</small>` : ""; };
+    const whereOf = fid => { const r = fa.filter(x => x.n === n && x.form === fid && x.g.includes(g.key)); const places = r.filter(x => x.area), other = r.filter(x => !x.area && x.label);
+      return (places.length ? `<small class="fwhere">Found in: ${places.map(x => areaHtml(x.area)).join(", ")}</small>` : "") +
+        (other.length ? `<small class="fwhere">${other.map(x => esc(x.label)).join(" · ")}</small>` : ""); };
     const row = (label, sub, id, src, ssrc, c, s, wh = "") => {
       const pair = `<img alt="" loading="lazy" src="${src}" onload="Forms.fit(this)">` + (g.shiny ? `<img alt="" loading="lazy" src="${ssrc}" onload="Forms.fit(this)">` : "");
       const btn = (kind, glyph, word, on) =>
@@ -120,5 +130,5 @@ const Forms = (() => {
     return out;
   }
 
-  return { fit, init, setAreas, areasFor, ready: () => !!data, data: () => data, forGame, counts, speciesCounts, catTotals, missing, html };
+  return { fit, init, setAreas, areasFor, byMethod, bySeason, notesFor, ready: () => !!data, data: () => data, forGame, counts, speciesCounts, catTotals, missing, html };
 })();

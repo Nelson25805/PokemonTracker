@@ -218,7 +218,9 @@ const Where = (() => {
   // `chance` is the encounter rate within that area (several slots of one method are already added up in
   // build_locations.py). An area is ranked by its best method; entries with no recorded rate (0) go last.
   // Within an area the methods are sorted the same way, and ties fall back to the area name.
-  function lines(entries, sel = "all", tsel = "all", clock = null) {
+  function lines(entries, sel = "all", tsel = "all", clock = null, fx = null) {
+    const fm = m => (fx ? fx.method(m).join("") : "");                    // form chips for an encounter method (Basculin)
+    const fsel = fx && sel !== "all" ? fx.season(sel) : "";                    // form chip for the chosen season (Deerling, Sawsbuck)
     const areas = new Map();
     for (const [area0, method, lo, hi, chance, cond] of entries) {
       // PokéAPI files HeartGold / SoulSilver's Latias / Latios under Johto, but they roam Kanto (same fix as in maps.js)
@@ -255,13 +257,13 @@ const Where = (() => {
     const body = a => {
       const g = [...a.grid.values()].sort((x, y) => best(y) - best(x));
       const table = (cols, key, cls, head) => `<table class="stable"><thead><tr><th><span class="vh">Method</span></th>${cols.map(x => `<th class="${cls}-${x}">${head(x)}</th>`).join("")}</tr></thead><tbody>` +
-        g.map(x => `<tr><td><b class="mchip m-${mclass(x.method)}">${esc(label(x.method))}</b><small>${esc(lvl(x))}</small>${tags(x)}</td>` +
+        g.map(x => `<tr><td><b class="mchip m-${mclass(x.method)}">${esc(label(x.method))}</b>${fm(x.method)}<small>${esc(lvl(x))}</small>${tags(x)}</td>` +
           cols.map(c => (c in x[key] ? `<td class="yes">${x[key][c] ? x[key][c] + "%" : "✓"}</td>` : `<td class="na">—</td>`)).join("") + `</tr>`).join("") + `</tbody></table>`;
-      if (a.seasonal && sel === "all") return table(SEASONS, "per", "s", x => SEASON_NAME[x] + `<small>${SEASON_MONTHS[x]}</small>`);
+      if (a.seasonal && sel === "all") return table(SEASONS, "per", "s", x => SEASON_NAME[x] + `<small>${SEASON_MONTHS[x]}</small>` + (fx ? fx.season(x) : ""));
       if (a.timed && tsel === "all") return table(TIMES, "tper", "t", x => TNAME[x] + (clock ? `<small>${clock[x]}</small>` : ""));
       return g.map(x => {
         const c = sel !== "all" ? x.per[sel] : tsel !== "all" ? x.tper[tsel] : best(x);
-        return `<div class="mrow"><b class="mchip m-${mclass(x.method)}">${esc(label(x.method))}</b><span class="lv">${esc(lvl(x))}</span>${tags(x)}${rate(c)}</div>`;
+        return `<div class="mrow"><b class="mchip m-${mclass(x.method)}">${esc(label(x.method))}</b>${fm(x.method)}${fsel}<span class="lv">${esc(lvl(x))}</span>${tags(x)}${rate(c)}</div>`;
       }).join("");
     };
     const rows = [...areas].map(([area, a]) => {
@@ -394,6 +396,18 @@ const Where = (() => {
 
   const nameOf = n => (mons.find(m => m.n === n) || { name: `#${n}` }).name;
 
+  // Form chips for Pokémon whose form depends on how / when you meet them (data/form-areas.json rules with "methods" or "season").
+  const fslug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  function formFx(keys, n) {
+    if (typeof Forms === "undefined") return null;
+    const chip = (f, suffix = "") => {
+      const part = f.g.length < keys.length ? ` · ${f.g.map(k => (byKey[k] || {}).name || k).join(" / ")}` : "";   // name the games when the group mixes games with different forms
+      return `<mark class="formtag" data-form="${esc(fslug(f.name))}" title="Form you get this way">${esc(f.name + suffix + part)}</mark>`;
+    };
+    return { method: m => Forms.byMethod(n, keys, m).map(f => chip(f)), season: s => Forms.bySeason(n, keys, s).map(f => chip(f, " form")).join("") };
+  }
+  const formNotes = (keys, n) => (typeof Forms === "undefined" ? "" : Forms.notesFor(n, keys).map(t => `<p class="formnote">${esc(t)}</p>`).join(""));
+
   function render(game, n, groups) {
     if (!groups.length) {
       const map = typeof Maps !== "undefined" ? Maps.html([game.key], [], nameOf(n)) : "";   // still show the map, with "AREA UNKNOWN"
@@ -425,7 +439,7 @@ const Where = (() => {
       };
       const entries = sel === "all" && tsel === "all" ? g.entries : g.entries.filter(keep);
       const keys = g.games.map(x => x.key);
-      const ls = lines(entries, sel, tsel, clock), mine = {};
+      const ls = lines(entries, sel, tsel, clock, formFx(keys, n)), mine = {};
       ls.forEach(l => { if (l.seg) (mine[l.base] = mine[l.base] || new Set()).add(l.seg); });
       const bases = new Set(ls.map(l => l.base));                          // places that have their own row in this list
       const rows = ls.map(l => {
@@ -455,7 +469,7 @@ const Where = (() => {
       }
       if (sel !== "all") maps = maps.replace(/<figure class="amap"/g, `<figure class="amap" data-season="${sel}"`);   // tint for the chosen season (CSS below)
       const bars = (sOn ? seasonBar(gk, sel) : "") + (tOn ? timeBar(gk, clock, tsel) : "");
-      return `<details${open ? " open" : ""}><summary>${esc(g.games.map(x => x.name).join(", "))} ${sub}</summary>${maps}${bars}${roamNote(g)}<ul>${rows.join("")}</ul></details>`;
+      return `<details${open ? " open" : ""}><summary>${esc(g.games.map(x => x.name).join(", "))} ${sub}</summary>${maps}${bars}${roamNote(g)}${formNotes(keys, n)}<ul>${rows.join("")}</ul></details>`;
     }).join("");
   }
 
@@ -553,7 +567,15 @@ const Where = (() => {
 #where .seasonnote{margin:6px 0 0;font-size:12px;opacity:.85}
 #where li span.wide{order:3;flex:1 1 100%}
 #where li:has(span.wide) .locbtn{order:2}
-#where li .locbtn{align-self:flex-start}   /* don't stretch to the height of a two-line title */
+#where li .locbtn{align-self:flex-start}
+#where .formnote{margin:0 0 8px;font-size:13px;line-height:1.45;border-left:4px solid var(--mid);padding:2px 0 2px 8px}
+#where .formtag[data-form=red-striped]{background:#f4b3a8;color:#4a1008;border-color:#c25a4a}
+#where .formtag[data-form=blue-striped]{background:#9fd0f2;color:#0c2e4d;border-color:#4f8fc4}
+#where .formtag[data-form=spring]{background:#bfe6a8;color:#173a0c;border-color:#6cbf5a}
+#where .formtag[data-form=summer]{background:#fbe48a;color:#3d2e00;border-color:#d4a418}
+#where .formtag[data-form=autumn]{background:#f6c28f;color:#4a2208;border-color:#e07b2a}
+#where .formtag[data-form=winter]{background:#cfe4f8;color:#0c2e4d;border-color:#6aaee8}
+#where .stable th .formtag{display:block;margin:3px auto 0;font-size:10px;line-height:1.4;white-space:normal}   /* don't stretch to the height of a two-line title */
 #where .stable{width:100%;border-collapse:collapse;font-size:12px;margin:2px 0 4px;table-layout:fixed}
 #where .stable th,#where .stable td{border:1px solid var(--mid);padding:3px 4px;text-align:center}
 #where .stable th:first-child,#where .stable td:first-child{width:38%;text-align:left}

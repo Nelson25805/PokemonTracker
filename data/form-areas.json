@@ -1,6 +1,6 @@
 {
  "version": 1,
- "_help": "Which form of a Pokémon appears in which area. 'area' is a location name exactly as in locations.json (e.g. \"Sinnoh Route 212 North\"), or a whole route (\"Sinnoh Route 212\") to cover all its segments. 'form' is \"base\" or a form id from forms.json (e.g. \"422-east\"). 'g' = game keys. Check it with: python3 check_form_areas.py",
+ "_help": "Which form of a Pokémon appears in which area. 'area' is a location name exactly as in locations.json (e.g. \"Sinnoh Route 212 North\"), or a whole route (\"Sinnoh Route 212\") to cover all its segments. 'form' is \"base\" or a form id from forms.json (e.g. \"422-east\"). 'g' = game keys. Check it with: python3 check_form_areas.py Other rule kinds (no 'area'): 'methods' = encounter method names from locations.json (e.g. surf-spots = rippling water), 'season' = spring/summer/autumn/winter, 'label' = text shown in the Forms tab. 'notes' = [{ n, g, text }] shown above the location list.",
  "rules": [
   {
    "n": 422,
@@ -220,6 +220,217 @@
    "area": "Valley Windworks",
    "form": "base",
    "auto": true
+  },
+  {
+   "n": 550,
+   "g": [
+    "black",
+    "black-2"
+   ],
+   "form": "base",
+   "methods": [
+    "surf",
+    "old-rod",
+    "good-rod",
+    "super-rod"
+   ],
+   "label": "Surfing and fishing"
+  },
+  {
+   "n": 550,
+   "g": [
+    "black",
+    "black-2"
+   ],
+   "form": "550-blue-striped",
+   "methods": [
+    "surf-spots",
+    "super-rod-spots"
+   ],
+   "label": "Rippling water only"
+  },
+  {
+   "n": 550,
+   "g": [
+    "white",
+    "white-2"
+   ],
+   "form": "550-blue-striped",
+   "methods": [
+    "surf",
+    "old-rod",
+    "good-rod",
+    "super-rod"
+   ],
+   "label": "Surfing and fishing"
+  },
+  {
+   "n": 550,
+   "g": [
+    "white",
+    "white-2"
+   ],
+   "form": "base",
+   "methods": [
+    "surf-spots",
+    "super-rod-spots"
+   ],
+   "label": "Rippling water only"
+  },
+  {
+   "n": 585,
+   "g": [
+    "black",
+    "white",
+    "black-2",
+    "white-2"
+   ],
+   "season": "spring",
+   "form": "base",
+   "label": "Spring (Jan · May · Sep)"
+  },
+  {
+   "n": 585,
+   "g": [
+    "black",
+    "white",
+    "black-2",
+    "white-2"
+   ],
+   "season": "summer",
+   "form": "585-summer",
+   "label": "Summer (Feb · Jun · Oct)"
+  },
+  {
+   "n": 585,
+   "g": [
+    "black",
+    "white",
+    "black-2",
+    "white-2"
+   ],
+   "season": "autumn",
+   "form": "585-autumn",
+   "label": "Autumn (Mar · Jul · Nov)"
+  },
+  {
+   "n": 585,
+   "g": [
+    "black",
+    "white",
+    "black-2",
+    "white-2"
+   ],
+   "season": "winter",
+   "form": "585-winter",
+   "label": "Winter (Apr · Aug · Dec)"
+  },
+  {
+   "n": 586,
+   "g": [
+    "black",
+    "white",
+    "black-2",
+    "white-2"
+   ],
+   "season": "spring",
+   "form": "base",
+   "label": "Spring (Jan · May · Sep)"
+  },
+  {
+   "n": 586,
+   "g": [
+    "black",
+    "white",
+    "black-2",
+    "white-2"
+   ],
+   "season": "summer",
+   "form": "586-summer",
+   "label": "Summer (Feb · Jun · Oct)"
+  },
+  {
+   "n": 586,
+   "g": [
+    "black",
+    "white",
+    "black-2",
+    "white-2"
+   ],
+   "season": "autumn",
+   "form": "586-autumn",
+   "label": "Autumn (Mar · Jul · Nov)"
+  },
+  {
+   "n": 586,
+   "g": [
+    "black",
+    "white",
+    "black-2",
+    "white-2"
+   ],
+   "season": "winter",
+   "form": "586-winter",
+   "label": "Winter (Apr · Aug · Dec)"
+  },
+  {
+   "n": 555,
+   "g": [
+    "black",
+    "white",
+    "black-2",
+    "white-2"
+   ],
+   "form": "555-zen",
+   "label": "Battle only: Zen Mode Ability, HP at half or less"
+  }
+ ],
+ "notes": [
+  {
+   "n": 550,
+   "g": [
+    "black",
+    "black-2"
+   ],
+   "text": "Black / Black 2: Red-Striped Basculin is the normal one when surfing or fishing. Blue-Striped appears only in rippling water."
+  },
+  {
+   "n": 550,
+   "g": [
+    "white",
+    "white-2"
+   ],
+   "text": "White / White 2: Blue-Striped Basculin is the normal one when surfing or fishing. Red-Striped appears only in rippling water."
+  },
+  {
+   "n": 585,
+   "g": [
+    "black",
+    "white",
+    "black-2",
+    "white-2"
+   ],
+   "text": "Deerling's form follows the season on the DS clock: Spring, Summer, Autumn or Winter form. The season buttons and table headers show which form each season gives."
+  },
+  {
+   "n": 586,
+   "g": [
+    "black",
+    "white",
+    "black-2",
+    "white-2"
+   ],
+   "text": "Sawsbuck's form follows the season on the DS clock: Spring, Summer, Autumn or Winter form. The season buttons and table headers show which form each season gives."
+  },
+  {
+   "n": 555,
+   "g": [
+    "black",
+    "white",
+    "black-2",
+    "white-2"
+   ],
+   "text": "Darmanitan only takes Zen Mode during battle: it needs the Zen Mode Ability and changes when its HP falls to half or less. It is not found in a particular place."
   }
  ]
 }
