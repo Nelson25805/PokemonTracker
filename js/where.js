@@ -83,6 +83,9 @@ const Where = (() => {
     }
     return [...m.values()].some(v => cols.some(c => v[c] !== v[cols[0]]));
   }
+  // Does the FORM of this Pokémon change with the season (data/form-areas.json "season" rules: Deerling, Sawsbuck, ...)?
+  // Then the season filter is worth showing even when every season has the same rate (e.g. 30% in each).
+  const formsVaryBySeason = (keys, n) => typeof Forms !== "undefined" && SEASONS.some(x => Forms.bySeason(n, keys, x).length > 0);
   const prettify = s => s.replace(/-/g, " ").replace(/^./, c => c.toUpperCase());
   const label = m => METHODS[m] || prettify(m);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -445,9 +448,10 @@ const Where = (() => {
     return groups.map((g, gi) => {
       // Filters sit under that group's map, and only exist when they change something for these games:
       // a time-of-day filter for games with a clock, a season filter for Black / White / Black 2 / White 2.
+      const keys = g.games.map(x => x.key);
       const gk = g.games[0].key, st = fs(gk), clock = clockOf(g);
       const tOn = !!clock && variesBy(g.entries, "time");
-      const sOn = g.games.some(x => SEASON_GAMES.has(x.key)) && variesBy(g.entries, "season");
+      const sOn = g.games.some(x => SEASON_GAMES.has(x.key)) && (variesBy(g.entries, "season") || formsVaryBySeason(keys, n));
       const sel = sOn ? st.season : "all", tsel = tOn ? st.time : "all";
       const keep = e => {
         if (sel !== "all") { const z = seasonsIn(e[5]); if (z.length && !z.includes(sel)) return false; }
@@ -455,7 +459,6 @@ const Where = (() => {
         return true;
       };
       const entries = sel === "all" && tsel === "all" ? g.entries : g.entries.filter(keep);
-      const keys = g.games.map(x => x.key);
       const ls = lines(entries, sel, tsel, clock, formFx(keys, n)), mine = {};
       ls.forEach(l => { if (l.seg) (mine[l.base] = mine[l.base] || new Set()).add(l.seg); });
       const sp = specialPlan(keys, ls, entries), bases = new Set(ls.map(l => l.base));                          // places that have their own row in this list

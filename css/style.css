@@ -168,12 +168,12 @@ body.selecting .chip{display:none}
 #tab-forms h3{margin:12px 0 6px;font:400 13px "PKMN",monospace}
 #forms-note{margin:0 0 10px;font-size:13px}
 .flist{list-style:none;margin:0;padding:0}
-.frow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:4px 6px;margin:0 0 6px;border:2px solid var(--line);background:var(--card)}
+.frow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:6px 12px;margin:0 0 6px;border:2px solid var(--line);background:var(--card)}
 .frow .pair{display:flex;gap:2px}
 .frow img{width:var(--fs,80px);height:var(--fs,80px);image-rendering:pixelated;object-fit:contain}
 .frow .fname{flex:1 1 9ch;display:flex;flex-direction:column;font-weight:600;overflow-wrap:anywhere}
 .frow .fname small{font-weight:400;font-size:12px;opacity:.8}
-.ftogs{display:flex;gap:6px}
+.ftogs{display:flex;gap:6px;flex:none;margin-left:auto}
 .ftog[aria-pressed=true]{background:var(--hi);color:var(--on-hi);border-color:var(--on-hi)}
 #settings .rules{flex-direction:column;align-items:flex-start;gap:6px;border:2px solid var(--line);padding:8px 10px}
 #settings .rules p{margin:0;font-size:12px;max-width:44ch}#settings .rules .fine{opacity:.8}
@@ -424,3 +424,7 @@ body.selecting .chip{display:none}
 @keyframes uxRoute{0%,17%{opacity:0}43.75%,71.9%{opacity:1}100%{opacity:0}}
 @keyframes uxSpot{0%,17%{opacity:0}50%,68.8%{opacity:1}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.uxsvg .ux{animation:none;opacity:.75}}
+/* "Where to find": rows with a long body (N's Pokémon, egg passwords) put the heading on one full-width line instead of a 22ch column */
+#where li.special>strong,#where li.egg>strong{flex:1 1 100%}
+/* Forms tab rows are <li> inside #where, so the generic "#where li{padding:4px 0}" rule was beating .frow's padding. This one is more specific. */
+#where .frow{padding:6px 14px}
