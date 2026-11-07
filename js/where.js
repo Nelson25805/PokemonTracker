@@ -203,10 +203,11 @@ const Where = (() => {
       if (!src || n > src.count) continue;                       // that game doesn't have this Pokémon
       const entries = (d.loc[key] || {})[n] || [];
       const evolve = evolution(n, d.evo[n], src, d.items);       // null if the pre-evolution or every method is missing in that game
-      if (!entries.length && !evolve) continue;
-      const sig = JSON.stringify([entries, evolve]);
+      const egg = typeof Eggs !== "undefined" && Eggs.applies(key, n);   // Heart Gold / Soul Silver egg password for Mareep, Wooper, Slugma
+      if (!entries.length && !evolve && !egg) continue;
+      const sig = JSON.stringify([entries, evolve, egg]);
       let g = groups.find(x => x.sig === sig);
-      if (!g) groups.push(g = { sig, games: [], vias: [], entries, evolve });
+      if (!g) groups.push(g = { sig, games: [], vias: [], entries, evolve, egg });
       g.games.push(src);
       const v = via(src, game);
       if (v && !g.vias.includes(v)) g.vias.push(v);
@@ -450,6 +451,7 @@ const Where = (() => {
         return `<li${l.grp !== l.base && bases.has(l.grp) ? ' class="inside"' : ""}><strong>${nameHtml(l, keys, mine, n)}</strong><span class="wide">${l.html}</span>${btn}${extra}</li>`;
       });
       if (!entries.length && (sel !== "all" || tsel !== "all")) rows.push(`<li><span>Not found here ${sel !== "all" ? "in " + SEASON_NAME[sel] : TPHRASE[tsel]}.</span></li>`);
+      if (g.egg) rows.unshift(Eggs.row(n, g.games.map(x => x.name)));
       if (g.evolve) rows.unshift(...evoRows(g.evolve));
       // Only one group starts open (see openAt above); every other game's group starts folded
       // (click its heading to open it), so the panel isn't cluttered right away.
@@ -500,6 +502,7 @@ const Where = (() => {
     body.textContent = "Loading…";
     if (!dlg.open) dlg.showModal();
     const d = await load();
+    if (typeof Eggs !== "undefined") await Eggs.load();
     body.innerHTML = d
       ? (last = { game, n, groups: plan(game, n, byKey, d) }, render(game, n, last.groups))
       : `<p>Location data isn't installed yet. Run <code>python3 build_locations.py</code> once to create <code>data/locations.json</code>.</p>`;

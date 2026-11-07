@@ -1,7 +1,9 @@
 "use strict";
 // Eggs: the HeartGold / SoulSilver secret passwords for the Mareep, Wooper and Slugma eggs.
 //
-//   Eggs.show(game, n)         call when the info dialog opens; fills #egg-box for those three Pokémon in HG / SS, hides it otherwise
+//   Eggs.applies(gameKey, n)   is Pokémon n one of the three egg Pokémon, and gameKey Heart Gold / Soul Silver?
+//   Eggs.load()                Promise: loads data/egg-words.json (where.js waits for it before drawing)
+//   Eggs.row(n, names)         HTML of the "Get the ... Egg" row that where.js adds to the Heart Gold / Soul Silver group
 //   Eggs.passwords(reward, tid, size)   pure: -> four word indices (exported for testing)
 //
 // How it works: the NPC in the Violet City Pokémon Center checks four Easy Chat words. The words that unlock a reward depend on
@@ -20,7 +22,7 @@ const Eggs = (() => {
   const MAGIC = 6;                       // high nybble of the first byte in Platinum / HeartGold / SoulSilver
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
-  let data = null, loading = null, cur = null;      // cur = { game, n } while the dialog shows an egg
+  let data = null, loading = null;
   const pref = { tid: "", lang: "en" };
   try {
     const r = JSON.parse(localStorage.getItem(KEY));
@@ -61,53 +63,55 @@ const Eggs = (() => {
 
   if (!document.getElementById("eggs-css")) {
     const st = document.createElement("style"); st.id = "eggs-css";
-    st.textContent = `#egg-box{border:2px solid var(--line);background:var(--card);padding:8px 10px;margin:0 0 10px}
-#egg-box[hidden]{display:none}
-#egg-box h3{margin:0 0 4px;font:400 14px "PKMN",monospace}
-#egg-box p{margin:0 0 8px;font-size:13px}
-#egg-box .eggrow{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 8px}
-#egg-box label{display:flex;align-items:center;gap:6px}
-#egg-box input{width:7em}
-#egg-box ol.eggwords{display:grid;grid-template-columns:repeat(auto-fit,minmax(11ch,1fr));gap:6px;list-style:none;margin:0;padding:0}
-#egg-box ol.eggwords li{padding:5px 8px;border:2px solid var(--line);background:var(--hi);color:var(--on-hi);font-weight:700;overflow-wrap:anywhere}
-#egg-box ol.eggwords li small{display:block;font-weight:400;font-size:11px;opacity:.8}
-#egg-box .eggmsg{font-size:13px}
-#egg-box .fine{font-size:12px;opacity:.8;margin:8px 0 0}`;
+    st.textContent = `#where .egg-note{margin:0 0 8px;font-size:13px}
+#where .eggrow{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 8px}
+#where .eggrow label{display:flex;align-items:center;gap:6px}
+#where .eggrow input{width:7em}
+#where ol.eggwords{display:grid;grid-template-columns:repeat(auto-fit,minmax(11ch,1fr));gap:6px;list-style:none;margin:0;padding:0}
+#where ol.eggwords li{display:flex;flex-direction:column;align-items:stretch;gap:2px;padding:5px 8px;border:2px solid var(--line);background:var(--hi);color:var(--on-hi)}
+#where ol.eggwords li small{display:block;font-size:11px;opacity:.8}
+#where ol.eggwords li b{display:block;overflow-wrap:anywhere}
+#where .eggmsg{font-size:13px}`;
     document.head.append(st);
   }
 
-  function result() {
-    const out = $("#egg-out"), egg = EGGS[cur.n];
-    const lang = data.langs[pref.lang] || Object.values(data.langs)[0];
-    if (!/^\d+$/.test(pref.tid)) { out.innerHTML = `<p class="eggmsg">Enter your Trainer ID (the "ID No." on your Trainer Card) to see the four words.</p>`; return; }
+  const langOf = () => (data && (data.langs[pref.lang] || Object.values(data.langs)[0])) || null;
+
+  function words(n) {
+    const lang = langOf();
+    if (!lang) return `<p class="eggmsg">The password word list isn't installed. Add <code>data/egg-words.json</code>.</p>`;
+    if (!/^\d+$/.test(pref.tid)) return `<p class="eggmsg">Enter your Trainer ID (the "ID No." on your Trainer Card) to see the four words.</p>`;
     const tid = Number(pref.tid);
-    if (tid > 65535) { out.innerHTML = `<p class="eggmsg">A Trainer ID is a number from 0 to 65535.</p>`; return; }
-    const words = passwords(egg.id, tid, lang.words.length).map(i => lang.words[i]);
-    out.innerHTML = `<ol class="eggwords">${words.map((w, i) => `<li><small>Word ${i + 1}</small>${esc(w)}</li>`).join("")}</ol>`;
+    if (tid > 65535) return `<p class="eggmsg">A Trainer ID is a number from 0 to 65535.</p>`;
+    const w = passwords(EGGS[n].id, tid, lang.words.length).map(i => lang.words[i]);
+    return `<ol class="eggwords" lang="${esc(Object.keys(data.langs).find(k => data.langs[k] === lang))}">${w.map((x, i) => `<li><small>Word ${i + 1}</small><b>${esc(x)}</b></li>`).join("")}</ol>`;
   }
 
-  async function show(game, n) {
-    const box = $("#egg-box"); if (!box) return;
-    const egg = EGGS[n];
-    cur = egg && GAMES.has(game.key) ? { game, n } : null;
-    if (!cur) { box.hidden = true; box.textContent = ""; return; }
-    box.hidden = false; box.textContent = "Loading…";
-    await load();
-    if (!cur || cur.n !== n || !$("#egg-box")) return;                    // the dialog moved on while loading
-    if (!data) { box.innerHTML = `<h3>${esc(egg.name)}</h3><p class="eggmsg">The password word list isn't installed. Add <code>data/egg-words.json</code>.</p>`; return; }
-    if (!data.langs[pref.lang]) pref.lang = Object.keys(data.langs)[0];
-    const langs = Object.entries(data.langs);
-    box.innerHTML = `<h3>${esc(egg.name)} password</h3>` +
-      `<p>In ${esc(game.name)}, tell the NPC in the Violet City Pokémon Center these four words, in this order, with Easy Chat. ` +
-      `They are different for every save file, so they depend on your Trainer ID.</p>` +
-      `<div class="eggrow"><label>Trainer ID <input id="egg-tid" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="e.g. 12345" value="${esc(pref.tid)}"></label>` +
-      (langs.length > 1 ? `<label>Game language <select id="egg-lang">${langs.map(([k, l]) => `<option value="${k}"${k === pref.lang ? " selected" : ""}>${esc(l.name)}</option>`).join("")}</select></label>` : "") +
-      `</div><div id="egg-out" aria-live="polite"></div>` +
-      `<p class="fine">Words are for the ${esc(langs.length > 1 ? "language you pick" : data.langs[pref.lang].name)} version of the game. Method from the DPPtHGSS Secret Password Tool.</p>`;
-    $("#egg-tid").addEventListener("input", e => { pref.tid = e.target.value.replace(/\D/g, "").slice(0, 5); if (e.target.value !== pref.tid) e.target.value = pref.tid; save(); result(); });
-    const sel = $("#egg-lang"); if (sel) sel.addEventListener("change", e => { pref.lang = e.target.value; save(); result(); });
-    result();
+  // the row for the "Where to find" list: names = the Heart Gold / Soul Silver game names of this group
+  function row(n, names) {
+    const egg = EGGS[n], langs = data ? Object.entries(data.langs) : [];
+    return `<li class="evo egg"><strong>Get the ${esc(egg.name)}</strong><span class="wide">` +
+      `<p class="egg-note">In ${esc(names.join(" / "))}, tell the NPC in the Violet City Pokémon Center these four words, in this order, with Easy Chat. ` +
+      `They are different for every save file, so they depend on your Trainer ID and the game's language.</p>` +
+      `<div class="eggrow"><label>Trainer ID <input class="egg-tid" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="e.g. 12345" value="${esc(pref.tid)}"></label>` +
+      (langs.length > 1 ? `<label>Game language <select class="egg-lang">${langs.map(([k, l]) => `<option value="${k}"${langOf() === l ? " selected" : ""}>${esc(l.name)}</option>`).join("")}</select></label>` : "") +
+      `</div><div class="egg-out" data-n="${n}" aria-live="polite">${words(n)}</div></span></li>`;
   }
 
-  return { show, passwords };
+  // The dialog can hold several egg rows and is redrawn by the season / time buttons, so listen on the document and update every row.
+  const refresh = () => document.querySelectorAll("#where .egg-out").forEach(o => { o.innerHTML = words(Number(o.dataset.n)); });
+  document.addEventListener("input", e => {
+    if (!e.target.classList || !e.target.classList.contains("egg-tid")) return;
+    pref.tid = e.target.value.replace(/\D/g, "").slice(0, 5); if (e.target.value !== pref.tid) e.target.value = pref.tid;
+    document.querySelectorAll("#where .egg-tid").forEach(i => { if (i !== e.target) i.value = pref.tid; });
+    save(); refresh();
+  });
+  document.addEventListener("change", e => {
+    if (!e.target.classList || !e.target.classList.contains("egg-lang")) return;
+    pref.lang = e.target.value;
+    document.querySelectorAll("#where .egg-lang").forEach(i => { i.value = pref.lang; });
+    save(); refresh();
+  });
+
+  return { applies: (key, n) => !!EGGS[n] && GAMES.has(key), load, row, passwords };
 })();
