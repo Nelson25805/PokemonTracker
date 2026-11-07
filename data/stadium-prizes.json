@@ -1,0 +1,235 @@
+{
+ "version": 1,
+ "_help": "N64 Stadium prize Pokemon, read by js/where.js. prizes: n = national dex number, game = key into hardware, g = games that can receive it, area = location shown, lv = level, task = how to unlock, gift = what you get. Each prize becomes a 'stadium-prize' row plus a how-it-works blurb.",
+ "hardware": {
+  "stadium1": {
+   "name": "Pokémon Stadium, N64",
+   "text": [
+    "You need a Nintendo 64 with Pokémon Stadium, a Transfer Pak, and your own Red, Blue or Yellow cartridge in the Transfer Pak (it must be that cartridge: rentals can't be sent to a game).",
+    "The prize is deposited into one of the boxes in Professor Oak's Laboratory. From there, move it into your cartridge's boxes. To use it in Gold, Silver or Crystal, send it over with the Time Capsule."
+   ]
+  },
+  "stadium2": {
+   "name": "Pokémon Stadium 2, N64",
+   "text": [
+    "You need a Nintendo 64 with Pokémon Stadium 2, a Transfer Pak, and your own Gold, Silver or Crystal cartridge in the Transfer Pak.",
+    "The prize is deposited into one of the boxes in Professor Oak's Laboratory. From there, move it into your cartridge's boxes. It knows a Generation II move and holds an item, so it can only go to Gold, Silver or Crystal, not to Red, Blue or Yellow."
+   ]
+  }
+ },
+ "prizes": [
+  {
+   "id": "bulbasaur",
+   "n": 1,
+   "name": "Bulbasaur",
+   "game": "stadium1",
+   "area": "Pokémon Stadium (N64)",
+   "g": [
+    "red",
+    "blue",
+    "yellow"
+   ],
+   "lv": 5,
+   "moves": [
+    "Tackle",
+    "Growl"
+   ],
+   "task": "Win the Gym Leader Castle (all the Gym Leaders, then the Elite Four and your Rival), in Round 1 or Round 2. The gift is picked at random from Bulbasaur, Charmander, Squirtle, Hitmonlee, Hitmonchan, Eevee, Omanyte and Kabuto, so repeat the Elite Four and Rival to roll again until you get the one you want.",
+   "gift": "You get: Lv 5 Bulbasaur knowing Tackle, Growl. Original Trainer: Stadium, ID 02000. If you later trade it to Gold, Silver or Crystal it holds a Normal Box (won in Round 1) or a Gorgeous Box (won in Round 2); opening it unlocks the Silver / Gold Trophy room decoration."
+  },
+  {
+   "id": "charmander",
+   "n": 4,
+   "name": "Charmander",
+   "game": "stadium1",
+   "area": "Pokémon Stadium (N64)",
+   "g": [
+    "red",
+    "blue",
+    "yellow"
+   ],
+   "lv": 5,
+   "moves": [
+    "Scratch",
+    "Leer"
+   ],
+   "task": "Win the Gym Leader Castle (all the Gym Leaders, then the Elite Four and your Rival), in Round 1 or Round 2. The gift is picked at random from Bulbasaur, Charmander, Squirtle, Hitmonlee, Hitmonchan, Eevee, Omanyte and Kabuto, so repeat the Elite Four and Rival to roll again until you get the one you want.",
+   "gift": "You get: Lv 5 Charmander knowing Scratch, Leer. Original Trainer: Stadium, ID 02000. If you later trade it to Gold, Silver or Crystal it holds a Normal Box (won in Round 1) or a Gorgeous Box (won in Round 2); opening it unlocks the Silver / Gold Trophy room decoration."
+  },
+  {
+   "id": "squirtle",
+   "n": 7,
+   "name": "Squirtle",
+   "game": "stadium1",
+   "area": "Pokémon Stadium (N64)",
+   "g": [
+    "red",
+    "blue",
+    "yellow"
+   ],
+   "lv": 5,
+   "moves": [
+    "Tackle",
+    "Tail Whip"
+   ],
+   "task": "Win the Gym Leader Castle (all the Gym Leaders, then the Elite Four and your Rival), in Round 1 or Round 2. The gift is picked at random from Bulbasaur, Charmander, Squirtle, Hitmonlee, Hitmonchan, Eevee, Omanyte and Kabuto, so repeat the Elite Four and Rival to roll again until you get the one you want.",
+   "gift": "You get: Lv 5 Squirtle knowing Tackle, Tail Whip. Original Trainer: Stadium, ID 02000. If you later trade it to Gold, Silver or Crystal it holds a Normal Box (won in Round 1) or a Gorgeous Box (won in Round 2); opening it unlocks the Silver / Gold Trophy room decoration."
+  },
+  {
+   "id": "hitmonlee",
+   "n": 106,
+   "name": "Hitmonlee",
+   "game": "stadium1",
+   "area": "Pokémon Stadium (N64)",
+   "g": [
+    "red",
+    "blue",
+    "yellow"
+   ],
+   "lv": 20,
+   "moves": [
+    "Double Kick",
+    "Meditate"
+   ],
+   "task": "Win the Gym Leader Castle (all the Gym Leaders, then the Elite Four and your Rival), in Round 1 or Round 2. The gift is picked at random from Bulbasaur, Charmander, Squirtle, Hitmonlee, Hitmonchan, Eevee, Omanyte and Kabuto, so repeat the Elite Four and Rival to roll again until you get the one you want.",
+   "gift": "You get: Lv 20 Hitmonlee knowing Double Kick, Meditate. Original Trainer: Stadium, ID 02000. If you later trade it to Gold, Silver or Crystal it holds a Normal Box (won in Round 1) or a Gorgeous Box (won in Round 2); opening it unlocks the Silver / Gold Trophy room decoration."
+  },
+  {
+   "id": "hitmonchan",
+   "n": 107,
+   "name": "Hitmonchan",
+   "game": "stadium1",
+   "area": "Pokémon Stadium (N64)",
+   "g": [
+    "red",
+    "blue",
+    "yellow"
+   ],
+   "lv": 20,
+   "moves": [
+    "Comet Punch",
+    "Agility"
+   ],
+   "task": "Win the Gym Leader Castle (all the Gym Leaders, then the Elite Four and your Rival), in Round 1 or Round 2. The gift is picked at random from Bulbasaur, Charmander, Squirtle, Hitmonlee, Hitmonchan, Eevee, Omanyte and Kabuto, so repeat the Elite Four and Rival to roll again until you get the one you want.",
+   "gift": "You get: Lv 20 Hitmonchan knowing Comet Punch, Agility. Original Trainer: Stadium, ID 02000. If you later trade it to Gold, Silver or Crystal it holds a Normal Box (won in Round 1) or a Gorgeous Box (won in Round 2); opening it unlocks the Silver / Gold Trophy room decoration."
+  },
+  {
+   "id": "eevee",
+   "n": 133,
+   "name": "Eevee",
+   "game": "stadium1",
+   "area": "Pokémon Stadium (N64)",
+   "g": [
+    "red",
+    "blue",
+    "yellow"
+   ],
+   "lv": 25,
+   "moves": [
+    "Tackle",
+    "Sand-Attack"
+   ],
+   "task": "Win the Gym Leader Castle (all the Gym Leaders, then the Elite Four and your Rival), in Round 1 or Round 2. The gift is picked at random from Bulbasaur, Charmander, Squirtle, Hitmonlee, Hitmonchan, Eevee, Omanyte and Kabuto, so repeat the Elite Four and Rival to roll again until you get the one you want.",
+   "gift": "You get: Lv 25 Eevee knowing Tackle, Sand-Attack. Original Trainer: Stadium, ID 02000. If you later trade it to Gold, Silver or Crystal it holds a Normal Box (won in Round 1) or a Gorgeous Box (won in Round 2); opening it unlocks the Silver / Gold Trophy room decoration."
+  },
+  {
+   "id": "omanyte",
+   "n": 138,
+   "name": "Omanyte",
+   "game": "stadium1",
+   "area": "Pokémon Stadium (N64)",
+   "g": [
+    "red",
+    "blue",
+    "yellow"
+   ],
+   "lv": 20,
+   "moves": [
+    "Water Gun",
+    "Withdraw"
+   ],
+   "task": "Win the Gym Leader Castle (all the Gym Leaders, then the Elite Four and your Rival), in Round 1 or Round 2. The gift is picked at random from Bulbasaur, Charmander, Squirtle, Hitmonlee, Hitmonchan, Eevee, Omanyte and Kabuto, so repeat the Elite Four and Rival to roll again until you get the one you want.",
+   "gift": "You get: Lv 20 Omanyte knowing Water Gun, Withdraw. Original Trainer: Stadium, ID 02000. If you later trade it to Gold, Silver or Crystal it holds a Normal Box (won in Round 1) or a Gorgeous Box (won in Round 2); opening it unlocks the Silver / Gold Trophy room decoration."
+  },
+  {
+   "id": "kabuto",
+   "n": 140,
+   "name": "Kabuto",
+   "game": "stadium1",
+   "area": "Pokémon Stadium (N64)",
+   "g": [
+    "red",
+    "blue",
+    "yellow"
+   ],
+   "lv": 20,
+   "moves": [
+    "Scratch",
+    "Harden"
+   ],
+   "task": "Win the Gym Leader Castle (all the Gym Leaders, then the Elite Four and your Rival), in Round 1 or Round 2. The gift is picked at random from Bulbasaur, Charmander, Squirtle, Hitmonlee, Hitmonchan, Eevee, Omanyte and Kabuto, so repeat the Elite Four and Rival to roll again until you get the one you want.",
+   "gift": "You get: Lv 20 Kabuto knowing Scratch, Harden. Original Trainer: Stadium, ID 02000. If you later trade it to Gold, Silver or Crystal it holds a Normal Box (won in Round 1) or a Gorgeous Box (won in Round 2); opening it unlocks the Silver / Gold Trophy room decoration."
+  },
+  {
+   "id": "psyduck",
+   "n": 54,
+   "name": "Psyduck",
+   "game": "stadium1",
+   "area": "Pokémon Stadium (N64)",
+   "g": [
+    "red",
+    "blue",
+    "yellow"
+   ],
+   "lv": 15,
+   "moves": [
+    "Scratch",
+    "Amnesia"
+   ],
+   "task": "Register all 151 Pokémon in the Hall of Fame by winning the cups or the Gym Leader Castle with each of them on your team. Mewtwo is not a rental, so you need one from your own Game Boy cartridge. Amnesia is a move Psyduck cannot normally learn.",
+   "gift": "You get: Lv 15 Psyduck knowing Scratch, Amnesia. Original Trainer: Stadium, ID 02000. If you later trade it to Gold, Silver or Crystal it holds a Normal Box (won in Round 1) or a Gorgeous Box (won in Round 2); opening it unlocks the Silver / Gold Trophy room decoration."
+  },
+  {
+   "id": "farfetchd",
+   "n": 83,
+   "name": "Farfetch'd",
+   "game": "stadium2",
+   "area": "Pokémon Stadium 2 (N64)",
+   "g": [
+    "gold",
+    "silver",
+    "crystal"
+   ],
+   "lv": 5,
+   "moves": [
+    "Baton Pass",
+    "Agility",
+    "Swords Dance",
+    "Slash"
+   ],
+   "task": "Beat the special Rival battle in Round 1, then watch the credits. You can only receive it once per save file. Baton Pass is a move Farfetch'd cannot normally learn.",
+   "gift": "You get: Lv 5 Farfetch'd knowing Baton Pass, Agility, Swords Dance, Slash. Original Trainer: Stadium, ID 02000. Holding Gold Berry."
+  },
+  {
+   "id": "gligar",
+   "n": 207,
+   "name": "Gligar",
+   "game": "stadium2",
+   "area": "Pokémon Stadium 2 (N64)",
+   "g": [
+    "gold",
+    "silver",
+    "crystal"
+   ],
+   "lv": 5,
+   "moves": [
+    "Earthquake",
+    "Poison Sting",
+    "Wing Attack",
+    "Counter"
+   ],
+   "task": "Beat the special Rival battle in Round 2, then watch the credits. You can only receive it once per save file. Earthquake is a move Gligar cannot normally learn in Generation II.",
+   "gift": "You get: Lv 5 Gligar knowing Earthquake, Poison Sting, Wing Attack, Counter. Original Trainer: Stadium, ID 02000. Holding MysteryBerry."
+  }
+ ]
+}

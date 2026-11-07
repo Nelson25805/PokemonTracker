@@ -32,6 +32,7 @@ const Where = (() => {
     "rock-smash": "Rock Smash", headbutt: "Headbutt", gift: "Gift", "gift-egg": "Gift (Egg)", "only-one": "Static (one-time)",
     pokeflute: "Poké Flute", "bug-catching-contest": "Bug-Catching Contest", "roaming-grass": "Roaming (grass / land)", "roaming-water": "Roaming (surfing)",
     "honey-tree": "Honey tree",
+    "stadium-prize": "★ Stadium prize",     // N64 Pokémon Stadium / Stadium 2 prize Pokémon (data/stadium-prizes.json)
     // Gen 5 special encounter spots: friendlier names for the player (locations.json keeps the raw method names)
     "grass-spots": "Rustling grass", "cave-spots": "Dust clouds", "bridge-spots": "Bridge shadows",
     "surf-spots": "Surfing in rippling water", "super-rod-spots": "Fishing in rippling water",
@@ -270,7 +271,7 @@ const Where = (() => {
       for (const t of times) g.tper[t] = Math.min(100, (g.tper[t] || 0) + (chance || 0));
     }
     const lvl = r => (r.lo ? (r.lo === r.hi ? `Lv ${r.lo}` : `Lv ${r.lo}–${r.hi}`) : "");
-    const mclass = m => (/surf|rod/.test(m) ? "water" : /^(gift|only-one)/.test(m) ? "static" : "land");
+    const mclass = m => (/surf|rod/.test(m) ? "water" : /^stadium/.test(m) ? "prize" : /^(gift|only-one)/.test(m) ? "static" : "land");
     const tags = x => (x.other ? x.other.split(", ").map(c => `<span class="ctag">${esc(c)}</span>`).join("") : "");
     const best = x => Math.max(0, ...Object.values(x.per));
     const rate = c => (c > 0 ? `<span class="rate">${c}%</span>` : "");   // 100% is shown too (gifts, static encounters, guaranteed spots); 0 = no rate recorded, so nothing
@@ -416,14 +417,34 @@ const Where = (() => {
       (list ? `<details class="honeydet" open><summary>All ${spots.length} honey trees</summary><ul>${list}</ul></details>` : "") + `</div>`;
   }
 
+  // ---- N64 Stadium prize Pokémon (data/stadium-prizes.json) ----
+  // Each prize becomes one "stadium-prize" row in the games that can receive it (shown with a gold "★ Stadium prize" chip), plus a
+  // "how it works" row (hardware + what to do) built from the same file and shown once above that row.
+  const STADIUM = "stadium-prize";
+  function mergeStadium(d, s) {
+    d.loc = d.loc || {};
+    for (const p of s.prizes) for (const g of p.g || []) {
+      const byMon = (d.loc[g] = d.loc[g] || {}), rows = (byMon[p.n] = byMon[p.n] || []);
+      if (!rows.some(r => r[0] === p.area && r[1] === STADIUM)) rows.push([p.area, STADIUM, p.lv, p.lv, 0, ""]);
+    }
+  }
+  function stadiumBlurbs(s) {
+    const hw = s.hardware || {};
+    return s.prizes.map(p => {
+      const h = hw[p.game] || { name: "", text: [] };
+      return { id: "stadium-" + p.id, n: p.n, g: p.g, match: { method: STADIUM }, title: `★ Stadium prize: ${p.name}${h.name ? " (" + h.name + ")" : ""}`,
+        intro: [...(h.text || []), "How to unlock it: " + p.task, p.gift].filter(Boolean) };
+    });
+  }
+
   // ---- special encounters (data/special-encounters.json): a "how it works" row shown once, under the first location row that has such an encounter ----
   // An encounter is recognised from the location data itself: a row with the given method (e.g. "special") whose condition text matches "cond".
   const blurb = e => `<li class="evo special"><strong>${esc(e.title)}</strong><span class="wide">` +
     (e.intro || []).map(t => `<p class="special-note">${esc(t)}</p>`).join("") + `</span></li>`;
-  function specialPlan(keys, ls, entries) {                         // -> { at: [[row index, html]] }
+  function specialPlan(keys, ls, entries, n) {                         // -> { at: [[row index, html]] }
     const at = [];
     for (const e of special) {
-      if (!e.g.some(k => keys.includes(k)) || !e.match) continue;
+      if (!e.g.some(k => keys.includes(k)) || !e.match || (e.n && e.n !== n)) continue;   // e.n: an entry for one Pokémon only (Stadium prizes)
       const re = new RegExp(e.match.cond || "", "i");
       const areas = new Set(entries.filter(x => x[1] === e.match.method && re.test(x[5] || "")).map(x => x[0]));
       const i = ls.findIndex(l => areas.has(l.area));
@@ -479,7 +500,7 @@ const Where = (() => {
       const entries = sel === "all" && tsel === "all" ? g.entries : g.entries.filter(keep);
       const ls = lines(entries, sel, tsel, clock, formFx(keys, n)), mine = {};
       ls.forEach(l => { if (l.seg) (mine[l.base] = mine[l.base] || new Set()).add(l.seg); });
-      const sp = specialPlan(keys, ls, entries), bases = new Set(ls.map(l => l.base));                          // places that have their own row in this list
+      const sp = specialPlan(keys, ls, entries, n), bases = new Set(ls.map(l => l.base));                          // places that have their own row in this list
       const rows = ls.map(l => {
         // "Show on map" button: only when this location has a box on one of the maps shown for this group
         const ok = typeof Maps !== "undefined" && Maps.locate(keys, l.area).length;
@@ -516,10 +537,11 @@ const Where = (() => {
   function load() {
     if (data) return Promise.resolve(data);
     const get = f => fetch(`data/${f}.json`).then(r => (r.ok ? r.json() : null)).catch(() => null);
-    return (loading = loading || Promise.all([get("locations"), get("items"), get("maps"), get("honey"), get("special-encounters")])
-      .then(([d, items, maps, hon, sp]) => {
+    return (loading = loading || Promise.all([get("locations"), get("items"), get("maps"), get("honey"), get("special-encounters"), get("stadium-prizes")])
+      .then(([d, items, maps, hon, sp, stp]) => {
         loading = null;
         special = sp && Array.isArray(sp.encounters) ? sp.encounters : [];
+        if (d && stp && Array.isArray(stp.prizes)) { mergeStadium(d, stp); special = special.concat(stadiumBlurbs(stp)); }   // optional file
         if (typeof Maps !== "undefined") {
           Maps.init(maps);                                                         // maps.json is optional too
           if (hon) Maps.addHoney(hon);                                             // honey.json is optional: puts the trees on the map
@@ -647,6 +669,7 @@ const Where = (() => {
 #where .mchip.m-land{background:#e3f1cf;border-color:#6a9a3a;color:#1d3a0c}
 #where .mchip.m-water{background:#d9ebfa;border-color:#4f8fc4;color:#0c2e4d}
 #where .mchip.m-static{background:#ebe1fa;border-color:#8a63c9;color:#2a1250}
+#where .mchip.m-prize{background:#ffd23a;border-color:#a8620a;color:#3a1f00;box-shadow:0 0 0 1px #fff3b8 inset}
 #where .mrow .lv{font-size:13px}
 #where .ctag{display:inline-block;font-size:11px;padding:0 6px;border:1px dashed var(--line);white-space:nowrap}
 #where .rate{margin-left:auto;font-size:13px;font-weight:700}
