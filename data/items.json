@@ -1,6 +1,6 @@
 {
  "version": 1,
- "generated": "2026-10-24",
+ "generated": "2026-11-07",
  "source": "Bulbapedia (https://bulbapedia.bulbagarden.net), CC BY-NC-SA 2.5",
  "items": {
   "Thunder Stone": {
@@ -162,6 +162,33 @@
      "t": [
       "Dust clouds",
       "Black City/White Forest (Ken)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Nimbasa City",
+      "Chargestone Cave"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Battle Subway/Pokémon World Tournament (3 BP)",
+      "Join Avenue (Antique Shop)",
+      "Black City (Store 1)",
+      "Funfest Missions",
+      "Dust clouds (Chargestone Cave, Mistralton Cave, Clay Tunnel, Twist Mountain, Underground Ruins, Victory Road, Wellspring Cave, Seaside Cave, Giant Chasm)",
+      "Hidden Grottoes (Routes 2, 3, 5, 6, 7, 9, 13, 18, 22, and 23; Floccesy Ranch; Giant Chasm; Abundant Shrine; Lostlorn Forest; Pinwheel Forest)",
+      "Transfer from Dream Radar"
      ],
      "k": "repeat"
     }
@@ -329,6 +356,33 @@
       "Black City/White Forest (Vincent)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Lentimas Town",
+      "Desert Resort"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Battle Subway/Pokémon World Tournament (3 BP)",
+      "Join Avenue (Antique Shop)",
+      "Black City (Store 2)",
+      "Funfest Missions",
+      "Dust clouds (Chargestone Cave, Mistralton Cave, Clay Tunnel, Twist Mountain, Underground Ruins, Victory Road, Wellspring Cave, Seaside Cave, Giant Chasm)",
+      "Hidden Grottoes (Routes 2, 3, 5, 6, 7, 9, 13, 18, 22, and 23; Floccesy Ranch; Giant Chasm; Abundant Shrine; Lostlorn Forest; Pinwheel Forest)",
+      "Transfer from Dream Radar"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -481,6 +535,33 @@
      "t": [
       "Dust clouds",
       "Black City/White Forest (Ralph)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Route 19",
+      "Clay Tunnel"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Battle Subway/Pokémon World Tournament (3 BP)",
+      "Join Avenue (Antique Shop)",
+      "White Forest (Store 2)",
+      "Funfest Missions",
+      "Dust clouds (Chargestone Cave, Mistralton Cave, Clay Tunnel, Twist Mountain, Underground Ruins, Victory Road, Wellspring Cave, Seaside Cave, Giant Chasm)",
+      "Hidden Grottoes (Routes 2, 3, 5, 6, 7, 9, 13, 18, 22, and 23; Floccesy Ranch; Giant Chasm; Abundant Shrine; Lostlorn Forest; Pinwheel Forest)",
+      "Transfer from Dream Radar"
      ],
      "k": "repeat"
     }
@@ -646,6 +727,33 @@
      "t": [
       "Dust clouds",
       "Black City/White Forest (Karenna)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Route 7",
+      "Lostlorn Forest"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Battle Subway/Pokémon World Tournament (3 BP)",
+      "Join Avenue (Antique Shop)",
+      "White Forest (Store 1)",
+      "Funfest Missions",
+      "Dust clouds (Chargestone Cave, Mistralton Cave, Clay Tunnel, Twist Mountain, Underground Ruins, Victory Road, Wellspring Cave, Seaside Cave, Giant Chasm)",
+      "Hidden Grottoes (Routes 2, 3, 5, 6, 7, 9, 13, 18, 22, and 23; Floccesy Ranch; Giant Chasm; Abundant Shrine; Lostlorn Forest; Pinwheel Forest)",
+      "Transfer from Dream Radar"
      ],
      "k": "repeat"
     }
@@ -819,6 +927,35 @@
       "and wild Lunatone (5% chance each)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Route 6",
+      "Giant Chasm"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Pickup (Lv. 41-100)",
+      "Join Avenue (Antique Shop)",
+      "Funfest Mission (What is the Real Price?)W2",
+      "Held by wild Clefairy",
+      "wild Clefable",
+      "and wild Lunatone (5% chance each)",
+      "Dust clouds (Chargestone Cave, Mistralton Cave, Clay Tunnel, Twist Mountain, Underground Ruins, Victory Road, Wellspring Cave, Seaside Cave, Giant Chasm)",
+      "Hidden Grottoes (Routes 6 and 13; Abundant Shrine)",
+      "Transfer from Dream Radar"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -924,6 +1061,35 @@
       "Pickup (Lv. 31-100)",
       "Black City/White Forest (Lena)",
       "Held by wild Solrock (5% chance)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Nimbasa City",
+      "Relic Castle",
+      "Giant Chasm",
+      "Pinwheel Forest"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Pickup (Lv. 31-100)",
+      "Join Avenue (Antique Shop)",
+      "Funfest Mission (What is the Best Price?)B2",
+      "Held by wild Solrock (5% chance)",
+      "Dust clouds (Chargestone Cave, Mistralton Cave, Clay Tunnel, Twist Mountain, Underground Ruins, Victory Road, Wellspring Cave, Seaside Cave, Giant Chasm)",
+      "Hidden Grottoes (Routes 6 and 13; Abundant Shrine)",
+      "Transfer from Dream Radar"
      ],
      "k": "repeat"
     }
@@ -1083,6 +1249,33 @@
       "and wild Slowking (5% chance each)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Nuvema Town",
+      "Icirrus City"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Join Avenue (Antique Shop); White Forest (Store 4)",
+      "Pickup (Lv. 11-30)",
+      "Held by wild Poliwhirl",
+      "wild Poliwrath",
+      "wild Politoed",
+      "and wild Hariyama (5% chance each)",
+      "Transfer from Dream Radar"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1236,6 +1429,36 @@
       "and wild Bronzong (5% chance each)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Chargestone Cave",
+      "Clay Tunnel"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Join Avenue (Antique Shop)",
+      "Black City (Store 2)",
+      "Funfest Mission (Do a Great Trade-Up!)",
+      "Held by wild Magnemite",
+      "wild Magneton",
+      "wild Metang",
+      "wild Metagross",
+      "wild Bronzor",
+      "wild Bronzong",
+      "and wild Magnezone (5% chance each)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1351,6 +1574,32 @@
       "and wild Kingdra (5% chance each)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Victory Road"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Join Avenue (Antique Shop); White Forest (Store 3)",
+      "Held by wild Horsea",
+      "wild Seadra",
+      "wild Dratini",
+      "wild Dragonair",
+      "wild Dragonite",
+      "and wild Kingdra (5% chance each)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1439,6 +1688,29 @@
       "Route 13 (treasure hunter)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Pinwheel Forest",
+      "Striaton City"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Black City (Store 3)",
+      "Join Avenue (Antique Shop)",
+      "Funfest Mission (Not-Found Lost Items!) W2"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1503,6 +1775,22 @@
      ],
      "t": [
       "Route 13 (treasure hunter)",
+      "Held by wild Carvanha",
+      "wild Sharpedo",
+      "wild Huntail",
+      "and wild Basculin (Red-Striped) (5% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Join Avenue (Antique Shop)",
+      "White Forest (Store 1)",
+      "Funfest Mission (What is the Best Price?)B2",
       "Held by wild Carvanha",
       "wild Sharpedo",
       "wild Huntail",
@@ -1594,6 +1882,23 @@
       "and wild Basculin (Blue-Striped) (5% chance each)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Join Avenue (Antique Shop)",
+      "White Forest (Store 2)",
+      "Funfest Mission (What is the Real Price?)W2",
+      "Held by wild Chinchou",
+      "wild Lanturn",
+      "wild Gorebyss",
+      "wild Relicanth",
+      "and wild Basculin (Blue-Striped) (5% chance each)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1671,6 +1976,33 @@
      "t": [
       "Dust clouds",
       "Black City/White Forest (Molly)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Route 6",
+      "Abundant Shrine",
+      "Dragonspiral Tower",
+      "Undella Town"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Join Avenue (Antique Shop)",
+      "White Forest (Store 3)",
+      "Funfest Mission (Find Shining Ores!)W2",
+      "Dust clouds (Chargestone Cave, Mistralton Cave, Clay Tunnel, Twist Mountain, Underground Ruins, Victory Road, Wellspring Cave, Seaside Cave, Giant Chasm)",
+      "Hidden Grottoes (Routes 6 and 13; Abundant Shrine)"
      ],
      "k": "repeat"
     }
@@ -1753,6 +2085,32 @@
       "Black City/White Forest (Herman)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Strange House",
+      "Victory Road",
+      "Twist Mountain"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Join Avenue (Antique Shop)",
+      "Black City (Store 3)",
+      "Funfest Mission (Find Mysterious Ores!)B2",
+      "Dust clouds (Chargestone Cave, Mistralton Cave, Clay Tunnel, Twist Mountain, Underground Ruins, Victory Road, Wellspring Cave, Seaside Cave, Giant Chasm)",
+      "Hidden Grottoes (Routes 6 and 13; Abundant Shrine)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1832,6 +2190,33 @@
       "Black City/White Forest (Grace)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Route 2",
+      "Dreamyard",
+      "Moor of Icirrus"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Join Avenue (Antique Shop)",
+      "Black City (Store 4)",
+      "Funfest Mission (Do a Great Trade-Up!)",
+      "Dust clouds (Chargestone Cave, Mistralton Cave, Clay Tunnel, Twist Mountain, Underground Ruins, Victory Road, Wellspring Cave, Seaside Cave, Giant Chasm)",
+      "Hidden Grotto (Route 3)",
+      "Transfer from Dream Radar"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1902,6 +2287,18 @@
       "Held by wild Happiny (50% chance)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Dust clouds (Chargestone Cave, Mistralton Cave, Clay Tunnel, Twist Mountain, Underground Ruins, Victory Road, Wellspring Cave, Seaside Cave, Giant Chasm)",
+      "White Forest (Store 4)",
+      "Funfest Mission (Do a Great Trade-Up!)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1967,6 +2364,26 @@
      "t": [
       "Route 13 (treasure hunter)",
       "Battle Subway (48 BP)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Giant Chasm"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Battle Subway/PWT (8 BP)"
      ],
      "k": "repeat"
     }
@@ -2042,6 +2459,26 @@
       "Battle Subway (48 BP)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Route 11"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Battle Subway/PWT (8 BP)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -2094,6 +2531,27 @@
      ],
      "t": [
       "Route 13 (treasure hunter)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Wellspring Cave"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Join Avenue (Antique Shop)",
+      "Black City (Store 1)"
      ],
      "k": "repeat"
     }
@@ -2150,6 +2608,27 @@
       "Route 13 (treasure hunter)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Plasma FrigateW2"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Join Avenue (Antique Shop)",
+      "Funfest Mission (Not-Found Lost Items!) W2"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -2192,6 +2671,27 @@
      ],
      "t": [
       "Route 13 (treasure hunter)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Plasma FrigateB2"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Join Avenue (Antique Shop)",
+      "Funfest Mission (Forgotten Lost Items!) B2"
      ],
      "k": "repeat"
     }
@@ -2259,6 +2759,27 @@
       "Route 13 (treasure hunter)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Dreamyard"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Join Avenue (Antique Shop)",
+      "Funfest Mission (Do a Great Trade-Up!)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -2313,6 +2834,28 @@
       "Route 13 (treasure hunter)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "P2 Laboratory"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Join Avenue (Antique Shop)",
+      "Black City (Store 4)",
+      "Funfest Mission (Forgotten Lost Items!) B2"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -2336,6 +2879,29 @@
      ],
      "t": [
       "Pickup (Lv. 51-100)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Route 1",
+      "Undella Town"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "black-2",
+      "white-2"
+     ],
+     "t": [
+      "Join Avenue (Antique Shop)",
+      "Pickup (Lv. 51-100)",
+      "Hidden recurring item (Route 18)"
      ],
      "k": "repeat"
     }

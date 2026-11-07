@@ -8,7 +8,9 @@
 //
 // Evolution help: the "Evolve X" row explains how to evolve in plain words (stone, trade, friendship, level, place),
 // leaves out methods that don't exist in the games being shown, and lists where to get any item it needs
-// (data/items.json, optional; items it doesn't know link to Bulbapedia).
+// (data/items.json, optional; items it doesn't know link to Bulbapedia). Each item's sources are split into
+// "One-time" (finite: a ball on the ground, a gift, a story reward) and "Repeatable" (can be got again: shops, trades,
+// repeatable rewards), using the `k` flag build_items.py stores with every source.
 //
 // Honey trees (Diamond / Pearl / Platinum): data/honey.json (optional) lists what a slathered honey tree can attract and where
 // the trees are. At load time its encounters are added to the location data as ONE "Honey Trees" row (the per-route
@@ -146,10 +148,20 @@ const Where = (() => {
     }
   }
 
+  // Where to get `name` in game `key`, split by how it is obtained (items.json rows are { g: [games], t: [lines], k: "once" | "repeat" }):
+  //   once   = finite: a ball on the ground, a gift, a story reward (you get it one time)
+  //   repeat = can be got again: a shop, a repeatable reward, a trade, a recurring spot
+  //   other  = no flag recorded for that row
+  // Returns null when the item has no recorded source in this game (for example Black 2 / White 2 until items.json is rebuilt).
   const itemLines = (items, name, key) => {
     const it = items && items.items && items.items[name];
-    const t = it ? (it.where || []).filter(w => (w.g || []).includes(key)).flatMap(w => w.t || []) : [];
-    return t.length ? t : null;
+    const rows = it ? (it.where || []).filter(w => (w.g || []).includes(key)) : [];
+    const out = { once: [], repeat: [], other: [] };
+    for (const w of rows) {
+      const bucket = w.k === "once" ? out.once : w.k === "repeat" ? out.repeat : out.other;
+      for (const t of w.t || []) if (!bucket.includes(t)) bucket.push(t);
+    }
+    return out.once.length || out.repeat.length || out.other.length ? out : null;
   };
 
   // How `n` evolves in `src`: null if its pre-evolution isn't in that game or no method works there.
@@ -173,17 +185,23 @@ const Where = (() => {
     if (src.gen === 5 && n === 471) return { from: evo[0], opts: ["Level up next to the Ice Rock in Twist Mountain."], items: [] };
     if (src.gen === 5 && (n === 462 || n === 476)) return { from: evo[0], opts: ["Level up in Chargestone Cave (the magnetic field there)."], items: [] };
     if (!opts.length) return null;
-    return { from: evo[0], opts, items: need.map(name => ({ name, lines: itemLines(items, name, src.key) })) };
+    return { from: evo[0], opts, game: src.name, items: need.map(name => ({ name, lines: itemLines(items, name, src.key) })) };
   }
 
   const wiki = name => `https://bulbapedia.bulbagarden.net/wiki/${encodeURIComponent(name.replace(/ /g, "_"))}`;
+  // The "Get <item>" row: One-time and Repeatable sources in separate labelled blocks, then a link to the item's full Bulbapedia page.
+  function itemBody(it, game) {
+    const link = `<a class="itemwiki" href="${wiki(it.name)}" target="_blank" rel="noopener">Full list on Bulbapedia ↗</a>`;
+    if (!it.lines) return `<span class="itemgrp">No source for this item is recorded${game ? ` in ${esc(game)}` : ""} yet.</span>${link}`;
+    const grp = (cls, name, tip, arr) => arr.length
+      ? `<span class="itemgrp"><b class="itemk ${cls}" title="${esc(tip)}">${name}</b>${arr.map(esc).join("<br>")}</span>` : "";
+    return grp("once", "One-time", "Finite: you can only get this once in a playthrough (an item on the ground, a gift, a story reward).", it.lines.once) +
+      grp("repeat", "Repeatable", "You can get this again (a shop, a repeatable reward or a recurring spot).", it.lines.repeat) +
+      (it.lines.other.length ? `<span class="itemgrp">${it.lines.other.map(esc).join("<br>")}</span>` : "") + link;
+  }
   function evoRows(e) {
     const rows = [`<li class="evo"><strong>Evolve ${esc(nameOf(e.from))}</strong><span>${e.opts.map(esc).join("<br>or: ")}</span></li>`];
-    for (const it of e.items) {
-      const body = it.lines ? it.lines.map(esc).join("<br>")
-        : `Not recorded here yet. <a href="${wiki(it.name)}" target="_blank" rel="noopener">See Bulbapedia ↗</a>`;
-      rows.push(`<li class="evo"><strong>Get ${esc(it.name)}</strong><span>${body}</span></li>`);
-    }
+    for (const it of e.items) rows.push(`<li class="evo"><strong>Get ${esc(it.name)}</strong><span class="wide">${itemBody(it, e.game)}</span></li>`);
     return rows;
   }
 
@@ -632,6 +650,12 @@ const Where = (() => {
 #where .mrow .lv{font-size:13px}
 #where .ctag{display:inline-block;font-size:11px;padding:0 6px;border:1px dashed var(--line);white-space:nowrap}
 #where .rate{margin-left:auto;font-size:13px;font-weight:700}
+#where .itemgrp{display:block;padding:3px 0;font-size:13px;line-height:1.45}
+#where .itemgrp+.itemgrp{border-top:1px dotted var(--mid)}
+#where .itemk{display:block;width:fit-content;margin:0 0 4px;font-size:11px;font-weight:600;padding:1px 7px;border:2px solid var(--line);background:var(--card);white-space:nowrap}
+#where .itemk.once{background:#fbe48a;border-color:#d4a418;color:#3d2e00}
+#where .itemk.repeat{background:#bfe6a8;border-color:#6cbf5a;color:#173a0c}
+#where .itemwiki{display:inline-block;margin-top:4px;font-size:12px}
 #where .amap[data-timed][data-time=day] .amapimg img{filter:saturate(1.15) brightness(1.04)}
 #where .amap[data-season] .amapimg img{transition:filter .4s}
 #where .amap[data-season=spring] .amapimg img{filter:saturate(1.25) brightness(1.07) hue-rotate(-8deg)}

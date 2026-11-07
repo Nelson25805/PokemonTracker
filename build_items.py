@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Build data/items.json: where to get each evolution item in each Gen 1-4 game, read from the
+Build data/items.json: where to get each evolution item in each Gen 1-5 game, read from the
 "Acquisition" table on the item's Bulbapedia page (https://bulbapedia.bulbagarden.net).
 
     python3 build_items.py --dry-run               # parse everything, print it, write nothing (do this first)
@@ -15,9 +15,14 @@ per game group with "Finite methods" (one-time) and "Repeatable methods" columns
 inside a cell limit that entry to that game. Items or pages that can't be parsed keep their existing entry, so a bad run
 never wipes data. ALWAYS read the --dry-run output against the Bulbapedia page for a couple of items before trusting it.
 
+CHANGE in this version: a game group is now recognised by its link title OR a looser match (ignoring "Pokémon" / "Versions",
+case and punctuation) OR the row's abbreviation text (BW, B2W2 ...). Black 2 / White 2 rows were being skipped when
+Bulbapedia's link title did not match the config text exactly. Rows whose game cell matches NO game now print a
+"skipped row" line in the output, so a missed group is visible instead of silent.
+
 Output (what js/where.js reads):
     { "items": { "Thunder Stone": { "where": [ { "g": ["gold","silver"], "t": ["Sea Cottage (from Bill's grandfather)"], "k": "once" } ] } } }
-k is "once" (finite) or "repeat" (repeatable).
+k is "once" (finite) or "repeat" (repeatable). js/where.js now shows both, labelled.
 """
 import argparse, datetime, json, os, re, time, urllib.parse, urllib.request
 from html.parser import HTMLParser
@@ -46,6 +51,36 @@ GAMES = gamesconfig.bulbapedia_groups(_CFG)
 TITLE_KEYS = dict(GAMES)
 ORDER = [k for _, ks in GAMES for k in ks]
 GEN = gamesconfig.generations(_CFG)
+
+# ---- looser matching of a game link (see "CHANGE" above) ----
+def _norm(s):
+    s = str(s).lower().replace("pokémon", "").replace("pokemon", "")
+    s = re.sub(r"\bversions?\b", "", s)
+    return re.sub(r"[^a-z0-9]+", "", s)
+
+NORM_TITLES = {_norm(t): ks for t, ks in TITLE_KEYS.items()}
+# Abbreviations Bulbapedia prints in the "Games" column -> the config's Bulbapedia title of that group.
+# A title that is not in the config is simply ignored (e.g. a game you have not added).
+ABBR = {
+    "RBY": "Pokémon Red and Blue Versions", "RGBY": "Pokémon Red and Blue Versions",
+    "GSC": "Pokémon Gold and Silver Versions", "RSE": "Pokémon Ruby and Sapphire Versions",
+    "FRLG": "Pokémon FireRed and LeafGreen Versions", "DPPt": "Pokémon Diamond and Pearl Versions",
+    "HGSS": "Pokémon HeartGold and SoulSilver Versions",
+    "BW": "Pokémon Black and White Versions", "B2W2": "Pokémon Black 2 and White 2 Versions",
+}
+NORM_ABBR = {_norm(a): NORM_TITLES.get(_norm(t)) for a, t in ABBR.items()}
+
+
+def keys_for(a, text=None):
+    """Game keys for one <a> link: exact title, else a looser title match, else the abbreviation text. [] if none."""
+    title = a.attrs.get("title") if hasattr(a, "attrs") else None
+    if title in TITLE_KEYS:
+        return TITLE_KEYS[title]
+    if title and _norm(title) in NORM_TITLES:
+        return NORM_TITLES[_norm(title)]
+    t = text if text is not None else plain(a)
+    # abbreviation text only counts for a link that has no title of another real page
+    return NORM_ABBR.get(_norm(t)) or []
 
 
 # ---------------------------------------------------------------- a tiny HTML tree
@@ -113,8 +148,8 @@ def flatten(n, out):
             out.append("\n")
         elif k.tag in ("style", "script"):
             continue
-        elif k.tag == "a" and k.attrs.get("title") in TITLE_KEYS and len(plain(k).strip()) <= 4:
-            out.append("\x00" + "|".join(TITLE_KEYS[k.attrs["title"]]) + "\x01")
+        elif k.tag == "a" and len(plain(k).strip()) <= 4 and keys_for(k):
+            out.append("\x00" + "|".join(keys_for(k)) + "\x01")
         else:
             if k.tag in BLOCK:
                 out.append("\n")
@@ -150,8 +185,9 @@ def clean(e):
     return e, tags
 
 
-def parse_acquisition(html):
-    """HTML of an item page -> list of { g: [game keys], t: [lines], k: once|repeat }, or None if no table found."""
+def parse_acquisition(html, skipped=None):
+    """HTML of an item page -> list of { g: [game keys], t: [lines], k: once|repeat }, or None if no table found.
+    skipped (a list, optional) receives the text of every row whose game cell matched no game."""
     root, started, table = build(html), False, None
     for n in walk(root):
         if not started:
@@ -168,8 +204,12 @@ def parse_acquisition(html):
             continue
         games = []
         for a in walk(cells[-3]):
-            games += [g for g in TITLE_KEYS.get(a.attrs.get("title"), []) if g not in games] if a.tag == "a" else []
-        if not games:                                                    # header row, or only games outside Gen 1-4
+            if a.tag == "a":
+                games += [g for g in keys_for(a) if g not in games]
+        if not games:                                                    # header row, or only games outside the config
+            label = re.sub(r"\s+", " ", plain(cells[-3])).strip()
+            if skipped is not None and label and label.lower() != "games":
+                skipped.append(label)
             continue
         for kind, cell in (("once", cells[-2]), ("repeat", cells[-1])):
             for raw in split_entries(flatten(cell, [])):
@@ -222,16 +262,19 @@ def main():
         if args.only and name != args.only:
             continue
         print(f"\n== {name}   https://bulbapedia.bulbagarden.net/wiki/{urllib.parse.quote(page)}#Acquisition")
+        skipped = []
         try:
-            rows = parse_acquisition(fetch_html(page, args.cache, args.delay))
+            rows = parse_acquisition(fetch_html(page, args.cache, args.delay), skipped)
         except Exception as e:
             print(f"   could not fetch/parse ({e}); keeping the existing entry")
             continue
         if not rows:
-            print("   no Gen 1-4 rows found; keeping the existing entry")
+            print("   no rows found for the games in the config; keeping the existing entry")
             continue
         for r in rows:
             print(f"   [{r['k']:<6}] {', '.join(r['g'])}: " + " | ".join(r["t"]))
+        for s in skipped:
+            print(f"   skipped row (game cell matched no game in the config): {s!r}")
         covered = {g for r in rows for g in r["g"]}
         none = [g for g in ORDER if GEN[g] >= gen and g not in covered]
         if none:
