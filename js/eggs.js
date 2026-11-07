@@ -3,7 +3,7 @@
 //
 //   Eggs.applies(gameKey, n)   is Pokémon n one of the three egg Pokémon, and gameKey Heart Gold / Soul Silver?
 //   Eggs.load()                Promise: loads data/egg-words.json (where.js waits for it before drawing)
-//   Eggs.row(n, names)         HTML of the "Get the ... Egg" row that where.js adds to the Heart Gold / Soul Silver group
+//   Eggs.row(n, names)         HTML of the "Secret code for ... Egg" row that where.js adds to the Heart Gold / Soul Silver group
 //   Eggs.passwords(reward, tid, size)   pure: -> four word indices (exported for testing)
 //
 // How it works: the NPC in the Violet City Pokémon Center checks four Easy Chat words. The words that unlock a reward depend on
@@ -90,7 +90,7 @@ const Eggs = (() => {
   // the row for the "Where to find" list: names = the Heart Gold / Soul Silver game names of this group
   function row(n, names) {
     const egg = EGGS[n], langs = data ? Object.entries(data.langs) : [];
-    return `<li class="evo egg"><strong>Get the ${esc(egg.name)}</strong><span class="wide">` +
+    return `<li class="evo egg"><strong>Secret code for ${esc(egg.name)}</strong><span class="wide">` +
       `<p class="egg-note">In ${esc(names.join(" / "))}, tell the NPC in the Violet City Pokémon Center these four words, in this order, with Easy Chat. ` +
       `They are different for every save file, so they depend on your Trainer ID and the game's language.</p>` +
       `<div class="eggrow"><label>Trainer ID <input class="egg-tid" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="e.g. 12345" value="${esc(pref.tid)}"></label>` +
