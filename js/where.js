@@ -20,7 +20,7 @@
 // time the panel opens, so it costs nothing until someone asks.
 const Where = (() => {
   const $ = s => document.querySelector(s);
-  let games = [], mons = [], byKey = {}, data = null, loading = null, honey = null;
+  let games = [], mons = [], byKey = {}, data = null, loading = null, honey = null, special = [];
   let last = null;                              // last = what the open dialog shows (for the season buttons); season = the chosen season filter ("all" or spring / summer / autumn / winter)
 
   const HONEY = "Honey Trees", HONEY_PRE = "Honey Tree: ";     // same names as in maps.js
@@ -395,6 +395,22 @@ const Where = (() => {
       (list ? `<details class="honeydet" open><summary>All ${spots.length} honey trees</summary><ul>${list}</ul></details>` : "") + `</div>`;
   }
 
+  // ---- special encounters (data/special-encounters.json): a "how it works" row shown once, under the first location row that has such an encounter ----
+  // An encounter is recognised from the location data itself: a row with the given method (e.g. "special") whose condition text matches "cond".
+  const blurb = e => `<li class="evo special"><strong>${esc(e.title)}</strong><span class="wide">` +
+    (e.intro || []).map(t => `<p class="special-note">${esc(t)}</p>`).join("") + `</span></li>`;
+  function specialPlan(keys, ls, entries) {                         // -> { at: [[row index, html]] }
+    const at = [];
+    for (const e of special) {
+      if (!e.g.some(k => keys.includes(k)) || !e.match) continue;
+      const re = new RegExp(e.match.cond || "", "i");
+      const areas = new Set(entries.filter(x => x[1] === e.match.method && re.test(x[5] || "")).map(x => x[0]));
+      const i = ls.findIndex(l => areas.has(l.area));
+      if (i >= 0) at.push([i, blurb(e)]);                           // once, however many floors / rows match
+    }
+    return { at };
+  }
+
   const nameOf = n => (mons.find(m => m.n === n) || { name: `#${n}` }).name;
 
   // Form chips for Pokémon whose form depends on how / when you meet them (data/form-areas.json rules with "methods" or "season").
@@ -442,7 +458,7 @@ const Where = (() => {
       const keys = g.games.map(x => x.key);
       const ls = lines(entries, sel, tsel, clock, formFx(keys, n)), mine = {};
       ls.forEach(l => { if (l.seg) (mine[l.base] = mine[l.base] || new Set()).add(l.seg); });
-      const bases = new Set(ls.map(l => l.base));                          // places that have their own row in this list
+      const sp = specialPlan(keys, ls, entries), bases = new Set(ls.map(l => l.base));                          // places that have their own row in this list
       const rows = ls.map(l => {
         // "Show on map" button: only when this location has a box on one of the maps shown for this group
         const ok = typeof Maps !== "undefined" && Maps.locate(keys, l.area).length;
@@ -450,6 +466,7 @@ const Where = (() => {
         const extra = l.area === HONEY && honey ? honeyHtml(keys, n) : "";
         return `<li${l.grp !== l.base && bases.has(l.grp) ? ' class="inside"' : ""}><strong>${nameHtml(l, keys, mine, n)}</strong><span class="wide">${l.html}</span>${btn}${extra}</li>`;
       });
+      for (const [i, h] of [...sp.at].sort((x, y) => y[0] - x[0])) rows.splice(i, 0, h);   // special-encounter info, right above its first location
       if (!entries.length && (sel !== "all" || tsel !== "all")) rows.push(`<li><span>Not found here ${sel !== "all" ? "in " + SEASON_NAME[sel] : TPHRASE[tsel]}.</span></li>`);
       if (g.egg) rows.unshift(Eggs.row(n, g.games.map(x => x.name)));
       if (g.evolve) rows.unshift(...evoRows(g.evolve));
@@ -478,9 +495,10 @@ const Where = (() => {
   function load() {
     if (data) return Promise.resolve(data);
     const get = f => fetch(`data/${f}.json`).then(r => (r.ok ? r.json() : null)).catch(() => null);
-    return (loading = loading || Promise.all([get("locations"), get("items"), get("maps"), get("honey")])
-      .then(([d, items, maps, hon]) => {
+    return (loading = loading || Promise.all([get("locations"), get("items"), get("maps"), get("honey"), get("special-encounters")])
+      .then(([d, items, maps, hon, sp]) => {
         loading = null;
+        special = sp && Array.isArray(sp.encounters) ? sp.encounters : [];
         if (typeof Maps !== "undefined") {
           Maps.init(maps);                                                         // maps.json is optional too
           if (hon) Maps.addHoney(hon);                                             // honey.json is optional: puts the trees on the map
@@ -617,6 +635,7 @@ const Where = (() => {
 #where .amap[data-season=summer] .amapimg img{filter:sepia(.2) saturate(1.45) brightness(1.08) contrast(1.04)}
 #where .amap[data-season=autumn] .amapimg img{filter:sepia(.18) saturate(1.1) hue-rotate(-9deg) brightness(.98)}
 #where .amap[data-season=winter] .amapimg img{filter:saturate(.72) brightness(1.07) contrast(.97) hue-rotate(8deg)}
+#where .special-note{margin:0 0 6px;font-size:13px}
 #where .floortag{display:inline-block;padding:0 6px;margin-left:4px;font:600 11px/1.6 system-ui,sans-serif;border:2px solid var(--line);background:var(--card);color:var(--ink);vertical-align:middle;white-space:nowrap}
 #where .amap .tfilter{display:none}   /* the map's own time buttons are replaced by the filter under each map, which also filters the list */`;
       document.head.append(st);
