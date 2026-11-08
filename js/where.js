@@ -29,7 +29,7 @@ const Where = (() => {
 
   const METHODS = {
     walk: "Grass / cave / land", surf: "Surfing", "old-rod": "Old Rod", "good-rod": "Good Rod", "super-rod": "Super Rod",
-    "rock-smash": "Rock Smash", headbutt: "Headbutt", gift: "Gift", "gift-egg": "Gift (Egg)", "only-one": "Static (one-time)",
+    "rock-smash": "Rock Smash", headbutt: "Headbutt", gift: "Gift", "gift-egg": "Gift (Egg)", trade: "In-game trade", "only-one": "Static (one-time)",
     pokeflute: "Poké Flute", "bug-catching-contest": "Bug-Catching Contest", "roaming-grass": "Roaming (grass / land)", "roaming-water": "Roaming (surfing)",
     "honey-tree": "Honey tree",
     // Colosseum / XD (data/orre.json)
@@ -282,7 +282,7 @@ const Where = (() => {
       for (const t of times) g.tper[t] = Math.min(100, (g.tper[t] || 0) + (chance || 0));
     }
     const lvl = r => (r.lo ? (r.lo === r.hi ? `Lv ${r.lo}` : `Lv ${r.lo}–${r.hi}`) : "");
-    const mclass = m => (/surf|rod/.test(m) ? "water" : /^(gift|only-one|shadow|mirorb|ecard|download)/.test(m) ? "static" : "land");
+    const mclass = m => (/surf|rod/.test(m) ? "water" : /^(gift|only-one|shadow|mirorb|trade|ecard|download)/.test(m) ? "static" : "land");
     const tags = x => (x.other ? x.other.split(", ").map(c => `<span class="ctag">${esc(c)}</span>`).join("") : "");
     const best = x => Math.max(0, ...Object.values(x.per));
     const rate = c => (c > 0 ? `<span class="rate">${c}%</span>` : "");   // 100% is shown too (gifts, static encounters, guaranteed spots); 0 = no rate recorded, so nothing

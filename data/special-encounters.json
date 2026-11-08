@@ -27,7 +27,8 @@
    ],
    "intro": [
     "Shadow Pokémon belong to a Cipher or Snagem trainer. Win the battle, then use the Snag Machine to snag the Shadow Pokémon instead of fighting it normally.",
-    "A Shadow Pokémon can't be traded or sent to another game until you purify it (Colosseum: Relic Stone / XD: Purification Chamber). Once purified, it can be sent to Ruby, Sapphire, Emerald, FireRed and LeafGreen with a link cable."
+    "A Shadow Pokémon can't be traded or sent to another game until you purify it (Colosseum: Relic Stone / XD: Purification Chamber). Once purified, it can be sent to Ruby, Sapphire, Emerald, FireRed and LeafGreen with a link cable.",
+    "Pokémon XD can only trade with the Game Boy Advance games on the original GameCube release. The Nintendo Classics (Switch 2) version cannot link to them."
    ],
    "match": {
     "method": "shadow",
@@ -43,11 +44,42 @@
    "intro": [
     "Some Shadow Pokémon belong to trainers who don't stay in one place (Cipher Admins and wandering Cipher Peons). If you miss one, Miror B. steals it, and you get a second chance to snag it from him.",
     "Once you have found Miror B., a radar alert tells you where he is. He can turn up anywhere: at a PokéSpot, in a town or at a stadium. He will battle you with the stolen Pokémon as many times as it takes for you to snag it.",
-    "When every one of the 83 Shadow Pokémon is snagged, whether from him or from their trainers, he destroys the radar. The levels listed here are the ones he uses."
+    "When every one of the 83 Shadow Pokémon is snagged, whether from him or from their trainers, he destroys the radar. The levels listed here are the ones he uses.",
+    "Snag rule: a Shadow Pokémon you snag does not appear in your party or PC until you win the battle. If you lose after snagging it, it either goes back to its trainer or runs off and joins Miror B.'s team, exactly as if you had won without snagging it."
    ],
    "match": {
     "method": "mirorb",
     "cond": "."
+   }
+  },
+  {
+   "id": "xd-trades",
+   "title": "In-game trades (XD)",
+   "g": [
+    "xd"
+   ],
+   "intro": [
+    "Two NPCs trade you a Pokémon for one of yours. Hordel (Outskirt Stand) wants a purified Shadow Togepi or Togetic and gives a Lv 20 Elekid. Duking swaps rare PokéSpot Pokémon: Surskit for Shuckle, Trapinch for Meditite, Wooper for Larvitar (all Lv 20).",
+    "These trades give you Pokémon you cannot get any other way in this game, so keep the PokéSpot rarities."
+   ],
+   "match": {
+    "method": "trade",
+    "cond": "."
+   }
+  },
+  {
+   "id": "xd-johto-starters",
+   "title": "Johto starters (Mt. Battle)",
+   "g": [
+    "xd"
+   ],
+   "intro": [
+    "Beat 100 opponents in a row in Mt. Battle with the same party and you can pick one Johto starter (Lv 5). Redo the challenge to get the others.",
+    "Each one knows its own signature move: Chikorita has Frenzy Plant, Cyndaquil has Blast Burn and Totodile has Hydro Cannon."
+   ],
+   "match": {
+    "method": "only-one",
+    "cond": "100 opponents"
    }
   }
  ]

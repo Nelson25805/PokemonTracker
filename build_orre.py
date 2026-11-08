@@ -13,7 +13,7 @@ Output: { "dex": { "colosseum": [national numbers], "xd": [...] },
   dex  -> the game's Pokemon list (js/app.js merges it into the regional lists)
   loc  -> "Where to find" rows (js/where.js merges them into locations.json when the page loads)
 Table lines:  national number | area | method | level (30 or 10-20, blank = unknown) | note
-Methods: shadow (snag), gift, only-one (one-time reward), ecard, download, pokespot (wild).
+Methods: shadow (snag), gift, only-one (one-time reward), trade (in-game trade), ecard, download, pokespot (wild).
 For shadow lines "Trainer: " is added to the note automatically. Avoid commas in notes.
 For pokespot lines the note is the encounter rate (for example 50%): it becomes the rate shown in the
 "Where to find" panel (the chance field) and no note is added.
@@ -119,7 +119,13 @@ XD = """
 299|Phenac Stadium|shadow|26|Wanderer Miror. B
 335|Cipher Key Lair|shadow|28|Thug Zook
 175|Outskirt Stand|shadow|25|Hordel
-239|Outskirt Stand|gift||Not a Shadow Pokémon: trade Togepi back to Hordel (same level as your Togepi)
+239|Outskirt Stand|trade|20|Hordel trades this for a purified Shadow Togepi or Togetic
+213|Duking|trade|20|Give Duking a Surskit from the Oasis PokéSpot
+307|Duking|trade|20|Give Duking a Trapinch from the Rock PokéSpot
+246|Duking|trade|20|Give Duking a Wooper from the Cave PokéSpot
+152|Mt. Battle|only-one|5|Reward for beating 100 opponents in a row with the same party (Chikorita)
+155|Mt. Battle|only-one|5|Reward for beating 100 opponents in a row with the same party (Cyndaquil)
+158|Mt. Battle|only-one|5|Reward for beating 100 opponents in a row with the same party (Totodile)
 46|Cipher Key Lair|shadow|28|Cipher Peon Humah
 58|Cipher Key Lair|shadow|28|Cipher Peon Humah
 90|Cipher Key Lair|shadow|29|Cipher Peon Gorog
