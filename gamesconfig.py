@@ -39,7 +39,7 @@ def dexes(cfg):
     out = []
     for g in cfg["games"]:
         d = (g.get("region") or {}).get("dex")
-        if d and d not in out:
+        if d and d not in out and not (g.get("region") or {}).get("custom"):   # "custom" lists (Colosseum / XD) live in data/orre.json
             out.append(d)
     return out
 

@@ -25,9 +25,12 @@
   Cards.setMons(mons);                                                     // the Leaf Crown diploma (HeartGold / SoulSilver) lets you pick a partner Pokémon
   // Regional Pokédex lists (built by build_regional.py). Optional: without the file the Dex dropdown stays disabled.
   regional = await fetch("data/regional.json").then(r => (r.ok ? r.json() : null)).then(d => d && d.dex).catch(() => null);
+  // data/orre.json: the Pokémon lists of Colosseum and XD (built by build_orre.py), added to the regional lists
+  const orre = await fetch("data/orre.json").then(r => (r.ok ? r.json() : null)).catch(() => null);
+  if (orre && orre.dex) regional = { ...(regional || {}), ...orre.dex };
   Forms.init(await fetch("data/forms.json").then(r => (r.ok ? r.json() : null)).catch(() => null));   // optional: without it there are no chips
   Forms.setAreas(await fetch("data/form-areas.json").then(r => (r.ok ? r.json() : null)).catch(() => null));   // optional: which form lives where
-  Where.init({ games, mons });
+  Where.init({ games, mons, regional });
 
   // ---- selectors: everything the view needs is derived from state ----
   const gameOf = s => games.find(g => g.key === s.last.game) || games[0];
@@ -39,8 +42,9 @@
   // Regional lists are arrays of national numbers in regional order. A game only offers the regional
   // view when its list actually differs from the national one (so Red/Blue/Yellow don't).
   const regList = g => (regional && g.region && regional[g.region.dex]) || null;
-  const hasRegional = g => { const l = regList(g); return !!l && !(l.length === g.count && l.every((n, i) => n === i + 1)); };
-  const dexList = (s, g = gameOf(s)) => (s.last.dex === "regional" && hasRegional(g) ? regList(g) : null);
+  const onlyRegional = g => !!(g.region && g.region.only);            // Colosseum / XD: only their own Pokémon list exists
+  const hasRegional = g => { const l = regList(g); return !!l && (onlyRegional(g) || !(l.length === g.count && l.every((n, i) => n === i + 1))); };
+  const dexList = (s, g = gameOf(s)) => ((s.last.dex === "regional" || onlyRegional(g)) && hasRegional(g) ? regList(g) : null);
   const dexTotal = (s, g = gameOf(s)) => (dexList(s, g) ? dexList(s, g).length : g.count);
   // viewOf: the visible dex of one list ("caught" or "shiny"). viewCaught is the list being tracked right now;
   // the trainer card and diploma always use the normal list, whatever you are tracking.
@@ -73,9 +77,9 @@
     $("#req-gender").checked = rq.gender; $("#req-alt").checked = rq.alt;
     $("#req-hint").textContent = !Forms.ready() ? "Forms data isn't installed yet. Run python3 build_forms.py once."
       : tot.gender + tot.alt ? `In ${g.name}: ${pl(tot.gender, "gender difference")} and ${pl(tot.alt, "alternate form")}.` : `${g.name} has no extra forms.`;
-    $("#dex").disabled = !reg;
+    $("#dex").disabled = !reg || onlyRegional(g);
     $("#dex").options[1].textContent = reg ? `Regional (${g.region.name})` : "Regional";
-    $("#dex").value = reg && s.last.dex === "regional" ? "regional" : "national";
+    $("#dex").value = reg && (onlyRegional(g) || s.last.dex === "regional") ? "regional" : "national";
     if ($("#trainer").value !== s.name) $("#trainer").value = s.name; // don't rewrite while typing
     $("#gname").textContent = g.name + (shinyOn(s, g) ? " ★" : "") + (dexList(s, g) ? ` · ${g.region.name}` : ""); // shown on phones, where the Options panel is closed
     $("#trainerbox").open = !!s.last.cardOpen;
@@ -90,7 +94,7 @@
 
   function renderGrid(s) {
     const g = gameOf(s), got = caughtSet(s, g), dir = spriteDir(s, g), list = dexList(s, g), fm = Forms.forGame(g);
-    const rows = (list ? list.map((n, i) => [monByN.get(n), i + (g.region.start ?? 1)]) : mons.slice(0, g.count).map(m => [m, m.n])).filter(([m]) => m);
+    const rows = (list ? list.map((n, i) => [monByN.get(n), g.region.nat ? n : i + (g.region.start ?? 1)]) : mons.slice(0, g.count).map(m => [m, m.n])).filter(([m]) => m);
     const cell = ([m, pos]) => `<div class="cell"><button class="card${got.has(m.n) ? " on" : ""}${fm.has(m.n) ? " hasform" : ""}" data-n="${m.n}" data-pos="${pos}" data-name="${m.name.toLowerCase()}" aria-pressed="${got.has(m.n)}" aria-keyshortcuts="${["I", g.shiny && "S", fm.has(m.n) && "F"].filter(Boolean).join(" ")}">
         <img loading="lazy" decoding="async" alt="" src="${spriteSrc(dir, m.n)}">
         <span class="n">#${String(pos).padStart(3, "0")}</span><span class="nm">${m.name}</span></button>

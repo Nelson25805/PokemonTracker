@@ -428,3 +428,8 @@ body.selecting .chip{display:none}
 #where li.special>strong,#where li.egg>strong{flex:1 1 100%}
 /* Forms tab rows are <li> inside #where, so the generic "#where li{padding:4px 0}" rule was beating .frow's padding. This one is more specific. */
 #where .frow{padding:6px 14px}
+/* Colosseum and XD themes */
+:root[data-theme=colosseum]{--bg:#efdcc0;--panel:#d9964a;--ink:#2a1606;--mid:#8a4a14;--hi:#ffe0a0;--card:#f8ecd8;--line:#2a1606;--on-hi:#2a1606;color-scheme:light}
+:root[data-theme=colosseum][data-mode=dark]{--bg:#1f150d;--panel:#3e2b1a;--ink:#f1e3d2;--mid:#dea674;--hi:#d79c62;--card:#53402b;--line:#c19a7b;--on-hi:#24150a;color-scheme:dark}
+:root[data-theme=xd]{--bg:#e4dcf2;--panel:#8a6fc4;--ink:#150a2b;--mid:#4a2d94;--hi:#d8c8ff;--card:#f1ecfa;--line:#150a2b;--on-hi:#150a2b;color-scheme:light}
+:root[data-theme=xd][data-mode=dark]{--bg:#14101f;--panel:#2a2040;--ink:#e6dff5;--mid:#a58ee0;--hi:#8a73c4;--card:#3a2f55;--line:#9a87c9;--on-hi:#120a24;color-scheme:dark}

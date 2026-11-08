@@ -22,7 +22,7 @@
 // time the panel opens, so it costs nothing until someone asks.
 const Where = (() => {
   const $ = s => document.querySelector(s);
-  let games = [], mons = [], byKey = {}, data = null, loading = null, honey = null, special = [];
+  let games = [], mons = [], byKey = {}, data = null, loading = null, honey = null, special = [], regional = null;
   let last = null;                              // last = what the open dialog shows (for the season buttons); season = the chosen season filter ("all" or spring / summer / autumn / winter)
 
   const HONEY = "Honey Trees", HONEY_PRE = "Honey Tree: ";     // same names as in maps.js
@@ -32,7 +32,8 @@ const Where = (() => {
     "rock-smash": "Rock Smash", headbutt: "Headbutt", gift: "Gift", "gift-egg": "Gift (Egg)", "only-one": "Static (one-time)",
     pokeflute: "Poké Flute", "bug-catching-contest": "Bug-Catching Contest", "roaming-grass": "Roaming (grass / land)", "roaming-water": "Roaming (surfing)",
     "honey-tree": "Honey tree",
-    "stadium-prize": "★ Stadium prize",     // N64 Pokémon Stadium / Stadium 2 prize Pokémon (data/stadium-prizes.json)
+    // Colosseum / XD (data/orre.json)
+    shadow: "Snag (Shadow Pokémon)", pokespot: "PokéSpot (wild)", ecard: "e-Reader card", download: "Bonus Disc download",
     // Gen 5 special encounter spots: friendlier names for the player (locations.json keeps the raw method names)
     "grass-spots": "Rustling grass", "cave-spots": "Dust clouds", "bridge-spots": "Bridge shadows",
     "surf-spots": "Surfing in rippling water", "super-rod-spots": "Fishing in rippling water",
@@ -209,11 +210,21 @@ const Where = (() => {
   // How a Pokémon from `src` gets into `game`.
   function via(src, game) {
     if (src.key === game.key) return "";
+    if (src.link && game.gen === 3) return "link cable (Shadow Pokémon must be purified first)";
+    if (src.link && game.gen === 4) return "a link cable to a GBA game, then Pal Park (one-way)";
     if (src.gen === game.gen) return "trade";
     if (src.gen <= 2 && game.gen <= 2) return game.gen === 1 ? "Time Capsule (Gen 1 Pokémon with no Gen 2 moves)" : "Time Capsule";
     if (src.gen === 3 && game.gen === 4) return "Pal Park (one-way)";
     if (src.gen === 4 && game.gen === 5) return "Poké Transfer (one-way)";
     return "";
+  }
+
+  // Colosseum / XD only have their own list of Pokémon: an evolution counts only if its pre-evolution is in that list.
+  function evolvesHere(src, evo) {
+    if (!evo) return false;
+    if (!(src.region && src.region.only)) return true;
+    const l = regional && regional[src.region.dex];
+    return !l || l.includes(evo[0]);
   }
 
   // One group per distinct set of results, so Red and Blue (same spots) share a section.
@@ -224,7 +235,7 @@ const Where = (() => {
       const src = keyed[key];
       if (!src || n > src.count) continue;                       // that game doesn't have this Pokémon
       const entries = (d.loc[key] || {})[n] || [];
-      const evolve = evolution(n, d.evo[n], src, d.items);       // null if the pre-evolution or every method is missing in that game
+      const evolve = evolvesHere(src, d.evo[n]) ? evolution(n, d.evo[n], src, d.items) : null;       // null if the pre-evolution or every method is missing in that game
       const egg = typeof Eggs !== "undefined" && Eggs.applies(key, n);   // Heart Gold / Soul Silver egg password for Mareep, Wooper, Slugma
       if (!entries.length && !evolve && !egg) continue;
       const sig = JSON.stringify([entries, evolve, egg]);
@@ -271,7 +282,7 @@ const Where = (() => {
       for (const t of times) g.tper[t] = Math.min(100, (g.tper[t] || 0) + (chance || 0));
     }
     const lvl = r => (r.lo ? (r.lo === r.hi ? `Lv ${r.lo}` : `Lv ${r.lo}–${r.hi}`) : "");
-    const mclass = m => (/surf|rod/.test(m) ? "water" : /^stadium/.test(m) ? "prize" : /^(gift|only-one)/.test(m) ? "static" : "land");
+    const mclass = m => (/surf|rod/.test(m) ? "water" : /^(gift|only-one|shadow|ecard|download)/.test(m) ? "static" : "land");
     const tags = x => (x.other ? x.other.split(", ").map(c => `<span class="ctag">${esc(c)}</span>`).join("") : "");
     const best = x => Math.max(0, ...Object.values(x.per));
     const rate = c => (c > 0 ? `<span class="rate">${c}%</span>` : "");   // 100% is shown too (gifts, static encounters, guaranteed spots); 0 = no rate recorded, so nothing
@@ -417,34 +428,24 @@ const Where = (() => {
       (list ? `<details class="honeydet" open><summary>All ${spots.length} honey trees</summary><ul>${list}</ul></details>` : "") + `</div>`;
   }
 
-  // ---- N64 Stadium prize Pokémon (data/stadium-prizes.json) ----
-  // Each prize becomes one "stadium-prize" row in the games that can receive it (shown with a gold "★ Stadium prize" chip), plus a
-  // "how it works" row (hardware + what to do) built from the same file and shown once above that row.
-  const STADIUM = "stadium-prize";
-  function mergeStadium(d, s) {
+  // data/orre.json: Colosseum / XD encounters, added to the location data (they are not in PokéAPI)
+  function mergeOrre(d, o) {
+    if (!d || !o || !o.loc) return;
     d.loc = d.loc || {};
-    for (const p of s.prizes) for (const g of p.g || []) {
-      const byMon = (d.loc[g] = d.loc[g] || {}), rows = (byMon[p.n] = byMon[p.n] || []);
-      if (!rows.some(r => r[0] === p.area && r[1] === STADIUM)) rows.push([p.area, STADIUM, p.lv, p.lv, 0, ""]);
+    for (const [g, byMon] of Object.entries(o.loc)) {
+      const dst = (d.loc[g] = d.loc[g] || {});
+      for (const [n, rows] of Object.entries(byMon)) dst[n] = (dst[n] || []).concat(rows);
     }
-  }
-  function stadiumBlurbs(s) {
-    const hw = s.hardware || {};
-    return s.prizes.map(p => {
-      const h = hw[p.game] || { name: "", text: [] };
-      return { id: "stadium-" + p.id, n: p.n, g: p.g, match: { method: STADIUM }, title: `★ Stadium prize: ${p.name}${h.name ? " (" + h.name + ")" : ""}`,
-        intro: [...(h.text || []), "How to unlock it: " + p.task, p.gift].filter(Boolean) };
-    });
   }
 
   // ---- special encounters (data/special-encounters.json): a "how it works" row shown once, under the first location row that has such an encounter ----
   // An encounter is recognised from the location data itself: a row with the given method (e.g. "special") whose condition text matches "cond".
   const blurb = e => `<li class="evo special"><strong>${esc(e.title)}</strong><span class="wide">` +
     (e.intro || []).map(t => `<p class="special-note">${esc(t)}</p>`).join("") + `</span></li>`;
-  function specialPlan(keys, ls, entries, n) {                         // -> { at: [[row index, html]] }
+  function specialPlan(keys, ls, entries) {                         // -> { at: [[row index, html]] }
     const at = [];
     for (const e of special) {
-      if (!e.g.some(k => keys.includes(k)) || !e.match || (e.n && e.n !== n)) continue;   // e.n: an entry for one Pokémon only (Stadium prizes)
+      if (!e.g.some(k => keys.includes(k)) || !e.match) continue;
       const re = new RegExp(e.match.cond || "", "i");
       const areas = new Set(entries.filter(x => x[1] === e.match.method && re.test(x[5] || "")).map(x => x[0]));
       const i = ls.findIndex(l => areas.has(l.area));
@@ -500,7 +501,7 @@ const Where = (() => {
       const entries = sel === "all" && tsel === "all" ? g.entries : g.entries.filter(keep);
       const ls = lines(entries, sel, tsel, clock, formFx(keys, n)), mine = {};
       ls.forEach(l => { if (l.seg) (mine[l.base] = mine[l.base] || new Set()).add(l.seg); });
-      const sp = specialPlan(keys, ls, entries, n), bases = new Set(ls.map(l => l.base));                          // places that have their own row in this list
+      const sp = specialPlan(keys, ls, entries), bases = new Set(ls.map(l => l.base));                          // places that have their own row in this list
       const rows = ls.map(l => {
         // "Show on map" button: only when this location has a box on one of the maps shown for this group
         const ok = typeof Maps !== "undefined" && Maps.locate(keys, l.area).length;
@@ -537,17 +538,17 @@ const Where = (() => {
   function load() {
     if (data) return Promise.resolve(data);
     const get = f => fetch(`data/${f}.json`).then(r => (r.ok ? r.json() : null)).catch(() => null);
-    return (loading = loading || Promise.all([get("locations"), get("items"), get("maps"), get("honey"), get("special-encounters"), get("stadium-prizes")])
-      .then(([d, items, maps, hon, sp, stp]) => {
+    return (loading = loading || Promise.all([get("locations"), get("items"), get("maps"), get("honey"), get("special-encounters"), get("orre")])
+      .then(([d, items, maps, hon, sp, orre]) => {
         loading = null;
         special = sp && Array.isArray(sp.encounters) ? sp.encounters : [];
-        if (d && stp && Array.isArray(stp.prizes)) { mergeStadium(d, stp); special = special.concat(stadiumBlurbs(stp)); }   // optional file
         if (typeof Maps !== "undefined") {
           Maps.init(maps);                                                         // maps.json is optional too
           if (hon) Maps.addHoney(hon);                                             // honey.json is optional: puts the trees on the map
         }
         if (d && typeof Maps !== "undefined") Maps.fixLoc(d);                     // PokeAPI's "Kanto Victory Road 1 / 2" -> "Kanto Victory Road"
         if (d && hon) { mergeHoney(d, hon); honey = hon; }
+        if (d && orre) mergeOrre(d, orre);
         return (data = d && { ...d, items });
       }));   // items.json and honey.json are optional; a failed load can be retried next time
   }
@@ -570,7 +571,7 @@ const Where = (() => {
   }
 
   function init(deps) {
-    games = deps.games; mons = deps.mons;
+    games = deps.games; mons = deps.mons; regional = deps.regional || null;
     byKey = Object.fromEntries(games.map(g => [g.key, g]));
     $("#where-close").addEventListener("click", () => $("#where").close());
     $("#where-x").addEventListener("click", () => $("#where").close());
@@ -669,7 +670,6 @@ const Where = (() => {
 #where .mchip.m-land{background:#e3f1cf;border-color:#6a9a3a;color:#1d3a0c}
 #where .mchip.m-water{background:#d9ebfa;border-color:#4f8fc4;color:#0c2e4d}
 #where .mchip.m-static{background:#ebe1fa;border-color:#8a63c9;color:#2a1250}
-#where .mchip.m-prize{background:#ffd23a;border-color:#a8620a;color:#3a1f00;box-shadow:0 0 0 1px #fff3b8 inset}
 #where .mrow .lv{font-size:13px}
 #where .ctag{display:inline-block;font-size:11px;padding:0 6px;border:1px dashed var(--line);white-space:nowrap}
 #where .rate{margin-left:auto;font-size:13px;font-weight:700}

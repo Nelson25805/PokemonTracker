@@ -35,7 +35,7 @@ const Config = (() => {
     };
     return cfg.games.map(g => {
       const { card, diploma, ...rest } = g, out = { ...rest, sources: sourcesOf(g) };
-      const pc = (cfg.generations[g.gen] || {}).pc;                    // PC box layout of the generation: { boxes, box (slots per box), cols }
+      const pc = g.pc || (cfg.generations[g.gen] || {}).pc;                    // PC box layout of the generation: { boxes, box (slots per box), cols }
       if (pc) out.pc = pc;
       if (card) {
         const { layout, ...over } = card;

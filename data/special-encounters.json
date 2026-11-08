@@ -17,6 +17,22 @@
     "method": "special",
     "cond": "memory link"
    }
+  },
+  {
+   "id": "shadow-pokemon",
+   "title": "Shadow Pokémon (snag and purify)",
+   "g": [
+    "colosseum",
+    "xd"
+   ],
+   "intro": [
+    "Shadow Pokémon belong to a Cipher or Snagem trainer. Win the battle, then use the Snag Machine to snag the Shadow Pokémon instead of fighting it normally.",
+    "A Shadow Pokémon can't be traded or sent to another game until you purify it (Colosseum: Relic Stone / XD: Purification Chamber). Once purified, it can be sent to Ruby, Sapphire, Emerald, FireRed and LeafGreen with a link cable."
+   ],
+   "match": {
+    "method": "shadow",
+    "cond": "."
+   }
   }
  ]
 }
