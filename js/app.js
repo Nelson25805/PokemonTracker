@@ -424,7 +424,9 @@
   document.addEventListener("keydown", e => { if (e.key === "Escape" && view.select && !document.querySelector("dialog[open]")) setSelect(false); });
 
   // ---- start up ----
-  $("#game").innerHTML = games.map(g => `<option value="${g.key}">${g.name}</option>`).join("");
+  // The Game dropdown is split into one <optgroup> per generation ("Gen 1 · Kanto" ...), from Config.gameGroups().
+  $("#game").innerHTML = Config.gameGroups().map(([label, list]) =>
+    `<optgroup label="${label}">${list.map(g => `<option value="${g.key}">${g.name}</option>`).join("")}</optgroup>`).join("");
   Store.subscribe(Persist.save);            // saving is just another subscriber, so no handler calls save()
   selectGame(gameOf(Store.get()).key);      // correct a saved game key that no longer exists
   Store.subscribe(onChange);

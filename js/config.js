@@ -7,6 +7,7 @@
 //                            pc        { boxes, box, cols }: the in-game PC (from the generation, for the "PC boxes" layout)
 //                            sources   keys of the games whose Pokémon can reach this game (itself first), for "where to find"
 //   Config.themeGroups()   [[group label, [[id, name], ...]], ...] for the Theme dropdown (after load())
+//   Config.gameGroups()    [[generation label, [game, ...]], ...] for the Game dropdown, one group per generation (after load())
 //   Config.build(cfg)      pure: raw config -> games array (exported for testing)
 //
 // Fonts are not per game, so they stay here.
@@ -63,5 +64,12 @@ const Config = (() => {
     return [...extra, ...gens.map(n => [((raw.generations[n] || {}).label) || `Gen ${n}`, games.filter(g => g.gen === n).map(g => [g.key, g.name])])];
   }
 
-  return { load, build, themeGroups };
+  // The Game dropdown: one group per generation ("Gen 1 · Kanto" ...), games in config order inside each group.
+  // The label comes from "generations" in data/games.config.json.
+  function gameGroups() {
+    const gens = [...new Set(games.map(g => g.gen))].sort((a, b) => a - b);
+    return gens.map(n => [((raw.generations[n] || {}).label) || `Gen ${n}`, games.filter(g => g.gen === n)]);
+  }
+
+  return { load, build, themeGroups, gameGroups };
 })();
