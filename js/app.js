@@ -165,7 +165,7 @@
     for (const c of chipEls) {
       const n = Number(c.dataset.n), { have, total } = Forms.speciesCounts(s, g, kind, n);
       c.textContent = `${have}/${total}`; c.classList.toggle("done", have === total);
-      c.setAttribute("aria-label", `Forms of ${monByN.get(n).name}: ${have} of ${total} (${what})`);
+      c.setAttribute("aria-label", `${have}/${total} forms of ${monByN.get(n).name} (${what})`);
       c.title = `Forms: ${have} of ${total} (${what}). Click to see them (or press F on the card)`;
     }
   }

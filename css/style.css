@@ -62,13 +62,14 @@ button{cursor:pointer}button:hover{background:var(--hi);color:var(--on-hi)}
 #fill{height:100%;width:0;background:var(--ink);transition:width .2s}
 #count{font:400 16px "PKMN",monospace;min-width:7ch;text-align:right}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(calc(var(--sprite,80px) + 24px),1fr));gap:0;padding:11px;max-width:1200px;margin:auto}
-.card{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:30px 4px 6px;background:var(--card);border:2px solid var(--line);border-radius:0;opacity:.5;filter:grayscale(1)} /* top 30px is reserved for the ? button and the caught tick, so they never sit on the artwork */
+.card{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:30px 4px 6px;background:var(--card);border:2px solid var(--line);border-radius:0;opacity:.75;filter:grayscale(1)} /* top 30px is reserved for the ? button and the caught tick, so they never sit on the artwork */
 .cell{position:relative;display:flex;padding:5px;content-visibility:auto;contain-intrinsic-size:auto 175px} /* off-screen cells skip layout/paint but stay in the DOM; padding replaces the grid gap so focus outlines are not clipped */.cell>.card{flex:1}.cell[hidden]{display:none} /* search hides the whole cell; its display:flex would beat the default [hidden] rule */
 .where{position:absolute;top:7px;left:7px;z-index:1;width:22px;height:22px;padding:0;line-height:1;font:400 12px "PKMN",monospace}
 .card.on{opacity:1;filter:none;background:var(--hi);color:var(--on-hi);border-color:var(--on-hi)}
 .card.on::after{content:"✓";position:absolute;top:2px;right:5px;font-weight:700}
 .card img{width:var(--sprite,80px);height:var(--sprite,80px);image-rendering:pixelated;object-fit:contain}
 .card .n{font:400 12px "PKMN",monospace}.card .nm{font-size:12px;text-align:center;overflow-wrap:anywhere}
+#grid:empty{min-height:100vh} /* before the cards are drawn: keeps the footer off screen so it does not jump (layout shift) */
 .card:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--mid);outline-offset:2px}
 footer{padding:0 16px 32px;max-width:1200px;margin:auto}footer p{font-size:12px;opacity:.8;max-width:70ch}
 footer button{margin-right:8px}
@@ -108,7 +109,7 @@ button:disabled{opacity:.45;cursor:not-allowed}button:disabled:hover{background:
 .tools{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;padding:8px 16px 0;max-width:1200px;margin:auto}
 .seg{display:flex}.seg button{border-right-width:0}.seg button:last-child{border-right-width:2px}
 .seg button[aria-pressed=true],#select[aria-pressed=true]{background:var(--ink);color:var(--bg)}
-#shown{font-size:13px;opacity:.85;margin-left:auto}
+#shown{font-size:13px;opacity:.85;margin-left:auto;min-height:1.4em}
 .card.sel{opacity:1;filter:none;box-shadow:inset 0 0 0 3px var(--ink)}
 .card.sel::before{content:"■";position:absolute;bottom:2px;right:5px;font-size:12px}
 body.selecting .grid{-webkit-user-select:none;user-select:none}
