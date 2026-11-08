@@ -5,7 +5,8 @@ build_orre.py - writes data/orre.json: the Pokemon Colosseum and Pokemon XD data
     python3 build_orre.py
 
 Neither game exists in PokeAPI's encounter data, so the data is typed in below (from Serebii.net:
-colosseum/pokemon.shtml, xd/pokemon.shtml, xd/pokespot.shtml). Edit the tables, run it again.
+colosseum/pokemon.shtml, xd/pokemon.shtml, and Bulbapedia's Poke Spot page for the Poke Spot rates).
+Edit the tables, run it again.
 
 Output: { "dex": { "colosseum": [national numbers], "xd": [...] },
           "loc": { "<game>": { "<n>": [[area, method, lo, hi, chance, cond], ...] } } }
@@ -14,6 +15,8 @@ Output: { "dex": { "colosseum": [national numbers], "xd": [...] },
 Table lines:  national number | area | method | level (30 or 10-20, blank = unknown) | note
 Methods: shadow (snag), gift, only-one (one-time reward), ecard, download, pokespot (wild).
 For shadow lines "Trainer: " is added to the note automatically. Avoid commas in notes.
+For pokespot lines the note is the encounter rate (for example 50%): it becomes the rate shown in the
+"Where to find" panel (the chance field) and no note is added.
 """
 import json, os
 
@@ -167,16 +170,21 @@ XD = """
 112|Citadark Isle|shadow|46|Cipher Boss Greevil
 103|Citadark Isle|shadow|46|Cipher Boss Greevil
 149|Gateon Port|shadow|55|Wanderer Miror. B
-27|RockGround PokéSpot|pokespot|10-20|Common
-207|RockGround PokéSpot|pokespot|10-20|Uncommon
-328|RockGround PokéSpot|pokespot|10-20|Rare
-187|Oasis PokéSpot|pokespot|10-20|Common
-231|Oasis PokéSpot|pokespot|10-20|Uncommon
-283|Oasis PokéSpot|pokespot|10-20|Rare
-41|Cave PokéSpot|pokespot|10-20|Common
-304|Cave PokéSpot|pokespot|10-20|Uncommon
-194|Cave PokéSpot|pokespot|10-20|Rare
+27|RockGround PokéSpot|pokespot|10-23|50%
+207|RockGround PokéSpot|pokespot|10-20|35%
+328|RockGround PokéSpot|pokespot|10-20|15%
+187|Oasis PokéSpot|pokespot|10-20|50%
+231|Oasis PokéSpot|pokespot|10-20|35%
+283|Oasis PokéSpot|pokespot|10-20|15%
+41|Cave PokéSpot|pokespot|10-21|50%
+304|Cave PokéSpot|pokespot|10-21|35%
+194|Cave PokéSpot|pokespot|10-21|15%
 """
+
+# Miror B.'s 2nd Chances (XD): if you miss a Shadow Pokemon whose trainer walks away, Miror B. steals it and battles you for it
+# until you snag it. national number : level (Serebii.net xd/mirorb.shtml). Edit the list and run build_orre.py again.
+MIRORB_LIST = "167:14 322:14 285:15 318:15 301:18 296:18 37:18 355:19 280:20 303:22 361:20 204:20 177:22 315:22 52:22 220:22 21:22 88:23 86:23 337:25 335:28 46:28 58:28 90:29 15:30 17:30 114:30 12:30 82:30 49:32 70:32 24:33 57:34 97:34 55:33 302:33 20:34 85:34 83:36 334:36 115:36 354:37 126:36 127:35 219:38 78:40 106:38 107:38 108:38 123:40 113:39 338:41 121:41 125:43 277:43 143:43 62:43 122:43 51:40 310:44 373:50 105:44 131:44"
+MIRORB = "\n".join(f"{n}|Miror B. (radar)|mirorb|{lv}|Only if you missed the original Shadow Pokémon" for n, lv in (x.split(":") for x in MIRORB_LIST.split()))
 
 def parse(block):
     loc = {}
@@ -185,14 +193,20 @@ def parse(block):
         lo, _, hi = lv.partition("-")
         lo = int(lo) if lo else 0
         hi = int(hi) if hi else lo
+        chance = 0
         if method == "shadow":
             note = "Trainer: " + note
-        loc.setdefault(n, []).append([area, method, lo, hi, 0, note])
+        elif method == "pokespot" and note.endswith("%"):
+            chance, note = int(note[:-1]), ""          # the rate goes in the chance field; nothing else to say
+        loc.setdefault(n, []).append([area, method, lo, hi, chance, note])
     return loc
 
-out = {"version": 1, "source": "Serebii.net (Colosseum / XD pages)", "dex": {}, "loc": {}}
+out = {"version": 1, "source": "Serebii.net (Colosseum / XD pages); Poké Spot rates from Bulbapedia", "dex": {}, "loc": {}}
 for key, block in (("colosseum", COLOSSEUM), ("xd", XD)):
     out["loc"][key] = parse(block)
+    if key == "xd":                                  # Miror B.'s 2nd chances are extra rows on top of the normal ones
+        for n, rows in parse(MIRORB).items():
+            out["loc"][key].setdefault(n, []).extend(rows)
     out["dex"][key] = sorted(int(n) for n in out["loc"][key])
 os.makedirs("data", exist_ok=True)
 with open(os.path.join("data", "orre.json"), "w", encoding="utf-8") as f:

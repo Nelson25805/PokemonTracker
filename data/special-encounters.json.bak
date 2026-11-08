@@ -1,0 +1,38 @@
+{
+ "version": 1,
+ "_help": "Special encounters that need a short \"how it works\" explanation. Read by js/where.js. Each entry: id, title (bold heading), g = games it applies to, match = how to recognise the encounter in data/locations.json: method (the encounter method, e.g. \"special\") and cond (a regular expression tested, case-insensitive, against the row's condition text), intro = the explanation paragraphs. The explanation is shown once per Pokémon, as its own row under the first location row that has a matching encounter. Your normal location rows are unchanged.",
+ "encounters": [
+  {
+   "id": "ns-pokemon",
+   "title": "N's Pokémon (special encounter)",
+   "g": [
+    "black-2",
+    "white-2"
+   ],
+   "intro": [
+    "You need two DS / 3DS consoles: one with Pokémon Black or White where you have already beaten N and Ghetsis, and one with this game (Black 2 or White 2).",
+    "Connect them with Unova Link > Memory Link, then talk to the Breeder in the Aspertia City Pokémon Center and watch the cutscene where N releases his Pokémon. After that, each one has about a 1% chance to replace a normal wild encounter in its usual spot, and it stays there until you catch it."
+   ],
+   "match": {
+    "method": "special",
+    "cond": "memory link"
+   }
+  },
+  {
+   "id": "shadow-pokemon",
+   "title": "Shadow Pokémon (snag and purify)",
+   "g": [
+    "colosseum",
+    "xd"
+   ],
+   "intro": [
+    "Shadow Pokémon belong to a Cipher or Snagem trainer. Win the battle, then use the Snag Machine to snag the Shadow Pokémon instead of fighting it normally.",
+    "A Shadow Pokémon can't be traded or sent to another game until you purify it (Colosseum: Relic Stone / XD: Purification Chamber). Once purified, it can be sent to Ruby, Sapphire, Emerald, FireRed and LeafGreen with a link cable."
+   ],
+   "match": {
+    "method": "shadow",
+    "cond": "."
+   }
+  }
+ ]
+}

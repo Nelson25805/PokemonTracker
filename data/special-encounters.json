@@ -33,6 +33,22 @@
     "method": "shadow",
     "cond": "."
    }
+  },
+  {
+   "id": "mirorb",
+   "title": "Miror B.'s 2nd Chances (missed Shadow Pokémon)",
+   "g": [
+    "xd"
+   ],
+   "intro": [
+    "Some Shadow Pokémon belong to trainers who don't stay in one place (Cipher Admins and wandering Cipher Peons). If you miss one, Miror B. steals it, and you get a second chance to snag it from him.",
+    "Once you have found Miror B., a radar alert tells you where he is. He can turn up anywhere: at a PokéSpot, in a town or at a stadium. He will battle you with the stolen Pokémon as many times as it takes for you to snag it.",
+    "When every one of the 83 Shadow Pokémon is snagged, whether from him or from their trainers, he destroys the radar. The levels listed here are the ones he uses."
+   ],
+   "match": {
+    "method": "mirorb",
+    "cond": "."
+   }
   }
  ]
 }
