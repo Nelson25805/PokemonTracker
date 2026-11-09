@@ -434,3 +434,6 @@ body.selecting .chip{display:none}
 :root[data-theme=colosseum][data-mode=dark]{--bg:#1f150d;--panel:#3e2b1a;--ink:#f1e3d2;--mid:#dea674;--hi:#d79c62;--card:#53402b;--line:#c19a7b;--on-hi:#24150a;color-scheme:dark}
 :root[data-theme=xd]{--bg:#e4dcf2;--panel:#8a6fc4;--ink:#150a2b;--mid:#4a2d94;--hi:#d8c8ff;--card:#f1ecfa;--line:#150a2b;--on-hi:#150a2b;color-scheme:light}
 :root[data-theme=xd][data-mode=dark]{--bg:#14101f;--panel:#2a2040;--ink:#e6dff5;--mid:#a58ee0;--hi:#8a73c4;--card:#3a2f55;--line:#9a87c9;--on-hi:#120a24;color-scheme:dark}
+/* shiny-locked Pokémon while tracking shiny (config "shinyLocked") */
+.card.locked{opacity:.4;cursor:not-allowed}
+.card.locked::after{content:"🔒";position:absolute;top:2px;right:5px;font-size:12px}

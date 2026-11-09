@@ -37,7 +37,11 @@
   const shinyOn = (s, g = gameOf(s)) => !!(s.last.shiny && g.shiny);
   const listKey = (s, g = gameOf(s)) => (shinyOn(s, g) ? "shiny" : "caught");
   const pcOn = (s, g = gameOf(s)) => s.last.layout === "pc" && !!g.pc;     // PC boxes layout (needs the generation's box sizes)
-  const caughtSet = (s, g = gameOf(s)) => new Set(s[listKey(s, g)][g.key] || []);
+  // Shiny-locked Pokémon (config "shinyLocked": national numbers that can never be shiny in that game) can't be marked
+  // in the shiny list and don't count toward the shiny total.
+  const lockedOf = (g, kind) => (kind === "shiny" ? new Set(g.shinyLocked || []) : new Set());
+  const blocked = (g, kind, n) => kind === "shiny" && (g.shinyLocked || []).includes(n);
+  const caughtSet = (s, g = gameOf(s)) => { const k = listKey(s, g), lock = lockedOf(g, k); return new Set((s[k][g.key] || []).filter(n => !lock.has(n))); };
 
   // Regional lists are arrays of national numbers in regional order. A game only offers the regional
   // view when its list actually differs from the national one (so Red/Blue/Yellow don't).
@@ -46,10 +50,17 @@
   const hasRegional = g => { const l = regList(g); return !!l && (onlyRegional(g) || !(l.length === g.count && l.every((n, i) => n === i + 1))); };
   const dexList = (s, g = gameOf(s)) => ((s.last.dex === "regional" || onlyRegional(g)) && hasRegional(g) ? regList(g) : null);
   const dexTotal = (s, g = gameOf(s)) => (dexList(s, g) ? dexList(s, g).length : g.count);
+  // The total for one list: the shiny list leaves out shiny-locked Pokémon that are in the visible dex.
+  const totalOf = (s, kind, g = gameOf(s)) => {
+    const n = dexTotal(s, g), locked = g.shinyLocked || [];
+    if (kind !== "shiny" || !locked.length) return n;
+    const list = dexList(s, g);
+    return n - locked.filter(x => (list ? list.includes(x) : x <= g.count)).length;
+  };
   // viewOf: the visible dex of one list ("caught" or "shiny"). viewCaught is the list being tracked right now;
   // the trainer card and diploma always use the normal list, whatever you are tracking.
   const viewOf = (s, kind, g = gameOf(s)) => {
-    const all = new Set(s[kind][g.key] || []), list = dexList(s, g);
+    const lock = lockedOf(g, kind), all = new Set((s[kind][g.key] || []).filter(n => !lock.has(n))), list = dexList(s, g);
     return list ? new Set(list.filter(n => all.has(n))) : all;
   };
   const viewCaught = (s, g = gameOf(s)) => viewOf(s, listKey(s, g), g);
@@ -117,7 +128,7 @@
     cardEls = [...document.querySelectorAll("#grid .card")];
     badgeEls = [...document.querySelectorAll("#grid .other")];     // same order as cardEls (empty when the game has no shiny sprites)
     chipEls = [...document.querySelectorAll("#grid .chip")];
-    paintBadges(s); paintChips(s);
+    paintBadges(s); paintChips(s); paintLocks(s);
     view.selected.clear(); view.anchor = null; // a new set of cards: nothing is selected yet
     applyFilter(); // keep any search text and Show filter applied after a game switch
   }
@@ -126,11 +137,12 @@
   // Cards that get hidden are also dropped from the selection, so bulk actions only ever touch what you can see.
   const isShown = el => !el.parentElement.hidden;
   function applyFilter() {
-    const q = $("#search").value.trim().toLowerCase(), got = caughtSet(Store.get());
+    const s = Store.get(), g = gameOf(s), q = $("#search").value.trim().toLowerCase(), got = caughtSet(s, g), lock = lockedOf(g, listKey(s, g));
     for (const el of cardEls) {
       const n = Number(el.dataset.n);
       const textOk = !q || el.dataset.name.includes(q) || el.dataset.n.includes(q) || el.dataset.pos.includes(q);
-      const stateOk = view.filter === "all" || (view.filter === "caught") === got.has(n);
+      // a shiny-locked Pokémon can never be "missing" from the shiny list, so Missing leaves it out
+      const stateOk = view.filter === "all" || ((view.filter === "caught") === got.has(n) && !(view.filter === "missing" && lock.has(n)));
       el.parentElement.hidden = !(textOk && stateOk);
       if (!(textOk && stateOk)) view.selected.delete(n);
     }
@@ -147,15 +159,25 @@
   // The small corner badge on every card shows the list you are NOT tracking (★ shiny while tracking normal,
   // ✓ normal while tracking shiny). Lit = owned. Clicking it (or pressing S on a card) toggles that list.
   function paintBadges(s) {
-    const g = gameOf(s), other = otherKey(s, g), has = new Set(s[other][g.key] || []), show = s.last.badges !== false;
+    const g = gameOf(s), other = otherKey(s, g), has = new Set(s[other][g.key] || []), show = s.last.badges !== false, lock = lockedOf(g, other);
     const glyph = other === "shiny" ? "★" : "✓", what = other === "shiny" ? "Shiny" : "Normal";
     $("#grid").classList.toggle("has-badges", g.shiny && show);       // makes room under the name
     badgeEls.forEach((b, i) => {
-      const n = Number(cardEls[i].dataset.n), on = has.has(n);
-      b.hidden = !show; b.textContent = glyph; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on);
+      const n = Number(cardEls[i].dataset.n), on = has.has(n) && !lock.has(n);
+      b.hidden = !show || lock.has(n); b.textContent = glyph; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on);
       b.setAttribute("aria-label", `${what}: ${monByN.get(n).name}`);
       b.title = `${what} ${on ? "owned" : "not owned"}. Click to ${on ? "unmark" : "mark"} (or press S on the card)`;
     });
+  }
+
+  // While tracking shiny, shiny-locked Pokémon are greyed out with a lock and can't be marked.
+  function paintLocks(s) {
+    const g = gameOf(s), lock = lockedOf(g, shinyOn(s, g) ? "shiny" : "caught");
+    for (const el of cardEls) {
+      const l = lock.has(Number(el.dataset.n));
+      el.classList.toggle("locked", l);
+      if (l) el.title = "Shiny locked: this Pokémon can't be shiny in this game"; else el.removeAttribute("title");
+    }
   }
 
   // The form chip ("2/28") on cards whose species has forms in this game: progress on the list being tracked.
@@ -180,7 +202,7 @@
   function renderMarks(s) {
     const got = caughtSet(s);
     for (const el of cardEls) el.classList.toggle("on", got.has(Number(el.dataset.n)));
-    paintBadges(s); paintChips(s);
+    paintBadges(s); paintChips(s); paintLocks(s);
     applyFilter(); // Missing / Caught views change when a mark does (this also refreshes aria-pressed and the toolbar)
   }
 
@@ -217,20 +239,20 @@
   }
 
   function renderProgress(s) {
-    const g = gameOf(s), n = viewCaught(s).size, total = dexTotal(s), normal = viewOf(s, "caught").size;
+    const g = gameOf(s), kind = listKey(s, g), n = viewCaught(s).size, total = totalOf(s, kind, g), dtotal = dexTotal(s), normal = viewOf(s, "caught").size;
     $("#count").textContent = `${n} / ${total}`;
     $("#fill").style.width = `${(n / total) * 100}%`;
     const left = formsLeft(s, g);                                      // required forms still missing (0 unless a completion rule is on)
-    $("#tsum").textContent = `${normal} / ${total}` + (normal === total && left ? ` · ${left} required form${left === 1 ? "" : "s"} left`
-      : normal === total && g.diploma && !g.diploma.always ? " · Diploma ready!" : "");
+    $("#tsum").textContent = `${normal} / ${dtotal}` + (normal === dtotal && left ? ` · ${left} required form${left === 1 ? "" : "s"} left`
+      : normal === dtotal && g.diploma && !g.diploma.always ? " · Diploma ready!" : "");
     const c2 = $("#count2");                                           // the other list's progress, for games with shiny sprites
     c2.hidden = !g.shiny;
     if (g.shiny) {
       const k = otherKey(s, g), m = viewOf(s, k).size;
-      c2.textContent = `${k === "shiny" ? "★" : "✓"} ${m} / ${total}`;
+      c2.textContent = `${k === "shiny" ? "★" : "✓"} ${m} / ${totalOf(s, k, g)}`;
       c2.title = `${k === "shiny" ? "Shiny" : "Normal"} progress`;
     }
-    const c3 = $("#count3"), kind = listKey(s, g), fc = Forms.counts(s, g, kind, inDexOf(s, g));   // forms: its own counter
+    const c3 = $("#count3"), fc = Forms.counts(s, g, kind, inDexOf(s, g));   // forms: its own counter
     c3.hidden = !fc.total;
     c3.textContent = `${kind === "shiny" ? "★ " : ""}Forms ${fc.have} / ${fc.total}`;
     c3.title = "Forms progress. It only counts toward completion if you turn on a completion rule in Settings.";
@@ -290,15 +312,16 @@
   $("#trainer").addEventListener("input", e => Store.set({ name: e.target.value }));
 
   $("#grid").addEventListener("click", e => {
-    const s = Store.get(), where = e.target.closest(".where");
+    const s = Store.get(), g = gameOf(s), where = e.target.closest(".where");
     if (where) return openInfo(Number(where.dataset.n), "where");
     const chip = e.target.closest(".chip");                            // form chip: open the Forms tab
     if (chip) { if (!view.select) openInfo(Number(chip.dataset.n), "forms"); return; }
     const other = e.target.closest(".other");                          // corner badge: toggle the list you are not tracking
-    if (other) { if (!view.select) Store.toggle(otherKey(s), gameOf(s).key, Number(other.dataset.n)); return; }
+    if (other) { if (!view.select && !blocked(g, otherKey(s, g), Number(other.dataset.n))) Store.toggle(otherKey(s, g), g.key, Number(other.dataset.n)); return; }
     const card = e.target.closest(".card"); if (!card) return;
     if (view.select) return pick(card, e.shiftKey);
-    Store.toggle(listKey(s), gameOf(s).key, Number(card.dataset.n));
+    if (blocked(g, listKey(s, g), Number(card.dataset.n))) return;     // shiny-locked: can't be marked shiny
+    Store.toggle(listKey(s, g), g.key, Number(card.dataset.n));
   });
   // The "?" and badge buttons are skipped by Tab (hundreds of extra stops), so keyboard users press I (where to find)
   // or S (toggle the shiny/normal badge) on a card instead.
@@ -310,7 +333,7 @@
     const s = Store.get(), g = gameOf(s), n = Number(card.dataset.n);
     if (k === "i") openInfo(n, "where");
     else if (k === "f") { if (card.classList.contains("hasform") && !view.select) openInfo(n, "forms"); }
-    else if (g.shiny && !view.select) Store.toggle(otherKey(s, g), g.key, n);
+    else if (g.shiny && !view.select && !blocked(g, otherKey(s, g), n)) Store.toggle(otherKey(s, g), g.key, n);
   });
 
   $("#export").addEventListener("click", () => Persist.exportFile(Store.get()));
@@ -368,7 +391,7 @@
   function applyBulk(ns, on, label) {
     const s = Store.get(), kind = listKey(s), key = gameOf(s).key, before = s[kind][key] || [];
     const after = new Set(before);
-    for (const n of ns) on ? after.add(n) : after.delete(n);
+    for (const n of ns) { if (on && blocked(gameOf(s), kind, n)) continue; on ? after.add(n) : after.delete(n); }   // shiny-locked Pokémon are skipped
     if (after.size === before.length) return;                          // nothing would change
     const sorted = [...after].sort((a, b) => a - b);
     view.undo = { kind, key, before, after: sorted, label: `${label} (${Math.abs(after.size - before.length)})` };

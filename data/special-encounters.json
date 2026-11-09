@@ -36,6 +36,20 @@
    }
   },
   {
+   "id": "xd-shiny-locked",
+   "title": "Shiny locked (XD)",
+   "g": [
+    "xd"
+   ],
+   "intro": [
+    "In Pokémon XD, almost every Shadow Pokémon is shiny locked, so it can never be shiny. Only 17 Pokémon can be shiny: Eevee, Chikorita, Cyndaquil, Totodile, Larvitar, Meditite, Shuckle, Elekid and the PokéSpot Pokémon (Zubat, Aron, Wooper, Sandshrew, Gligar, Trapinch, Hoppip, Phanpy, Surskit). Rows marked \"shiny locked\" below can't be shiny."
+   ],
+   "match": {
+    "method": "shadow",
+    "cond": "."
+   }
+  },
+  {
    "id": "mirorb",
    "title": "Miror B.'s 2nd Chances (missed Shadow Pokémon)",
    "g": [
@@ -80,6 +94,48 @@
    "match": {
     "method": "only-one",
     "cond": "100 opponents"
+   }
+  },
+  {
+   "id": "colo-japan-download",
+   "title": "Japan only (Bonus Disc)",
+   "g": [
+    "colosseum"
+   ],
+   "intro": [
+    "This Pokémon came from the Japanese Colosseum Bonus Disc. It was never available in the North American or PAL versions of the game."
+   ],
+   "match": {
+    "method": "download",
+    "cond": "Japan only"
+   }
+  },
+  {
+   "id": "colo-na-download",
+   "title": "North America only (Bonus Disc)",
+   "g": [
+    "colosseum"
+   ],
+   "intro": [
+    "This Pokémon (Jirachi) came from the North American Colosseum Bonus Disc. It was never available in the Japanese or PAL versions of the game."
+   ],
+   "match": {
+    "method": "download",
+    "cond": "North America only"
+   }
+  },
+  {
+   "id": "colo-japan-ecard",
+   "title": "Japan only (e-Reader card)",
+   "g": [
+    "colosseum"
+   ],
+   "intro": [
+    "These Shadow Pokémon (Togepi, Mareep, Scizor) came from Japanese e-Reader cards scanned in the Card e Room. The cards were only released in Japan, so you can't get them in the North American or PAL versions."
+   ],
+   "match": {
+    "method": "ecard",
+    "cond": "Japan only"
    }
   }
  ]

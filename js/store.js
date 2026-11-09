@@ -87,7 +87,8 @@ const Store = (() => {
       for (const key of Object.keys(src)) {
         const g = byKey.get(key), raw = src[key];
         if (!g || !Array.isArray(raw) || (kind === "shiny" && !g.shiny)) { dropped += Array.isArray(raw) ? raw.length : 1; continue; }
-        const ok = new Set(raw.filter(n => Number.isInteger(n) && n >= 1 && n <= g.count));
+        const ok = new Set(raw.filter(n => Number.isInteger(n) && n >= 1 && n <= g.count
+          && !(kind === "shiny" && (g.shinyLocked || []).includes(n))));   // shiny-locked Pokémon can't be in a shiny list
         dropped += raw.length - ok.size;
         out[key] = [...ok].sort((a, b) => a - b);
       }
