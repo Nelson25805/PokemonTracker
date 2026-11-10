@@ -8,12 +8,15 @@ Neither game exists in PokeAPI's encounter data, so the data is typed in below (
 colosseum/pokemon.shtml, xd/pokemon.shtml, and Bulbapedia's Poke Spot page for the Poke Spot rates).
 Edit the tables, run it again.
 
+Region exclusives: start the note with "Japan only" or "North America only" (data/special-encounters.json matches that text).
+Shiny-locked Pokemon are set in data/games.config.json ("shinyLocked"), not here.
+
 Output: { "dex": { "colosseum": [national numbers], "xd": [...] },
           "loc": { "<game>": { "<n>": [[area, method, lo, hi, chance, cond], ...] } } }
   dex  -> the game's Pokemon list (js/app.js merges it into the regional lists)
   loc  -> "Where to find" rows (js/where.js merges them into locations.json when the page loads)
 Table lines:  national number | area | method | level (30 or 10-20, blank = unknown) | note
-Methods: shadow (snag), gift, only-one (one-time reward), trade (in-game trade), ecard, download, pokespot (wild).
+Methods: shadow (snag), gift, only-one (one-time reward), ecard, download, pokespot (wild).
 For shadow lines "Trainer: " is added to the note automatically. Avoid commas in notes.
 For pokespot lines the note is the encounter rate (for example 50%): it becomes the rate shown in the
 "Where to find" panel (the chance field) and no note is added.
@@ -21,8 +24,8 @@ For pokespot lines the note is the encounter rate (for example 50%): it becomes 
 import json, os
 
 COLOSSEUM = """
-196|Starting Pokémon|gift|25|Given at the start of the game
-197|Starting Pokémon|gift|26|Given at the start of the game
+196|Starting Pokémon|gift|25|Given at the start of the game (shiny locked)
+197|Starting Pokémon|gift|26|Given at the start of the game (shiny locked)
 296|Phenac City|shadow|30|Miror B. Peon Trudly
 153|Phenac City Gates|shadow|30|Mystery Troop Verde (choose 1 of 3)
 156|Phenac City Gates|shadow|30|Mystery Troop Rosso (choose 1 of 3)
@@ -45,7 +48,7 @@ COLOSSEUM = """
 307|Pyrite Cave|shadow|33|Rider Twan
 333|Pyrite Cave|shadow|33|Hunter Zalo
 185|Pyrite City|shadow|35|Cipher Admin Miror B.
-311|Pyrite City|gift|13|Given by Ginzaru
+311|Pyrite City|gift|13|Given by Ginzaru (shiny locked)
 237|Celebi Shrine - Agate|shadow|38|Cipher Peon Skrub
 244|Mt. Battle|shadow|40|Cipher Admin Dakim
 166|The Under City|shadow|43|Cipher Peon Kloak
@@ -75,13 +78,13 @@ COLOSSEUM = """
 217|Snagem Hideout|shadow|45|Snagem Grunt Agrev
 213|Deep Colosseum|shadow|45|Deep King Agnol
 176|Outskirt Stand|shadow|20|Cipher Peon Grunt Fake
-250|Mt. Battle - 100th Battle|only-one|70|Reward for clearing the 100th Mt. Battle battle
-251|Download|download|10|Japanese Bonus Disc only
-25|Download|download|10|Japanese Bonus Disc only
-385|Download|download||US Bonus Disc only
-175|Card E Room - Phenac City|ecard||Needs an e-Reader card
-179|Card E Room - Phenac City|ecard||Needs an e-Reader card
-212|Card E Room - Phenac City|ecard||Needs an e-Reader card
+250|Mt. Battle - 100th Battle|only-one|70|Reward for clearing the 100th Mt. Battle battle (shiny locked)
+251|Download|download|10|Japan only: Japanese Bonus Disc (shiny locked)
+25|Download|download|10|Japan only: Japanese Bonus Disc (shiny locked)
+385|Download|download||North America only: US Bonus Disc
+175|Card E Room - Phenac City|ecard||Japan only: needs an e-Reader card
+179|Card E Room - Phenac City|ecard||Japan only: needs an e-Reader card
+212|Card E Room - Phenac City|ecard||Japan only: needs an e-Reader card
 """
 
 XD = """
@@ -119,13 +122,7 @@ XD = """
 299|Phenac Stadium|shadow|26|Wanderer Miror. B
 335|Cipher Key Lair|shadow|28|Thug Zook
 175|Outskirt Stand|shadow|25|Hordel
-239|Outskirt Stand|trade|20|Hordel trades this for a purified Shadow Togepi or Togetic
-213|Duking|trade|20|Give Duking a Surskit from the Oasis PokéSpot
-307|Duking|trade|20|Give Duking a Trapinch from the Rock PokéSpot
-246|Duking|trade|20|Give Duking a Wooper from the Cave PokéSpot
-152|Mt. Battle|only-one|5|Reward for beating 100 opponents in a row with the same party (Chikorita)
-155|Mt. Battle|only-one|5|Reward for beating 100 opponents in a row with the same party (Cyndaquil)
-158|Mt. Battle|only-one|5|Reward for beating 100 opponents in a row with the same party (Totodile)
+239|Outskirt Stand|gift||Not a Shadow Pokémon: trade Togepi back to Hordel (same level as your Togepi)
 46|Cipher Key Lair|shadow|28|Cipher Peon Humah
 58|Cipher Key Lair|shadow|28|Cipher Peon Humah
 90|Cipher Key Lair|shadow|29|Cipher Peon Gorog
@@ -187,11 +184,6 @@ XD = """
 194|Cave PokéSpot|pokespot|10-21|15%
 """
 
-# Miror B.'s 2nd Chances (XD): if you miss a Shadow Pokemon whose trainer walks away, Miror B. steals it and battles you for it
-# until you snag it. national number : level (Serebii.net xd/mirorb.shtml). Edit the list and run build_orre.py again.
-MIRORB_LIST = "167:14 322:14 285:15 318:15 301:18 296:18 37:18 355:19 280:20 303:22 361:20 204:20 177:22 315:22 52:22 220:22 21:22 88:23 86:23 337:25 335:28 46:28 58:28 90:29 15:30 17:30 114:30 12:30 82:30 49:32 70:32 24:33 57:34 97:34 55:33 302:33 20:34 85:34 83:36 334:36 115:36 354:37 126:36 127:35 219:38 78:40 106:38 107:38 108:38 123:40 113:39 338:41 121:41 125:43 277:43 143:43 62:43 122:43 51:40 310:44 373:50 105:44 131:44"
-MIRORB = "\n".join(f"{n}|Miror B. (radar)|mirorb|{lv}|Only if you missed the original Shadow Pokémon" for n, lv in (x.split(":") for x in MIRORB_LIST.split()))
-
 def parse(block):
     loc = {}
     for line in block.strip().splitlines():
@@ -210,9 +202,6 @@ def parse(block):
 out = {"version": 1, "source": "Serebii.net (Colosseum / XD pages); Poké Spot rates from Bulbapedia", "dex": {}, "loc": {}}
 for key, block in (("colosseum", COLOSSEUM), ("xd", XD)):
     out["loc"][key] = parse(block)
-    if key == "xd":                                  # Miror B.'s 2nd chances are extra rows on top of the normal ones
-        for n, rows in parse(MIRORB).items():
-            out["loc"][key].setdefault(n, []).extend(rows)
     out["dex"][key] = sorted(int(n) for n in out["loc"][key])
 os.makedirs("data", exist_ok=True)
 with open(os.path.join("data", "orre.json"), "w", encoding="utf-8") as f:
