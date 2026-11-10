@@ -18,20 +18,27 @@
 // Maps.addHoney() puts the 21 trees on the map (one small flashing square each), and the row gets a short help text plus
 // a list of every tree with a "Show on map" button each.
 //
+// PokéWalker (Heart Gold / Soul Silver): data/pokewalker.json (optional, built by build_pokewalker.py) has the same shape as
+// data/orre.json. Its course Pokémon are added to the location data as "PokéWalker: <course>" rows (method "pokewalker"), and its
+// evolution-item sources are added to the "Get <item>" rows, with a short blurb about the extra hardware (pokewalker.json "itemNote").
+//
 // Location data lives in data/locations.json (built by build_locations.py) and is fetched the first
 // time the panel opens, so it costs nothing until someone asks.
 const Where = (() => {
   const $ = s => document.querySelector(s);
   let games = [], mons = [], byKey = {}, data = null, loading = null, honey = null, special = [], regional = null;
+  let walkerNote = "";                          // pokewalker.json "itemNote": the short blurb shown under an item that has a PokéWalker source
   let last = null;                              // last = what the open dialog shows (for the season buttons); season = the chosen season filter ("all" or spring / summer / autumn / winter)
 
   const HONEY = "Honey Trees", HONEY_PRE = "Honey Tree: ";     // same names as in maps.js
+  const WALKER = "PokéWalker";                                 // item source lines from pokewalker.json start with this
 
   const METHODS = {
     walk: "Grass / cave / land", surf: "Surfing", "old-rod": "Old Rod", "good-rod": "Good Rod", "super-rod": "Super Rod",
     "rock-smash": "Rock Smash", headbutt: "Headbutt", gift: "Gift", "gift-egg": "Gift (Egg)", trade: "In-game trade", "only-one": "Static (one-time)",
     pokeflute: "Poké Flute", "bug-catching-contest": "Bug-Catching Contest", "roaming-grass": "Roaming (grass / land)", "roaming-water": "Roaming (surfing)",
     "honey-tree": "Honey tree",
+    pokewalker: "PokéWalker (transfer)",
     // Colosseum / XD (data/orre.json)
     shadow: "Snag (Shadow Pokémon)", mirorb: "Miror B.'s 2nd chance (snag)", pokespot: "PokéSpot (wild)", ecard: "e-Reader card", download: "Bonus Disc download",
     // Gen 5 special encounter spots: friendlier names for the player (locations.json keeps the raw method names)
@@ -192,14 +199,17 @@ const Where = (() => {
 
   const wiki = name => `https://bulbapedia.bulbagarden.net/wiki/${encodeURIComponent(name.replace(/ /g, "_"))}`;
   // The "Get <item>" row: One-time and Repeatable sources in separate labelled blocks, then a link to the item's full Bulbapedia page.
+  // An item with a PokéWalker source also gets the short PokéWalker blurb (pokewalker.json "itemNote").
   function itemBody(it, game) {
     const link = `<a class="itemwiki" href="${wiki(it.name)}" target="_blank" rel="noopener">Full list on Bulbapedia ↗</a>`;
     if (!it.lines) return `<span class="itemgrp">No source for this item is recorded${game ? ` in ${esc(game)}` : ""} yet.</span>${link}`;
     const grp = (cls, name, tip, arr) => arr.length
       ? `<span class="itemgrp"><b class="itemk ${cls}" title="${esc(tip)}">${name}</b>${arr.map(esc).join("<br>")}</span>` : "";
+    const walker = [...it.lines.once, ...it.lines.repeat, ...it.lines.other].some(t => t.startsWith(WALKER));
+    const note = walker && walkerNote ? `<span class="itemgrp"><b class="itemk repeat">PokéWalker</b>${esc(walkerNote)}</span>` : "";
     return grp("once", "One-time", "Finite: you can only get this once in a playthrough (an item on the ground, a gift, a story reward).", it.lines.once) +
       grp("repeat", "Repeatable", "You can get this again (a shop, a repeatable reward or a recurring spot).", it.lines.repeat) +
-      (it.lines.other.length ? `<span class="itemgrp">${it.lines.other.map(esc).join("<br>")}</span>` : "") + link;
+      (it.lines.other.length ? `<span class="itemgrp">${it.lines.other.map(esc).join("<br>")}</span>` : "") + note + link;
   }
   function evoRows(e) {
     const rows = [`<li class="evo"><strong>Evolve ${esc(nameOf(e.from))}</strong><span>${e.opts.map(esc).join("<br>or: ")}</span></li>`];
@@ -282,7 +292,7 @@ const Where = (() => {
       for (const t of times) g.tper[t] = Math.min(100, (g.tper[t] || 0) + (chance || 0));
     }
     const lvl = r => (r.lo ? (r.lo === r.hi ? `Lv ${r.lo}` : `Lv ${r.lo}–${r.hi}`) : "");
-    const mclass = m => (/surf|rod/.test(m) ? "water" : /^(gift|only-one|shadow|mirorb|trade|ecard|download)/.test(m) ? "static" : "land");
+    const mclass = m => (/surf|rod/.test(m) ? "water" : /^(gift|only-one|shadow|mirorb|trade|ecard|download|pokewalker)/.test(m) ? "static" : "land");
     const tags = x => (x.other ? x.other.split(", ").map(c => `<span class="ctag">${esc(c)}</span>`).join("") : "");
     const best = x => Math.max(0, ...Object.values(x.per));
     const rate = c => (c > 0 ? `<span class="rate">${c}%</span>` : "");   // 100% is shown too (gifts, static encounters, guaranteed spots); 0 = no rate recorded, so nothing
@@ -429,12 +439,22 @@ const Where = (() => {
   }
 
   // data/orre.json: Colosseum / XD encounters, added to the location data (they are not in PokéAPI)
+  // data/pokewalker.json has the same "loc" shape, so it is merged with this too.
   function mergeOrre(d, o) {
     if (!d || !o || !o.loc) return;
     d.loc = d.loc || {};
     for (const [g, byMon] of Object.entries(o.loc)) {
       const dst = (d.loc[g] = d.loc[g] || {});
       for (const [n, rows] of Object.entries(byMon)) dst[n] = (dst[n] || []).concat(rows);
+    }
+  }
+
+  // data/pokewalker.json: same row shape as orre.json, plus evolution-item sources
+  function mergeWalkerItems(items, pw) {
+    if (!items || !items.items || !pw || !pw.items) return;
+    for (const [name, rows] of Object.entries(pw.items)) {
+      const it = (items.items[name] = items.items[name] || { where: [] });
+      (it.where = it.where || []).push({ g: pw.games, t: rows, k: "repeat" });
     }
   }
 
@@ -538,8 +558,8 @@ const Where = (() => {
   function load() {
     if (data) return Promise.resolve(data);
     const get = f => fetch(`data/${f}.json`).then(r => (r.ok ? r.json() : null)).catch(() => null);
-    return (loading = loading || Promise.all([get("locations"), get("items"), get("maps"), get("honey"), get("special-encounters"), get("orre")])
-      .then(([d, items, maps, hon, sp, orre]) => {
+    return (loading = loading || Promise.all([get("locations"), get("items"), get("maps"), get("honey"), get("special-encounters"), get("orre"), get("pokewalker")])
+      .then(([d, items, maps, hon, sp, orre, pw]) => {
         loading = null;
         special = sp && Array.isArray(sp.encounters) ? sp.encounters : [];
         if (typeof Maps !== "undefined") {
@@ -549,8 +569,10 @@ const Where = (() => {
         if (d && typeof Maps !== "undefined") Maps.fixLoc(d);                     // PokeAPI's "Kanto Victory Road 1 / 2" -> "Kanto Victory Road"
         if (d && hon) { mergeHoney(d, hon); honey = hon; }
         if (d && orre) mergeOrre(d, orre);
+        if (d && pw) { mergeOrre(d, pw); walkerNote = pw.itemNote || ""; }        // loc has the same shape as orre.json
+        mergeWalkerItems(items, pw);                                               // PokéWalker sources for evolution items
         return (data = d && { ...d, items });
-      }));   // items.json and honey.json are optional; a failed load can be retried next time
+      }));   // items.json, honey.json and pokewalker.json are optional; a failed load can be retried next time
   }
 
   async function open(game, n) {
