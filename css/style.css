@@ -1,17 +1,15 @@
+/* Pokédex Tracker styles. Themes: js/theme.js sets data-theme / data-mode on <html>. Variables: --bg page, --panel header,
+   --ink text and borders, --mid focus rings, --hi caught cards / hover, --card cards and inputs, --line borders, --on-hi text on --hi.
+   Every theme has a light and a dark block. Region-map flash colours and timings were measured from game recordings. */
 @font-face{font-family:"PKMN";src:url("../assets/fonts/pkmn-rbygsc.ttf");font-display:swap}
 @font-face{font-family:"PokeRS";src:url("../assets/fonts/pokemon-rs.ttf");font-display:swap}
 @font-face{font-family:"PokeFRLG";src:url("../assets/fonts/pokemon-frlg.ttf");font-display:swap}
 :root{--bg:#c7d98a;--panel:#b2c66f;--ink:#0f380f;--mid:#306230;--hi:#9bbc0f;--card:#d9e8a4;--line:#0f380f;--on-hi:#0f380f;color-scheme:light}
-/* Themes (js/theme.js sets data-theme / data-mode on <html>).
-   Variables: --bg page, --panel header, --ink text+borders, --mid focus rings, --hi caught cards / hover,
-   --card cards+inputs, --line borders, --on-hi text drawn on --hi.
-   Every theme has light + dark palettes; Classic green is the base set above. */
+
 @media (prefers-color-scheme:dark){:root:not([data-mode=light]):not([data-theme]){--bg:#0f2a0f;--panel:#173a17;--ink:#c9e27a;--mid:#8bac0f;--hi:#9bbc0f;--card:#1d461d;--line:#8bac0f;--on-hi:#0f380f;color-scheme:dark}}
 :root:not([data-theme])[data-mode=dark]{--bg:#0f2a0f;--panel:#173a17;--ink:#c9e27a;--mid:#8bac0f;--hi:#9bbc0f;--card:#1d461d;--line:#8bac0f;--on-hi:#0f380f;color-scheme:dark}
 :root:not([data-theme])[data-mode=light]{--bg:#c7d98a;--panel:#b2c66f;--ink:#0f380f;--mid:#306230;--hi:#9bbc0f;--card:#d9e8a4;--line:#0f380f;--on-hi:#0f380f;color-scheme:light}
 
-/* Game Boy palettes and one theme per game. Every theme has a light and a dark palette; js/theme.js sets
-   data-mode to "light" or "dark" (Auto resolves to the device setting), so each theme only needs two rules. */
 :root[data-theme=pocket]{--bg:#cfcfc8;--panel:#b4b4ae;--ink:#202020;--mid:#585858;--hi:#f0f0ea;--card:#dcdcd6;--line:#202020;--on-hi:#202020;color-scheme:light}
 :root[data-theme=pocket][data-mode=dark]{--bg:#171716;--panel:#2f2f2d;--ink:#e6e6e5;--mid:#b1b1aa;--hi:#b9b9a2;--card:#41413f;--line:#a0a09c;--on-hi:#26260d;color-scheme:dark}
 :root[data-theme=color]{--bg:#e8defa;--panel:#b9a3ec;--ink:#1c1038;--mid:#5b3fb0;--hi:#d6c2ff;--card:#f4eefd;--line:#1c1038;--on-hi:#1c1038;color-scheme:light}
@@ -51,25 +49,26 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,sans-serif}
 header{position:sticky;top:0;z-index:2;background:var(--panel);border-bottom:3px solid var(--line);padding:8px 16px;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
-h1{margin:0;padding:12px 16px 8px;font:400 22px/1 "PKMN",monospace;letter-spacing:.04em} /* outside the sticky header, so it scrolls away */
-.hrow,.controls{display:contents} /* wide screens: everything sits in one wrapping row */
+h1{margin:0;padding:12px 16px 8px;font:400 22px/1 "PKMN",monospace;letter-spacing:.04em}
+.hrow,.controls{display:contents}
 #optbtn,#gname{display:none}
 select,input[type=search],input[type=text],button{font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:0;padding:6px 8px}
 button{cursor:pointer}button:hover{background:var(--hi);color:var(--on-hi)}
 .check{display:flex;align-items:center;gap:6px}.check:has(:disabled){opacity:.45}
-.progress{flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px} /* always its own line under the controls */
+.progress{flex:1 1 100%;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
 .bar{flex:1 1 140px;min-width:140px;height:14px;border:2px solid var(--line);background:var(--card)}
 #fill{height:100%;width:0;background:var(--ink);transition:width .2s}
 #count{font:400 16px "PKMN",monospace;min-width:7ch;text-align:right}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(calc(var(--sprite,80px) + 24px),1fr));gap:0;padding:11px;max-width:1200px;margin:auto}
-.card{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:30px 4px 6px;background:var(--card);border:2px solid var(--line);border-radius:0;opacity:.75;filter:grayscale(1)} /* top 30px is reserved for the ? button and the caught tick, so they never sit on the artwork */
-.cell{position:relative;display:flex;padding:5px;content-visibility:auto;contain-intrinsic-size:auto 175px} /* off-screen cells skip layout/paint but stay in the DOM; padding replaces the grid gap so focus outlines are not clipped */.cell>.card{flex:1}.cell[hidden]{display:none} /* search hides the whole cell; its display:flex would beat the default [hidden] rule */
+.card{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:30px 4px 6px;background:var(--card);border:2px solid var(--line);border-radius:0;opacity:.75;filter:grayscale(1)}
+.cell{position:relative;display:flex;padding:5px;content-visibility:auto;contain-intrinsic-size:auto 175px} .cell>.card{flex:1}.cell[hidden]{display:none}
 .where{position:absolute;top:7px;left:7px;z-index:1;width:22px;height:22px;padding:0;line-height:1;font:400 12px "PKMN",monospace}
 .card.on{opacity:1;filter:none;background:var(--hi);color:var(--on-hi);border-color:var(--on-hi)}
 .card.on::after{content:"✓";position:absolute;top:2px;right:5px;font-weight:700}
 .card img{width:var(--sprite,80px);height:var(--sprite,80px);image-rendering:pixelated;object-fit:contain}
+.grid.smooth .card img{image-rendering:auto}
 .card .n{font:400 12px "PKMN",monospace}.card .nm{font-size:12px;text-align:center;overflow-wrap:anywhere}
-#grid:empty{min-height:100vh} /* before the cards are drawn: keeps the footer off screen so it does not jump (layout shift) */
+#grid:empty{min-height:100vh}
 .card:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--mid);outline-offset:2px}
 footer{padding:0 16px 32px;max-width:1200px;margin:auto}footer p{font-size:12px;opacity:.8;max-width:70ch}
 footer button{margin-right:8px}
@@ -87,10 +86,10 @@ fieldset:has(:disabled){opacity:.45}
 dialog{background:var(--bg);color:var(--ink);border:3px solid var(--line);padding:16px;max-width:min(96vw,560px);max-height:92vh}
 dialog::backdrop{background:rgba(0,0,0,.6)}dialog h2{margin:0 0 10px;font:400 18px "PKMN",monospace}
 dialog .row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:0 0 10px}dialog fieldset{border:0;padding:0}
-dialog .row[hidden]{display:none} /* a .row with the hidden attribute (diploma time fields, Leaf Crown picker) must really disappear */
+dialog .row[hidden]{display:none}
 #where{width:min(96vw,640px);padding:0;overflow:hidden}
 #where[open]{display:flex;flex-direction:column}
-/* title row with the X button: always visible, never overlaps the content (only .dbody scrolls) */
+
 #where .dhead{flex:none;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:16px 16px 10px;background:var(--bg)}
 #where .dhead h2{margin:0}
 #where .dbody{flex:1 1 auto;min-height:0;overflow:auto;padding:0 16px 16px}
@@ -104,7 +103,6 @@ dialog .row[hidden]{display:none} /* a .row with the hidden attribute (diploma t
 #where li strong{flex:0 0 min(100%,22ch)}#where li.evo strong{font-style:italic}
 #where code{font-size:12px}
 
-/* filters + bulk actions */
 button:disabled{opacity:.45;cursor:not-allowed}button:disabled:hover{background:var(--card);color:var(--ink)}
 .tools{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;padding:8px 16px 0;max-width:1200px;margin:auto}
 .seg{display:flex}.seg button{border-right-width:0}.seg button:last-child{border-right-width:2px}
@@ -120,7 +118,6 @@ body.selecting footer{padding-bottom:110px}
 #selcount{font:400 14px "PKMN",monospace;min-width:11ch}
 #selrange[aria-pressed=true]{background:var(--ink);color:var(--bg)}
 
-/* shiny / normal corner badge, tracking switch, settings */
 .trk{display:flex;align-items:center;gap:6px}
 .other{position:absolute;bottom:7px;left:7px;z-index:1;display:flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;font:700 14px/1 system-ui,sans-serif;opacity:.6}
 .other[hidden]{display:none}
@@ -129,7 +126,6 @@ body.selecting footer{padding-bottom:110px}
 #count2{font-size:12px;white-space:nowrap;opacity:.9}#count2[hidden]{display:none}
 #settings .row>span{font-size:14px}
 
-/* phones and narrow windows: a compact sticky header (search + progress), the rest behind "Options" */
 @media (max-width:759px){
   h1{font-size:16px;padding:8px 12px 6px}
   header{padding:6px 10px;gap:6px 8px}
@@ -142,24 +138,23 @@ body.selecting footer{padding-bottom:110px}
   #gname{display:block;flex:0 1 auto;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
   .bar{height:10px}
   #count{font-size:13px;min-width:0}
-  input,select{font-size:16px} /* 16px stops iOS from zooming the page when a field is focused */
+  input,select{font-size:16px}
   .trainer,.tools{padding-left:10px;padding-right:10px}
   .grid{padding:6px}
   #shown{margin-left:0;flex-basis:100%}
   #selbar{padding-left:10px;padding-right:10px}
   #selbar button{padding:6px 8px;font-size:14px}
 }
-/* touch screens: bigger tap targets */
+
 @media (pointer:coarse){
   select,input,button{min-height:40px}
   .card,.where,.other{min-height:0}
   .where{width:30px;height:30px}
   .other{width:30px;height:30px}
-  .card{padding-top:38px}                          /* room for the bigger 30px ? button */
-  .has-badges .card,.card.hasform{padding-bottom:40px}   /* room for the bigger badge / chip */
+  .card{padding-top:38px}
+  .has-badges .card,.card.hasform{padding-bottom:40px}
 }
 
-/* forms: card chip, counter, info-dialog tabs, completion rules */
 .chip{position:absolute;bottom:7px;right:7px;z-index:1;height:24px;padding:0 6px;font:400 11px/1 "PKMN",monospace;opacity:.75}
 .chip.done{opacity:1;background:var(--hi);color:var(--on-hi);border-color:var(--on-hi)}
 .card.hasform{padding-bottom:30px}
@@ -179,7 +174,7 @@ body.selecting .chip{display:none}
 #settings .rules{flex-direction:column;align-items:flex-start;gap:6px;border:2px solid var(--line);padding:8px 10px}
 #settings .rules p{margin:0;font-size:12px;max-width:44ch}#settings .rules .fine{opacity:.8}
 @media (pointer:coarse){.chip{min-height:30px;height:30px}}
-/* region map in the "Where to find" panel (js/maps.js) */
+
 .amap{margin:0;padding:6px 8px 4px}
 .amapimg{position:relative;line-height:0;border:2px solid var(--line);background:var(--card)}
 .amapimg img{display:block;width:100%;height:auto;image-rendering:pixelated}
@@ -187,41 +182,33 @@ body.selecting .chip{display:none}
 @keyframes mkblink{50%{opacity:.2}}
 @media (prefers-reduced-motion:reduce){.amapimg .mk{animation:none}}
 .amap figcaption{font-size:12px;opacity:.85;margin-top:4px}
-/* blinking nest icon (maps.json "icon") and the hover / tap tooltip over the map */
+
 .amapimg .nest{position:absolute;background-repeat:repeat;image-rendering:pixelated;animation:mkblink 1s steps(1) infinite}
 @media (prefers-reduced-motion:reduce){.amapimg .nest{animation:none}}
-/* Red / Blue / Yellow nest blink (maps "kanto-rby" and "kanto-y"), matched to the game from a screen capture.
-   The game shows every icon for 25 frames, hides them for 25 frames, and repeats: 50 frames at 59.73 Hz = 837 ms per cycle,
-   hard cuts, icons fully gone while hidden, and visible first. The capture also shows one soft frame at each switch (the
-   screen's slow response); those are the 48-50 % and 98-100 % steps below, drawn at --nest-ghost opacity. Set
-   --nest-ghost:0 for pure on/off cuts with no soft frame.
-   Other maps (Gold / Silver / Crystal ...) keep the generic blink above until they get their own. Yellow uses the same timing;
-   if a game ever differs, give its map its own selector and override --nest-cycle or the keyframes there. */
+
 .amap[data-map=kanto-rby],.amap[data-map=kanto-y]{--nest-cycle:837ms;--nest-ghost:.45}
 @keyframes nestRB{0%{opacity:1}48%{opacity:var(--nest-ghost)}50%{opacity:0}98%{opacity:var(--nest-ghost)}100%{opacity:1}}
 .amap[data-map=kanto-rby] .amapimg .nest,.amap[data-map=kanto-y] .amapimg .nest{animation:nestRB var(--nest-cycle) step-end infinite}
 @media (prefers-reduced-motion:reduce){.amap[data-map=kanto-rby] .amapimg .nest,.amap[data-map=kanto-y] .amapimg .nest{animation:none}}
 .amap[data-map=kanto-y] .amaptitle{color:#060606}
-/* Gold / Silver / Crystal nest blink (map "johto-kanto-gsc"), measured from a screen capture of the game.
-   Each cycle is 16 frames visible then 16 frames hidden at 59.73 Hz = 536 ms (268 ms on, 268 ms off), hard cuts
-   with no fade, visible first. While hidden the icon is fully gone, so the map underneath shows through. */
+
 .amap[data-map=johto-kanto-gsc]{--nest-cycle-gsc:536ms}
 @keyframes nestGSC{0%{opacity:1}50%{opacity:0}100%{opacity:0}}
 .amap[data-map=johto-kanto-gsc] .amapimg .nest{animation:nestGSC var(--nest-cycle-gsc) step-end infinite}
 @media (prefers-reduced-motion:reduce){.amap[data-map=johto-kanto-gsc] .amapimg .nest{animation:none}}
-                      /* Yellow's black is a little darker than Red / Blue's */
+
 .amaptip{position:absolute;z-index:2;pointer-events:none;white-space:nowrap;line-height:1.3;font:12px system-ui,sans-serif;
   background:var(--bg);color:var(--ink);border:2px solid var(--line);padding:3px 6px}
 .amaptip[hidden]{display:none}
 .amapimg .nest,.amapimg .mk{pointer-events:none}
 .amaphl{position:absolute;inset:0;z-index:1;pointer-events:none}
-.amaphl i{position:absolute;background:transparent;outline:2px solid #000;box-shadow:0 0 0 1px #fff}   /* hover: black outline only, no yellow fill */
-/* "AREA UNKNOWN" banner and the "NAME's NEST" heading on the map (js/maps.js) */
+.amaphl i{position:absolute;background:transparent;outline:2px solid #000;box-shadow:0 0 0 1px #fff}
+
 .amapimg{container-type:inline-size}
 .amapimg .unk{position:absolute;display:block;pointer-events:none;image-rendering:pixelated;height:auto}
 .amapimg .unk.txt{left:5%;top:38.9%;width:85%;padding:6px 0;text-align:center;line-height:1.2;font:400 4cqw "PKMN",monospace;background:#f8e8f8;color:#181010;border:2px solid #181010}
 .amaptitle{position:absolute;right:0;z-index:1;pointer-events:none;white-space:nowrap;overflow:hidden;line-height:1;font-family:"PKMN",monospace;color:#181010}
-/* time of day on the region map (js/maps.js): filter bar, M / D / N badges, "not at this time" banner */
+
 .amaptime{margin:6px 8px 2px;flex-wrap:wrap}
 .amaptime button{font-size:13px;padding:4px 8px}
 .amapimg .tm{outline:2px solid var(--tc,#fff);box-shadow:0 0 0 1px #000,inset 0 0 0 1px #000}
@@ -229,23 +216,10 @@ body.selecting .chip{display:none}
 .amapimg .tb{position:absolute;right:-1px;bottom:-1px;padding:.25cqw .5cqw;font:400 2.6cqw/1 "PKMN",monospace;background:#000;color:var(--tc,#fff);letter-spacing:.1cqw}
 .amapimg .nest .tb,.amapimg .mk .tb{animation:none}
 .amapimg .unk.txt.small{font-size:3cqw}
-/* Hoenn's, Sinnoh's and HeartGold / SoulSilver's "AREA UNKNOWN" banners are a shrunken, higher-resolution picture, so let the browser smooth it instead of using hard pixels */
+
 .amap[data-map=hoenn-rse] .amapimg .unk,.amap[data-map=sinnoh-dp] .amapimg .unk,.amap[data-map=johto-kanto-hgss] .amapimg .unk,.amap[data-map=unova-bw] .amapimg .unk,.amap[data-map=unova-b2w2] .amapimg .unk{image-rendering:auto}
 .amapimg .unk.txt[hidden]{display:none}
 
-/* flashing area map (maps.json "flash": true, Hoenn; js/maps.js). Every box of a location is an <i class="fl land|special">.
-   Timing and colours measured frame-by-frame from screen captures of the games (29.97 fps clips).
-   ONE loop of 1.919 s (about 115 game frames at 59.73 Hz):
-     0-52 %    routes / towns: one smooth ~1 s pulse. Pale glow builds up, hits a solid salmon (--peak) at 26 %,
-               fades back through the glow colour, and is gone at 52 %.
-     52-66 %   pause
-     66-78 %   special places (caves, buildings...) flash on  (hard cut, ~0.23 s)
-     78-89 %   off
-     89-99 %   flash on again, then the loop restarts
-   Ruby / Sapphire (data-flash=rs): glow = yellow,        special flash = red       #fc6161
-   Emerald         (data-flash=emerald): glow = cream,    special flash = whitish pink #ffe6e7
-   Fire Red / Leaf Green and Sinnoh use the Ruby / Sapphire look.
-   Tune --glow, --peak (routes) and --sp (special places) below. */
 .amap[data-flash]{--glow:#ffe58a;--peak:#fa8a88;--sp:#fc6161;--flash-cycle:1.919s}
 .amap[data-flash=emerald]{--glow:#fff2c4;--peak:#fa8a88;--sp:#ffe6e7}
 .amapimg .fl{position:absolute;pointer-events:none;opacity:0;background:var(--peak);mix-blend-mode:normal}
@@ -266,17 +240,7 @@ body.selecting .chip{display:none}
   .amapimg .fl{animation:none !important;opacity:.7}
   .amapimg .fl.special{outline:2px solid #000}
 }
-/* Sinnoh (Diamond / Pearl / Platinum) flashing area map: colour + timing measured frame-by-frame from a screen capture
-   of the game (29.97 fps). Only the "sinnoh-dp" map (shared by Diamond, Pearl and Platinum) uses this; Hoenn and FireRed / LeafGreen keep the rules above.
-   COLOUR: each box is drawn with mix-blend-mode:screen, so the map's own colours show through. The overlay colour is rgb(0, g, b):
-           it starts black (no effect), the BLUE channel rises first (pale lavender), then GREEN catches up and the box peaks as
-           a bright whitish cyan (about #00F0FF on screen), then fades back the same way.
-   TIMING: ONE loop of 2.035 s (about 61 frames of the capture):
-             0 - 49.6 %    routes / towns: one smooth pulse (peak at about 24 %)
-             49.6 - 50 %   tiny gap
-             50 - 100 %    special places (caves, buildings...): the same pulse shape (peak at about 76 %)
-           Both groups use the SAME colour; the special places simply pulse second.
-   To tune: change --sinnoh-cycle (speed), or edit the rgb(0,g,b) steps in the two @keyframes below. */
+
 .amap[data-map=sinnoh-dp]{--sinnoh-cycle:2.035s}
 .amap[data-map=sinnoh-dp] .amapimg .fl{opacity:1;background:#000;mix-blend-mode:screen}
 .amap[data-map=sinnoh-dp] .fl.land{animation:sinLand var(--sinnoh-cycle) linear infinite}
@@ -318,20 +282,7 @@ body.selecting .chip{display:none}
 @media (prefers-reduced-motion:reduce){
   .amap[data-map=sinnoh-dp] .amapimg .fl{animation:none !important;background:rgb(0,170,225)}
 }
-/* HeartGold / SoulSilver flashing area map (map "johto-kanto-hgss"): colour + timing measured frame-by-frame from a screen
-   capture of the game's Pokedex Area screen (29.97 fps, 41 frames). Both games share this one map, so both use this rule.
-   COLOUR: each box is drawn with mix-blend-mode:lighten, i.e. every pixel becomes the brighter of the map's own colour and the
-           overlay colour. The overlay starts black (no effect), then runs the colours measured on the map's dark-green route
-           outline: green -> lime -> a pale yellow that peaks at about #FAFC85, then back down the same way. The map's own pale
-           fills stay pale, so routes and towns light up as pale yellow and the outlines glow lime.
-   TIMING: ONE pulse of about 1.04 s (31 frames): about 0.5 s up to the peak, about 0.5 s back down. EVERY flashing location
-           (routes, towns, caves, buildings) pulses at the same time, there is no separate "special places" phase like in Hoenn.
-           The capture is only 1.37 s long, so how long the gap between two pulses is was not measured. --hgss-cycle is the loop
-           length: 1.2 s leaves about 0.16 s of rest after the pulse (the capture shows at least 0.17 s of rest before and after
-           its single pulse). If you time the real game and it differs, change ONLY --hgss-cycle; the pulse shape stretches with
-           it. (Keyframe percentages are for a 1.2 s loop; to keep the pulse at 1.04 s while changing the gap, rescale them.)
-   Not copied: the player's-head marker that also blinks on that screen (16 frames on, 8 off at 29.97 fps, about 0.8 s per blink),
-           because the tracker has no "player location" to show. */
+
 .amap[data-map=johto-kanto-hgss]{--hgss-cycle:1.2s}
 .amap[data-map=johto-kanto-hgss] .amapimg .fl{opacity:1;background:#000;mix-blend-mode:lighten}
 .amap[data-map=johto-kanto-hgss] .amapimg .fl.land,.amap[data-map=johto-kanto-hgss] .amapimg .fl.special{animation:hgssPulse var(--hgss-cycle) linear infinite}
@@ -358,7 +309,7 @@ body.selecting .chip{display:none}
 @media (prefers-reduced-motion:reduce){
   .amap[data-map=johto-kanto-hgss] .amapimg .fl{animation:none !important;background:rgb(250,252,133)}
 }
-/* PC boxes layout (Layout > PC boxes): Pokémon grouped into boxes like the in-game PC of that generation (js/app.js renderGrid) */
+
 .grid.pc{display:block}
 .pcnote{margin:0 6px 10px;font-size:13px;opacity:.85}
 .pcbox{max-width:calc(var(--cols) * 150px + 24px);margin:0 auto 14px;border:3px solid var(--line);background:var(--panel)}
@@ -369,7 +320,7 @@ body.selecting .chip{display:none}
 @media (min-width:760px){.pcbox .boxgrid{grid-template-columns:repeat(var(--cols),minmax(0,1fr))}}
 .cell.empty::before{content:"";flex:1;min-height:150px;border:2px dashed var(--line);opacity:.3}
 .pcbox.filtering .cell.empty{display:none}
-/* location segments (North / South / East / West) and form badges (js/where.js, js/forms.js) */
+
 .segtag,.formtag{display:inline-block;padding:0 6px;margin-left:2px;font:600 11px/1.6 system-ui,sans-serif;border:2px solid var(--line);vertical-align:middle;white-space:nowrap}
 .segtag{background:var(--ink);color:var(--bg)}
 .segtag.approx{background:var(--card);color:var(--ink);border-style:dashed}
@@ -377,11 +328,9 @@ body.selecting .chip{display:none}
 .segnote{display:block;font-weight:400;font-size:11px;opacity:.8}
 .fwhere{font-weight:400;font-size:12px;opacity:.9}
 
-/* form badges that match their sprites (any theme, light or dark): Shellos / Gastrodon West Sea = pink, East Sea = blue */
 .formtag[data-form=west-sea]{background:#f6b3d0;color:#4a1230;border-color:#c9658f}
 .formtag[data-form=east-sea]{background:#9fd0f2;color:#0c2e4d;border-color:#4f8fc4}
 
-/* Generation 5 themes (Black, White, Black 2, White 2) */
 :root[data-theme=black]{--bg:#dcdcdc;--panel:#8c8c8c;--ink:#0e0e0e;--mid:#444444;--hi:#f0f0f0;--card:#ececec;--line:#0e0e0e;--on-hi:#0e0e0e;color-scheme:light}
 :root[data-theme=black][data-mode=dark]{--bg:#121212;--panel:#262626;--ink:#e8e8e8;--mid:#aaaaaa;--hi:#9a9a9a;--card:#333333;--line:#8a8a8a;--on-hi:#111111;color-scheme:dark}
 :root[data-theme=white]{--bg:#f2f5f8;--panel:#c9d3dd;--ink:#14202c;--mid:#4a6178;--hi:#ffffff;--card:#fbfcfd;--line:#14202c;--on-hi:#14202c;color-scheme:light}
@@ -391,31 +340,18 @@ body.selecting .chip{display:none}
 :root[data-theme=white-2]{--bg:#dbe9f6;--panel:#6fb1e8;--ink:#06182b;--mid:#1b5a9a;--hi:#e8f5ff;--card:#eef6fc;--line:#06182b;--on-hi:#06182b;color-scheme:light}
 :root[data-theme=white-2][data-mode=dark]{--bg:#0e1822;--panel:#1b2e41;--ink:#d6e7f6;--mid:#7fb6e6;--hi:#6ea8d6;--card:#2a4258;--line:#7aa3c6;--on-hi:#0a1622;color-scheme:dark}
 
-/* sprites bigger than 80px (config "spriteSize", e.g. Gen 5 = 96): shown 1:1 on wide screens; on phones scaled down smoothly instead of dropping pixels */
 @media (max-width:759px){
   .grid.big{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
   .grid.big .card img{width:80px;height:80px;image-rendering:auto}
 }
 
-/* Forms tab on phones: a little smaller so the name and Normal / Shiny buttons still fit beside the two sprites; scaled smoothly */
-@media (max-width:759px){.frow img{max-width:72px;max-height:72px;image-rendering:auto}}   /* beats the exact size set by Forms.fit */
+@media (max-width:759px){.frow img{max-width:72px;max-height:72px;image-rendering:auto}}
 
-/* circles / triangles / diagonal strips on the region map and in the map editor: drawn as SVG over the picture (js/maps.js) */
 .amapsvg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
 .amapsvg .w,.amapsvg .b{fill:none;vector-effect:non-scaling-stroke;stroke-linejoin:round}
 .amapsvg .w{stroke:#fff;stroke-width:4px}
 .amapsvg .b{stroke:#000;stroke-width:2px}
 
-/* Black / White flashing area map (maps.json "fx": "unova"; js/maps.js uxMarks). Colours, sizes and timing measured frame by frame from a
-   screen recording of the game (30 fps, 91 frames, 3 pulses).
-   TIMING: ONE pulse of 1.067 s (32 frames = 64 game frames) shared by routes, towns and places, in four steps:
-             0 - 17 %      rest (the orange line / green dot is shown as drawn on the map)
-             17 - 44 %     routes and towns fade to red (places: 17 - 50 %)
-             44 - 72 %     fully red (places: 50 - 69 %)
-             72 - 100 %    fade back
-   COLOUR: routes and towns / cities (a filled disc, not just a ring) go to rgb(252,72,85); places get a disc of rgb(226,80,115), 1.25x the size of the dot, soft edged.
-   A route is drawn about 1.75x thicker than its orange line (the red band also covers the line's dark shadow): that is the
-   stroke-width below, added to the shape's own width. To tune: change --ux-cycle (speed) or the percentages in the two @keyframes. */
 .uxsvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .amap[data-fx=unova]{--ux-cycle:1.0667s}
 .uxsvg .ux{opacity:0;animation-duration:var(--ux-cycle);animation-iteration-count:infinite;animation-timing-function:linear}
@@ -425,15 +361,15 @@ body.selecting .chip{display:none}
 @keyframes uxRoute{0%,17%{opacity:0}43.75%,71.9%{opacity:1}100%{opacity:0}}
 @keyframes uxSpot{0%,17%{opacity:0}50%,68.8%{opacity:1}100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.uxsvg .ux{animation:none;opacity:.75}}
-/* "Where to find": rows with a long body (N's Pokémon, egg passwords) put the heading on one full-width line instead of a 22ch column */
+
 #where li.special>strong,#where li.egg>strong{flex:1 1 100%}
-/* Forms tab rows are <li> inside #where, so the generic "#where li{padding:4px 0}" rule was beating .frow's padding. This one is more specific. */
+
 #where .frow{padding:6px 14px}
-/* Colosseum and XD themes */
+
 :root[data-theme=colosseum]{--bg:#efdcc0;--panel:#d9964a;--ink:#2a1606;--mid:#8a4a14;--hi:#ffe0a0;--card:#f8ecd8;--line:#2a1606;--on-hi:#2a1606;color-scheme:light}
 :root[data-theme=colosseum][data-mode=dark]{--bg:#1f150d;--panel:#3e2b1a;--ink:#f1e3d2;--mid:#dea674;--hi:#d79c62;--card:#53402b;--line:#c19a7b;--on-hi:#24150a;color-scheme:dark}
 :root[data-theme=xd]{--bg:#e4dcf2;--panel:#8a6fc4;--ink:#150a2b;--mid:#4a2d94;--hi:#d8c8ff;--card:#f1ecfa;--line:#150a2b;--on-hi:#150a2b;color-scheme:light}
 :root[data-theme=xd][data-mode=dark]{--bg:#14101f;--panel:#2a2040;--ink:#e6dff5;--mid:#a58ee0;--hi:#8a73c4;--card:#3a2f55;--line:#9a87c9;--on-hi:#120a24;color-scheme:dark}
-/* shiny-locked Pokémon while tracking shiny (config "shinyLocked") */
+
 .card.locked{opacity:.4;cursor:not-allowed}
 .card.locked::after{content:"🔒";position:absolute;top:2px;right:5px;font-size:12px}

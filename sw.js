@@ -1,46 +1,33 @@
 "use strict";
-// Service worker: makes the tracker load instantly and work offline.
-//
-//   App files (HTML, CSS, JS, data/*.json)  stale-while-revalidate: served from the cache at once, then
-//                                           refreshed in the background, so a new release arrives on the next load.
-//   Images and fonts (assets/*)             cache-first: fetched once, then never again. Sprites are only cached
-//                                           after they've been shown (there are thousands), so a game works offline
-//                                           once you've scrolled through it online.
-//   Everything else (other sites, test.html, tests/) is left alone.
-//
-// Saved progress is in localStorage, which this file never touches.
-//
-// WHEN TO CHANGE THE CACHE NAMES (bump the number):
-//   ASSET_CACHE: when you replace an existing image or font IN PLACE (same file name). Assets are cache-first, so
-//                otherwise users keep the old picture forever. New files with new names don't need a bump.
-//   SHELL_CACHE: only to purge it, e.g. after deleting or renaming files. Ordinary edits update themselves.
+// Service worker: instant loading and offline use. Saved progress lives in localStorage, which this file never touches.
+//   App files (HTML, CSS, JS, data/*.json)  stale-while-revalidate: served from cache, refreshed in the background.
+//   Images and fonts (assets/*)             cache-first, cached once shown.   Everything else (other sites, test.html, tests/) is untouched.
+// Bump ASSET_CACHE when replacing an existing image or font in place (same name). Bump SHELL_CACHE only to purge deleted / renamed files.
 const SHELL_CACHE = "pokedex-shell-v2";
 const ASSET_CACHE = "pokedex-assets-v2";
 
-// Downloaded when the worker installs. Paths are relative to this file. A missing file is skipped, not fatal.
 const SHELL = [
   "./", "index.html", "manifest.webmanifest", "css/style.css",
   "js/config.js", "js/cards.js", "js/store.js", "js/storage.js", "js/theme.js", "js/forms.js", "js/maps.js", "js/where.js", "js/eggs.js", "js/app.js",
   "data/games.config.json", "data/pokemon.json", "data/regional.json", "data/forms.json",
-  "data/locations.json", "data/orre.json", "data/pokewalker.json", "data/items.json", "data/maps.json", "data/form-areas.json", "data/honey.json", "data/egg-words.json", "data/special-encounters.json",   // so "where to find" works offline; remove this line if the file gets too big
+  "data/locations.json", "data/orre.json", "data/pokewalker.json", "data/items.json", "data/maps.json", "data/form-areas.json", "data/honey.json", "data/egg-words.json", "data/special-encounters.json",
   "icons/icon-192.png", "icons/icon-512.png",
 ];
 const ASSETS = ["assets/fonts/pkmn-rbygsc.ttf", "assets/fonts/pokemon-rs.ttf", "assets/fonts/pokemon-frlg.ttf"];
 
-const SCOPE = self.registration.scope;                    // e.g. https://name.github.io/pokedex/
+const SCOPE = self.registration.scope;
 const BASE = new URL(SCOPE).pathname;
 const INDEX = new URL("index.html", SCOPE).href;
 
 async function precache(name, urls) {
   const cache = await caches.open(name);
-  // cache:"reload" skips the browser's HTTP cache so a new install never stores a stale copy
   await Promise.allSettled(urls.map(u => cache.add(new Request(u, { cache: "reload" }))));
 }
 
 self.addEventListener("install", e => {
   e.waitUntil((async () => {
     await Promise.all([precache(SHELL_CACHE, SHELL), precache(ASSET_CACHE, ASSETS)]);
-    await self.skipWaiting();                             // don't wait for every tab to close
+    await self.skipWaiting();
   })());
 });
 
@@ -49,7 +36,7 @@ self.addEventListener("activate", e => {
     for (const k of await caches.keys()) {
       if (k.startsWith("pokedex-") && k !== SHELL_CACHE && k !== ASSET_CACHE) await caches.delete(k);
     }
-    await self.clients.claim();                           // start serving the page that registered us
+    await self.clients.claim();
   })());
 });
 
@@ -61,13 +48,13 @@ async function cacheFirst(req) {
     if (res.status === 200) cache.put(req, res.clone());
     return res;
   } catch {
-    return Response.error();                              // offline and never cached: the <img> just stays empty
+    return Response.error();
   }
 }
 
 async function staleWhileRevalidate(e) {
   const req = e.request, cache = await caches.open(SHELL_CACHE), cached = await cache.match(req);
-  const update = fetch(new Request(req, { cache: "no-cache" }))   // revalidate with the server (cheap 304 when unchanged)
+  const update = fetch(new Request(req, { cache: "no-cache" }))
     .then(res => { if (res.status === 200) cache.put(req, res.clone()); return res; })
     .catch(() => null);
   if (cached) { e.waitUntil(update); return cached; }
@@ -78,6 +65,6 @@ self.addEventListener("fetch", e => {
   const req = e.request, url = new URL(req.url);
   if (req.method !== "GET" || url.origin !== location.origin || !url.pathname.startsWith(BASE)) return;
   const path = url.pathname.slice(BASE.length);
-  if (/^(tests?(\/|\.html$)|map-editor\.html$)/.test(path)) return;           // the render-check page and its baselines must always be fresh
+  if (/^(tests?(\/|\.html$)|map-editor\.html$)/.test(path)) return;
   e.respondWith(path.startsWith("assets/") ? cacheFirst(req) : staleWhileRevalidate(e));
 });

@@ -1,103 +1,25 @@
 "use strict";
-// Maps: the region map shown in the "Where to find" panel, with the Pokémon's locations marked on it
-// (like the Pokédex "Area" screen in the games). Pure: no DOM access except one <style> tag added on init,
-// otherwise it only builds an HTML string.
-//
-//   Maps.init(data)              once, with data/maps.json (null if it isn't installed: no maps are shown)
-//   Maps.addHoney(honey)         once, with data/honey.json (optional): registers every honey tree as a place on the map (see "Honey trees")
-//   Maps.html(gameKeys, entries) HTML for every map that has at least one marked location
-//                                entries = the [area, method, ...] rows from data/locations.json
-//                                With NO entries (Mew, evolution-only, event Pokémon) it shows the first map with an
-//                                "AREA UNKNOWN" banner instead, like the in-game Pokédex.
-//   Maps.placeKey(area)          "Kanto Route 2 South towards Viridian City" -> "Kanto Route 2"
-//   Maps.at(mapId, fx, fy, found) the places under a point ({name, here, roam, when, boxes}); where.js shows them in the hover tooltip
-//   Maps.locate(keys, area)      the maps of those games that have boxes for a location -> [{ id, boxes, w, h }] (for the "Show on map" buttons)
-//   Maps.drop(img)               called by a map picture that fails to load: removes that map (and its tab)
-//
-// Several maps for one game (FireRed / LeafGreen: Kanto + three Sevii Islands maps; HeartGold / SoulSilver: Johto + Kanto):
-// when a Pokémon is marked on two or more DIFFERENT maps, they are shown with a row of tabs (map name + how many locations
-// are marked on it) and one map at a time. A Pokémon that is only on one map gets just that map, with no tabs.
-// Give every map of a game its own "name" in maps.json: it is the tab label.
-//
-// Two marker styles:
-//   * map has "icon" (Red/Blue/Yellow): the game's blinking sprite on EVERY tile of every location.
-//   * map has "icon" AND "single": true (Gold/Silver/Crystal): the game's sprite ONCE per location, on the middle tile of its
-//     biggest box. (With no "icon" at all, a built-in bug drawing is used instead.)
-//     Hovering any tile of a location (see where.js) outlines the whole location and names it; if the Pokémon lives there
-//     and the map has "times": true, the tooltip also says when (Morning / Day / Night, or All day).
-//     maps.json "mark" = icon size in image pixels (default: the map's grid size).
-//   Title: maps.json "title" { text, x, y, size } writes "{NAME}'S NEST" over the image (Red/Blue/Yellow, whose art has an empty
-//   top row). With "bar": true it is drawn like the Gold/Silver/Crystal Pokédex screen instead: pale text on a black strip above
-//   the map, in the game's thin pixel font (drawn as SVG, so it is crisp at any size).
-//   "frame": true adds the games' grey bevelled border around the map. "labels": [{ text, side: "left"|"right" }] puts
-//   region name plates ("JOHTO", "KANTO") in the bottom corners, in the games' bold pixel font.
-//
-// Flashing area map (Hoenn, FireRed / LeafGreen and Sinnoh, maps.json "flash": true): the Gen 3 Pokédex "Area" screen. Instead of an icon,
-// every box of a location FLASHES (see the .fl rules in style.css). Locations are split in two kinds by name (Maps.kindOf):
-//   land    routes, towns, cities and villages   (name contains Route / Town / City / Village; plus the Sevii "One Island" ...
-//           "Seven Island" towns, Cinnabar Island, Indigo Plateau and Three Isle Port; and every honey tree)
-//   special everything else: caves, woods, towers, buildings, islands...
-// Ruby / Sapphire: routes and towns flash red; then they stop and the special locations flash red twice; repeat.
-// Emerald:         routes and towns flash yellowish -> orange -> red; the special locations then flash a whitish red twice; repeat.
-// Fire Red / Leaf Green use the Ruby / Sapphire look.
-// The same map image serves all three Hoenn games (the figure gets data-flash="rs" or "emerald"; a group that contains both
-// kinds of game shows one map for each). If the Pokémon is only on one kind, that kind just flashes on its own.
-//
-// Honey trees (Diamond / Pearl / Platinum, data/honey.json): the trees have no boxes of their own in maps.json, so Maps.addHoney()
-// builds them at start-up from honey.json: each tree "Honey Tree: <name>" gets the boxes of the route / place it stands on (or its own
-// "boxes"), and one extra place "Honey Trees" holds the boxes of all of them. A Pokémon with a honey tree row (area "Honey Trees")
-// therefore flashes every route that has a tree, like any other route, and hovering a flashing route says
-// "Honey Tree: Route 205 · found here". The "Show on map" button of an individual tree outlines just that tree's route.
-//
-// Roaming Pokémon (Gen 2 onwards: Raikou / Entei / Suicune, Latios / Latias, Mesprit / Cresselia ...): they have no fixed spot, so
-// their rows ("Roaming Johto", method roaming-grass / roaming-water) have no boxes of their own. Instead every ROUTE of the region
-// they roam is shaded on the map (a slow bluish pulse, any map style) with a one-line legend underneath, and hovering a route says
-// "could be roaming here". The region comes from the row's name ("Roaming Johto" -> routes starting "Johto "). Sevii Islands and
-// other maps with no routes show nothing. Only data/maps.json "areas" is used, so no new data files are needed.
-//
-// Sinnoh (Diamond / Pearl / Platinum) uses the same flashing style as Ruby / Sapphire and has a clock: see "Time of day" below.
-//
-// Time of day: the last column of each entry row holds conditions such as "Morning" or "Night" (rows without one count as
-// all day). Maps with at least one location that is only there at some times get All / Morning / Day / Night buttons
-// that hide the icons that don't apply. On EVERY map that has them (Gold / Silver / Crystal, Sinnoh, any later game) the map picture is also tinted: warm for Morning, darker
-// and bluer for Night, untouched for Day. Put "times": true on the map in maps.json so the hover tooltip says when, too.
-//
-// data/maps.json (made with map-editor.html, or tools/add_areas.py):
-//   { "version": 1,
-//     "maps":  { "<mapId>": { "name": "Kanto", "img": "assets/maps/kanto-rby.png", "w": 160, "h": 144, "grid": 8,
-//                             "icon": "assets/maps/nest-rby.png",                       optional: see above
-//                             "single": true, "mark": 8, "times": true,                 optional: one icon per location; icon size; show times in the tooltip
-//                             "title": {...}, "frame": true, "labels": [...],           optional: see above
-//                             "unknown": { "img": "...", "x": 8, "y": 56, "w": 136, "h": 32 } } },   optional: the AREA UNKNOWN banner art
-//     "games": { "<game key>": ["<mapId>", ...] },                   a game can have several maps
-//     "areas": { "<mapId>": { "<place>": [[x, y, w, h], ...] } } }   boxes in image pixels
-//     "inside": { "<mapId>": { "<child place>": "<parent place>" } }   optional, see "Places inside other places"
-//
-// Places inside other places ("inside"): Silph Co. is inside Saffron City, the Prize Corner inside Celadon City, Mt. Moon's rooms
-// inside Mt. Moon... A child needs NO box of its own: it is drawn with its parent's boxes (the parent flashes / is outlined when
-// the Pokémon is in the child). If the child DOES have a box (a small pin drawn inside the parent in map-editor.html) that box is used
-// instead. Hovering says "Saffron City · found here in Silph Co." and the "Where to find" list indents the child under its parent.
-// Floors work too: an entry for "Silph Co." covers "Silph Co. 5F". Chains (room > building > city) work up to 4 levels.
-//   Maps.parentOf(area)   the parent place name of an area ("" if it is top level)
-// Two games with the same places but a different look (Red / Blue and Yellow use different colours): give the second one its own
-// map (own picture, own "unknown" banner) with "areasOf": "<the map whose boxes it uses>", so the boxes are kept in one place only.
-// "variant" ("Yellow", "Red / Blue") then names each picture in its caption when one list shows both.
-// A place is the location name without floors, compass words or "towards ...", so "Mt. Moon 1F" and "Mt. Moon 2F"
-// share one entry. An exact area name in "areas" wins over its place name. Places with identical boxes (spelling aliases)
-// count as one location.
+// Maps: the region map in the "Where to find" panel with a Pokémon's locations marked (like the in-game Pokédex Area screen).
+// Builds HTML strings only; no DOM access except one <style> tag added on init.
+//   init(data)  addHoney(honey)  html(gameKeys, entries, name, blank)  at(mapId, fx, fy, found)  locate(keys, area)  drop(img)
+//   placeKey / segment / parentOf / exact / kindOf / label / fixLoc, and shape helpers (bbox, inBox, move, outline, pin...)
+// Marker styles: sprite on every tile (Red / Blue / Yellow), one sprite per location (Gold / Silver / Crystal, or a built-in bug),
+// and flashing locations (Hoenn, FireRed / LeafGreen, Sinnoh, HeartGold / SoulSilver, Unova; maps.json "flash", "fx").
+// Several maps per game show as tabs. Time-of-day buttons and tinting, roaming routes, honey trees (honey.json) and
+// no-data "AREA UNKNOWN" banners are supported.
+// data/maps.json: maps { name, img, w, h, grid, icon, single, mark, times, title, frame, labels, unknown, flash, fx, areasOf, variant },
+// games { key: [mapIds] }, areas { mapId: { place: [boxes] } } and inside { mapId: { child: parent } }.
+// A box is [x, y, w, h] (image pixels), ["e", x, y, w, h] (oval) or ["p", x1, y1, x2, y2, ...] (polygon).
 const Maps = (() => {
   let data = null;
-  const FLOOR = /^b?\d+[fr]$/i;       // floors (1F, B2F) and rooms (1R, as in Meteor Falls 1F 1R)
+  const FLOOR = /^b?\d+[fr]$/i;
   const WORDS = new Set(["north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest",
     "ne", "nw", "se", "sw", "area", "entrance", "exterior", "outside"]);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  // A map's boxes: its own, or those of the map it shares them with (maps.json "areasOf"). famOf = the id those boxes are filed under.
   const famOf = id => { const m = data && data.maps[id]; return (m && m.areasOf) || id; };
   const tableOf = id => ((data && data.areas) || {})[famOf(id)] || {};
-  // ---- places inside other places (maps.json "inside": { mapId: { child: parent } }) ----
   const insideOf = id => ((data && data.inside) || {})[famOf(id)] || {};
   const parentIn = (id, area) => { const t = insideOf(id); return t[area] || t[placeKey(area)] || ""; };
-  // The boxes a place is drawn with: its own, else its parent's, else the grandparent's ... (null = none)
   function boxesFor(id, table, area) {
     for (let a = area, i = 0; a && i < 5; a = parentIn(id, a), i++) {
       const b = table[a] || table[placeKey(a)];
@@ -105,17 +27,15 @@ const Maps = (() => {
     }
     return null;
   }
-  // The parent of a place on any map ("" = top level). Place names are unique enough per region that no map id is needed.
   function parentOf(area) {
     if (!data || !data.inside) return "";
     for (const id of Object.keys(data.maps)) { const p = parentIn(id, area); if (p) return p; }
     return "";
   }
 
-  // ---- honey trees (data/honey.json, see the header comment) ----
-  const HONEY_PREFIX = "Honey Tree: ";      // one place per tree: "Honey Tree: Route 205"
-  const HONEY_ALL = "Honey Trees";          // one place holding every tree: the row a Pokémon's honey tree encounters use
-  let honeyNames = [];                       // the "Honey Tree: ..." places that were registered
+  const HONEY_PREFIX = "Honey Tree: ";
+  const HONEY_ALL = "Honey Trees";
+  let honeyNames = [];
 
   function addHoney(h) {
     honeyNames = [];
@@ -125,7 +45,7 @@ const Maps = (() => {
     const all = [], seen = new Set();
     for (const s of h.spots) {
       const src = Array.isArray(s.boxes) && s.boxes.length ? s.boxes : (table[s.area] || table[placeKey(s.area || "")]);
-      if (!src || !src.length) continue;                               // a tree whose place isn't drawn on the map is skipped
+      if (!src || !src.length) continue;
       const name = HONEY_PREFIX + s.name, boxes = src.map(b => b.slice());
       table[name] = boxes;
       honeyNames.push(name);
@@ -134,26 +54,21 @@ const Maps = (() => {
     if (all.length) table[HONEY_ALL] = all;
   }
 
-  // ---- shapes ----
-  // A "box" in maps.json is [x, y, w, h] (a rectangle, as always) or a shape:
-  //   ["e", x, y, w, h]                a circle / oval drawn inside that box
-  //   ["p", x1, y1, x2, y2, x3, y3...] a polygon: triangles, diagonal strips for routes, any outline (in image pixels)
-  // Every helper below accepts either kind. Rectangles behave exactly as before.
   const P = v => (v * 100).toFixed(3) + "%";
   const isShape = b => typeof b[0] === "string";
-  const verts = b => {                                                  // corner points: [[x, y], ...]
+  const verts = b => {
     if (!isShape(b)) { const [x, y, w, h] = b; return [[x, y], [x + w, y], [x + w, y + h], [x, y + h]]; }
     if (b[0] === "e") { const [, x, y, w, h] = b; return [[x, y], [x + w, y], [x + w, y + h], [x, y + h]]; }
     const out = []; for (let i = 1; i + 1 < b.length; i += 2) out.push([b[i], b[i + 1]]); return out;
   };
-  const bbox = b => {                                                   // the rectangle around a box / shape
+  const bbox = b => {
     if (!isShape(b)) return b;
     if (b[0] === "e") return b.slice(1, 5);
     const v = verts(b), xs = v.map(p => p[0]), ys = v.map(p => p[1]), x = Math.min(...xs), y = Math.min(...ys);
     return [x, y, Math.max(...xs) - x, Math.max(...ys) - y];
   };
   const area = b => { const r = bbox(b); return r[2] * r[3]; };
-  function inBox(b, x, y, pad = 0) {                                    // is the point inside the box / shape?
+  function inBox(b, x, y, pad = 0) {
     if (!isShape(b)) { const [bx, by, bw, bh] = b; return x >= bx - pad && x < bx + bw + pad && y >= by - pad && y < by + bh + pad; }
     if (b[0] === "e") {
       const rx = b[3] / 2 + pad, ry = b[4] / 2 + pad; if (!(rx > 0 && ry > 0)) return false;
@@ -170,7 +85,6 @@ const Maps = (() => {
   const move = (b, dx, dy) => !isShape(b) ? [b[0] + dx, b[1] + dy, b[2], b[3]]
     : b[0] === "e" ? ["e", r1(b[1] + dx), r1(b[2] + dy), b[3], b[4]]
     : ["p", ...b.slice(1).map((v, i) => r1(v + (i % 2 ? dy : dx)))];
-  // CSS for an element that covers a box / shape: its bounding rectangle, clipped to the shape.
   function boxStyle(b, m) {
     const [x, y, w, h] = bbox(b);
     let s = `left:${P(x / m.w)};top:${P(y / m.h)};width:${P(w / m.w)};height:${P(h / m.h)}`;
@@ -183,7 +97,6 @@ const Maps = (() => {
     }
     return s;
   }
-  // Outlines (hover and "Show on map"): rectangles stay <i> tags, shapes become one SVG (a white line under a coloured one).
   const svgShape = b => {
     const at = b[0] === "e" ? `ellipse cx="${b[1] + b[3] / 2}" cy="${b[2] + b[4] / 2}" rx="${b[3] / 2}" ry="${b[4] / 2}"`
       : `polygon points="${verts(b).map(v => v.join(",")).join(" ")}"`;
@@ -201,17 +114,12 @@ const Maps = (() => {
   const outline = (boxes, W, H) => layer(boxes, W, H);
   const pin = (boxes, W, H, pad = 0, tree = false) => layer(boxes, W, H, pad, tree);
 
-  // Unova (Black / White) flashing, maps.json "fx": "unova": measured from a screen recording of the game's Pokédex Area screen.
-  // Routes and bridges: a red strip fades in over the orange line (thicker than the line, like the game). Towns and cities: the
-  // orange ring fades to red. Caves, buildings and other places (the green dots): a pink-red disc a little bigger than the dot
-  // fades in. All of them use the same ~1.07 s pulse (see .amap[data-fx=unova] in style.css). Each marker follows its own shape:
-  // a circle for a circle, a strip for a diagonal route, never a square. Returns one SVG (drawn in image pixels).
   function uxMarks(sets, m) {
     const f = v => +v.toFixed(2);
     let out = "";
     for (const k of ["land", "special"]) for (const { b } of sets[k]) {
       const [x, y, w, h] = bbox(b), cx = x + w / 2, cy = y + h / 2;
-      const circle = isShape(b) ? b[0] === "e" : true;                    // a plain box that is nearly square is a circle location too
+      const circle = isShape(b) ? b[0] === "e" : true;
       const squarish = w <= 16 && h <= 16 && w / h > 0.6 && w / h < 1.67;
       if (circle && squarish && k === "special") out += `<ellipse class="ux spot" cx="${f(cx)}" cy="${f(cy)}" rx="${f(w / 2 * 1.25)}" ry="${f(h / 2 * 1.25)}" fill="url(#uxdisc)"/>`;
       else if (circle && squarish) out += `<ellipse class="ux town" cx="${f(cx)}" cy="${f(cy)}" rx="${f(w / 2 - 0.9)}" ry="${f(h / 2 - 0.9)}"/>`;
@@ -224,9 +132,6 @@ const Maps = (() => {
   const TIMES = ["morning", "day", "night"];
   const TCOL = { morning: "#ffd23f", day: "#ff8a1f", night: "#3b4cc0" };
   const TLABEL = { morning: "Morning", day: "Day", night: "Night" };
-  // In-game clock ranges for each period, shown on the Morning / Day / Night buttons. Keyed by map id; a map in maps.json can
-  // override with its own "clock": { "morning": "...", "day": "...", "night": "..." }. Gen 2 and HeartGold / SoulSilver share
-  // the same hours; Diamond / Pearl / Platinum (map "sinnoh-dp") have a longer day.
   const CLOCK_GS = { morning: "4:00–9:59 AM", day: "10:00 AM–5:59 PM", night: "6:00 PM–3:59 AM" };
   const CLOCKS = {
     "johto-kanto-gsc": CLOCK_GS,
@@ -236,7 +141,6 @@ const Maps = (() => {
   const clockOf = (id, m) => (m && m.clock) || CLOCKS[id] || null;
   const timeText = set => (set.size >= TIMES.length ? "All day" : TIMES.filter(t => set.has(t)).map(t => TLABEL[t]).join(" / "));
 
-  // The built-in bug marker: 8x8 pixels, drawn as an SVG so no image file is needed.
   const BUG = (() => {
     const rows = [".#....#.", "..#..#..", "...##...", ".######.", "#.####.#", "#.####.#", "..#..#..", ".#....#."];
     let r = "";
@@ -244,18 +148,13 @@ const Maps = (() => {
     return "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" shape-rendering="crispEdges" fill="#d01818">${r}</svg>`);
   })();
 
-
-  // ---- honey tree icon (Diamond / Pearl / Platinum) ----
-  // A 9x9 pixel replica of the golden honey tree from the games, drawn as an SVG so no image file is needed.
-  // Drawn one pixel larger than the tree's 7x7 box on every side, so it reads clearly on the map.
   const HONEYICON = (() => {
-    const pal = { D: "#3b2506", M: "#e08a10", L: "#ffd23a", T: "#5a3416" };   // dark outline + bright amber: stands out from the map's olive / orange
+    const pal = { D: "#3b2506", M: "#e08a10", L: "#ffd23a", T: "#5a3416" };
     const rows = ["..DDDDD..", ".DLLLLMD.", "DLLLLMMMD", "DLLLMMMMD", "DLLMMMMMD", "DMMMMMMDD", ".DMMMMDD.", "..DTTTD..", "..TT.TT.."];
     let r = "";
     rows.forEach((row, y) => [...row].forEach((c, x) => { if (pal[c]) r += `<rect x="${x}" y="${y}" width="1" height="1" fill="${pal[c]}"/>`; }));
     return "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 9" shape-rendering="crispEdges">${r}</svg>`);
   })();
-  // One icon per honey tree on this map's table. They carry data-t for all three times so the Morning / Day / Night buttons never hide them.
   function honeyIcons(table, m) {
     const p = v => (v * 100).toFixed(3) + "%", seen = new Set();
     let out = "";
@@ -267,10 +166,6 @@ const Maps = (() => {
     return out;
   }
 
-  // ---- the games' pixel fonts, drawn as SVG paths (crisp at any size, no font file needed) ----
-  // THIN: the Pokédex title font. 7x7 glyphs on an 8px pitch (copied from the Gold/Silver/Crystal "NEST" screen).
-  // BOLD: the region-name font. 6 rows tall; each glyph is as wide as its rows, plus 1px gap (T has none).
-  // A character that isn't in a table is skipped. Add glyphs here if a Pokémon name needs one.
   const THIN = {
     A: ["..###..", ".#...#.", "#.....#", "#.....#", "#######", "#.....#", "#.....#"],
     B: ["######.", "#.....#", "#.....#", "######.", "#.....#", "#.....#", "######."],
@@ -326,7 +221,6 @@ const Maps = (() => {
     S: [".####", "##...", ".###.", "...##", "...##", "####."],
     T: ["######", "..##..", "..##..", "..##..", "..##..", "..##.."],
   };
-  // rows of "#"/"." -> one SVG path of 1x1 pixel runs, drawn with its top-left at (x, y)
   const runs = (rows, x, y) => {
     let d = "";
     rows.forEach((row, r) => { const re = /#+/g; let k; while ((k = re.exec(row))) d += `M${x + k.index} ${y + r}h${k[0].length}v1h-${k[0].length}z`; });
@@ -337,7 +231,7 @@ const Maps = (() => {
     for (const ch of String(txt).toUpperCase()) { if (THIN[ch]) d += runs(THIN[ch], x, y); x += 8; }
     return d;
   };
-  const boldText = (txt, x, y) => {                                     // -> [path, width of the text without its last gap]
+  const boldText = (txt, x, y) => {
     let d = "", end = x;
     for (const ch of String(txt).toUpperCase()) {
       const g = BOLD[ch]; if (!g) { x += 4; end = x; continue; }
@@ -345,10 +239,9 @@ const Maps = (() => {
     }
     return [d, end - 0];
   };
-  const CUT = [5, 3, 2, 1, 1, 0, 0, 0];                                 // the plate's rounded corner, row by row (8 rows)
-  // A region name plate ("JOHTO") for one bottom corner: pale plate, black bold text, rounded corner towards the map.
+  const CUT = [5, 3, 2, 1, 1, 0, 0, 0];
   const labelSvg = (m, l) => {
-    const left = l.side !== "right", pad = left ? 2 : 8;                // 2px on the frame side, 8px on the map side
+    const left = l.side !== "right", pad = left ? 2 : 8;
     const [text, end] = boldText(l.text, pad, 1), w = end + (left ? 8 : 2);
     let plate = "";
     for (let r = 0; r < 8; r++) { const a = left ? 0 : CUT[r], b = left ? w - CUT[r] : w; plate += `M${a} ${r}h${b - a}v1h-${b - a}z`; }
@@ -366,7 +259,7 @@ const Maps = (() => {
 .amap .amapwrap.framed .amapimg{border:0;box-shadow:0 0 0 calc(var(--u) * 2) #000,0 0 0 calc(var(--u) * 4) #686868,0 0 0 calc(var(--u) * 6) #a8a8a8}
 .amap .amaplabel{position:absolute;bottom:0;display:block;height:auto;pointer-events:none;image-rendering:pixelated}
 .amap[data-time=morning] .amapimg>i:not(.roam):not([data-t~=morning]),.amap[data-time=day] .amapimg>i:not(.roam):not([data-t~=day]),.amap[data-time=night] .amapimg>i:not(.roam):not([data-t~=night]){display:none}
-/* any map whose locations depend on the clock (Gold / Silver / Crystal, Sinnoh, and later games): the picture is tinted to the chosen time of day */
+
 .amap[data-timed] .amapimg img{transition:filter .4s}
 .amap[data-timed][data-time=morning] .amapimg img{filter:sepia(.28) saturate(1.2) brightness(1.07) hue-rotate(-8deg)}
 .amap[data-timed][data-time=night] .amapimg img{filter:brightness(.55) saturate(.8) hue-rotate(12deg) contrast(1.05)}
@@ -391,13 +284,13 @@ const Maps = (() => {
 .amap .amappin i{position:absolute;box-sizing:border-box;background:rgba(255,40,40,.3);outline:2px solid #d01818;box-shadow:0 0 0 1px #fff,inset 0 0 0 1px #fff;animation:pinPulse 1.2s ease-in-out infinite}
 @keyframes pinPulse{0%,100%{opacity:.55}50%{opacity:1}}
 @media (prefers-reduced-motion:reduce){.amap .amappin i{animation:none}}
-/* "Show on map" for a honey tree: no fill, just a red outline around the tree itself */
+
 .amap .amappin i.tree{background:transparent;box-shadow:0 0 0 1px #fff,inset 0 0 0 1px #fff;outline:2px solid #d01818}
 #where li .locbtn{margin-left:auto;padding:2px 8px;font-size:12px;white-space:nowrap}
 #where li .locbtn[aria-pressed=true]{background:var(--ink);color:var(--bg)}
 .amap .roamsw{flex:none;width:14px;height:14px;margin-top:1px;background:rgba(70,150,255,.5);border:1px solid #fff;outline:1px solid #000}
 .amapimg .honeyicon{position:absolute;z-index:1;pointer-events:none;background-repeat:no-repeat;background-size:100% 100%;image-rendering:pixelated;filter:drop-shadow(1px 0 0 #fff) drop-shadow(-1px 0 0 #fff) drop-shadow(0 1px 0 #fff) drop-shadow(0 -1px 0 #fff)}
-/* honey tree list under the "Honey Trees" row (js/where.js) */
+
 #where .honeyinfo{flex:1 1 100%;font-size:13px;line-height:1.4}
 #where .honeyinfo p{margin:4px 0}
 #where .honeyinfo details.honeydet{margin:6px 0 2px}
@@ -405,22 +298,20 @@ const Maps = (() => {
 #where .honeyinfo li{align-items:center}
 #where .honeyinfo li strong{flex:0 0 min(100%,20ch)}
 #where .honeyinfo li span{flex:1 1 20ch}
-/* "Show on map" outline of a circle / triangle / diagonal strip (drawn as SVG): same red pulse as the box outlines */
+
 .amap .amappin svg{animation:pinPulse 1.2s ease-in-out infinite}
 .amap .amappin .w{stroke:#fff;stroke-width:4px}
 .amap .amappin .b{stroke:#d01818;stroke-width:2px;fill:rgba(255,40,40,.3)}
 @media (prefers-reduced-motion:reduce){.amap .amappin svg{animation:none}}
-/* hover tooltip: wraps and stays narrow instead of one long line that runs off the map */
+
 .amap .amaptip{white-space:normal;width:max-content;max-width:min(230px,70cqw)}
 .amaptip small{opacity:.8}
-/* a place inside another place (maps.json "inside"): indented under its parent in the "Where to find" list */
+
 #where li.inside{margin-left:14px;padding-left:8px;border-left:4px solid var(--mid)}
 #where .insidetag{display:inline-block;padding:0 6px;margin-left:4px;font:600 11px/1.6 system-ui,sans-serif;border:2px dashed var(--line);background:var(--card);color:var(--ink);vertical-align:middle;white-space:nowrap}`;
 
-  // Flashing maps: is this place a route / town (land) or a unique location (special)?
   const LAND = new RegExp("\\b(route|town|city|village)\\b|\\b(one|two|three|four|five|six|seven) island\\b" +
     "|\\bcinnabar island\\b|\\bindigo plateau\\b|\\bthree isle port\\b", "i");
-  // Honey trees always flash like routes (the whole route pulses), even the ones that stand in a forest or a factory.
   const kindOf = place => (String(place).startsWith(HONEY_PREFIX) || place === HONEY_ALL || LAND.test(String(place)) ? "land" : "special");
 
   function placeKey(area) {
@@ -429,16 +320,14 @@ const Maps = (() => {
     return w.join(" ");
   }
 
-  // Segments: "Sinnoh Route 212 North" -> { base: "Sinnoh Route 212", seg: "North" } (compass words kept, floors / "towards" dropped)
   const COMPASS = new Set(["north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest"]);
   function segment(area) {
     const parts = String(area).split(/\s+towards\s+/i), w = parts[0].trim().split(/\s+/), seg = [];
     while (w.length > 1 && FLOOR.test(w[w.length - 1])) w.pop();
     while (w.length > 1 && COMPASS.has(w[w.length - 1].toLowerCase())) seg.unshift(w.pop());
-    const to = parts[1] ? "towards " + parts[1].trim() : "";           // "Route 205 South towards Floaroma Town"
+    const to = parts[1] ? "towards " + parts[1].trim() : "";
     return { base: placeKey(w.join(" ")), seg: [seg.join(" "), to].filter(Boolean).join(" ") };
   }
-  // Is this exact area name (e.g. "Sinnoh Route 212 North") drawn on any map of these games? false = only its parent route is.
   function exact(keys, area) {
     if (!data) return true;
     for (const key of keys) for (const id of data.games[key] || []) if (tableOf(id)[area]) return true;
@@ -447,19 +336,16 @@ const Maps = (() => {
 
   function init(d) {
     data = d && typeof d === "object" && d.maps && d.games ? d : null;
-    if (typeof document !== "undefined" && !document.getElementById("maps-time-css")) {   // styles for the bug icon, time buttons and map tabs
+    if (typeof document !== "undefined" && !document.getElementById("maps-time-css")) {
       const s = document.createElement("style"); s.id = "maps-time-css"; s.textContent = CSS; document.head.append(s);
     }
   }
 
-  // Which times of day does one entry row apply to? A row with no time condition applies to all three.
   function rowTimes(cond) {
     const c = String(cond || "").toLowerCase(), t = TIMES.filter(x => c.includes(x));
     return t.length ? t : TIMES;
   }
 
-  // A map picture failed to load (inline onerror): remove that map, and its tab if there are tabs. If the map that was on
-  // show goes, the first remaining one is shown instead; with only one map left the tab row goes too.
   function drop(img) {
     const fig = img && img.closest && img.closest("figure");
     if (!fig) return;
@@ -467,7 +353,7 @@ const Maps = (() => {
     fig.remove();
     if (!box) return;
     const tabs = [...box.querySelectorAll(".amaptab")].filter(t => {
-      if (box.querySelector(`figure.amap[data-map="${t.dataset.map}"]`)) return true;   // its map is still there
+      if (box.querySelector(`figure.amap[data-map="${t.dataset.map}"]`)) return true;
       t.remove(); return false;
     });
     if (!tabs.length) { box.remove(); return; }
@@ -477,35 +363,27 @@ const Maps = (() => {
     if (tabs.length < 2) { const strip = box.querySelector(".amaptabs"); if (strip) strip.remove(); }
   }
 
-  // blank (a short text, e.g. "not found in Summer"): show the maps with nothing marked instead of "AREA UNKNOWN" (used when a season / time filter leaves no locations)
   function html(keys, entries, name = "", blank = "") {
     if (!data) return "";
     const areas = [...new Set(entries.map(e => e[0]))], done = new Set(), out = [], none = !areas.length && !blank;
-    const meta = [];                                                    // one { id, name, n } per figure in `out`, for the tabs
+    const meta = [];
     const emit = (id, m, n, markup, roamOnly = false) => { out.push(markup); meta.push({ id, name: m.name, n, roamOnly }); };
-    // times per area name: the union over all of that area's rows
     const areaTimes = new Map();
     for (const e of entries) {
       const set = areaTimes.get(e[0]) || new Set();
       for (const t of rowTimes(e[5])) set.add(t);
       areaTimes.set(e[0], set);
     }
-    // for the hover tooltip: every area name (and its place name) with its times, e.g. { n: "Johto Route 36", t: "day night" }
     const found = areas.flatMap(a => { const t = TIMES.filter(x => areaTimes.get(a).has(x)).join(" "); return [{ n: a, t }, { n: placeKey(a), t }]; });
-    // honey trees: the tooltip should say "found here" on every route that has a tree (they all share the times of the "Honey Trees" row)
     const honeyHere = areas.includes(HONEY_ALL);
     if (honeyHere) { const t = TIMES.filter(x => areaTimes.get(HONEY_ALL).has(x)).join(" "); honeyNames.forEach(n => found.push({ n, t })); }
     const pc = v => (v * 100).toFixed(3) + "%";
-    // The in-game "PIKACHU's NEST" heading, if the map defines one (maps.json "title"): { text, x, y, size } in image pixels.
-    // {NAME} = upper case name, {name} = as written.
     const title = m => {
       const t = m.title;
       if (!t || !t.text || !name || t.bar) return "";
       const txt = String(t.text).replace("{NAME}", name.toUpperCase()).replace("{name}", name);
       return `<div class="amaptitle" style="left:${pc((t.x || 0) / m.w)};top:${pc((t.y || 0) / m.h)};font-size:${((t.size || 8) / m.w * 100).toFixed(3)}cqw">${esc(txt)}</div>`;
     };
-    // The "HOOTHOOT'S NEST" strip above the map (maps.json title.bar): pale pixel text on black, like the games.
-    // It is outside .amapimg, so hover positions stay exact. Its viewBox is in the same "image pixels" as the map.
     const bar = m => {
       const t = m.title;
       if (!t || !t.text || !name || !t.bar) return "";
@@ -518,7 +396,6 @@ const Maps = (() => {
       `<div class="amapwrap${m.frame ? " framed" : ""}"${m.frame ? ` style="--u:${(100 / (m.w + 16)).toFixed(4)}cqw"` : ""}>${bar(m)}<div class="amapframe"><div class="amapimg">` +
       `<img alt="${esc(m.name)} map" src="${esc(m.img)}" onerror="Maps.drop(this)">${inner}<div class="amaphl"></div><div class="amappin"></div>${title(m)}` +
       `${(m.labels || []).map(l => labelSvg(m, l)).join("")}<div class="amaptip" hidden></div></div></div></div><figcaption>${cap}</figcaption>${extra}</figure>`;
-    // All / Morning / Day / Night buttons (inline handler: this file never touches the DOM after init).
     const filter = (m, id) => {
       const clock = clockOf(id, m) || {};
       return `<div class="tfilter" role="group" aria-label="Time of day">` +
@@ -530,13 +407,10 @@ const Maps = (() => {
       `${clock.morning ? " The hours are the game's own clock." : ""}</span></div>`;
     };
 
-    // Roaming: which regions do the roaming rows name, and which routes of a map belong to them?
     const regions = [...new Set(entries.filter(e => /^roaming/.test(e[1])).map(e =>
-      // PokéAPI files HeartGold / SoulSilver's Latias / Latios under Johto, but they roam Kanto (they start at Vermilion's Fan Club).
       (/copycat/i.test(e[5]) ? "Kanto" : String(e[0]).replace(/^Roaming\s+/i, "").trim())))];
-    // caption: "3 locations marked", "roams the shaded routes", or both
     const capOf = (n, rm) => (n ? `${n} location${n === 1 ? "" : "s"} marked` : "") + (n && rm ? " + " : "") + (rm ? "roams the shaded routes" : "");
-    const roamFor = (table, m) => {                                     // -> { marks, names, note } or null
+    const roamFor = (table, m) => {
       if (!regions.length) return null;
       const seen = new Set(), names = [];
       let marks = "";
@@ -555,52 +429,50 @@ const Maps = (() => {
           `and it moves around as you play. Hover a route to check it.</span></p>` };
     };
 
-    const inGroup = {};                                                 // which maps of one family this list shows (Red / Blue + Yellow)
+    const inGroup = {};
     for (const k of keys) for (const id of data.games[k] || []) (inGroup[famOf(id)] = inGroup[famOf(id)] || new Set()).add(id);
     const tag = (id, m) => (m.variant && inGroup[famOf(id)] && inGroup[famOf(id)].size > 1 ? ` (${esc(m.variant)})` : "");
-    const mixed = keys.includes("emerald") && keys.some(k => k !== "emerald");   // Emerald and Ruby/Sapphire in one group
+    const mixed = keys.includes("emerald") && keys.some(k => k !== "emerald");
     for (const key of keys) for (const id of data.games[key] || []) {
       const m = data.maps[id];
-      if (!m || !m.w || !m.h) continue;                                 // not set up yet
-      const fstyle = m.flash ? (key === "emerald" ? "emerald" : "rs") : "";   // flashing maps look different in Emerald
+      if (!m || !m.w || !m.h) continue;
+      const fstyle = m.flash ? (key === "emerald" ? "emerald" : "rs") : "";
       if (done.has(id + "|" + fstyle)) continue;
       done.add(id + "|" + fstyle);
-      if (none) {                                                       // nowhere to show: the in-game "AREA UNKNOWN" box
+      if (none) {
         const u = m.unknown, banner = u && u.img
           ? `<img class="unk" alt="Area unknown" src="${esc(u.img)}" style="left:${pc(u.x / m.w)};top:${pc(u.y / m.h)};width:${pc(u.w / m.w)}">`
           : `<div class="unk txt">AREA UNKNOWN</div>`;
-        return wrap(m, id, banner, `${esc(m.name)}: area unknown`);       // only the first map; one banner is enough
+        return wrap(m, id, banner, `${esc(m.name)}: area unknown`);
       }
       const table = tableOf(id);
-      if (blank) {                                                      // an empty map: the picture stays open, no markers
+      if (blank) {
         emit(id, m, 0, wrap(m, id, "", `${esc(m.name)}: ${esc(blank)}`, [], "", m.flash ? ` data-flash="${fstyle}"` : ""), false);
         continue;
       }
 
-      if (m.flash) {                                                    // style 3: the locations themselves flash (Hoenn, FireRed / LeafGreen)
-        const seen = new Map(), sets = { land: [], special: [] }, names = new Set();   // seen: kind + box -> { b, times }
+      if (m.flash) {
+        const seen = new Map(), sets = { land: [], special: [] }, names = new Set();
         for (const a of areas) {
           const boxes = boxesFor(id, table, a);
           if (!boxes || !boxes.length) continue;
           const kind = kindOf(placeKey(a));
-          if (a === HONEY_ALL) honeyNames.forEach(h => names.add(h)); else names.add(placeKey(a));   // honey trees count one by one
+          if (a === HONEY_ALL) honeyNames.forEach(h => names.add(h)); else names.add(placeKey(a));
           for (const b of boxes) {
             const sig = kind + JSON.stringify(b);
             let o = seen.get(sig);
             if (!o) { seen.set(sig, o = { b, times: new Set() }); sets[kind].push(o); }
-            for (const t of areaTimes.get(a)) o.times.add(t);               // a box shared by two places is there whenever either is
+            for (const t of areaTimes.get(a)) o.times.add(t);
           }
         }
         const rm = roamFor(table, m);
-        if (!seen.size && !rm) continue;                                // nothing of this Pokémon on this map
-        // Morning / Day / Night: with a clock in the game (Sinnoh), boxes that only apply at some times get data-t,
-        // the figure gets the time buttons, and the picture is tinted to the chosen time (see data-timed in the CSS).
+        if (!seen.size && !rm) continue;
         let timed = false;
         let marks = (rm ? rm.marks : "") + (m.fx === "unova" ? uxMarks(sets, m) : ["land", "special"].flatMap(k => sets[k].map(({ b, times }) => {
           if (times.size < TIMES.length) timed = true;
           return `<i class="fl ${k}" data-t="${TIMES.filter(t => times.has(t)).join(" ")}" style="${boxStyle(b, m)}"></i>`;
         })).join(""));
-        if (honeyHere) marks += honeyIcons(table, m);                  // the tree icons sit on top of the flashing boxes
+        if (honeyHere) marks += honeyIcons(table, m);
         const mix = sets.land.length && sets.special.length ? "both" : sets.special.length ? "special" : "land";
         const who = mixed ? (fstyle === "emerald" ? " (Emerald)" : " (Ruby / Sapphire)") : "";
         emit(id, m, names.size, wrap(m, id, marks, `${esc(m.name)}${who}: ${capOf(names.size, rm)}`, rm ? found.concat(rm.found) : found,
@@ -608,7 +480,7 @@ const Maps = (() => {
         continue;
       }
 
-      if (m.icon && !m.single) {                                        // style 1: the game's sprite on every tile
+      if (m.icon && !m.single) {
         const seen = new Set(), places = new Set();
         for (const a of areas) {
           const boxes = boxesFor(id, table, a);
@@ -617,7 +489,7 @@ const Maps = (() => {
           for (const b of boxes) seen.add(JSON.stringify(b));
         }
         const rm = roamFor(table, m);
-        if (!seen.size && !rm) continue;                                // nothing of this Pokémon on this map
+        if (!seen.size && !rm) continue;
         const g = m.grid || 8;
         const marks = (rm ? rm.marks : "") + [...seen].map(s => bbox(JSON.parse(s))).map(([x, y, w, h]) => {
           const pos = `left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(w / m.w)};height:${pc(h / m.h)}`;
@@ -627,8 +499,6 @@ const Maps = (() => {
         continue;
       }
 
-      // style 2: one icon per location (the game's sprite if the map has "icon", else the built-in bug). Places with
-      // identical boxes (aliases) are one location.
       const sprite = m.icon ? esc(m.icon) : BUG;
       const groups = new Map();
       for (const a of areas) {
@@ -644,10 +514,10 @@ const Maps = (() => {
       let timed = false;
       const marks = (rm ? rm.marks : "") + [...groups.values()].map(gr => {
         const part = gr.times.size < TIMES.length; timed = timed || part;
-        const big = bbox(gr.boxes.reduce((p, b) => (area(b) > area(p) ? b : p)));      // biggest box of the location
+        const big = bbox(gr.boxes.reduce((p, b) => (area(b) > area(p) ? b : p)));
         const cw = Math.min(ms, big[2]), ch = Math.min(ms, big[3]);
         const cols = Math.max(1, Math.floor(big[2] / cw)), rows = Math.max(1, Math.floor(big[3] / ch));
-        const x = big[0] + Math.floor((cols - 1) / 2) * cw, y = big[1] + Math.floor((rows - 1) / 2) * ch;   // middle tile
+        const x = big[0] + Math.floor((cols - 1) / 2) * cw, y = big[1] + Math.floor((rows - 1) / 2) * ch;
         const pos = `left:${pc(x / m.w)};top:${pc(y / m.h)};width:${pc(cw / m.w)};height:${pc(ch / m.h)}`;
         return `<i class="nest ${m.icon ? "one" : "bug"}" data-t="${TIMES.filter(t => gr.times.has(t)).join(" ")}" style="${pos};background-image:url(${sprite})"></i>`;
       }).join("");
@@ -655,10 +525,8 @@ const Maps = (() => {
         (timed ? filter(m, id) : "") + (rm ? rm.note : ""), timed ? " data-timed" : ""), !groups.size);
     }
 
-    // Two or more different maps (Kanto + Sevii Islands ...): a tab for each, one map shown at a time. (The same map twice, as
-    // with Hoenn's Ruby / Sapphire + Emerald, is not a tab: both versions stay on show so they can be compared.)
     const ids = [...new Set(meta.map(x => x.id))];
-    if (new Set(ids.map(famOf)).size < 2) return out.join("");          // one place shown twice (Red / Blue + Yellow, Ruby / Sapphire + Emerald): both pictures stay on show, no tabs
+    if (new Set(ids.map(famOf)).size < 2) return out.join("");
     const first = ids[0];
     const pick = "var w=this.closest('.amaps'),id=this.dataset.map;" +
       "w.querySelectorAll('.amaptab').forEach(function(b){b.setAttribute('aria-selected',b===this)},this);" +
@@ -672,12 +540,9 @@ const Maps = (() => {
     return `<div class="amaps"><div class="amaptabs" role="tablist" aria-label="Maps">${tabs}</div>${figs.join("")}</div>`;
   }
 
-  // "Pokémon Tower" / "Pokemon Tower", "Diglett's Cave" / "Diglett S Cave" and "Kanto Victory Road" / "Victory Road"
-  // are separate keys in maps.json that mean the same place, so compare them in a normalised form.
   const norm = s => String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
     .replace(/^kanto/, "").replace(/[^a-z0-9]/g, "");
 
-  // Short label for places that share one spot: their common start if it is meaningful, else the apostrophe spelling / the first name.
   const wordsOf = s => String(s).split(/\s+/);
   const commonWords = (p, q) => { const x = wordsOf(p), y = wordsOf(q); let i = 0; while (i < x.length && i < y.length && x[i].toLowerCase() === y[i].toLowerCase()) i++; return i; };
   function label(names) {
@@ -690,31 +555,25 @@ const Maps = (() => {
     return list.find(s => /['é]/.test(s)) || list[0];
   }
 
-  // Which locations cover the point (fx, fy) (0..1 across the map image)? -> [{ name, here, when, boxes }]
-  // `found` = what Maps.html put in data-found: { n: area name, t: "day night" } (plain strings count as all day).
-  // `roam` = a roaming Pokémon could be there (shaded route);
-  // `here` = the Pokémon is found there; `when` = "Morning / Night" or "All day" (only when the map has "times": true).
-  // `boxes` = every tile of the location, so the caller can outline all of it. Aliases with the same boxes are merged.
-  // The combined "Honey Trees" place is skipped here: each tree is its own place, so the tooltip names the tree.
   function at(id, fx, fy, found = []) {
     const m = data && data.maps[id];
     if (!m || !m.w || !m.h) return [];
     const x = fx * m.w, y = fy * m.h, byName = new Map();
-    const roamKeys = new Set();                                          // routes a roaming Pokémon can be on (found entries with r: 1)
-    const via = new Map(), own = tableOf(id);                            // via: parent key -> names of the places inside it the Pokémon is in
+    const roamKeys = new Set();
+    const via = new Map(), own = tableOf(id);
     for (const f of found) {
       if (f && f.r) { roamKeys.add(norm(f.n)); continue; }
       const nm = typeof f === "string" ? f : f.n, k = norm(nm), set = byName.get(k) || new Set();
       const t = typeof f === "string" || !f.t ? TIMES : f.t.split(" ");
       t.forEach(v => set.add(v)); byName.set(k, set);
-      if (own[nm] || own[placeKey(nm)]) continue;                        // it has its own box, so its parent is not lit up
-      for (let p = parentIn(id, nm), hops = 0; p && hops < 4; p = parentIn(id, p), hops++) {   // it is drawn with its parent's boxes
+      if (own[nm] || own[placeKey(nm)]) continue;
+      for (let p = parentIn(id, nm), hops = 0; p && hops < 4; p = parentIn(id, p), hops++) {
         const pk = norm(p), ps = byName.get(pk) || new Set();
         t.forEach(v => ps.add(v)); byName.set(pk, ps);
         if (nm === placeKey(nm)) { const l = via.get(pk) || new Set(); l.add(nm); via.set(pk, l); }
       }
     }
-    const merged = new Map();                                            // box signature -> one location
+    const merged = new Map();
     for (const [p, all] of Object.entries(tableOf(id))) {
       if (p === HONEY_ALL) continue;
       if (!all.some(b => inBox(b, x, y))) continue;
@@ -726,14 +585,11 @@ const Maps = (() => {
       if (byName.has(k)) { g.here = true; byName.get(k).forEach(t => g.times.add(t)); }
       if (via.has(k)) via.get(k).forEach(x => g.via.add(x));
     }
-    // One line per place, but not one line per room: names that share a box set are labelled by their common start
-    // ("Kanto Safari Zone Area 1 / 2 / 3 / Middle" -> "Kanto Safari Zone"), and different box sets whose names share a long start
-    // (or one name is the start of the other) are merged into one entry. Places the Pokémon is in come first.
     const items = [...merged.values()].map(g => ({
-      name: g.names.find(s => s.startsWith(HONEY_PREFIX) && byName.has(norm(s)))   // a honey tree this Pokémon uses: name the tree
+      name: g.names.find(s => s.startsWith(HONEY_PREFIX) && byName.has(norm(s)))
         || label(g.names.filter(s => !s.startsWith(HONEY_PREFIX))) || g.names[0],
       here: g.here, roam: !!g.roam, times: new Set(g.times), boxes: g.boxes.slice(), via: new Set(g.via),
-      inside: g.names.map(n => parentIn(id, n)).find(Boolean) || "",           // this place is inside ...
+      inside: g.names.map(n => parentIn(id, n)).find(Boolean) || "",
       count: 1,
     }));
     const out = [];
@@ -747,12 +603,11 @@ const Maps = (() => {
       o.inside = o.inside || it.inside;
     }
     return out.map(o => ({
-      name: o.name, here: o.here, roam: o.roam && !o.here,                  // a roamer could be here (and it isn't a fixed spot)
+      name: o.name, here: o.here, roam: o.roam && !o.here,
       when: o.here && m.times ? timeText(o.times) : "", boxes: o.boxes, inside: o.inside, via: [...o.via], count: o.count,
     })).sort((x, y) => (y.here ? 1 : 0) - (x.here ? 1 : 0));
   }
 
-  // Which maps (of the given games) have boxes for this location? -> [{ id, boxes, w, h }] (used by the "Show on map" buttons in where.js)
   function locate(keys, area) {
     if (!data) return [];
     const out = [], seen = new Set();
@@ -767,11 +622,6 @@ const Maps = (() => {
     return out;
   }
 
-  // ---- PokeAPI naming fix: "Kanto Victory Road 1" / "2" ----
-  // PokeAPI uses two location names for the same place: "Kanto Victory Road 1" holds the Gold / Silver / Crystal /
-  // HeartGold / SoulSilver data and "Kanto Victory Road 2" holds the Red / Blue / Yellow / FireRed / LeafGreen data.
-  // Each game only ever has one of them, so the number means nothing to the player. Strip it (floors are kept:
-  // "Kanto Victory Road 1 2F" -> "Kanto Victory Road 2F") so the rows match the map boxes and read naturally.
   const VR_NUM = { gold: 1, silver: 1, crystal: 1, "heart-gold": 1, "soul-silver": 1, red: 2, blue: 2, yellow: 2, "fire-red": 2, "leaf-green": 2 };
   function fixLoc(d) {
     if (!d || !d.loc) return d;

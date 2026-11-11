@@ -1,16 +1,12 @@
 "use strict";
-// Forms: alternate forms and gender differences (data/forms.json, built by build_forms.py).
-// Pure helpers plus one HTML builder; no state of its own beyond the loaded data. No DOM access.
-//
-//   Forms.init(data)                          once, after data/forms.json loads (null if it didn't)
-//   Forms.ready() / Forms.data()              was the file loaded / the raw data (for Store.sanitize)
-//   Forms.forGame(game)                       Map: national number -> { base, forms: [{id,name,cat,g}] } for that game
-//   Forms.counts(state, game, kind, inDex)    { have, total } over the visible dex (inDex: n => bool, or null for all)
-//   Forms.speciesCounts(state, game, kind, n) same, for one species (the card chip)
-//   Forms.catTotals(game, inDex)              { gender, alt } how many forms exist per category
-//   Forms.missing(state, game, req, inDex)    how many REQUIRED forms the normal list still lacks (req = { gender, alt })
-//   Forms.html(state, game, n)                the Forms tab for one species
-// kind is "caught" (normal) or "shiny".
+// Forms: alternate forms and gender differences (data/forms.json). Pure helpers plus one HTML builder; no DOM access.
+//   init(data) / ready() / data()          load state          setAreas(formAreas)   data/form-areas.json (which form lives where)
+//   forGame(game)                          Map: national number -> { base, forms } for that game
+//   counts / speciesCounts / catTotals     progress numbers (kind is "caught" or "shiny")
+//   missing(state, game, req, inDex)       required forms the normal list still lacks (completion rules)
+//   html(state, game, n)                   the Forms tab for one species
+//   areasFor / byMethod / bySeason / notesFor   form info for the "Where to find" list
+//   fit(img)                               show a form sprite at a whole multiple of its real size
 const Forms = (() => {
   let data = null;
   const cache = new Map();
@@ -18,12 +14,9 @@ const Forms = (() => {
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const have = (state, kind, key) => new Set(((state.forms || {})[kind] || {})[key] || []);
 
-  // data/form-areas.json: which form shows up in which area (and segment). rules: [{ n, g: [game keys], area, form: "base" | form id }]
   let fa = [];
   let fnotes = [];
   const setAreas = d => { fa = d && Array.isArray(d.rules) ? d.rules : []; fnotes = d && Array.isArray(d.notes) ? d.notes : []; };
-  // Rules without an "area": by encounter method (Basculin: surfing / fishing vs rippling water) or by season (Deerling, Sawsbuck).
-  // Each returns [{ name: form name, g: [game keys of the group it applies to] }].
   const merge = list => { const m = new Map(); for (const [name, g] of list) { const e = m.get(name) || { name, g: [] }; g.forEach(k => { if (!e.g.includes(k)) e.g.push(k); }); m.set(name, e); } return [...m.values()]; };
   const hit = (r, keys) => r.g.filter(k => keys.includes(k));
   const byMethod = (n, keys, method) => merge(fa.filter(r => r.n === n && r.methods && r.methods.includes(method)).map(r => [formName(n, r.form), hit(r, keys)]).filter(x => x[1].length));
@@ -34,7 +27,6 @@ const Forms = (() => {
     if (id === "base") return sp.base;
     const f = (sp.forms || []).find(x => x.id === id); return f ? f.name : id;
   };
-  // Form names that apply to Pokémon n in this area for these games (used by the "Where to find" list).
   const areasFor = (n, keys, area, base) => [...new Set(fa.filter(r => r.n === n && r.g.some(k => keys.includes(k)) && (r.area === area || r.area === base)).map(r => formName(n, r.form)))];
   const areaHtml = a => {
     const s = typeof Maps !== "undefined" ? Maps.segment(a) : { base: a, seg: "" };
@@ -94,8 +86,6 @@ const Forms = (() => {
     return left;
   }
 
-  // Once a form sprite has loaded, show it at a WHOLE multiple of its real size (the multiple closest to the target size in
-  // the list's --fs), so pixels stay even whatever size the file is: 64px at a 100px target -> 128px (2x), 80px -> 80px (1x).
   function fit(img) {
     const n = img.naturalWidth, list = img.closest(".flist"), t = list ? parseFloat(list.style.getPropertyValue("--fs")) : 0;
     if (!n || !t) return;
@@ -107,7 +97,7 @@ const Forms = (() => {
     const sp = forGame(g).get(n);
     if (!sp) return "";
     const dir = `assets/sprites/${g.sprites}`;
-    const ul = `<ul class="flist" style="--fs:${g.spriteSize || 80}px">`;   // form sprites are shown at the game's native sprite size (config "spriteSize")
+    const ul = `<ul class="flist" style="--fs:${g.spriteSize || 80}px">`;
     const fc = have(state, "caught", g.key), fs = have(state, "shiny", g.key);
     const mc = new Set(state.caught[g.key] || []), ms = new Set(state.shiny[g.key] || []);
     const whereOf = fid => { const r = fa.filter(x => x.n === n && x.form === fid && x.g.includes(g.key)); const places = r.filter(x => x.area), other = r.filter(x => !x.area && x.label);

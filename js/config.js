@@ -1,18 +1,10 @@
 "use strict";
-// Config: the game list and every per-game setting, read from data/games.config.json (the one source of truth).
-//
-//   Config.load()          Promise of the games array (cached). Each game is the config entry plus:
-//                            card      the named card layout merged with that game's own overrides (or undefined)
-//                            diploma   the named diploma layout (or undefined)
-//                            pc        { boxes, box, cols }: the in-game PC (from the generation, for the "PC boxes" layout)
-//                            sources   keys of the games whose Pokémon can reach this game (itself first), for "where to find"
-//   Config.themeGroups()   [[group label, [[id, name], ...]], ...] for the Theme dropdown (after load())
-//   Config.gameGroups()    [[generation label, [game, ...]], ...] for the Game dropdown, one group per generation (after load())
-//   Config.build(cfg)      pure: raw config -> games array (exported for testing)
-//
-// Fonts are not per game, so they stay here.
-// native = the pixel size each font was drawn for; other sizes are scaled from it.
-// asc = the font's ascent / em-size (GDI+ anchors text by its top, canvas by its baseline).
+// Config: the game list and every per-game setting, loaded from data/games.config.json (the single source of truth).
+//   Config.load()          Promise of the games array: each config entry plus its merged card layout, diploma layout,
+//                          PC box layout (pc) and sources (games whose Pokémon can reach this game, itself first).
+//   Config.themeGroups()   Theme dropdown groups; Config.gameGroups() Game dropdown groups (call after load()).
+//   Config.build(cfg)      pure: raw config -> games array.
+// FONTS: native = pixel size the font was drawn for (other sizes are scaled); asc = ascent / em-size.
 const FONTS = {
   pkmn: { css: "PKMN",     asc: 1.0,    native: 8 },
   rs:   { css: "PokeRS",   asc: 0.8662, native: 15 },
@@ -23,9 +15,6 @@ const Config = (() => {
   const PATH = "data/games.config.json";
   let raw = null, games = null, loading = null;
 
-  // Which games can send Pokémon into each game, the game itself first:
-  //   same generation (trading), then the generations listed in that generation's "transfer"
-  //   (Gen 1 <-> 2 Time Capsule, Gen 3 -> 4 Pal Park). A game can set its own "sources" list to override.
   function build(cfg) {
     const byGen = {};
     for (const g of cfg.games) (byGen[g.gen] = byGen[g.gen] || []).push(g.key);
@@ -36,7 +25,7 @@ const Config = (() => {
     };
     return cfg.games.map(g => {
       const { card, diploma, ...rest } = g, out = { ...rest, sources: sourcesOf(g) };
-      const pc = g.pc || (cfg.generations[g.gen] || {}).pc;                    // PC box layout of the generation: { boxes, box (slots per box), cols }
+      const pc = g.pc || (cfg.generations[g.gen] || {}).pc;
       if (pc) out.pc = pc;
       if (card) {
         const { layout, ...over } = card;
@@ -64,8 +53,6 @@ const Config = (() => {
     return [...extra, ...gens.map(n => [((raw.generations[n] || {}).label) || `Gen ${n}`, games.filter(g => g.gen === n).map(g => [g.key, g.name])])];
   }
 
-  // The Game dropdown: one group per generation ("Gen 1 · Kanto" ...), games in config order inside each group.
-  // The label comes from "generations" in data/games.config.json.
   function gameGroups() {
     const gens = [...new Set(games.map(g => g.gen))].sort((a, b) => a - b);
     return gens.map(n => [((raw.generations[n] || {}).label) || `Gen ${n}`, games.filter(g => g.gen === n)]);

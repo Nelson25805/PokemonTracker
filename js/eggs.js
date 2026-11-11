@@ -1,25 +1,16 @@
 "use strict";
-// Eggs: the HeartGold / SoulSilver secret passwords for the Mareep, Wooper and Slugma eggs.
-//
-//   Eggs.applies(gameKey, n)   is Pokémon n one of the three egg Pokémon, and gameKey Heart Gold / Soul Silver?
-//   Eggs.load()                Promise: loads data/egg-words.json (where.js waits for it before drawing)
-//   Eggs.row(n, names)         HTML of the "Secret code for ... Egg" row that where.js adds to the Heart Gold / Soul Silver group
-//   Eggs.passwords(reward, tid, size)   pure: -> four word indices (exported for testing)
-//
-// How it works: the NPC in the Violet City Pokémon Center checks four Easy Chat words. The words that unlock a reward depend on
-// the save's Trainer ID. This file runs the game's check BACKWARDS: it builds the four bytes the check wants
-// (reward id + magic number 6, the Trainer ID, a checksum), undoes the game's scrambling, and turns the result into positions in
-// the password word list. The word list is data/egg-words.json (one list per game language; the order matters, so it is the
-// game's own order). Only languages present in that file are offered.
-//
-// The Trainer ID and language are remembered in this browser under their own key (like the theme), not in the progress save.
+// Eggs: HeartGold / SoulSilver secret passwords for the Mareep, Wooper and Slugma eggs.
+//   applies(gameKey, n)    is this one of the egg Pokémon in HG / SS?     load()   fetches data/egg-words.json
+//   row(n, names)          HTML row for the "Where to find" list          passwords(reward, tid, size)  pure: four word indices
+// The NPC's check depends on the Trainer ID, so passwords() runs the game's check backwards (reward id + magic 6, Trainer ID,
+// checksum, undo the scrambling) and maps the result onto the game's own word list. Trainer ID and language are remembered
+// under their own localStorage key.
 const Eggs = (() => {
   const $ = s => document.querySelector(s);
   const KEY = "pokedexTracker.eggs";
   const GAMES = new Set(["heart-gold", "soul-silver"]);
-  // national number -> reward number used by the game (HG / SS rewards 0-7 are wallpapers and gifts, 8-10 are the eggs)
   const EGGS = { 179: { id: 8, name: "Mareep Egg" }, 194: { id: 9, name: "Wooper Egg" }, 218: { id: 10, name: "Slugma Egg" } };
-  const MAGIC = 6;                       // high nybble of the first byte in Platinum / HeartGold / SoulSilver
+  const MAGIC = 6;
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
   let data = null, loading = null;
@@ -28,34 +19,25 @@ const Eggs = (() => {
     const r = JSON.parse(localStorage.getItem(KEY));
     if (r && /^\d{1,5}$/.test(r.tid || "")) pref.tid = r.tid;
     if (r && /^[a-z]{2}$/.test(r.lang || "")) pref.lang = r.lang;
-  } catch { /* nothing saved, or storage blocked */ }
-  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(pref)); } catch { /* private mode */ } };
+  } catch { }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(pref)); } catch { } };
 
-  // ---- the maths ----
   const rotl32 = (v, n) => ((v << n) | (v >>> (32 - n))) >>> 0;
   const rotl24 = (v, n) => { n %= 24; return n ? (((v << n) | (v >>> (24 - n))) & 0xFFFFFF) : v; };
 
-  // reward number + Trainer ID -> four positions in the word list (list length = size)
   function passwords(reward, tid, size) {
-    // what the check wants to end up with
     const f0 = (MAGIC << 4) | reward, f1 = tid >> 8, f2 = tid & 255, f3 = ((f0 + f1) * f2) & 255;
-    // undo, in reverse order: (d) first byte XOR-ed into the 2nd and 3rd
     let a = f0, b = f1 ^ f0, c = f2 ^ f0;
-    // (c) 24-bit rotate right by the low nybble of the 4th byte
     const v = rotl24((a << 16) | (b << 8) | c, f3 & 15);
-    // (b) high nybble of the 4th byte XOR-ed into both nybbles of the first three bytes
     const m = (f3 >> 4) * 17;
     a = ((v >> 16) & 255) ^ m; b = ((v >> 8) & 255) ^ m; c = (v & 255) ^ m;
-    // (a) 32-bit rotate right by 5
     const w = rotl32(((a << 24) | (b << 16) | (c << 8) | f3) >>> 0, 5);
     const bytes = [w >>> 24, (w >>> 16) & 255, (w >>> 8) & 255, w & 255];
-    // bytes -> list positions: the first is itself, the others are steps forward (wrapping round the list)
     const idx = [bytes[0]];
     for (let i = 1; i < 4; i++) idx.push((idx[i - 1] + bytes[i]) % size);
     return idx;
   }
 
-  // ---- data + page ----
   function load() {
     return (loading = loading || fetch("data/egg-words.json").then(r => (r.ok ? r.json() : null)).catch(() => null)
       .then(d => { loading = null; return (data = d && d.langs ? d : null); }));
@@ -87,7 +69,6 @@ const Eggs = (() => {
     return `<ol class="eggwords" lang="${esc(Object.keys(data.langs).find(k => data.langs[k] === lang))}">${w.map((x, i) => `<li><small>Word ${i + 1}</small><b>${esc(x)}</b></li>`).join("")}</ol>`;
   }
 
-  // the row for the "Where to find" list: names = the Heart Gold / Soul Silver game names of this group
   function row(n, names) {
     const egg = EGGS[n], langs = data ? Object.entries(data.langs) : [];
     return `<li class="evo egg"><strong>Secret code for ${esc(egg.name)}</strong><span class="wide">` +
@@ -98,7 +79,6 @@ const Eggs = (() => {
       `</div><div class="egg-out" data-n="${n}" aria-live="polite">${words(n)}</div></span></li>`;
   }
 
-  // The dialog can hold several egg rows and is redrawn by the season / time buttons, so listen on the document and update every row.
   const refresh = () => document.querySelectorAll("#where .egg-out").forEach(o => { o.innerHTML = words(Number(o.dataset.n)); });
   document.addEventListener("input", e => {
     if (!e.target.classList || !e.target.classList.contains("egg-tid")) return;

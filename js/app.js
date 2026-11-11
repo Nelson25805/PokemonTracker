@@ -1,15 +1,14 @@
 "use strict";
-// View: reads from Store, draws the page, and turns DOM events into Store updates.
-// It never touches localStorage or files (Persist does) and keeps no state of its own,
-// only the static game and Pokémon lists it loads once.
+// View: reads from Store, draws the page, and turns DOM events into Store updates. Never touches localStorage or files (Persist does).
+// The grid is built once per game; search, filters and marks only toggle classes / hidden, so scroll position and sprites are kept.
+// Sections: selectors, renderers, reactions (onChange), actions (DOM events), info dialog, filters and bulk actions, start up.
 (async function main() {
   const $ = s => document.querySelector(s);
-  let games = [], mons = [], monByN = new Map(), regional = null, cardEls = [], badgeEls = [], chipEls = []; // cardEls: the grid's buttons, built once per game; badgeEls: the matching ★/✓ badges (games with shiny sprites only)
-  // View-only state (not saved, like the search box): the Show filter, select mode, and the last bulk action for Undo.
+  let games = [], mons = [], monByN = new Map(), regional = null, cardEls = [], badgeEls = [], chipEls = [];
   const view = { filter: "all", select: false, range: false, selected: new Set(), anchor: null, undo: null };
 
   const saved = Persist.load();
-  if (Store.isOutdated(saved)) Persist.backup(saved);   // keep the old-format save once, then Store.init migrates it
+  if (Store.isOutdated(saved)) Persist.backup(saved);
   Store.init(saved);
   Cards.init(Store);
 
@@ -19,67 +18,54 @@
     $("#grid").textContent = "Couldn't load data. If you opened index.html directly, serve the folder instead (python3 -m http.server).";
     return;
   }
-  // Everything per game (card / diploma layout, region, link-up sources) comes from data/games.config.json via Config.load().
-  if (typeof Theme !== "undefined") Theme.setGroups(Config.themeGroups());   // the Settings > Theme list is built from the same file
+  if (typeof Theme !== "undefined") Theme.setGroups(Config.themeGroups());
   monByN = new Map(mons.map(m => [m.n, m]));
-  Cards.setMons(mons);                                                     // the Leaf Crown diploma (HeartGold / SoulSilver) lets you pick a partner Pokémon
-  // Regional Pokédex lists (built by build_regional.py). Optional: without the file the Dex dropdown stays disabled.
+  Cards.setMons(mons);
   regional = await fetch("data/regional.json").then(r => (r.ok ? r.json() : null)).then(d => d && d.dex).catch(() => null);
-  // data/orre.json: the Pokémon lists of Colosseum and XD (built by build_orre.py), added to the regional lists
   const orre = await fetch("data/orre.json").then(r => (r.ok ? r.json() : null)).catch(() => null);
   if (orre && orre.dex) regional = { ...(regional || {}), ...orre.dex };
-  Forms.init(await fetch("data/forms.json").then(r => (r.ok ? r.json() : null)).catch(() => null));   // optional: without it there are no chips
-  Forms.setAreas(await fetch("data/form-areas.json").then(r => (r.ok ? r.json() : null)).catch(() => null));   // optional: which form lives where
+  Forms.init(await fetch("data/forms.json").then(r => (r.ok ? r.json() : null)).catch(() => null));
+  Forms.setAreas(await fetch("data/form-areas.json").then(r => (r.ok ? r.json() : null)).catch(() => null));
   Where.init({ games, mons, regional });
 
-  // ---- selectors: everything the view needs is derived from state ----
   const gameOf = s => games.find(g => g.key === s.last.game) || games[0];
   const shinyOn = (s, g = gameOf(s)) => !!(s.last.shiny && g.shiny);
   const listKey = (s, g = gameOf(s)) => (shinyOn(s, g) ? "shiny" : "caught");
-  const pcOn = (s, g = gameOf(s)) => s.last.layout === "pc" && !!g.pc;     // PC boxes layout (needs the generation's box sizes)
-  // Shiny-locked Pokémon (config "shinyLocked": national numbers that can never be shiny in that game) can't be marked
-  // in the shiny list and don't count toward the shiny total.
+  const pcOn = (s, g = gameOf(s)) => s.last.layout === "pc" && !!g.pc;
   const lockedOf = (g, kind) => (kind === "shiny" ? new Set(g.shinyLocked || []) : new Set());
   const blocked = (g, kind, n) => kind === "shiny" && (g.shinyLocked || []).includes(n);
   const caughtSet = (s, g = gameOf(s)) => { const k = listKey(s, g), lock = lockedOf(g, k); return new Set((s[k][g.key] || []).filter(n => !lock.has(n))); };
 
-  // Regional lists are arrays of national numbers in regional order. A game only offers the regional
-  // view when its list actually differs from the national one (so Red/Blue/Yellow don't).
   const regList = g => (regional && g.region && regional[g.region.dex]) || null;
-  const onlyRegional = g => !!(g.region && g.region.only);            // Colosseum / XD: only their own Pokémon list exists
+  const onlyRegional = g => !!(g.region && g.region.only);
   const hasRegional = g => { const l = regList(g); return !!l && (onlyRegional(g) || !(l.length === g.count && l.every((n, i) => n === i + 1))); };
   const dexList = (s, g = gameOf(s)) => ((s.last.dex === "regional" || onlyRegional(g)) && hasRegional(g) ? regList(g) : null);
   const dexTotal = (s, g = gameOf(s)) => (dexList(s, g) ? dexList(s, g).length : g.count);
-  // The total for one list: the shiny list leaves out shiny-locked Pokémon that are in the visible dex.
   const totalOf = (s, kind, g = gameOf(s)) => {
     const n = dexTotal(s, g), locked = g.shinyLocked || [];
     if (kind !== "shiny" || !locked.length) return n;
     const list = dexList(s, g);
     return n - locked.filter(x => (list ? list.includes(x) : x <= g.count)).length;
   };
-  // viewOf: the visible dex of one list ("caught" or "shiny"). viewCaught is the list being tracked right now;
-  // the trainer card and diploma always use the normal list, whatever you are tracking.
   const viewOf = (s, kind, g = gameOf(s)) => {
     const lock = lockedOf(g, kind), all = new Set((s[kind][g.key] || []).filter(n => !lock.has(n))), list = dexList(s, g);
     return list ? new Set(list.filter(n => all.has(n))) : all;
   };
   const viewCaught = (s, g = gameOf(s)) => viewOf(s, listKey(s, g), g);
-  const otherKey = (s, g = gameOf(s)) => (listKey(s, g) === "shiny" ? "caught" : "shiny"); // the list you are not tracking
-  const viewGame = (s, g = gameOf(s)) => ({ ...g, count: dexTotal(s, g) }); // trainer card + diploma see the visible dex
-  // Completion rules (Settings): which form categories must be caught (normal list) before the Pokédex counts as complete.
+  const otherKey = (s, g = gameOf(s)) => (listKey(s, g) === "shiny" ? "caught" : "shiny");
+  const viewGame = (s, g = gameOf(s)) => ({ ...g, count: dexTotal(s, g) });
   const reqOf = s => ({ gender: !!(s.last.require && s.last.require.gender), alt: !!(s.last.require && s.last.require.alt) });
   const inDexOf = (s, g = gameOf(s)) => { const l = dexList(s, g); if (!l) return null; const set = new Set(l); return n => set.has(n); };
   const formsLeft = (s, g = gameOf(s)) => Forms.missing(s, g, reqOf(s), inDexOf(s, g));
 
-  // ---- renderers: each draws one part of the page from a state snapshot ----
   function renderControls(s) {
     const g = gameOf(s), reg = hasRegional(g);
     $("#game").value = g.key;
-    document.querySelectorAll("#track button").forEach(b => {          // Tracking: Normal / Shiny
+    document.querySelectorAll("#track button").forEach(b => {
       b.setAttribute("aria-pressed", (b.dataset.track === "shiny") === shinyOn(s, g));
       if (b.dataset.track === "shiny") b.disabled = !g.shiny;
     });
-    document.querySelectorAll("#layout button").forEach(b => {          // Layout: Grid / PC boxes
+    document.querySelectorAll("#layout button").forEach(b => {
       b.setAttribute("aria-pressed", (b.dataset.layout === "pc") === pcOn(s, g));
       if (b.dataset.layout === "pc") b.disabled = !g.pc;
     });
@@ -91,15 +77,11 @@
     $("#dex").disabled = !reg || onlyRegional(g);
     $("#dex").options[1].textContent = reg ? `Regional (${g.region.name})` : "Regional";
     $("#dex").value = reg && (onlyRegional(g) || s.last.dex === "regional") ? "regional" : "national";
-    if ($("#trainer").value !== s.name) $("#trainer").value = s.name; // don't rewrite while typing
-    $("#gname").textContent = g.name + (shinyOn(s, g) ? " ★" : "") + (dexList(s, g) ? ` · ${g.region.name}` : ""); // shown on phones, where the Options panel is closed
+    if ($("#trainer").value !== s.name) $("#trainer").value = s.name;
+    $("#gname").textContent = g.name + (shinyOn(s, g) ? " ★" : "") + (dexList(s, g) ? ` · ${g.region.name}` : "");
     $("#trainerbox").open = !!s.last.cardOpen;
   }
 
-  // The grid is built once per game: every card, with the sprite folder baked in. After that nothing
-  // rewrites it: search toggles `hidden`, caught marks toggle a class, and the shiny view swaps each
-  // sprite's src. Typing or tapping never rebuilds the DOM, so sprites don't reload and scroll
-  // position and focus stay put.
   const spriteDir = (s, g = gameOf(s)) => g.sprites + (shinyOn(s, g) ? "/shiny" : "");
   const spriteSrc = (dir, n) => `assets/sprites/${dir}/${n}.png`;
 
@@ -112,10 +94,11 @@
         <button class="where" tabindex="-1" data-n="${m.n}" aria-label="Where to find ${m.name}" title="Where to find (or press I on a card)">?</button>${g.shiny ? `<button class="other" tabindex="-1" data-n="${m.n}"></button>` : ""}${fm.has(m.n) ? `<button class="chip" tabindex="-1" data-n="${m.n}"></button>` : ""}</div>`;
     const pc = pcOn(s, g);
     $("#grid").classList.toggle("pc", pc);
-    const px = g.spriteSize || 80;                                    // native sprite size (config "spriteSize"); 80 = the default card art size
+    const px = g.spriteSize || 80;
     $("#grid").style.setProperty("--sprite", px + "px"); $("#grid").classList.toggle("big", px > 80);
+    $("#grid").classList.toggle("smooth", !!g.spriteNative && px % g.spriteNative !== 0);   // sprite shown at a non-whole multiple of its real size: smooth instead of uneven pixels
     if (!pc) $("#grid").innerHTML = rows.map(cell).join("");
-    else {                                                            // like the in-game PC: fixed-size boxes filled in Pokédex order
+    else {
       const { box, boxes, cols } = g.pc, need = Math.ceil(rows.length / box);
       let out = `<p class="pcnote">${g.name} PC: ${boxes} boxes of ${box} (${boxes * box} slots). This Pokédex fills ${need} of them.</p>`;
       for (let b = 0; b < need; b++) {
@@ -126,27 +109,24 @@
       $("#grid").innerHTML = out;
     }
     cardEls = [...document.querySelectorAll("#grid .card")];
-    badgeEls = [...document.querySelectorAll("#grid .other")];     // same order as cardEls (empty when the game has no shiny sprites)
+    badgeEls = [...document.querySelectorAll("#grid .other")];
     chipEls = [...document.querySelectorAll("#grid .chip")];
     paintBadges(s); paintChips(s); paintLocks(s);
-    view.selected.clear(); view.anchor = null; // a new set of cards: nothing is selected yet
-    applyFilter(); // keep any search text and Show filter applied after a game switch
+    view.selected.clear(); view.anchor = null;
+    applyFilter();
   }
 
-  // Search text and the Show filter are view-only (not saved): hide the cards that don't match both.
-  // Cards that get hidden are also dropped from the selection, so bulk actions only ever touch what you can see.
   const isShown = el => !el.parentElement.hidden;
   function applyFilter() {
     const s = Store.get(), g = gameOf(s), q = $("#search").value.trim().toLowerCase(), got = caughtSet(s, g), lock = lockedOf(g, listKey(s, g));
     for (const el of cardEls) {
       const n = Number(el.dataset.n);
       const textOk = !q || el.dataset.name.includes(q) || el.dataset.n.includes(q) || el.dataset.pos.includes(q);
-      // a shiny-locked Pokémon can never be "missing" from the shiny list, so Missing leaves it out
       const stateOk = view.filter === "all" || ((view.filter === "caught") === got.has(n) && !(view.filter === "missing" && lock.has(n)));
       el.parentElement.hidden = !(textOk && stateOk);
       if (!(textOk && stateOk)) view.selected.delete(n);
     }
-    const narrowed = !!q || view.filter !== "all";                      // PC boxes: hide boxes with nothing to show, and the empty slots while filtering
+    const narrowed = !!q || view.filter !== "all";
     for (const b of document.querySelectorAll("#grid .pcbox")) {
       const cards = [...b.querySelectorAll(".card")], on = cards.filter(c => c.classList.contains("on")).length;
       b.hidden = !cards.some(isShown);
@@ -156,12 +136,10 @@
     paintSelection();
   }
 
-  // The small corner badge on every card shows the list you are NOT tracking (★ shiny while tracking normal,
-  // ✓ normal while tracking shiny). Lit = owned. Clicking it (or pressing S on a card) toggles that list.
   function paintBadges(s) {
     const g = gameOf(s), other = otherKey(s, g), has = new Set(s[other][g.key] || []), show = s.last.badges !== false, lock = lockedOf(g, other);
     const glyph = other === "shiny" ? "★" : "✓", what = other === "shiny" ? "Shiny" : "Normal";
-    $("#grid").classList.toggle("has-badges", g.shiny && show);       // makes room under the name
+    $("#grid").classList.toggle("has-badges", g.shiny && show);
     badgeEls.forEach((b, i) => {
       const n = Number(cardEls[i].dataset.n), on = has.has(n) && !lock.has(n);
       b.hidden = !show || lock.has(n); b.textContent = glyph; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on);
@@ -170,7 +148,6 @@
     });
   }
 
-  // While tracking shiny, shiny-locked Pokémon are greyed out with a lock and can't be marked.
   function paintLocks(s) {
     const g = gameOf(s), lock = lockedOf(g, shinyOn(s, g) ? "shiny" : "caught");
     for (const el of cardEls) {
@@ -180,7 +157,6 @@
     }
   }
 
-  // The form chip ("2/28") on cards whose species has forms in this game: progress on the list being tracked.
   function paintChips(s) {
     if (!chipEls.length) return;
     const g = gameOf(s), kind = listKey(s, g), what = kind === "shiny" ? "shiny" : "normal";
@@ -192,21 +168,18 @@
     }
   }
 
-  // Same game, other sprite folder (shiny toggled): point each existing card at its new sprite.
   function renderSprites(s) {
     const dir = spriteDir(s);
     for (const el of cardEls) el.firstElementChild.src = spriteSrc(dir, el.dataset.n);
   }
 
-  // Caught-state changed: update which cards are lit.
   function renderMarks(s) {
     const got = caughtSet(s);
     for (const el of cardEls) el.classList.toggle("on", got.has(Number(el.dataset.n)));
     paintBadges(s); paintChips(s); paintLocks(s);
-    applyFilter(); // Missing / Caught views change when a mark does (this also refreshes aria-pressed and the toolbar)
+    applyFilter();
   }
 
-  // Selection highlight + aria-pressed (which means "selected" in select mode, "caught" otherwise) + toolbar.
   function paintSelection() {
     const got = caughtSet(Store.get());
     for (const el of cardEls) {
@@ -223,14 +196,13 @@
     $("#shown").textContent = `Showing ${shown} of ${cardEls.length}`;
     $("#markvis").disabled = !shown;
     $("#clearall").disabled = !viewCaught(s, g).size;
-    $("#undo").disabled = !(u && sameList(s[u.kind][u.key] || [], u.after)); // only while nothing else has changed the list
+    $("#undo").disabled = !(u && sameList(s[u.kind][u.key] || [], u.after));
     $("#undo").title = u ? `Undo: ${u.label}` : "";
     $("#selcount").textContent = `${view.selected.size} selected`;
     for (const id of ["#selmark", "#selunmark", "#selnone"]) $(id).disabled = !view.selected.size;
     $("#selall").disabled = !shown;
     $("#selrange").disabled = view.anchor === null;
     $("#selrange").setAttribute("aria-pressed", view.range);
-    // Tell people how to select more than one at a time (Shift isn't available on touch screens).
     const touch = !!(window.matchMedia && matchMedia("(pointer: coarse)").matches);
     $("#selhint").textContent = view.range ? "Now tap the last Pokémon of the range."
       : !view.selected.size ? (touch ? "Tap Pokémon to pick them." : "Click Pokémon to pick them.")
@@ -242,89 +214,83 @@
     const g = gameOf(s), kind = listKey(s, g), n = viewCaught(s).size, total = totalOf(s, kind, g), dtotal = dexTotal(s), normal = viewOf(s, "caught").size;
     $("#count").textContent = `${n} / ${total}`;
     $("#fill").style.width = `${(n / total) * 100}%`;
-    const left = formsLeft(s, g);                                      // required forms still missing (0 unless a completion rule is on)
+    const left = formsLeft(s, g);
     $("#tsum").textContent = `${normal} / ${dtotal}` + (normal === dtotal && left ? ` · ${left} required form${left === 1 ? "" : "s"} left`
       : normal === dtotal && g.diploma && !g.diploma.always ? " · Diploma ready!" : "");
-    const c2 = $("#count2");                                           // the other list's progress, for games with shiny sprites
+    const c2 = $("#count2");
     c2.hidden = !g.shiny;
     if (g.shiny) {
       const k = otherKey(s, g), m = viewOf(s, k).size;
       c2.textContent = `${k === "shiny" ? "★" : "✓"} ${m} / ${totalOf(s, k, g)}`;
       c2.title = `${k === "shiny" ? "Shiny" : "Normal"} progress`;
     }
-    const c3 = $("#count3"), fc = Forms.counts(s, g, kind, inDexOf(s, g));   // forms: its own counter
+    const c3 = $("#count3"), fc = Forms.counts(s, g, kind, inDexOf(s, g));
     c3.hidden = !fc.total;
     c3.textContent = `${kind === "shiny" ? "★ " : ""}Forms ${fc.have} / ${fc.total}`;
     c3.title = "Forms progress. It only counts toward completion if you turn on a completion rule in Settings.";
   }
 
-  const renderTrainer = s => Cards.update(viewGame(s), viewOf(s, "caught"), s, { left: formsLeft(s) }); // always the normal dex, even while tracking shiny
+  const renderTrainer = s => Cards.update(viewGame(s), viewOf(s, "caught"), s, { left: formsLeft(s) });
 
   const renderAll = s => { renderControls(s); renderGrid(s); renderProgress(s); renderTrainer(s); };
 
-  // ---- reactions: work out what changed and redraw only that ----
   const changed = (s, p, ...keys) => keys.some(k => s[k] !== p[k]);
   function onChange(s, p) {
     if (changed(s, p, "last", "name")) renderControls(s);
-    if (s.last.game !== p.last.game || s.last.dex !== p.last.dex || s.last.layout !== p.last.layout) renderGrid(s); // different game, dex or layout: build its cards
+    if (s.last.game !== p.last.game || s.last.dex !== p.last.dex || s.last.layout !== p.last.layout) renderGrid(s);
     else {
-      if (s.last.shiny !== p.last.shiny) renderSprites(s);                 // same cards, other sprite folder
-      if (changed(s, p, "last", "caught", "shiny")) renderMarks(s);        // which cards are lit
-      else if (changed(s, p, "forms")) paintChips(s);                      // form chips
+      if (s.last.shiny !== p.last.shiny) renderSprites(s);
+      if (changed(s, p, "last", "caught", "shiny")) renderMarks(s);
+      else if (changed(s, p, "forms")) paintChips(s);
     }
     if (changed(s, p, "last", "caught", "shiny", "forms")) renderProgress(s);
     if (s.last.game !== p.last.game || s.last.dex !== p.last.dex || s.last.require !== p.last.require
         || changed(s, p, "caught", "name", "gender", "forms")) renderTrainer(s);
   }
 
-  // ---- actions: DOM events -> Store updates (the only place the view writes state) ----
   function selectGame(key) {
     const s = Store.get(), g = games.find(x => x.key === key) || games[0];
-    Store.set({ last: { ...s.last, game: g.key, shiny: shinyOn(s, g) } }); // games without shiny sprites turn the toggle off
+    Store.set({ last: { ...s.last, game: g.key, shiny: shinyOn(s, g) } });
   }
 
-  // Narrow screens keep game / dex / shiny / trainer behind an Options button so the sticky header stays short.
   const setOptions = open => { $("#top").classList.toggle("open", open); $("#optbtn").setAttribute("aria-expanded", open); $("#optbtn").textContent = open ? "Close" : "Options"; };
   $("#optbtn").addEventListener("click", () => setOptions(!$("#top").classList.contains("open")));
-  $("#trainerbox").addEventListener("toggle", e => {                      // remember whether the trainer card is open
+  $("#trainerbox").addEventListener("toggle", e => {
     const last = Store.get().last;
     if (!!last.cardOpen !== e.target.open) Store.set({ last: { ...last, cardOpen: e.target.open } });
   });
 
   $("#game").addEventListener("change", e => { selectGame(e.target.value); setOptions(false); });
-  $("#track").addEventListener("click", e => {                            // Tracking: which list taps, filters and bulk actions use
+  $("#track").addEventListener("click", e => {
     const b = e.target.closest("button[data-track]"); if (!b || b.disabled) return;
     Store.set({ last: { ...Store.get().last, shiny: b.dataset.track === "shiny" } });
   });
-  $("#layout").addEventListener("click", e => {                         // Layout: Grid / PC boxes (saved)
+  $("#layout").addEventListener("click", e => {
     const b = e.target.closest("button[data-layout]"); if (!b || b.disabled) return;
     Store.set({ last: { ...Store.get().last, layout: b.dataset.layout } });
   });
   $("#badges").addEventListener("change", e => Store.set({ last: { ...Store.get().last, badges: e.target.checked } }));
-  // Completion rules: off by default. When on, those forms must be caught (normal list) before the Pokédex counts as complete.
   const setReq = key => e => { const s = Store.get(); Store.set({ last: { ...s.last, require: { ...reqOf(s), [key]: e.target.checked } } }); };
   $("#req-gender").addEventListener("change", setReq("gender"));
   $("#req-alt").addEventListener("change", setReq("alt"));
   $("#setbtn").addEventListener("click", () => $("#settings").showModal());
   $("#setclose").addEventListener("click", () => $("#settings").close());
   $("#dex").addEventListener("change", e => Store.set({ last: { ...Store.get().last, dex: e.target.value } }));
-  $("#search").addEventListener("input", applyFilter);                     // search text is view-only, not saved
+  $("#search").addEventListener("input", applyFilter);
   $("#trainer").addEventListener("input", e => Store.set({ name: e.target.value }));
 
   $("#grid").addEventListener("click", e => {
     const s = Store.get(), g = gameOf(s), where = e.target.closest(".where");
     if (where) return openInfo(Number(where.dataset.n), "where");
-    const chip = e.target.closest(".chip");                            // form chip: open the Forms tab
+    const chip = e.target.closest(".chip");
     if (chip) { if (!view.select) openInfo(Number(chip.dataset.n), "forms"); return; }
-    const other = e.target.closest(".other");                          // corner badge: toggle the list you are not tracking
+    const other = e.target.closest(".other");
     if (other) { if (!view.select && !blocked(g, otherKey(s, g), Number(other.dataset.n))) Store.toggle(otherKey(s, g), g.key, Number(other.dataset.n)); return; }
     const card = e.target.closest(".card"); if (!card) return;
     if (view.select) return pick(card, e.shiftKey);
-    if (blocked(g, listKey(s, g), Number(card.dataset.n))) return;     // shiny-locked: can't be marked shiny
+    if (blocked(g, listKey(s, g), Number(card.dataset.n))) return;
     Store.toggle(listKey(s, g), g.key, Number(card.dataset.n));
   });
-  // The "?" and badge buttons are skipped by Tab (hundreds of extra stops), so keyboard users press I (where to find)
-  // or S (toggle the shiny/normal badge) on a card instead.
   $("#grid").addEventListener("keydown", e => {
     const k = e.key.toLowerCase();
     if ((k !== "i" && k !== "s" && k !== "f") || e.ctrlKey || e.metaKey || e.altKey) return;
@@ -346,15 +312,13 @@
                                  : "That file doesn't look like a Pokédex Tracker export.");
       return;
     }
-    const { state: clean, dropped } = Store.sanitize(data, games, Forms.data());   // known games, whole numbers within each game's range
+    const { state: clean, dropped } = Store.sanitize(data, games, Forms.data());
     const note = dropped ? `${dropped} invalid entr${dropped === 1 ? "y" : "ies"} in the file will be skipped.\n\n` : "";
     if (!confirm(note + "Replace the progress saved in this browser with the imported file?")) return;
-    // Keep the game you're looking at; start on the normal (non-shiny) list.
     Store.replace({ ...clean, last: { ...Store.get().last, game: gameOf(Store.get()).key, shiny: false } });
   });
 
-  // ---- the info dialog: "Where to find" and "Forms" tabs for one Pokémon ----
-  let info = null;                                                     // { n, game, hasForms, tab } while a card's dialog is open
+  let info = null;
   function setTab(t) {
     if (!info) return;
     if (t === "forms" && !info.hasForms) t = "where";
@@ -366,7 +330,7 @@
     const s = Store.get(), g = gameOf(s), rq = reqOf(s);
     info = { n, game: g.key, hasForms: Forms.forGame(g).has(n), tab };
     $("#wtabs").hidden = !info.hasForms;
-    Where.open(g, n);                                                  // fills the Where tab and shows the dialog
+    Where.open(g, n);
     if (info.hasForms) {
       const need = [rq.gender && "gender differences", rq.alt && "alternate forms"].filter(Boolean);
       $("#forms-note").textContent = need.length ? `Required for completion (Settings): ${need.join(" and ")}.`
@@ -376,7 +340,7 @@
     setTab(tab);
   }
   $("#wtabs").addEventListener("click", e => { const b = e.target.closest("button[data-tab]"); if (b) setTab(b.dataset.tab); });
-  $("#forms-body").addEventListener("click", e => {                    // a toggle in the Forms tab (the base-form row uses the main lists)
+  $("#forms-body").addEventListener("click", e => {
     const b = e.target.closest(".ftog"); if (!b || !info) return;
     const key = info.game, kind = b.dataset.kind, id = b.dataset.id;
     if (id) Store.toggleForm(kind, key, id); else Store.toggle(kind, key, info.n);
@@ -384,15 +348,13 @@
     b.setAttribute("aria-pressed", id ? (s.forms[kind][key] || []).includes(id) : (s[kind][key] || []).includes(info.n));
   });
 
-  // ---- filters and bulk actions ----
   const shownNs = () => cardEls.filter(isShown).map(el => Number(el.dataset.n));
 
-  // Add or remove many Pokémon in one update (so one save, one redraw), and remember how to undo it.
   function applyBulk(ns, on, label) {
     const s = Store.get(), kind = listKey(s), key = gameOf(s).key, before = s[kind][key] || [];
     const after = new Set(before);
-    for (const n of ns) { if (on && blocked(gameOf(s), kind, n)) continue; on ? after.add(n) : after.delete(n); }   // shiny-locked Pokémon are skipped
-    if (after.size === before.length) return;                          // nothing would change
+    for (const n of ns) { if (on && blocked(gameOf(s), kind, n)) continue; on ? after.add(n) : after.delete(n); }
+    if (after.size === before.length) return;
     const sorted = [...after].sort((a, b) => a - b);
     view.undo = { kind, key, before, after: sorted, label: `${label} (${Math.abs(after.size - before.length)})` };
     Store.setList(kind, key, sorted);
@@ -418,7 +380,6 @@
     view.undo = null; Store.setList(u.kind, u.key, u.before); renderTools();
   });
 
-  // Select mode: clicks pick cards instead of marking them; Shift+click picks a range of the visible cards.
   function setSelect(on) {
     view.select = on; view.anchor = null; view.range = false; if (!on) view.selected.clear();
     document.body.classList.toggle("selecting", on);
@@ -427,7 +388,7 @@
     paintSelection();
   }
   function pick(card, range) {
-    range = range || view.range; view.range = false;                  // the Range button works like holding Shift, once
+    range = range || view.range; view.range = false;
     const n = Number(card.dataset.n), vis = cardEls.filter(isShown);
     const a = vis.findIndex(el => Number(el.dataset.n) === view.anchor), b = vis.indexOf(card);
     if (range && a >= 0 && b >= 0) {
@@ -446,12 +407,10 @@
   $("#selrange").addEventListener("click", () => { if (view.anchor !== null) { view.range = !view.range; paintSelection(); } });
   document.addEventListener("keydown", e => { if (e.key === "Escape" && view.select && !document.querySelector("dialog[open]")) setSelect(false); });
 
-  // ---- start up ----
-  // The Game dropdown is split into one <optgroup> per generation ("Gen 1 · Kanto" ...), from Config.gameGroups().
   $("#game").innerHTML = Config.gameGroups().map(([label, list]) =>
     `<optgroup label="${label}">${list.map(g => `<option value="${g.key}">${g.name}</option>`).join("")}</optgroup>`).join("");
-  Store.subscribe(Persist.save);            // saving is just another subscriber, so no handler calls save()
-  selectGame(gameOf(Store.get()).key);      // correct a saved game key that no longer exists
+  Store.subscribe(Persist.save);
+  selectGame(gameOf(Store.get()).key);
   Store.subscribe(onChange);
   renderAll(Store.get());
 })();

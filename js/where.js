@@ -1,37 +1,19 @@
 "use strict";
-// "Where to find": a dialog listing where a Pokémon can be found, limited to the games that can
-// send Pokémon to the one you're tracking (see `sources` in config.js).
-//
-//   Where.init({ games, mons })   once, after the game and Pokémon lists load
-//   Where.open(game, n)           show Pokémon #n for the currently selected game
-//   Where.plan(game, n, byKey, data)   pure: works out what to show (exported for testing)
-//
-// Evolution help: the "Evolve X" row explains how to evolve in plain words (stone, trade, friendship, level, place),
-// leaves out methods that don't exist in the games being shown, and lists where to get any item it needs
-// (data/items.json, optional; items it doesn't know link to Bulbapedia). Each item's sources are split into
-// "One-time" (finite: a ball on the ground, a gift, a story reward) and "Repeatable" (can be got again: shops, trades,
-// repeatable rewards), using the `k` flag build_items.py stores with every source.
-//
-// Honey trees (Diamond / Pearl / Platinum): data/honey.json (optional) lists what a slathered honey tree can attract and where
-// the trees are. At load time its encounters are added to the location data as ONE "Honey Trees" row (the per-route
-// "Honey tree" rows that PokéAPI has in locations.json are folded into it, so honey trees are listed in one place only),
-// Maps.addHoney() puts the 21 trees on the map (one small flashing square each), and the row gets a short help text plus
-// a list of every tree with a "Show on map" button each.
-//
-// PokéWalker (Heart Gold / Soul Silver): data/pokewalker.json (optional, built by build_pokewalker.py) has the same shape as
-// data/orre.json. Its course Pokémon are added to the location data as "PokéWalker: <course>" rows (method "pokewalker"), and its
-// evolution-item sources are added to the "Get <item>" rows, with a short blurb about the extra hardware (pokewalker.json "itemNote").
-//
-// Location data lives in data/locations.json (built by build_locations.py) and is fetched the first
-// time the panel opens, so it costs nothing until someone asks.
+// Where: the "Where to find" dialog: where a Pokémon can be found, limited to games that can send Pokémon to the tracked game.
+//   init({ games, mons, regional }) / open(game, n) / plan(game, n, byKey, data)  (plan is pure, exported for testing)
+// Data (fetched on first open): data/locations.json plus optional items, maps, honey, special-encounters, orre and pokewalker JSON,
+// merged into the location rows at load time (mergeHoney, mergeOrre, mergeWalkerItems).
+// Features: evolution help with item sources (One-time / Repeatable), season filter (Gen 5) and time-of-day filter (Gen 2 / 4),
+// per-method encounter rows and tables, floors merged when identical, region maps with hover tooltips and "Show on map" outlines,
+// roaming / honey tree / PokéWalker / special encounter notes, and form chips.
 const Where = (() => {
   const $ = s => document.querySelector(s);
   let games = [], mons = [], byKey = {}, data = null, loading = null, honey = null, special = [], regional = null;
-  let walkerNote = "";                          // pokewalker.json "itemNote": the short blurb shown under an item that has a PokéWalker source
-  let last = null;                              // last = what the open dialog shows (for the season buttons); season = the chosen season filter ("all" or spring / summer / autumn / winter)
+  let walkerNote = "";
+  let last = null;
 
-  const HONEY = "Honey Trees", HONEY_PRE = "Honey Tree: ";     // same names as in maps.js
-  const WALKER = "PokéWalker";                                 // item source lines from pokewalker.json start with this
+  const HONEY = "Honey Trees", HONEY_PRE = "Honey Tree: ";
+  const WALKER = "PokéWalker";
 
   const METHODS = {
     walk: "Grass / cave / land", surf: "Surfing", "old-rod": "Old Rod", "good-rod": "Good Rod", "super-rod": "Super Rod",
@@ -39,25 +21,18 @@ const Where = (() => {
     pokeflute: "Poké Flute", "bug-catching-contest": "Bug-Catching Contest", "roaming-grass": "Roaming (grass / land)", "roaming-water": "Roaming (surfing)",
     "honey-tree": "Honey tree",
     pokewalker: "PokéWalker (transfer)",
-    // Colosseum / XD (data/orre.json)
     shadow: "Snag (Shadow Pokémon)", mirorb: "Miror B.'s 2nd chance (snag)", pokespot: "PokéSpot (wild)", ecard: "e-Reader card", download: "Bonus Disc download",
-    // Gen 5 special encounter spots: friendlier names for the player (locations.json keeps the raw method names)
     "grass-spots": "Rustling grass", "cave-spots": "Dust clouds", "bridge-spots": "Bridge shadows",
     "surf-spots": "Surfing in rippling water", "super-rod-spots": "Fishing in rippling water",
   };
   const TIMES = ["morning", "day", "night"];
 
-  // ---- seasons (Black / White / Black 2 / White 2) ----
-  // In these games the season follows the calendar month on the DS clock and repeats every four months:
-  // January = Spring, February = Summer, March = Autumn, April = Winter, May = Spring, and so on.
-  // data/locations.json stores it as an encounter condition ("Spring" after rebuilding, or "Season spring" from the older build).
   const SEASONS = ["spring", "summer", "autumn", "winter"];
   const SEASON_GAMES = new Set(["black", "white", "black-2", "white-2"]);
   const SEASON_NAME = { spring: "Spring", summer: "Summer", autumn: "Autumn", winter: "Winter" };
   const SEASON_MONTHS = { spring: "Jan · May · Sep", summer: "Feb · Jun · Oct", autumn: "Mar · Jul · Nov", winter: "Apr · Aug · Dec" };
   const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-  // ---- time of day (Gold / Silver / Crystal / HeartGold / SoulSilver and Diamond / Pearl / Platinum) ----
-  const fstate = {};                                                       // filter choices per group of games: { "<first game key>": { season, time } }
+  const fstate = {};
   const fs = k => fstate[k] || (fstate[k] = { season: "all", time: "all" });
   const TNAME = { morning: "Morning", day: "Day", night: "Night" };
   const TPHRASE = { morning: "in the morning", day: "during the day", night: "at night" };
@@ -65,7 +40,7 @@ const Where = (() => {
   const CLOCK_GS = { morning: "4:00–9:59 AM", day: "10:00 AM–5:59 PM", night: "6:00 PM–3:59 AM" };
   const CLOCK_DP = { morning: "4:00–9:59 AM", day: "10:00 AM–7:59 PM", night: "8:00 PM–3:59 AM" };
   const CLOCK_OF = { gold: CLOCK_GS, silver: CLOCK_GS, crystal: CLOCK_GS, "heart-gold": CLOCK_GS, "soul-silver": CLOCK_GS, diamond: CLOCK_DP, pearl: CLOCK_DP, platinum: CLOCK_DP };
-  const timesIn = cond => TIMES.filter(t => String(cond || "").split(",").some(p => p.trim().toLowerCase() === t));   // [] = the row applies at every time of day
+  const timesIn = cond => TIMES.filter(t => String(cond || "").split(",").some(p => p.trim().toLowerCase() === t));
   function timeBar(gk, clock, cur) {
     const btn = (id, name, sub) => `<button type="button" class="sbtn" data-k="time" data-g="${esc(gk)}" data-s="${id}" aria-pressed="${cur === id}">${name}${sub}</button>`;
     const buttons = btn("all", "All day", "") + TIMES.map(t => btn(t, TNAME[t], clock ? `<small>${clock[t]}</small>` : "")).join("");
@@ -73,7 +48,7 @@ const Where = (() => {
       `<p class="seasonnote">What appears here depends on the time of day on the game's own clock (hours are shown on each button). Pick one to see only what appears then; the map is tinted to match.</p></div>`;
   }
   const seasonWord = p => { const m = /^(?:season[\s-]+)?(spring|summer|autumn|winter)$/i.exec(String(p).trim()); return m ? m[1].toLowerCase() : null; };
-  const seasonsIn = cond => [...new Set(String(cond || "").split(",").map(seasonWord).filter(Boolean))];   // [] = the row applies in every season
+  const seasonsIn = cond => [...new Set(String(cond || "").split(",").map(seasonWord).filter(Boolean))];
   function seasonBar(gk, cur) {
     const d = new Date(), now = SEASONS[d.getMonth() % 4];
     const btn = (id, name, sub) => `<button type="button" class="sbtn" data-k="season" data-g="${esc(gk)}" data-s="${id}" aria-pressed="${cur === id}">${name}${sub}</button>`;
@@ -82,7 +57,6 @@ const Where = (() => {
       `<p class="seasonnote">The season follows the calendar month on the DS clock and repeats every four months (months are shown on each button). ` +
       `Pick a season to see only what appears then, with that season's rates; the map is tinted to match. Today (${MONTHS[d.getMonth()]}) would be ${SEASON_NAME[now]}.</p></div>`;
   }
-  // Does what this Pokémon can be found as change with the time of day / season in these rows? (If every rate is the same at every time, there is nothing to filter.)
   function variesBy(entries, kind) {
     const cols = kind === "time" ? TIMES : SEASONS, get = kind === "time" ? timesIn : seasonsIn, m = new Map();
     for (const [area, method, lo, hi, chance, cond] of entries) {
@@ -94,17 +68,12 @@ const Where = (() => {
     }
     return [...m.values()].some(v => cols.some(c => v[c] !== v[cols[0]]));
   }
-  // Does the FORM of this Pokémon change with the season (data/form-areas.json "season" rules: Deerling, Sawsbuck, ...)?
-  // Then the season filter is worth showing even when every season has the same rate (e.g. 30% in each).
   const formsVaryBySeason = (keys, n) => typeof Forms !== "undefined" && SEASONS.some(x => Forms.bySeason(n, keys, x).length > 0);
   const prettify = s => s.replace(/-/g, " ").replace(/^./, c => c.toUpperCase());
   const label = m => METHODS[m] || prettify(m);
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const pad = n => String(n).padStart(3, "0");
 
-  // ---- evolution blurbs ----
-  // Generation each evolution item first appeared in. An item missing from this list can't be used in Gen 1-4, so an
-  // option that needs it is dropped (PokéAPI also lists later methods, e.g. Ice Stone or a Thunder Stone for Magnezone).
   const ITEM_GEN = {
     "Fire Stone": 1, "Water Stone": 1, "Thunder Stone": 1, "Leaf Stone": 1, "Moon Stone": 1,
     "Sun Stone": 2, "King's Rock": 2, "Metal Coat": 2, "Dragon Scale": 2, "Up-Grade": 2,
@@ -113,11 +82,10 @@ const Where = (() => {
     "Protector": 4, "Electirizer": 4, "Magmarizer": 4, "Reaper Cloth": 4, "Dubious Disc": 4,
     "Prism Scale": 5,
   };
-  const STONE_LATER = new Set([462, 470, 476]);   // Magnezone, Leafeon, Probopass: stone methods only arrived in Gen 8
+  const STONE_LATER = new Set([462, 470, 476]);
   const COND = { daytime: "during the day", night: "at night", female: "female only", male: "male only" };
   const art = w => (/^[AEIOU]/i.test(w) ? "an " : "a ") + w;
 
-  // "Level up holding Razor Claw (night)" -> { kind, item, conds }
   function parse(opt) {
     const conds = [], main = opt.replace(/\s*\(([^)]*)\)/g, (_, c) => { conds.push(c); return ""; }).trim();
     let m;
@@ -157,11 +125,6 @@ const Where = (() => {
     }
   }
 
-  // Where to get `name` in game `key`, split by how it is obtained (items.json rows are { g: [games], t: [lines], k: "once" | "repeat" }):
-  //   once   = finite: a ball on the ground, a gift, a story reward (you get it one time)
-  //   repeat = can be got again: a shop, a repeatable reward, a trade, a recurring spot
-  //   other  = no flag recorded for that row
-  // Returns null when the item has no recorded source in this game (for example Black 2 / White 2 until items.json is rebuilt).
   const itemLines = (items, name, key) => {
     const it = items && items.items && items.items[name];
     const rows = it ? (it.where || []).filter(w => (w.g || []).includes(key)) : [];
@@ -173,15 +136,14 @@ const Where = (() => {
     return out.once.length || out.repeat.length || out.other.length ? out : null;
   };
 
-  // How `n` evolves in `src`: null if its pre-evolution isn't in that game or no method works there.
   function evolution(n, evo, src, items) {
     if (!evo || evo[0] > src.count) return null;
     const from = nameOf(evo[0]), opts = [], need = [];
     for (const raw of String(evo[1]).split(" or ")) {
       const p = parse(raw);
-      if (p.kind === "beauty" && src.gen >= 5) continue;                // Gen 5 has no contests, so no Beauty evolutions
-      if (p.item && !(ITEM_GEN[p.item] <= src.gen)) continue;          // item doesn't exist yet in this generation
-      if (p.kind === "item" && STONE_LATER.has(n)) continue;           // stone method added in Gen 8
+      if (p.kind === "beauty" && src.gen >= 5) continue;
+      if (p.item && !(ITEM_GEN[p.item] <= src.gen)) continue;
+      if (p.kind === "item" && STONE_LATER.has(n)) continue;
       const text = say(p, from, src);
       if (!opts.includes(text)) opts.push(text);
       if (p.item && !need.includes(p.item)) need.push(p.item);
@@ -198,8 +160,6 @@ const Where = (() => {
   }
 
   const wiki = name => `https://bulbapedia.bulbagarden.net/wiki/${encodeURIComponent(name.replace(/ /g, "_"))}`;
-  // The "Get <item>" row: One-time and Repeatable sources in separate labelled blocks, then a link to the item's full Bulbapedia page.
-  // An item with a PokéWalker source also gets the short PokéWalker blurb (pokewalker.json "itemNote").
   function itemBody(it, game) {
     const link = `<a class="itemwiki" href="${wiki(it.name)}" target="_blank" rel="noopener">Full list on Bulbapedia ↗</a>`;
     if (!it.lines) return `<span class="itemgrp">No source for this item is recorded${game ? ` in ${esc(game)}` : ""} yet.</span>${link}`;
@@ -217,7 +177,6 @@ const Where = (() => {
     return rows;
   }
 
-  // How a Pokémon from `src` gets into `game`.
   function via(src, game) {
     if (src.key === game.key) return "";
     if (src.link && game.gen === 3) return "link cable (Shadow Pokémon must be purified first)";
@@ -229,7 +188,6 @@ const Where = (() => {
     return "";
   }
 
-  // Colosseum / XD only have their own list of Pokémon: an evolution counts only if its pre-evolution is in that list.
   function evolvesHere(src, evo) {
     if (!evo) return false;
     if (!(src.region && src.region.only)) return true;
@@ -237,16 +195,15 @@ const Where = (() => {
     return !l || l.includes(evo[0]);
   }
 
-  // One group per distinct set of results, so Red and Blue (same spots) share a section.
   function plan(game, n, keyed, d) {
     const groups = [];
-    if (n > game.count) return groups;                           // not in this game's own Pokédex, so it can't be tracked here
+    if (n > game.count) return groups;
     for (const key of game.sources || [game.key]) {
       const src = keyed[key];
-      if (!src || n > src.count) continue;                       // that game doesn't have this Pokémon
+      if (!src || n > src.count) continue;
       const entries = (d.loc[key] || {})[n] || [];
-      const evolve = evolvesHere(src, d.evo[n]) ? evolution(n, d.evo[n], src, d.items) : null;       // null if the pre-evolution or every method is missing in that game
-      const egg = typeof Eggs !== "undefined" && Eggs.applies(key, n);   // Heart Gold / Soul Silver egg password for Mareep, Wooper, Slugma
+      const evolve = evolvesHere(src, d.evo[n]) ? evolution(n, d.evo[n], src, d.items) : null;
+      const egg = typeof Eggs !== "undefined" && Eggs.applies(key, n);
       if (!entries.length && !evolve && !egg) continue;
       const sig = JSON.stringify([entries, evolve, egg]);
       let g = groups.find(x => x.sig === sig);
@@ -258,25 +215,19 @@ const Where = (() => {
     return groups;
   }
 
-  // "Route 2 — Grass 3–5, 10%" lines, one per location, best odds first.
-  // `chance` is the encounter rate within that area (several slots of one method are already added up in
-  // build_locations.py). An area is ranked by its best method; entries with no recorded rate (0) go last.
-  // Within an area the methods are sorted the same way, and ties fall back to the area name.
   function lines(entries, sel = "all", tsel = "all", clock = null, fx = null) {
-    const fm = m => (fx ? fx.method(m).join("") : "");                    // form chips for an encounter method (Basculin)
-    const fsel = fx && sel !== "all" ? fx.season(sel) : "";                    // form chip for the chosen season (Deerling, Sawsbuck)
+    const fm = m => (fx ? fx.method(m).join("") : "");
+    const fsel = fx && sel !== "all" ? fx.season(sel) : "";
     const areas = new Map();
     for (const [area0, method, lo, hi, chance, cond] of entries) {
-      // PokéAPI files HeartGold / SoulSilver's Latias / Latios under Johto, but they roam Kanto (same fix as in maps.js)
       const area = area0 === "Roaming Johto" && /copycat/i.test(cond || "") ? "Roaming Kanto" : area0;
-      // Split the condition text into time of day, season and everything else (Swarm, Poké Radar, ...).
       const parts = String(cond || "").split(",").map(x => x.trim()).filter(Boolean);
       const hit = TIMES.filter(t => parts.some(p => p.toLowerCase() === t));
-      const sHit = parts.map(seasonWord).filter(Boolean);                  // seasons this row is limited to (none = all four)
-      if (sel !== "all" && sHit.length && !sHit.includes(sel)) continue;   // a season is chosen and this row is for other seasons
-      if (tsel !== "all" && hit.length && !hit.includes(tsel)) continue;   // a time of day is chosen and this row is for other times
+      const sHit = parts.map(seasonWord).filter(Boolean);
+      if (sel !== "all" && sHit.length && !sHit.includes(sel)) continue;
+      if (tsel !== "all" && hit.length && !hit.includes(tsel)) continue;
       const seasons = sHit.length ? sHit : SEASONS;
-      const times = hit.length ? hit : TIMES;                              // a row with no time condition applies all day
+      const times = hit.length ? hit : TIMES;
       const other = parts.filter(p => !TIMES.includes(p.toLowerCase()) && !seasonWord(p)).join(", ");
       if (!areas.has(area)) areas.set(area, { best: 0, times: new Set(), grid: new Map(), seasonal: false, timed: false });
       const a = areas.get(area);
@@ -284,7 +235,6 @@ const Where = (() => {
       a.best = Math.max(a.best, chance || 0);
       if (sHit.length) a.seasonal = true;
       if (hit.length && hit.length < TIMES.length) a.timed = true;
-      // one line per method + level range, with that method's rate in every season / time of day it exists
       const gk = [method, other, lo, hi].join("|");
       let g = a.grid.get(gk);
       if (!g) a.grid.set(gk, g = { method, other, lo, hi, per: {}, tper: {} });
@@ -295,9 +245,7 @@ const Where = (() => {
     const mclass = m => (/surf|rod/.test(m) ? "water" : /^(gift|only-one|shadow|mirorb|trade|ecard|download|pokewalker)/.test(m) ? "static" : "land");
     const tags = x => (x.other ? x.other.split(", ").map(c => `<span class="ctag">${esc(c)}</span>`).join("") : "");
     const best = x => Math.max(0, ...Object.values(x.per));
-    const rate = c => (c > 0 ? `<span class="rate">${c}%</span>` : "");   // 100% is shown too (gifts, static encounters, guaranteed spots); 0 = no rate recorded, so nothing
-    // The body of one location: a table with one column per season / time of day when the Pokémon changes with it
-    // (so the columns can be compared at a glance), otherwise one tidy line per method.
+    const rate = c => (c > 0 ? `<span class="rate">${c}%</span>` : "");
     const body = a => {
       const g = [...a.grid.values()].sort((x, y) => best(y) - best(x));
       const table = (cols, key, cls, head) => `<table class="stable"><thead><tr><th><span class="vh">Method</span></th>${cols.map(x => `<th class="${cls}-${x}">${head(x)}</th>`).join("")}</tr></thead><tbody>` +
@@ -314,14 +262,12 @@ const Where = (() => {
       const s = typeof Maps !== "undefined" ? Maps.segment(area) : { base: area, seg: "" };
       return { area, base: s.base, seg: s.seg, grp: (typeof Maps !== "undefined" && Maps.parentOf(s.base)) || s.base, best: a.best, times: TIMES.filter(t => a.times.has(t)), html: body(a) };
     });
-    // Floors of one place (Mt. Moon 1F / B1F / B2F ...) with exactly the same encounters (under the current filters) become ONE record
-    // that lists the floors it covers. Floors with different encounters stay separate records.
     const floorOf = a => {
       const m = /(^|\s)(b?\d+f)(?=\s|$)/i.exec(a);
       return m ? { floor: m[2].toUpperCase(), key: (a.slice(0, m.index + m[1].length) + a.slice(m.index + m[0].length)).replace(/\s+/g, " ").trim() } : null;
     };
-    const fval = f => (f[0] === "B" ? -1 : 1) * parseInt(f.replace(/\D/g, ""), 10);          // B2F = -2, B1F = -1, 1F = 1 ...
-    const floorText = fl => {                                                                  // "Floors 1F–3F" / "Floors B1F, 1F, 5F"
+    const fval = f => (f[0] === "B" ? -1 : 1) * parseInt(f.replace(/\D/g, ""), 10);
+    const floorText = fl => {
       const v = [...new Set(fl)].sort((x, y) => fval(x) - fval(y)), runs = [];
       for (const f of v) {
         const run = runs[runs.length - 1], p = run && fval(run[run.length - 1]);
@@ -339,13 +285,12 @@ const Where = (() => {
       same.set(k, n); list.push(n);
     }
     for (const o of list) if (o.floors) { if (o.floors.length > 1) o.floorTag = floorText(o.floors); else { delete o.floors; delete o.title; } }
-    const top = new Map();                                      // North / South of one route stay together, ranked by the better one
-    list.forEach(r => top.set(r.grp, Math.max(top.get(r.grp) || 0, r.best)));   // grp = the parent place, so a building sits right under its city
+    const top = new Map();
+    list.forEach(r => top.set(r.grp, Math.max(top.get(r.grp) || 0, r.best)));
     return list.sort((x, y) => top.get(y.grp) - top.get(x.grp) || x.grp.localeCompare(y.grp, undefined, { numeric: true })
       || (x.base === x.grp ? 0 : 1) - (y.base === y.grp ? 0 : 1) || x.base.localeCompare(y.base, undefined, { numeric: true }) || x.seg.localeCompare(y.seg));
   }
 
-  // Which segments (North, South, East...) exist for each place in a game, from the location data itself.
   const segCache = {};
   function segIndex(key) {
     if (segCache[key]) return segCache[key];
@@ -357,7 +302,6 @@ const Where = (() => {
     }
     return (segCache[key] = m);
   }
-  // Location name + segment badge ("North only", "not in South") + form badges ("East Sea").
   function nameHtml(l, keys, mine, n) {
     let out = esc(l.title || (l.seg ? l.base : l.area)) + (l.floorTag ? ` <mark class="floortag" title="Same encounters on each of these floors">${esc(l.floorTag)}</mark>` : "");
     if (l.seg) {
@@ -367,14 +311,12 @@ const Where = (() => {
       out += ` <mark class="segtag${drawn ? "" : " approx"}" title="${drawn ? "Only this part of the route." : "This part isn't drawn on the map yet, so Show on map outlines the whole route."}">${esc(l.seg)}${only ? " only" : ""}</mark>`;
       if (only) out += `<small class="segnote">not in ${esc(rest.join(" / "))}</small>`;
     }
-    const par = Maps.parentOf(l.title || l.area);                       // a place inside another place (maps.json "inside")
+    const par = Maps.parentOf(l.title || l.area);
     if (par) out += ` <mark class="insidetag" title="This place is inside ${esc(par)}">inside ${esc(par)}</mark>`;
     const forms = typeof Forms !== "undefined" ? Forms.areasFor(n, keys, l.area, l.base) : [];
     return out + forms.map(f => ` <mark class="formtag" data-form="${esc(f.toLowerCase().replace(/[^a-z0-9]+/g, "-"))}" title="Form found here">${esc(f)}</mark>`).join("");
   }
 
-  // "How roaming works": shown under the map for a Pokémon with roaming rows (Gen 2 onwards). Roamers have no fixed spot, so
-  // the map shades every route they can be on and this explains the rest. Facts are per generation (Bulbapedia, "Roaming Pokémon").
   const ROAM = {
     2: ["It wanders between routes and can move every time you change map, so it is rarely where you last saw it.",
         "On the route it is on, about 1 wild encounter in 10 is the roamer.",
@@ -397,18 +339,11 @@ const Where = (() => {
     return `<p class="roamhow"><strong>How roaming works</strong><br>${body}</p>`;
   }
 
-  // ---- honey trees ----
-  // Builds ONE "Honey Trees" row per Pokémon a honey tree can attract, in the same shape as the rows of locations.json:
-  // [area, method, lo, hi, chance, cond]. Done once, when the data loads.
-  //  1. PokéAPI lists a honey-tree row for every route a tree stands on ("Honey tree group c" on Route 205, 206, ...), which
-  //     put 20-odd near-identical rows (and 37 flashing places) on the map. Those rows are removed for the honey games.
-  //  2. The rows from honey.json are added instead (exact rates, 21 exact trees).
-  //  3. A Pokémon PokéAPI knows about but honey.json doesn't (yet) still gets a single "Honey Trees" row, so nothing is lost.
   function mergeHoney(d, h) {
     if (!d || !h || !Array.isArray(h.encounters)) return;
     d.loc = d.loc || {};
     const isHoney = r => r && r[1] === "honey-tree" && r[0] !== HONEY;
-    const covered = new Set();                                           // "game|n" pairs honey.json describes itself
+    const covered = new Set();
     for (const e of h.encounters) for (const g of e.g || []) covered.add(g + "|" + e.n);
     for (const g of h.games || []) {
       const byMon = d.loc[g]; if (!byMon) continue;
@@ -416,7 +351,7 @@ const Where = (() => {
         const rows = byMon[n], old = rows.filter(isHoney);
         if (!old.length) continue;
         byMon[n] = rows.filter(r => !isHoney(r));
-        if (!covered.has(g + "|" + n)) {                                 // keep one row, with the widest level range seen
+        if (!covered.has(g + "|" + n)) {
           const lo = Math.min(...old.map(r => r[2] || 99)), hi = Math.max(...old.map(r => r[3] || 0));
           byMon[n].push([HONEY, "honey-tree", lo === 99 ? 0 : lo, hi, 0, ""]);
         }
@@ -427,7 +362,6 @@ const Where = (() => {
       (byMon[e.n] = byMon[e.n] || []).push([HONEY, "honey-tree", e.lo || 0, e.hi || 0, e.chance || 0, ""]);
     }
   }
-  // The help under a "Honey Trees" row: how honey trees work, a note for this Pokémon, and every tree with its own button.
   function honeyHtml(keys, n) {
     if (!honey || !Array.isArray(honey.spots)) return "";
     const spots = honey.spots.filter(s => typeof Maps !== "undefined" && Maps.locate(keys, HONEY_PRE + s.name).length);
@@ -438,8 +372,6 @@ const Where = (() => {
       (list ? `<details class="honeydet" open><summary>All ${spots.length} honey trees</summary><ul>${list}</ul></details>` : "") + `</div>`;
   }
 
-  // data/orre.json: Colosseum / XD encounters, added to the location data (they are not in PokéAPI)
-  // data/pokewalker.json has the same "loc" shape, so it is merged with this too.
   function mergeOrre(d, o) {
     if (!d || !o || !o.loc) return;
     d.loc = d.loc || {};
@@ -449,7 +381,6 @@ const Where = (() => {
     }
   }
 
-  // data/pokewalker.json: same row shape as orre.json, plus evolution-item sources
   function mergeWalkerItems(items, pw) {
     if (!items || !items.items || !pw || !pw.items) return;
     for (const [name, rows] of Object.entries(pw.items)) {
@@ -458,30 +389,27 @@ const Where = (() => {
     }
   }
 
-  // ---- special encounters (data/special-encounters.json): a "how it works" row shown once, under the first location row that has such an encounter ----
-  // An encounter is recognised from the location data itself: a row with the given method (e.g. "special") whose condition text matches "cond".
   const blurb = e => `<li class="evo special"><strong>${esc(e.title)}</strong><span class="wide">` +
     (e.intro || []).map(t => `<p class="special-note">${esc(t)}</p>`).join("") + `</span></li>`;
-  function specialPlan(keys, ls, entries) {                         // -> { at: [[row index, html]] }
+  function specialPlan(keys, ls, entries) {
     const at = [];
     for (const e of special) {
       if (!e.g.some(k => keys.includes(k)) || !e.match) continue;
       const re = new RegExp(e.match.cond || "", "i");
       const areas = new Set(entries.filter(x => x[1] === e.match.method && re.test(x[5] || "")).map(x => x[0]));
       const i = ls.findIndex(l => areas.has(l.area));
-      if (i >= 0) at.push([i, blurb(e)]);                           // once, however many floors / rows match
+      if (i >= 0) at.push([i, blurb(e)]);
     }
     return { at };
   }
 
   const nameOf = n => (mons.find(m => m.n === n) || { name: `#${n}` }).name;
 
-  // Form chips for Pokémon whose form depends on how / when you meet them (data/form-areas.json rules with "methods" or "season").
   const fslug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, "-");
   function formFx(keys, n) {
     if (typeof Forms === "undefined") return null;
     const chip = (f, suffix = "") => {
-      const part = f.g.length < keys.length ? ` · ${f.g.map(k => (byKey[k] || {}).name || k).join(" / ")}` : "";   // name the games when the group mixes games with different forms
+      const part = f.g.length < keys.length ? ` · ${f.g.map(k => (byKey[k] || {}).name || k).join(" / ")}` : "";
       return `<mark class="formtag" data-form="${esc(fslug(f.name))}" title="Form you get this way">${esc(f.name + suffix + part)}</mark>`;
     };
     return { method: m => Forms.byMethod(n, keys, m).map(f => chip(f)), season: s => Forms.bySeason(n, keys, s).map(f => chip(f, " form")).join("") };
@@ -490,13 +418,11 @@ const Where = (() => {
 
   function render(game, n, groups) {
     if (!groups.length) {
-      const map = typeof Maps !== "undefined" ? Maps.html([game.key], [], nameOf(n)) : "";   // still show the map, with "AREA UNKNOWN"
+      const map = typeof Maps !== "undefined" ? Maps.html([game.key], [], nameOf(n)) : "";
       return map + `<p>No wild, gift or one-time encounters are recorded for ${esc(nameOf(n))} in ${esc(game.name)} or the games that link to it.
         It may be an evolution, a breeding result, an event Pokémon, or a trade. Check the full page below.</p>`;
     }
     const clockOf = g => g.games.map(x => CLOCK_OF[x.key]).find(Boolean) || null;
-    // Which group starts open: the one with the game you are tracking. If this Pokémon isn't available in that game,
-    // open only the group from the closest generation instead (the first one wins a tie); every other group stays folded.
     let openAt = groups.findIndex(g => g.games.some(x => x.key === game.key));
     if (openAt < 0) {
       let bestGap = Infinity;
@@ -506,8 +432,6 @@ const Where = (() => {
       });
     }
     return groups.map((g, gi) => {
-      // Filters sit under that group's map, and only exist when they change something for these games:
-      // a time-of-day filter for games with a clock, a season filter for Black / White / Black 2 / White 2.
       const keys = g.games.map(x => x.key);
       const gk = g.games[0].key, st = fs(gk), clock = clockOf(g);
       const tOn = !!clock && variesBy(g.entries, "time");
@@ -521,35 +445,30 @@ const Where = (() => {
       const entries = sel === "all" && tsel === "all" ? g.entries : g.entries.filter(keep);
       const ls = lines(entries, sel, tsel, clock, formFx(keys, n)), mine = {};
       ls.forEach(l => { if (l.seg) (mine[l.base] = mine[l.base] || new Set()).add(l.seg); });
-      const sp = specialPlan(keys, ls, entries), bases = new Set(ls.map(l => l.base));                          // places that have their own row in this list
+      const sp = specialPlan(keys, ls, entries), bases = new Set(ls.map(l => l.base));
       const rows = ls.map(l => {
-        // "Show on map" button: only when this location has a box on one of the maps shown for this group
         const ok = typeof Maps !== "undefined" && Maps.locate(keys, l.area).length;
         const btn = ok ? `<button type="button" class="locbtn" data-area="${esc(l.area)}" data-keys="${esc(keys.join(","))}" data-times="${l.times.join(" ")}" aria-pressed="false" aria-label="Outline ${esc(l.area)} on the map">Show on map</button>` : "";
         const extra = l.area === HONEY && honey ? honeyHtml(keys, n) : "";
         return `<li${l.grp !== l.base && bases.has(l.grp) ? ' class="inside"' : ""}><strong>${nameHtml(l, keys, mine, n)}</strong><span class="wide">${l.html}</span>${btn}${extra}</li>`;
       });
-      for (const [i, h] of [...sp.at].sort((x, y) => y[0] - x[0])) rows.splice(i, 0, h);   // special-encounter info, right above its first location
+      for (const [i, h] of [...sp.at].sort((x, y) => y[0] - x[0])) rows.splice(i, 0, h);
       if (!entries.length && (sel !== "all" || tsel !== "all")) rows.push(`<li><span>Not found here ${sel !== "all" ? "in " + SEASON_NAME[sel] : TPHRASE[tsel]}.</span></li>`);
       if (g.egg) rows.unshift(Eggs.row(n, g.games.map(x => x.name)));
       if (g.evolve) rows.unshift(...evoRows(g.evolve));
-      // Only one group starts open (see openAt above); every other game's group starts folded
-      // (click its heading to open it), so the panel isn't cluttered right away.
       const open = gi === openAt;
       const sub = g.vias.length ? `<small>reaches ${esc(game.name)} by ${esc(g.vias.join(" / "))}</small>` : "";
-      // Region map with the locations marked. When a season / time filter leaves nothing to mark (or nothing that is drawn on
-      // a map), the map stays on screen and shows the in-game "AREA UNKNOWN" banner instead of disappearing.
       let maps = "";
       if (typeof Maps !== "undefined") {
         const mk = g.games.map(x => x.key);
         maps = entries.length ? Maps.html(mk, entries, nameOf(n)) : "";
         if (!maps) maps = Maps.html(mk, [], nameOf(n));
       }
-      if (tsel !== "all") {                                                                   // tint the map picture to the chosen time of day
+      if (tsel !== "all") {
         maps = maps.replace(/data-time="all"/g, `data-time="${tsel}"`);
-        maps = maps.replace(/<figure class="amap"(?![^>]*data-timed)/g, '<figure class="amap" data-timed');   // maps.js only tints maps it thinks are time-dependent; the filter makes every one of them so
+        maps = maps.replace(/<figure class="amap"(?![^>]*data-timed)/g, '<figure class="amap" data-timed');
       }
-      if (sel !== "all") maps = maps.replace(/<figure class="amap"/g, `<figure class="amap" data-season="${sel}"`);   // tint for the chosen season (CSS below)
+      if (sel !== "all") maps = maps.replace(/<figure class="amap"/g, `<figure class="amap" data-season="${sel}"`);
       const bars = (sOn ? seasonBar(gk, sel) : "") + (tOn ? timeBar(gk, clock, tsel) : "");
       return `<details${open ? " open" : ""}><summary>${esc(g.games.map(x => x.name).join(", "))} ${sub}</summary>${maps}${bars}${roamNote(g)}${formNotes(keys, n)}<ul>${rows.join("")}</ul></details>`;
     }).join("");
@@ -563,16 +482,16 @@ const Where = (() => {
         loading = null;
         special = sp && Array.isArray(sp.encounters) ? sp.encounters : [];
         if (typeof Maps !== "undefined") {
-          Maps.init(maps);                                                         // maps.json is optional too
-          if (hon) Maps.addHoney(hon);                                             // honey.json is optional: puts the trees on the map
+          Maps.init(maps);
+          if (hon) Maps.addHoney(hon);
         }
-        if (d && typeof Maps !== "undefined") Maps.fixLoc(d);                     // PokeAPI's "Kanto Victory Road 1 / 2" -> "Kanto Victory Road"
+        if (d && typeof Maps !== "undefined") Maps.fixLoc(d);
         if (d && hon) { mergeHoney(d, hon); honey = hon; }
         if (d && orre) mergeOrre(d, orre);
-        if (d && pw) { mergeOrre(d, pw); walkerNote = pw.itemNote || ""; }        // loc has the same shape as orre.json
-        mergeWalkerItems(items, pw);                                               // PokéWalker sources for evolution items
+        if (d && pw) { mergeOrre(d, pw); walkerNote = pw.itemNote || ""; }
+        mergeWalkerItems(items, pw);
         return (data = d && { ...d, items });
-      }));   // items.json, honey.json and pokewalker.json are optional; a failed load can be retried next time
+      }));
   }
 
   async function open(game, n) {
@@ -598,7 +517,6 @@ const Where = (() => {
     $("#where-close").addEventListener("click", () => $("#where").close());
     $("#where-x").addEventListener("click", () => $("#where").close());
 
-    // Map hover / tap: show which locations sit under the pointer (Maps.at in maps.js).
     const hideTips = () => {
       document.querySelectorAll("#where .amaptip").forEach(t => { t.hidden = true; });
       document.querySelectorAll("#where .amaphl").forEach(l => { l.textContent = ""; l.dataset.k = ""; });
@@ -612,35 +530,33 @@ const Where = (() => {
       const fig = box.closest("figure"), tip = box.querySelector(".amaptip"), hl = box.querySelector(".amaphl"), r = box.getBoundingClientRect();
       const fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
       let found = [];
-      try { found = JSON.parse(fig.dataset.found || "[]"); } catch { /* ignore */ }
+      try { found = JSON.parse(fig.dataset.found || "[]"); } catch { }
       const hits = Maps.at(fig.dataset.map, fx, fy, found);
       if (!hits.length || !tip) { if (tip) tip.hidden = true; if (hl) { hl.textContent = ""; hl.dataset.k = ""; } return; }
-      if (hl) {                                                                 // outline every tile of the hovered place(s)
+      if (hl) {
         const bx = hits.flatMap(x => x.boxes), key = JSON.stringify(bx);
         if (hl.dataset.k !== key) {
           const W = Number(fig.dataset.w), H = Number(fig.dataset.h);
           hl.dataset.k = key;
-          hl.innerHTML = Maps.outline(bx, W, H);                                // boxes and shapes (circles, triangles, diagonal strips)
+          hl.innerHTML = Maps.outline(bx, W, H);
         }
       }
-      // name; if a roamer could be on that route: "could be roaming here"; if the Pokémon is found there: "found here", plus the time of day on maps that have one (Gold / Silver / Crystal)
       const sub = h => (h.inside ? ` <small>(inside ${esc(h.inside)})</small>` : "");
       const inn = h => (h.via && h.via.length ? ` in ${esc(h.via.slice(0, 2).join(", "))}${h.via.length > 2 ? ` +${h.via.length - 2}` : ""}` : "");
       const line = h => h.here ? `<b>${esc(h.name)}</b>${sub(h)} · found here${inn(h)}${h.when ? ` · ${esc(h.when)}` : ""}`
         : h.roam ? `<b>${esc(h.name)}</b>${sub(h)} · could be roaming here` : `${esc(h.name)}${sub(h)}`;
-      const MAXTIP = 4, rest = hits.length - MAXTIP;                           // a tile with many places: show the first few, count the rest
+      const MAXTIP = 4, rest = hits.length - MAXTIP;
       tip.innerHTML = hits.slice(0, MAXTIP).map(line).join("<br>") + (rest > 0 ? `<br><small>+${rest} more place${rest === 1 ? "" : "s"} here</small>` : "");
       tip.style.left = fx * 100 + "%"; tip.style.top = fy * 100 + "%";
-      const h = fx < 0.3 ? "0" : fx > 0.7 ? "-100%" : "-50%";                  // keep the tooltip inside the map
+      const h = fx < 0.3 ? "0" : fx > 0.7 ? "-100%" : "-50%";
       tip.style.transform = fy < 0.25 ? `translate(${h}, 16px)` : `translate(${h}, calc(-100% - 8px))`;
       tip.hidden = false;
     };
     const wb = $("#where-body");
     wb.addEventListener("pointermove", hover);
-    wb.addEventListener("pointerdown", hover);                                  // touch: tap a tile
+    wb.addEventListener("pointerdown", hover);
     wb.addEventListener("pointerleave", hideTips);
 
-    // Season buttons (Black / White / Black 2 / White 2): redraw the list for the chosen season, keeping the scroll position.
     if (!document.getElementById("where-season-css")) {
       const st = document.createElement("style"); st.id = "where-season-css";
       st.textContent = `#where .seasonwrap{margin:0 0 10px}
@@ -662,7 +578,7 @@ const Where = (() => {
 #where .formtag[data-form=summer]{background:#fbe48a;color:#3d2e00;border-color:#d4a418}
 #where .formtag[data-form=autumn]{background:#f6c28f;color:#4a2208;border-color:#e07b2a}
 #where .formtag[data-form=winter]{background:#cfe4f8;color:#0c2e4d;border-color:#6aaee8}
-#where .stable th .formtag{display:block;margin:3px auto 0;font-size:10px;line-height:1.4;white-space:normal}   /* don't stretch to the height of a two-line title */
+#where .stable th .formtag{display:block;margin:3px auto 0;font-size:10px;line-height:1.4;white-space:normal}
 #where .stable{width:100%;border-collapse:collapse;font-size:12px;margin:2px 0 4px;table-layout:fixed}
 #where .stable th,#where .stable td{border:1px solid var(--mid);padding:3px 4px;text-align:center}
 #where .stable th:first-child,#where .stable td:first-child{width:38%;text-align:left}
@@ -709,41 +625,39 @@ const Where = (() => {
 #where .amap[data-season=winter] .amapimg img{filter:saturate(.72) brightness(1.07) contrast(.97) hue-rotate(8deg)}
 #where .special-note{margin:0 0 6px;font-size:13px}
 #where .floortag{display:inline-block;padding:0 6px;margin-left:4px;font:600 11px/1.6 system-ui,sans-serif;border:2px solid var(--line);background:var(--card);color:var(--ink);vertical-align:middle;white-space:nowrap}
-#where .amap .tfilter{display:none}   /* the map's own time buttons are replaced by the filter under each map, which also filters the list */`;
+#where .amap .tfilter{display:none}  `;
       document.head.append(st);
     }
     wb.addEventListener("click", e => {
       const sb = e.target.closest && e.target.closest(".sbtn"); if (!sb || !last) return;
       fs(sb.dataset.g)[sb.dataset.k === "time" ? "time" : "season"] = sb.dataset.s;
       const sc = $("#where .dbody"), top = sc ? sc.scrollTop : 0;
-      const dets = [...wb.querySelectorAll("details")].map(d => d.open);          // which games / lists you had open or folded
+      const dets = [...wb.querySelectorAll("details")].map(d => d.open);
       const pinned = wb.querySelector(".locbtn[aria-pressed=true]");
-      const pin = pinned && { area: pinned.dataset.area, keys: pinned.dataset.keys };   // the "Show on map" outline that was on
+      const pin = pinned && { area: pinned.dataset.area, keys: pinned.dataset.keys };
       wb.innerHTML = render(last.game, last.n, last.groups);
       wb.querySelectorAll("details").forEach((d, i) => { if (i < dets.length) d.open = dets[i]; });
       if (pin) { const b = [...wb.querySelectorAll(".locbtn")].find(x => x.dataset.area === pin.area && x.dataset.keys === pin.keys); if (b) showPin(b, true); }
       if (sc) sc.scrollTop = top;
     });
 
-    // "Show on map" buttons: outline one location on its map. Only one outline can be on at a time (in the whole dialog).
     const clearPins = () => {
       wb.querySelectorAll(".amappin").forEach(p => { p.textContent = ""; });
       wb.querySelectorAll(".locbtn").forEach(b => { b.setAttribute("aria-pressed", "false"); b.textContent = "Show on map"; });
     };
     const showPin = (btn, quiet) => {
-      const det = btn.closest("details:not(.honeydet)"); if (det) det.open = true;   // the honey tree list is a details inside the game's details
+      const det = btn.closest("details:not(.honeydet)"); if (det) det.open = true;
       const scope = det || wb, q = id => CSS.escape(id);
       const hit = Maps.locate(btn.dataset.keys.split(","), btn.dataset.area)
         .find(h => scope.querySelector(`figure.amap[data-map="${q(h.id)}"]`));
-      if (!hit) return;                                                        // map picture failed to load
+      if (!hit) return;
       const figs = [...scope.querySelectorAll(`figure.amap[data-map="${q(hit.id)}"]`)];
-      const tab = scope.querySelector(`.amaptab[data-map="${q(hit.id)}"]`);    // several maps: switch to the right tab
+      const tab = scope.querySelector(`.amaptab[data-map="${q(hit.id)}"]`);
       if (tab && tab.getAttribute("aria-selected") !== "true") tab.click();
       const times = btn.dataset.times ? btn.dataset.times.split(" ") : [];
-      const tree = btn.dataset.area.startsWith(Maps.honeyPrefix) || btn.dataset.area === Maps.honeyAll, g = tree ? 2 : 0;   // a honey tree: red outline a little outside the icon
+      const tree = btn.dataset.area.startsWith(Maps.honeyPrefix) || btn.dataset.area === Maps.honeyAll, g = tree ? 2 : 0;
       const boxes = Maps.pin(hit.boxes, hit.w, hit.h, g, tree);
       for (const f of figs) {
-        // time of day: only when the entry applies to some times and not others, and the filter doesn't already match
         if (times.length && times.length < 3 && f.querySelector(".tfilter")) {
           const cur = f.dataset.time;
           if (cur === "all" ? times.length === 1 : !times.includes(cur)) {
@@ -759,7 +673,7 @@ const Where = (() => {
     wb.addEventListener("click", e => {
       const btn = e.target.closest && e.target.closest(".locbtn"); if (!btn) return;
       const was = btn.getAttribute("aria-pressed") === "true";
-      clearPins();                                                             // never two outlines at once
+      clearPins();
       if (!was) showPin(btn);
     });
   }
