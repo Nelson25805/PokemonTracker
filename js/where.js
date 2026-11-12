@@ -287,8 +287,10 @@ const Where = (() => {
     for (const o of list) if (o.floors) { if (o.floors.length > 1) o.floorTag = floorText(o.floors); else { delete o.floors; delete o.title; } }
     const top = new Map();
     list.forEach(r => top.set(r.grp, Math.max(top.get(r.grp) || 0, r.best)));
-    return list.sort((x, y) => top.get(y.grp) - top.get(x.grp) || x.grp.localeCompare(y.grp, undefined, { numeric: true })
+    list.sort((x, y) => top.get(y.grp) - top.get(x.grp) || x.grp.localeCompare(y.grp, undefined, { numeric: true })
       || (x.base === x.grp ? 0 : 1) - (y.base === y.grp ? 0 : 1) || x.base.localeCompare(y.base, undefined, { numeric: true }) || x.seg.localeCompare(y.seg));
+    const walker = r => r.area.startsWith(WALKER);   // PokéWalker rows always go last
+    return [...list.filter(r => !walker(r)), ...list.filter(walker)];
   }
 
   const segCache = {};

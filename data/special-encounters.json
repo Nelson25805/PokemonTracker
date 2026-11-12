@@ -147,7 +147,7 @@
    ],
    "intro": [
     "You can only get this with the PokéWalker, the infrared pedometer that came with HeartGold / SoulSilver. Send a Pokémon to it, pick a course and walk with it for real. When you sync it back to the game, what you caught comes back with it.",
-    "Each course has three groups of Pokémon (A = rare, B = uncommon, C = common). Every Pokémon needs a minimum number of steps on that course (shown on its row) and only one Pokémon per group can turn up at a time. The % is the chance at that step count and drops as rarer groups take over. To roll again, take the Pokémon out and send it again. Sending a Pokémon of one of the course's special types cuts the steps needed by 25%.",
+    "Each course has three groups of Pokémon (A = rare, B = uncommon, C = common). Every Pokémon needs a minimum number of steps on that course (shown on its row) and only one Pokémon per group can turn up at a time. The % is the chance at that step count and drops as rarer groups take over (common Pokémon are 100% at 0 steps). To roll again, take the Pokémon out and send it again. Sending a Pokémon of one of the course's special types cuts the steps needed by 25%.",
     "Courses unlock with Watts, the National Pokédex or events (see the Unlock tag). Event courses were limited-time distributions and are hard to get today."
    ],
    "match": {

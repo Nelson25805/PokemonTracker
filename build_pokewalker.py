@@ -52,7 +52,7 @@ BLURB_INTRO = [
     "Send a Pokémon to it, pick a course and walk with it for real. When you sync it back to the game, what you caught comes back with it.",
     "Each course has three groups of Pokémon (A = rare, B = uncommon, C = common). Every Pokémon needs a minimum number of steps "
     "on that course (shown on its row) and only one Pokémon per group can turn up at a time. The % is the chance at that step count "
-    "and drops as rarer groups take over. To roll again, take the Pokémon out and send it again. "
+    "and drops as rarer groups take over (common Pokémon are 100% at 0 steps). To roll again, take the Pokémon out and send it again. "
     "Sending a Pokémon of one of the course's special types cuts the steps needed by 25%.",
     "Courses unlock with Watts, the National Pokédex or events (see the Unlock tag). Event courses were limited-time "
     "distributions and are hard to get today.",
@@ -122,8 +122,13 @@ class Tables(HTMLParser):
             self.cell["lines"][-1] += data
 
 
+def fix_text(s):
+    """Repair 'Pok\ufffddex' style damage (Latin-1 bytes decoded as UTF-8)."""
+    return s.replace("Pok\ufffddex", "Pokédex").replace("Pok\ufffd", "Poké").replace("\ufffd", "é")
+
+
 def clean(s):
-    return re.sub(r"\s+", " ", s.replace("\xa0", " ")).strip()
+    return fix_text(re.sub(r"\s+", " ", s.replace("\xa0", " ")).strip())
 
 
 def lines(cell):
@@ -150,7 +155,14 @@ def warn(msg):
 def parse_header(t):
     cells = t["rows"][0]
     name = lines(cells[0])[0]
-    unlock = " + ".join(lines(cells[3])[1:]) if len(cells) > 3 else ""
+    unlock = ""
+    if len(cells) > 3:
+        ul = lines(cells[3])
+        if ul and re.match(r"unlock\s*:\s*\S", ul[0], re.I):
+            ul[0] = re.sub(r"^unlock\s*:\s*", "", ul[0], flags=re.I)
+        else:
+            ul = ul[1:]
+        unlock = " + ".join(ul)
     return {
         "id": t["anchors"][0].lower(),
         "name": name,
@@ -175,13 +187,20 @@ def parse_odds(ls):
 
 
 def own_chance(odds, steps):
-    """The % at the Pokémon's own step milestone, from the first row of its odds cell. 0 when unknown (0 steps)."""
-    if not steps or not odds:
+    """The % at the Pokémon's own step milestone, from the first row of its odds cell.
+    Group C (0 steps) gets 0 (no % chip): its 100% at 0 steps is the chance that GROUP C is the one showing, not that Pokémon's own odds.
+    cond_of() puts "100% at 0 steps" in its tags instead.
+    If Serebii's step count is not one of the milestones, the nearest milestone at or below it is used."""
+    if not odds or not steps:
         return 0
-    for s, p in next(iter(odds.values())):
+    rows = next(iter(odds.values()))
+    if not rows:
+        return 0
+    for s, p in rows:
         if s == steps:
             return p
-    return 0
+    below = [r for r in rows if r[0] <= steps]
+    return below[-1][1] if below else rows[0][1]
 
 
 def parse_pokemon(t, course):
@@ -261,6 +280,8 @@ def cond_of(p, course):
     parts = [f"Group {p['group']}"]
     if p["steps"]:
         parts.append(f"{p['steps']}+ steps")
+    elif p["group"] == "C":
+        parts.append("100% at 0 steps")
     if p["held"]:
         parts.append(f"holds {p['held']}")
     if course["unlock"] and course["unlock"] != "Beginning":
@@ -300,6 +321,14 @@ def install_blurb(path):
     path.write_text(json.dumps(data, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
+def decode(raw):
+    """UTF-8 if valid, otherwise Windows-1252 (Serebii mixes encodings)."""
+    try:
+        return raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return raw.decode("cp1252", errors="replace")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--url", default=URL)
@@ -310,10 +339,10 @@ def main():
     a = ap.parse_args()
 
     if a.file:
-        html = Path(a.file).read_text(encoding="utf-8", errors="replace")
+        html = decode(Path(a.file).read_bytes())
     else:
         req = urllib.request.Request(a.url, headers={"User-Agent": "Mozilla/5.0 (pokedex-tracker data build)"})
-        html = urllib.request.urlopen(req, timeout=30).read().decode("utf-8", errors="replace")
+        html = decode(urllib.request.urlopen(req, timeout=30).read())
 
     courses = parse(html)
     if len(courses) != EXPECTED_COURSES:
