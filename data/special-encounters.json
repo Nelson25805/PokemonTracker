@@ -154,6 +154,22 @@
     "method": "pokewalker",
     "cond": "."
    }
+  },
+  {
+   "id": "dream-radar",
+   "title": "Dream Radar (3DS app, no longer sold)",
+   "g": [
+    "black-2",
+    "white-2"
+   ],
+   "intro": [
+    "You can only get this with Pokémon Dream Radar, a Nintendo 3DS eShop app (removed from the eShop on March 27, 2023). You shoot Dream Clouds, battle the Pokémon inside them, then send your research data to Black 2 / White 2 (Unova Link > Nintendo 3DS Link). Pokémon arrive in a Dream Ball with their Hidden Ability (Rotom has none).",
+    "The level depends on the Badges in your Black 2 / White 2 save: 5 with none, 10 with 1-2, 20 with 3-4, 30 with 5-6, 40 with 7-8. The Orb tags show which Dream Orb colour attracts it: the colour you collected most on your last exploration decides which Pokémon can turn up next. Unlock tags say what you need first (catching Tornadus, Thundurus or Landorus, an extension, a code or a Gen 4 game card). Legendary Pokémon can only be caught once per Dream Radar save and received once per Black 2 / White 2 save. No official encounter rates exist, so no % is shown."
+   ],
+   "match": {
+    "method": "dream-radar",
+    "cond": "."
+   }
   }
  ]
 }

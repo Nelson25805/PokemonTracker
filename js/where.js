@@ -2,18 +2,18 @@
 // Where: the "Where to find" dialog: where a Pokémon can be found, limited to games that can send Pokémon to the tracked game.
 //   init({ games, mons, regional }) / open(game, n) / plan(game, n, byKey, data)  (plan is pure, exported for testing)
 // Data (fetched on first open): data/locations.json plus optional items, maps, honey, special-encounters, orre and pokewalker JSON,
-// merged into the location rows at load time (mergeHoney, mergeOrre, mergeWalkerItems).
+// merged into the location rows at load time (mergeHoney, mergeOrre, mergeWalkerItems). dreamradar.json is merged like pokewalker.json.
 // Features: evolution help with item sources (One-time / Repeatable), season filter (Gen 5) and time-of-day filter (Gen 2 / 4),
 // per-method encounter rows and tables, floors merged when identical, region maps with hover tooltips and "Show on map" outlines,
 // roaming / honey tree / PokéWalker / special encounter notes, and form chips.
 const Where = (() => {
   const $ = s => document.querySelector(s);
   let games = [], mons = [], byKey = {}, data = null, loading = null, honey = null, special = [], regional = null;
-  let walkerNote = "";
+  let walkerNote = "", radarNote = "";
   let last = null;
 
   const HONEY = "Honey Trees", HONEY_PRE = "Honey Tree: ";
-  const WALKER = "PokéWalker";
+  const WALKER = "PokéWalker", RADAR = "Dream Radar";
 
   const METHODS = {
     walk: "Grass / cave / land", surf: "Surfing", "old-rod": "Old Rod", "good-rod": "Good Rod", "super-rod": "Super Rod",
@@ -21,6 +21,7 @@ const Where = (() => {
     pokeflute: "Poké Flute", "bug-catching-contest": "Bug-Catching Contest", "roaming-grass": "Roaming (grass / land)", "roaming-water": "Roaming (surfing)",
     "honey-tree": "Honey tree",
     pokewalker: "PokéWalker (transfer)",
+    "dream-radar": "Dream Radar (3DS app)",
     shadow: "Snag (Shadow Pokémon)", mirorb: "Miror B.'s 2nd chance (snag)", pokespot: "PokéSpot (wild)", ecard: "e-Reader card", download: "Bonus Disc download",
     "grass-spots": "Rustling grass", "cave-spots": "Dust clouds", "bridge-spots": "Bridge shadows",
     "surf-spots": "Surfing in rippling water", "super-rod-spots": "Fishing in rippling water",
@@ -165,8 +166,9 @@ const Where = (() => {
     if (!it.lines) return `<span class="itemgrp">No source for this item is recorded${game ? ` in ${esc(game)}` : ""} yet.</span>${link}`;
     const grp = (cls, name, tip, arr) => arr.length
       ? `<span class="itemgrp"><b class="itemk ${cls}" title="${esc(tip)}">${name}</b>${arr.map(esc).join("<br>")}</span>` : "";
-    const walker = [...it.lines.once, ...it.lines.repeat, ...it.lines.other].some(t => t.startsWith(WALKER));
-    const note = walker && walkerNote ? `<span class="itemgrp"><b class="itemk repeat">PokéWalker</b>${esc(walkerNote)}</span>` : "";
+    const all = [...it.lines.once, ...it.lines.repeat, ...it.lines.other];
+    const note = (all.some(t => t.startsWith(WALKER)) && walkerNote ? `<span class="itemgrp"><b class="itemk repeat">PokéWalker</b>${esc(walkerNote)}</span>` : "") +
+      (all.some(t => t.startsWith(RADAR)) && radarNote ? `<span class="itemgrp"><b class="itemk repeat">Dream Radar</b>${esc(radarNote)}</span>` : "");
     return grp("once", "One-time", "Finite: you can only get this once in a playthrough (an item on the ground, a gift, a story reward).", it.lines.once) +
       grp("repeat", "Repeatable", "You can get this again (a shop, a repeatable reward or a recurring spot).", it.lines.repeat) +
       (it.lines.other.length ? `<span class="itemgrp">${it.lines.other.map(esc).join("<br>")}</span>` : "") + note + link;
@@ -242,7 +244,7 @@ const Where = (() => {
       for (const t of times) g.tper[t] = Math.min(100, (g.tper[t] || 0) + (chance || 0));
     }
     const lvl = r => (r.lo ? (r.lo === r.hi ? `Lv ${r.lo}` : `Lv ${r.lo}–${r.hi}`) : "");
-    const mclass = m => (/surf|rod/.test(m) ? "water" : /^(gift|only-one|shadow|mirorb|trade|ecard|download|pokewalker)/.test(m) ? "static" : "land");
+    const mclass = m => (/surf|rod/.test(m) ? "water" : /^(gift|only-one|shadow|mirorb|trade|ecard|download|pokewalker|dream-radar)/.test(m) ? "static" : "land");
     const tags = x => (x.other ? x.other.split(", ").map(c => `<span class="ctag">${esc(c)}</span>`).join("") : "");
     const best = x => Math.max(0, ...Object.values(x.per));
     const rate = c => (c > 0 ? `<span class="rate">${c}%</span>` : "");
@@ -289,7 +291,7 @@ const Where = (() => {
     list.forEach(r => top.set(r.grp, Math.max(top.get(r.grp) || 0, r.best)));
     list.sort((x, y) => top.get(y.grp) - top.get(x.grp) || x.grp.localeCompare(y.grp, undefined, { numeric: true })
       || (x.base === x.grp ? 0 : 1) - (y.base === y.grp ? 0 : 1) || x.base.localeCompare(y.base, undefined, { numeric: true }) || x.seg.localeCompare(y.seg));
-    const walker = r => r.area.startsWith(WALKER);   // PokéWalker rows always go last
+    const walker = r => r.area.startsWith(WALKER) || r.area.startsWith(RADAR);   // PokéWalker / Dream Radar rows always go last
     return [...list.filter(r => !walker(r)), ...list.filter(walker)];
   }
 
@@ -479,8 +481,8 @@ const Where = (() => {
   function load() {
     if (data) return Promise.resolve(data);
     const get = f => fetch(`data/${f}.json`).then(r => (r.ok ? r.json() : null)).catch(() => null);
-    return (loading = loading || Promise.all([get("locations"), get("items"), get("maps"), get("honey"), get("special-encounters"), get("orre"), get("pokewalker")])
-      .then(([d, items, maps, hon, sp, orre, pw]) => {
+    return (loading = loading || Promise.all([get("locations"), get("items"), get("maps"), get("honey"), get("special-encounters"), get("orre"), get("pokewalker"), get("dreamradar")])
+      .then(([d, items, maps, hon, sp, orre, pw, dr]) => {
         loading = null;
         special = sp && Array.isArray(sp.encounters) ? sp.encounters : [];
         if (typeof Maps !== "undefined") {
@@ -491,7 +493,9 @@ const Where = (() => {
         if (d && hon) { mergeHoney(d, hon); honey = hon; }
         if (d && orre) mergeOrre(d, orre);
         if (d && pw) { mergeOrre(d, pw); walkerNote = pw.itemNote || ""; }
+        if (d && dr) { mergeOrre(d, dr); radarNote = dr.itemNote || ""; }
         mergeWalkerItems(items, pw);
+        mergeWalkerItems(items, dr);
         return (data = d && { ...d, items });
       }));
   }
