@@ -632,7 +632,7 @@ const Where = (() => {
 #where .itemk.repeat{background:#bfe6a8;border-color:#6cbf5a;color:#173a0c}
 #where .itemwiki{display:inline-block;margin-top:4px;font-size:12px}
 #where .itemdivider{display:block;margin:10px 0 4px;padding-top:8px;border-top:3px double var(--line);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;opacity:.85}
-#where .itemside{border-top:0;padding-left:8px;border-left:4px solid var(--mid)}
+#where .itemside{border-top:0}
 #where .itemside+.itemside{margin-top:6px}
 #where .itemk.side{background:#d9ebfa;border-color:#4f8fc4;color:#0c2e4d}
 #where .sidenote{display:block;margin-top:4px;font-size:12px;opacity:.85}
