@@ -2,18 +2,21 @@
 // Where: the "Where to find" dialog: where a Pokémon can be found, limited to games that can send Pokémon to the tracked game.
 //   init({ games, mons, regional }) / open(game, n) / plan(game, n, byKey, data)  (plan is pure, exported for testing)
 // Data (fetched on first open): data/locations.json plus optional items, maps, honey, special-encounters, orre and pokewalker JSON,
-// merged into the location rows at load time (mergeHoney, mergeOrre, mergeWalkerItems). dreamradar.json is merged like pokewalker.json.
+// merged into the location rows at load time (mergeHoney, mergeOrre, mergeSideItems). dreamradar.json is merged like pokewalker.json.
+// Item sources from side games (PokéWalker, Dream Radar...) are shown in their own section under a divider. To add another side game: build its JSON like dreamradar.json (loc + items + itemNote + games),
+// add one name constant (like RADAR), fetch it in load(), call mergeOrre + mergeSideItems(items, data, NAME), and add NAME to SIDE.
 // Features: evolution help with item sources (One-time / Repeatable), season filter (Gen 5) and time-of-day filter (Gen 2 / 4),
 // per-method encounter rows and tables, floors merged when identical, region maps with hover tooltips and "Show on map" outlines,
 // roaming / honey tree / PokéWalker / special encounter notes, and form chips.
 const Where = (() => {
   const $ = s => document.querySelector(s);
   let games = [], mons = [], byKey = {}, data = null, loading = null, honey = null, special = [], regional = null;
-  let walkerNote = "", radarNote = "";
+  const sideNotes = {};   // side-game name -> the note shown under its item sources
   let last = null;
 
   const HONEY = "Honey Trees", HONEY_PRE = "Honey Tree: ";
   const WALKER = "PokéWalker", RADAR = "Dream Radar";
+  const SIDE = [WALKER, RADAR];   // side games: their item sources get their own section, and their location rows sort last
 
   const METHODS = {
     walk: "Grass / cave / land", surf: "Surfing", "old-rod": "Old Rod", "good-rod": "Good Rod", "super-rod": "Super Rod",
@@ -129,12 +132,12 @@ const Where = (() => {
   const itemLines = (items, name, key) => {
     const it = items && items.items && items.items[name];
     const rows = it ? (it.where || []).filter(w => (w.g || []).includes(key)) : [];
-    const out = { once: [], repeat: [], other: [] };
+    const out = { once: [], repeat: [], other: [], side: {} };
     for (const w of rows) {
-      const bucket = w.k === "once" ? out.once : w.k === "repeat" ? out.repeat : out.other;
+      const bucket = w.k === "side" ? (out.side[w.s] = out.side[w.s] || []) : w.k === "once" ? out.once : w.k === "repeat" ? out.repeat : out.other;
       for (const t of w.t || []) if (!bucket.includes(t)) bucket.push(t);
     }
-    return out.once.length || out.repeat.length || out.other.length ? out : null;
+    return out.once.length || out.repeat.length || out.other.length || Object.keys(out.side).length ? out : null;
   };
 
   function evolution(n, evo, src, items) {
@@ -166,12 +169,16 @@ const Where = (() => {
     if (!it.lines) return `<span class="itemgrp">No source for this item is recorded${game ? ` in ${esc(game)}` : ""} yet.</span>${link}`;
     const grp = (cls, name, tip, arr) => arr.length
       ? `<span class="itemgrp"><b class="itemk ${cls}" title="${esc(tip)}">${name}</b>${arr.map(esc).join("<br>")}</span>` : "";
-    const all = [...it.lines.once, ...it.lines.repeat, ...it.lines.other];
-    const note = (all.some(t => t.startsWith(WALKER)) && walkerNote ? `<span class="itemgrp"><b class="itemk repeat">PokéWalker</b>${esc(walkerNote)}</span>` : "") +
-      (all.some(t => t.startsWith(RADAR)) && radarNote ? `<span class="itemgrp"><b class="itemk repeat">Dream Radar</b>${esc(radarNote)}</span>` : "");
-    return grp("once", "One-time", "Finite: you can only get this once in a playthrough (an item on the ground, a gift, a story reward).", it.lines.once) +
+    const sides = SIDE.filter(s => it.lines.side[s]);
+    const side = sides.length
+      ? `<span class="itemdivider">Side games and extras</span>` + sides.map(s =>
+          `<span class="itemgrp itemside"><b class="itemk side" title="Not part of the main game: needs extra hardware or an app.">${esc(s)}</b>` +
+          it.lines.side[s].map(esc).join("<br>") + (sideNotes[s] ? `<small class="sidenote">${esc(sideNotes[s])}</small>` : "") + `</span>`).join("")
+      : "";
+    const main = grp("once", "One-time", "Finite: you can only get this once in a playthrough (an item on the ground, a gift, a story reward).", it.lines.once) +
       grp("repeat", "Repeatable", "You can get this again (a shop, a repeatable reward or a recurring spot).", it.lines.repeat) +
-      (it.lines.other.length ? `<span class="itemgrp">${it.lines.other.map(esc).join("<br>")}</span>` : "") + note + link;
+      (it.lines.other.length ? `<span class="itemgrp">${it.lines.other.map(esc).join("<br>")}</span>` : "");
+    return (main || (side ? `<span class="itemgrp">No main-game source is recorded${game ? ` in ${esc(game)}` : ""}.</span>` : "")) + side + link;
   }
   function evoRows(e) {
     const rows = [`<li class="evo"><strong>Evolve ${esc(nameOf(e.from))}</strong><span>${e.opts.map(esc).join("<br>or: ")}</span></li>`];
@@ -291,7 +298,7 @@ const Where = (() => {
     list.forEach(r => top.set(r.grp, Math.max(top.get(r.grp) || 0, r.best)));
     list.sort((x, y) => top.get(y.grp) - top.get(x.grp) || x.grp.localeCompare(y.grp, undefined, { numeric: true })
       || (x.base === x.grp ? 0 : 1) - (y.base === y.grp ? 0 : 1) || x.base.localeCompare(y.base, undefined, { numeric: true }) || x.seg.localeCompare(y.seg));
-    const walker = r => r.area.startsWith(WALKER) || r.area.startsWith(RADAR);   // PokéWalker / Dream Radar rows always go last
+    const walker = r => SIDE.some(s => r.area.startsWith(s));   // PokéWalker / Dream Radar rows always go last
     return [...list.filter(r => !walker(r)), ...list.filter(walker)];
   }
 
@@ -385,11 +392,12 @@ const Where = (() => {
     }
   }
 
-  function mergeWalkerItems(items, pw) {
-    if (!items || !items.items || !pw || !pw.items) return;
-    for (const [name, rows] of Object.entries(pw.items)) {
-      const it = (items.items[name] = items.items[name] || { where: [] });
-      (it.where = it.where || []).push({ g: pw.games, t: rows, k: "repeat" });
+  function mergeSideItems(items, data, name) {
+    if (!items || !items.items || !data || !data.items) return;
+    if (data.itemNote) sideNotes[name] = data.itemNote;
+    for (const [item, rows] of Object.entries(data.items)) {
+      const it = (items.items[item] = items.items[item] || { where: [] });
+      (it.where = it.where || []).push({ g: data.games, t: rows, k: "side", s: name });
     }
   }
 
@@ -492,10 +500,10 @@ const Where = (() => {
         if (d && typeof Maps !== "undefined") Maps.fixLoc(d);
         if (d && hon) { mergeHoney(d, hon); honey = hon; }
         if (d && orre) mergeOrre(d, orre);
-        if (d && pw) { mergeOrre(d, pw); walkerNote = pw.itemNote || ""; }
-        if (d && dr) { mergeOrre(d, dr); radarNote = dr.itemNote || ""; }
-        mergeWalkerItems(items, pw);
-        mergeWalkerItems(items, dr);
+        if (d && pw) mergeOrre(d, pw);
+        if (d && dr) mergeOrre(d, dr);
+        mergeSideItems(items, pw, WALKER);
+        mergeSideItems(items, dr, RADAR);
         return (data = d && { ...d, items });
       }));
   }
@@ -623,6 +631,11 @@ const Where = (() => {
 #where .itemk.once{background:#fbe48a;border-color:#d4a418;color:#3d2e00}
 #where .itemk.repeat{background:#bfe6a8;border-color:#6cbf5a;color:#173a0c}
 #where .itemwiki{display:inline-block;margin-top:4px;font-size:12px}
+#where .itemdivider{display:block;margin:10px 0 4px;padding-top:8px;border-top:3px double var(--line);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;opacity:.85}
+#where .itemside{border-top:0;padding-left:8px;border-left:4px solid var(--mid)}
+#where .itemside+.itemside{margin-top:6px}
+#where .itemk.side{background:#d9ebfa;border-color:#4f8fc4;color:#0c2e4d}
+#where .sidenote{display:block;margin-top:4px;font-size:12px;opacity:.85}
 #where .amap[data-timed][data-time=day] .amapimg img{filter:saturate(1.15) brightness(1.04)}
 #where .amap[data-season] .amapimg img{transition:filter .4s}
 #where .amap[data-season=spring] .amapimg img{filter:saturate(1.25) brightness(1.07) hue-rotate(-8deg)}
