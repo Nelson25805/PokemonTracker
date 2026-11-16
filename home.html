@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pokédex Tracker: complete your living Pokédex</title>
+<meta name="description" content="A free tracker for your living Pokédex in the Pokémon games, Gen 1 to Gen 5. Track shinies and forms, see where to find every Pokémon, and print your trainer card and diploma. Works offline.">
+<link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="theme-color" content="#b2c66f" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#173a17" media="(prefers-color-scheme: dark)">
+<script src="js/theme.js"></script><!-- in <head> so the saved theme is applied before first paint -->
+<style>
+  .home{max-width:1000px;margin:auto;padding:0 16px 40px}
+  .home h1{padding:0;margin:0}
+  .topbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;padding:12px 16px;background:var(--panel);border-bottom:3px solid var(--line)}
+  .topbar .brand{font:400 18px/1 "PKMN",monospace;letter-spacing:.04em;color:var(--ink);text-decoration:none}
+  .topbar nav{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+  .topbar nav a{color:var(--ink);font-size:14px}
+
+  .hero{padding:44px 0 28px;text-align:center}
+  .hero h1{font:400 clamp(26px,6vw,44px)/1.15 "PKMN",monospace;letter-spacing:.04em}
+  .hero .lead{max-width:56ch;margin:18px auto 0;font-size:17px;line-height:1.5}
+  .cta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:26px 0 0}
+  .btn{display:inline-block;padding:12px 22px;font:400 16px/1.2 "PKMN",monospace;letter-spacing:.04em;text-decoration:none;color:var(--bg);background:var(--ink);border:3px solid var(--line)}
+  .btn:hover{background:var(--hi);color:var(--on-hi)}
+  .btn.alt{color:var(--ink);background:var(--card)}
+  .btn.alt:hover{background:var(--hi);color:var(--on-hi)}
+  .btn:focus-visible,.topbar a:focus-visible,.home a:focus-visible{outline:3px solid var(--mid);outline-offset:2px}
+
+  .demo{max-width:520px;margin:30px auto 0;padding:14px 16px;border:3px solid var(--line);background:var(--panel);text-align:left}
+  .demo .row{display:flex;align-items:center;gap:10px}
+  .demo .bar{flex:1;height:14px;border:2px solid var(--line);background:var(--card)}
+  .demo .fill{height:100%;width:0;background:var(--ink);animation:fillup 2.4s steps(24,end) .4s forwards}
+  .demo .num{font:400 16px "PKMN",monospace;min-width:7ch;text-align:right}
+  .demo p{margin:8px 0 0;font-size:12px;opacity:.85}
+  @keyframes fillup{to{width:72%}}
+
+  section.block{padding:30px 0 6px}
+  section.block>h2{margin:0 0 6px;font:400 20px/1.2 "PKMN",monospace;letter-spacing:.04em}
+  section.block>.sub{margin:0 0 18px;max-width:64ch;opacity:.9}
+
+  .features{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+  .feat{padding:14px 16px;border:2px solid var(--line);background:var(--card)}
+  .feat h3{margin:0 0 6px;font:400 14px/1.3 "PKMN",monospace;letter-spacing:.03em}
+  .feat p{margin:0;font-size:14px;line-height:1.5}
+
+  .steps{counter-reset:s;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;list-style:none;margin:0;padding:0}
+  .steps li{counter-increment:s;position:relative;padding:44px 16px 14px;border:2px solid var(--line);background:var(--card)}
+  .steps li::before{content:counter(s);position:absolute;top:10px;left:12px;display:flex;align-items:center;justify-content:center;width:26px;height:26px;font:400 14px "PKMN",monospace;background:var(--ink);color:var(--bg)}
+  .steps b{display:block;margin-bottom:4px}
+  .steps span{font-size:14px;line-height:1.5}
+
+  .privacy{margin-top:30px;padding:14px 16px;border:2px dashed var(--line);background:var(--card);font-size:14px;line-height:1.5}
+  .privacy b{font-weight:700}
+
+  /* Follow + support */
+  .connect{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+  .panel{padding:16px;border:2px solid var(--line);background:var(--card)}
+  .panel h3{margin:0 0 6px;font:400 14px/1.3 "PKMN",monospace;letter-spacing:.03em}
+  .panel p{margin:0 0 12px;font-size:14px;line-height:1.5}
+  .socials{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0;padding:0}
+  .socials a{display:inline-block;padding:8px 14px;font-size:14px;font-weight:600;text-decoration:none;color:var(--ink);background:var(--bg);border:2px solid var(--line)}
+  .socials a:hover{background:var(--hi);color:var(--on-hi)}
+  .btn.donate{width:100%;text-align:center;font-size:15px;background:var(--hi);color:var(--on-hi)}
+  .btn.donate:hover{background:var(--ink);color:var(--bg)}
+  .panel .fine{margin:10px 0 0;font-size:12px;opacity:.8}
+
+  .final{margin:34px 0 0;padding:26px 16px;text-align:center;border:3px solid var(--line);background:var(--panel)}
+  .final h2{margin:0 0 14px;font:400 20px/1.3 "PKMN",monospace;letter-spacing:.04em}
+  .final .cta{margin:0}
+
+  footer.home-foot{max-width:1000px;margin:auto;padding:22px 16px 36px;font-size:12px;opacity:.85}
+  footer.home-foot p{margin:0 0 8px;max-width:70ch}
+  footer.home-foot a{color:var(--ink)}
+
+  @media (max-width:759px){
+    .hero{padding:30px 0 20px}
+    .hero .lead{font-size:16px}
+    .btn{width:100%;text-align:center}
+    .cta{flex-direction:column}
+  }
+  @media (prefers-reduced-motion:reduce){.demo .fill{animation:none;width:72%}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a class="brand" href="home.html">Pokédex Tracker</a>
+  <nav aria-label="Page sections">
+    <a href="#features">What it offers</a>
+    <a href="#how">How it works</a>
+    <a href="#connect">Follow &amp; support</a>
+    <a href="index.html">Open the tracker</a>
+  </nav>
+</div>
+
+<main class="home">
+  <section class="hero">
+    <h1>Complete your living Pokédex</h1>
+    <p class="lead">Keep track of every Pokémon you have caught in the main series games, from Gen 1 to Gen 5. See where to find the ones you are missing, mark your shinies and forms, and print your own trainer card and diploma when you finish.</p>
+    <div class="cta">
+      <a class="btn" href="index.html">Open the Pokédex</a>
+      <a class="btn alt" href="#features">See what it offers</a>
+    </div>
+    <div class="demo" aria-hidden="true">
+      <div class="row"><div class="bar"><div class="fill"></div></div><span class="num">Caught</span></div>
+      <p>Your progress fills up as you catch them all.</p>
+    </div>
+  </section>
+
+  <section class="block" id="features">
+    <h2>What it offers</h2>
+    <p class="sub">Everything is built around one goal: filling a living Pokédex without juggling spreadsheets and wiki tabs.</p>
+    <div class="features">
+      <article class="feat"><h3>Every game, one place</h3><p>Pick a game and track it on its own. Switch between the National Dex and the game's regional Dex, and follow the normal list or the shiny list.</p></article>
+      <article class="feat"><h3>Where to find it</h3><p>Tap the location button on any Pokémon to see where it appears, with the rates, levels and methods. Games that can send Pokémon to yours are included.</p></article>
+      <article class="feat"><h3>Maps with outlines</h3><p>Region maps show where each Pokémon lives. Press "Show on map" to outline the exact route or area.</p></article>
+      <article class="feat"><h3>Seasons and time of day</h3><p>Filter by season in Black and White, or by morning, day and night in Gold, Silver, Crystal, Diamond, Pearl, Platinum, HeartGold and SoulSilver. Rates update to match.</p></article>
+      <article class="feat"><h3>Evolution help</h3><p>See exactly how a Pokémon evolves, and where to get the stone or item it needs, marked as one-time or repeatable.</p></article>
+      <article class="feat"><h3>The odd encounters, explained</h3><p>Roaming Pokémon, honey trees, Shadow Pokémon, N's Pokémon, and extras like the PokéWalker and Dream Radar all come with a short plain-language explanation.</p></article>
+      <article class="feat"><h3>Shinies and forms</h3><p>Track shinies separately, and see which forms exist and how to get them. In Settings you can choose whether gender differences and alternate forms count toward completion.</p></article>
+      <article class="feat"><h3>Trainer card and diploma</h3><p>Fill in your trainer card, then save a pixel-style diploma as a PNG once the Pokédex is complete, in the style of the game you played.</p></article>
+      <article class="feat"><h3>Made for quick tapping</h3><p>Search by name or number, filter to what is missing, and use Select mode to mark whole ranges at once. There is an Undo button too. PC box view groups Pokémon the way the game does.</p></article>
+      <article class="feat"><h3>Themes, light and dark</h3><p>Choose from a whole set of themes inspired by the games, each with a light and a dark version.</p></article>
+      <article class="feat"><h3>Works offline</h3><p>Add it to your home screen and keep tracking without a connection, whether you are on a train or at the back of a cave.</p></article>
+      <article class="feat"><h3>Free, with no account</h3><p>There is nothing to sign up for. Open it and start catching.</p></article>
+    </div>
+  </section>
+
+  <section class="block" id="how">
+    <h2>How it works</h2>
+    <p class="sub">You can be up and running in under a minute.</p>
+    <ol class="steps">
+      <li><b>Choose your game</b><span>Open the tracker and pick the game you are playing from the Game menu.</span></li>
+      <li><b>Tap to mark</b><span>Tap a Pokémon when you catch it. Tap the location button when you need help finding one.</span></li>
+      <li><b>Finish and celebrate</b><span>Reach 100% and unlock your diploma. Save it as a picture and share it.</span></li>
+    </ol>
+  </section>
+
+  <section class="block" id="connect">
+    <h2>Follow &amp; support</h2>
+    <p class="sub">Say hi, share your finished diploma, or help keep the tracker free and up to date.</p>
+    <div class="connect">
+      <div class="panel">
+        <h3>Find me online</h3>
+        <p>Updates, new games added and the odd Pokédex flex.</p>
+        <!-- EDIT: replace each href with your own profile link. Delete any <li> you don't use. -->
+        <ul class="socials">
+          <li><a href="https://x.com/YOUR_HANDLE" target="_blank" rel="noopener noreferrer me">X / Twitter</a></li>
+          <li><a href="https://www.instagram.com/YOUR_HANDLE" target="_blank" rel="noopener noreferrer me">Instagram</a></li>
+          <li><a href="https://www.youtube.com/@YOUR_HANDLE" target="_blank" rel="noopener noreferrer me">YouTube</a></li>
+          <li><a href="https://www.twitch.tv/YOUR_HANDLE" target="_blank" rel="noopener noreferrer me">Twitch</a></li>
+          <li><a href="https://www.tiktok.com/@YOUR_HANDLE" target="_blank" rel="noopener noreferrer me">TikTok</a></li>
+          <li><a href="https://discord.gg/YOUR_INVITE" target="_blank" rel="noopener noreferrer me">Discord</a></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Support the project</h3>
+        <p>The tracker is free and has no ads or account. If it helped you finish a dex, a small donation helps cover the time that goes into the data.</p>
+        <!-- EDIT: replace with your PayPal link, e.g. https://www.paypal.me/YourName or https://www.paypal.com/donate/?hosted_button_id=XXXX -->
+        <a class="btn donate" href="https://www.paypal.me/YOUR_NAME" target="_blank" rel="noopener noreferrer">Donate with PayPal</a>
+        <p class="fine">Completely optional. Thank you!</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="privacy">
+    <b>Your progress stays with you.</b> It is saved in your own browser and never sent anywhere. Use Export to back it up or move to another device, and Import to bring it back.
+  </div>
+
+  <section class="final">
+    <h2>Ready to catch them all?</h2>
+    <div class="cta"><a class="btn" href="index.html">Open the Pokédex</a></div>
+  </section>
+</main>
+
+<footer class="home-foot">
+  <p>Fan project, not affiliated with Nintendo, Game Freak or The Pokémon Company. Encounter data is gathered from public community resources such as Serebii and Bulbapedia.</p>
+</footer>
+
+<script>
+// Same offline support as the tracker (sw.js). On localhost the worker is switched off so edits show up straight away;
+// add ?sw to the address to test it locally.
+if ("serviceWorker" in navigator) {
+  const local = ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname);
+  if (local && !location.search.includes("sw")) {
+    navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
+    if (window.caches) caches.keys().then(ks => ks.forEach(k => caches.delete(k)));
+  } else {
+    addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  }
+}
+</script>
+</body>
+</html>
