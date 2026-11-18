@@ -35,12 +35,15 @@ def versions(cfg):
 
 
 def dexes(cfg):
-    """PokéAPI regional pokedex names, each once, in game order (build_regional.py)."""
+    """PokéAPI regional pokedex names, each once, in game order (build_regional.py).
+    A game's "region" has either one "dex", or a "dexes" list of {"dex", "name"} (X / Y: Central, Coastal, Mountain Kalos)."""
     out = []
     for g in cfg["games"]:
-        d = (g.get("region") or {}).get("dex")
-        if d and d not in out and not (g.get("region") or {}).get("custom"):   # "custom" lists (Colosseum / XD) live in data/orre.json
-            out.append(d)
+        r = g.get("region") or {}
+        if r.get("custom"):                      # "custom" lists (Colosseum / XD) live in data/orre.json
+            continue
+        names = [x["dex"] for x in r.get("dexes", [])] or ([r["dex"]] if r.get("dex") else [])
+        out += [d for d in names if d not in out]
     return out
 
 
@@ -97,8 +100,13 @@ def check(cfg):
             apis[g["pokeapi"]] = k
         else:
             warnings.append(f"{k}: no \"pokeapi\" version, so build_locations.py gets no locations for it")
-        if not g.get("region"):
+        r = g.get("region")
+        if not r:
             warnings.append(f"{k}: no \"region\" (no regional dex)")
+        elif not r.get("dex") and not r.get("dexes"):
+            errors.append(f"{k}: \"region\" needs a \"dex\" or a \"dexes\" list")
+        elif r.get("dexes") and any(not x.get("dex") or not x.get("name") for x in r["dexes"]):
+            errors.append(f"{k}: every entry in region \"dexes\" needs a \"dex\" and a \"name\"")
         if not g.get("bulbapedia"):
             warnings.append(f"{k}: no \"bulbapedia\" title (no evolution-item locations)")
         if g.get("spriteRepo"):

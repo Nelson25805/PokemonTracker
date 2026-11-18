@@ -36,10 +36,19 @@
   const blocked = (g, kind, n) => kind === "shiny" && (g.shinyLocked || []).includes(n);
   const caughtSet = (s, g = gameOf(s)) => { const k = listKey(s, g), lock = lockedOf(g, k); return new Set((s[k][g.key] || []).filter(n => !lock.has(n))); };
 
-  const regList = g => (regional && g.region && regional[g.region.dex]) || null;
+  // Regional Pokédexes. A game's region has one "dex", or a "dexes" list (X / Y: Central, Coastal, Mountain Kalos).
+  // The Dex selector value is "national", "regional" (the game's first regional dex) or "regional:<pokeapi dex name>" (any other).
+  const regions = g => (g.region ? g.region.dexes || [{ dex: g.region.dex, name: g.region.name }] : []);
+  const dexVal = (g, r) => (r === regions(g)[0] ? "regional" : "regional:" + r.dex);
+  const regionOf = (s, g = gameOf(s)) => {
+    const rs = regions(g), m = /^regional:(.+)$/.exec(s.last.dex || "");
+    return (m && rs.find(r => r.dex === m[1])) || rs[0] || null;
+  };
+  const regList = (g, r = regions(g)[0]) => (regional && r && regional[r.dex]) || null;
   const onlyRegional = g => !!(g.region && g.region.only);
   const hasRegional = g => { const l = regList(g); return !!l && (onlyRegional(g) || !(l.length === g.count && l.every((n, i) => n === i + 1))); };
-  const dexList = (s, g = gameOf(s)) => ((s.last.dex === "regional" || onlyRegional(g)) && hasRegional(g) ? regList(g) : null);
+  const wantsRegional = (s, g) => onlyRegional(g) || String(s.last.dex || "").startsWith("regional");
+  const dexList = (s, g = gameOf(s)) => (wantsRegional(s, g) && hasRegional(g) ? regList(g, regionOf(s, g)) : null);
   const dexTotal = (s, g = gameOf(s)) => (dexList(s, g) ? dexList(s, g).length : g.count);
   const totalOf = (s, kind, g = gameOf(s)) => {
     const n = dexTotal(s, g), locked = g.shinyLocked || [];
@@ -74,11 +83,15 @@
     $("#req-gender").checked = rq.gender; $("#req-alt").checked = rq.alt;
     $("#req-hint").textContent = !Forms.ready() ? "Forms data isn't installed yet. Run python3 build_forms.py once."
       : tot.gender + tot.alt ? `In ${g.name}: ${pl(tot.gender, "gender difference")} and ${pl(tot.alt, "alternate form")}.` : `${g.name} has no extra forms.`;
-    $("#dex").disabled = !reg || onlyRegional(g);
-    $("#dex").options[1].textContent = reg ? `Regional (${g.region.name})` : "Regional";
-    $("#dex").value = reg && (onlyRegional(g) || s.last.dex === "regional") ? "regional" : "national";
+    // Dex selector: National plus one "Regional (...)" entry per regional dex of this game (rebuilt only when the list changes)
+    const dexSel = $("#dex"), cur = regionOf(s, g);
+    const dexHtml = '<option value="national">National</option>' +
+      (reg ? regions(g).map(r => `<option value="${dexVal(g, r)}">Regional (${r.name})</option>`).join("") : '<option value="regional">Regional</option>');
+    if (dexSel.dataset.sig !== dexHtml) { dexSel.innerHTML = dexHtml; dexSel.dataset.sig = dexHtml; }
+    dexSel.disabled = !reg || onlyRegional(g);
+    dexSel.value = reg && wantsRegional(s, g) ? dexVal(g, cur) : "national";
     if ($("#trainer").value !== s.name) $("#trainer").value = s.name;
-    $("#gname").textContent = g.name + (shinyOn(s, g) ? " ★" : "") + (dexList(s, g) ? ` · ${g.region.name}` : "");
+    $("#gname").textContent = g.name + (shinyOn(s, g) ? " ★" : "") + (dexList(s, g) ? ` · ${cur.name}` : "");
     $("#trainerbox").open = !!s.last.cardOpen;
   }
 
@@ -371,7 +384,7 @@
   $("#markvis").addEventListener("click", () => applyBulk(shownNs(), true, "mark all visible"));
   $("#clearall").addEventListener("click", () => {
     const s = Store.get(), g = gameOf(s), n = viewCaught(s, g).size; if (!n) return;
-    const list = dexList(s, g), dex = list ? `Regional (${g.region.name})` : "National";
+    const list = dexList(s, g), dex = list ? `Regional (${regionOf(s, g).name})` : "National";
     if (!confirm(`Clear all ${n} caught Pokémon in ${g.name}${shinyOn(s, g) ? " (shiny)" : ""}, ${dex} Pokédex?\n\nYou can press Undo right afterwards.`)) return;
     applyBulk(list || Array.from({ length: g.count }, (_, i) => i + 1), false, "clear all");
   });

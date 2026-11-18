@@ -1,6 +1,6 @@
 {
  "version": 1,
- "_help": "THE source of truth for games. To add a game: add one entry to \"games\" (see RELEASING.md). Read by js/config.js, gamesconfig.py and every build_*.py.",
+ "_help": "THE source of truth for games. To add a game: add one entry to \"games\" (see RELEASING.md). Read by js/config.js, gamesconfig.py and every build_*.py. A game's \"region\" has one \"dex\", or a \"dexes\" list of {dex, name} when the game has several regional Pokédexes (X / Y).",
 
  "generations": {
   "1": { "label": "Gen 1 · Kanto",  "transfer": [2], "pc": { "boxes": 12, "box": 20, "cols": 4 } },
@@ -71,14 +71,13 @@
 
   {"key":"white-2","name":"White 2","gen":5,"count":649,"sprites":"Black-White","shiny":true,"spriteRepo":"generation-v/black-white","spriteSize":96,"pokeapi":"white-2","bulbapedia":"Pokémon Black 2 and White 2 Versions","region":{"dex":"updated-unova","name":"Unova","start":0}},
 
-  {"key":"x","name":"X","gen":6,"count":721,"sprites":"X-Y","shiny":true,"spriteRepo":"generation-vi/x-y","spriteSize":96,"pokeapi":"x","bulbapedia":"Pokémon X and Y"},
+  {"key":"x","name":"X","gen":6,"count":721,"sprites":"X-Y","shiny":true,"spriteRepo":"generation-vi/x-y","spriteSize":96,"pokeapi":"x","bulbapedia":"Pokémon X and Y","region":{"name":"Kalos","dexes":[{"dex":"kalos-central","name":"Central Kalos"},{"dex":"kalos-coastal","name":"Coastal Kalos"},{"dex":"kalos-mountain","name":"Mountain Kalos"}]}},
 
-  {"key":"y","name":"Y","gen":6,"count":721,"sprites":"X-Y","shiny":true,"spriteRepo":"generation-vi/x-y","spriteSize":96,"pokeapi":"y","bulbapedia":"Pokémon X and Y"},
+  {"key":"y","name":"Y","gen":6,"count":721,"sprites":"X-Y","shiny":true,"spriteRepo":"generation-vi/x-y","spriteSize":96,"pokeapi":"y","bulbapedia":"Pokémon X and Y","region":{"name":"Kalos","dexes":[{"dex":"kalos-central","name":"Central Kalos"},{"dex":"kalos-coastal","name":"Coastal Kalos"},{"dex":"kalos-mountain","name":"Mountain Kalos"}]}},
 
   {"key":"omega-ruby","name":"Omega Ruby","gen":6,"count":721,"sprites":"OmegaRuby-AlphaSapphire","shiny":true,"spriteRepo":"generation-vi/omega-ruby-alpha-sapphire","spriteSize":96,"pokeapi":"omega-ruby","bulbapedia":"Pokémon Omega Ruby and Alpha Sapphire","region":{"dex":"updated-hoenn","name":"Hoenn"}},
 
   {"key":"alpha-sapphire","name":"Alpha Sapphire","gen":6,"count":721,"sprites":"OmegaRuby-AlphaSapphire","shiny":true,"spriteRepo":"generation-vi/omega-ruby-alpha-sapphire","spriteSize":96,"pokeapi":"alpha-sapphire","bulbapedia":"Pokémon Omega Ruby and Alpha Sapphire","region":{"dex":"updated-hoenn","name":"Hoenn"}}
 
-  
  ]
 }
