@@ -7,7 +7,8 @@
   "2": { "label": "Gen 2 · Johto",  "transfer": [1], "pc": { "boxes": 14, "box": 20, "cols": 4 } },
   "3": { "label": "Gen 3 · Hoenn",  "transfer": [], "pc": { "boxes": 14, "box": 30, "cols": 6 } },
   "4": { "label": "Gen 4 · Sinnoh", "transfer": [3], "pc": { "boxes": 18, "box": 30, "cols": 6 } },
-  "5": { "label": "Gen 5 · Unova",  "transfer": [4], "pc": { "boxes": 24, "box": 30, "cols": 6 } }
+  "5": { "label": "Gen 5 · Unova",  "transfer": [4], "pc": { "boxes": 24, "box": 30, "cols": 6 } },
+  "6": { "label": "Gen 6 · Kalos",  "transfer": [5], "pc": { "boxes": 31, "box": 30, "cols": 6 } }
  },
 
  "extraThemes": [
@@ -68,6 +69,15 @@
 
   {"key":"black-2","name":"Black 2","gen":5,"count":649,"sprites":"Black-White","shiny":true,"spriteRepo":"generation-v/black-white","spriteSize":96,"pokeapi":"black-2","bulbapedia":"Pokémon Black 2 and White 2 Versions","region":{"dex":"updated-unova","name":"Unova","start":0}},
 
-  {"key":"white-2","name":"White 2","gen":5,"count":649,"sprites":"Black-White","shiny":true,"spriteRepo":"generation-v/black-white","spriteSize":96,"pokeapi":"white-2","bulbapedia":"Pokémon Black 2 and White 2 Versions","region":{"dex":"updated-unova","name":"Unova","start":0}}
+  {"key":"white-2","name":"White 2","gen":5,"count":649,"sprites":"Black-White","shiny":true,"spriteRepo":"generation-v/black-white","spriteSize":96,"pokeapi":"white-2","bulbapedia":"Pokémon Black 2 and White 2 Versions","region":{"dex":"updated-unova","name":"Unova","start":0}},
+
+  {"key":"x","name":"X","gen":6,"count":721,"sprites":"X-Y","shiny":true,"spriteRepo":"generation-vi/x-y","spriteSize":96,"pokeapi":"x","bulbapedia":"Pokémon X and Y"},
+
+  {"key":"y","name":"Y","gen":6,"count":721,"sprites":"X-Y","shiny":true,"spriteRepo":"generation-vi/x-y","spriteSize":96,"pokeapi":"y","bulbapedia":"Pokémon X and Y"},
+
+  {"key":"omega-ruby","name":"Omega Ruby","gen":6,"count":721,"sprites":"OmegaRuby-AlphaSapphire","shiny":true,"spriteRepo":"generation-vi/omegaruby-alphasapphire","spriteSize":96,"pokeapi":"omega-ruby","bulbapedia":"Pokémon Omega Ruby and Alpha Sapphire","region":{"dex":"updated-hoenn","name":"Hoenn"}},
+
+  {"key":"alpha-sapphire","name":"Alpha Sapphire","gen":6,"count":721,"sprites":"OmegaRuby-AlphaSapphire","shiny":true,"spriteRepo":"generation-vi/omegaruby-alphasapphire","spriteSize":96,"pokeapi":"alpha-sapphire","bulbapedia":"Pokémon Omega Ruby and Alpha Sapphire","region":{"dex":"updated-hoenn","name":"Hoenn"}}
+
  ]
 }
