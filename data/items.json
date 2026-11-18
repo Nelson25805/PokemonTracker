@@ -1,6 +1,6 @@
 {
  "version": 1,
- "generated": "2026-11-07",
+ "generated": "2026-11-17",
  "source": "Bulbapedia (https://bulbapedia.bulbagarden.net), CC BY-NC-SA 2.5",
  "items": {
   "Thunder Stone": {
@@ -86,6 +86,33 @@
      ],
      "t": [
       "Celadon Department Store"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "colosseum"
+     ],
+     "t": [
+      "Trade"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "xd"
+     ],
+     "t": [
+      "Gateon Port"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "xd"
+     ],
+     "t": [
+      "Trade"
      ],
      "k": "repeat"
     },
@@ -191,6 +218,53 @@
       "Transfer from Dream Radar"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Routes 10 and 11"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Secret Super Training (Follow Those Fleeing Goals!, The Battle for the Best: Version X!, and The Battle for the Best: Version Y!)",
+      "Route 18 (from Psychic Inver)",
+      "Spiky rocks"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "New Mauville"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Route 124 (trade for Yellow Shard with Treasure Hunter)",
+      "Mauville City (Inverse Battle Stop)",
+      "Secret Super Training (Follow Those Fleeing Goals!, The Battle for the Best!)",
+      "Route 117 (rematch with Triathlete Dylan)",
+      "Route 118 (rematch with Guitarist Dalton)",
+      "Secret Base (\"Pick up stones\" with Secret Pal)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -277,6 +351,34 @@
      ],
      "t": [
       "Celadon Department Store"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "colosseum"
+     ],
+     "t": [
+      "Trade"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "xd"
+     ],
+     "t": [
+      "S.S. Libra",
+      "Gateon Port"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "xd"
+     ],
+     "t": [
+      "Trade"
      ],
      "k": "repeat"
     },
@@ -383,6 +485,54 @@
       "Transfer from Dream Radar"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Route 9",
+      "Route 13"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Lumiose City (Stone Emporium)",
+      "Secret Super Training (The Fire Stone Cup Begins!, The Battle for the Best: Version X!, and The Battle for the Best: Version Y!)",
+      "Route 18 (from Psychic Inver)",
+      "Spiky rocks"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Fiery Path"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Route 124 (trade for Red Shard with Treasure Hunter)",
+      "Mauville City (Inverse Battle Stop)",
+      "Secret Super Training (The Fire Stone Cup Begins!, The Battle for the Best!)",
+      "Route 114 (rematch with Kindler Bernie)",
+      "Secret Base (\"Pick up stones\" with Secret Pal)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -469,6 +619,34 @@
      ],
      "t": [
       "Celadon Department Store"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "colosseum"
+     ],
+     "t": [
+      "Trade"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "xd"
+     ],
+     "t": [
+      "Phenac Stadium",
+      "Gateon Port"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "xd"
+     ],
+     "t": [
+      "Trade"
      ],
      "k": "repeat"
     },
@@ -564,6 +742,43 @@
       "Transfer from Dream Radar"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Routes 8 and 12"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Lumiose City (Stone Emporium)",
+      "Secret Super Training (The Water Stone Cup Begins!, The Battle for the Best: Version X!, and The Battle for the Best: Version Y!)",
+      "Route 18 (from Psychic Inver)",
+      "Spiky rocks"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Route 124 (trade for Blue Shard with Treasure Hunter)",
+      "Mauville City (Inverse Battle Stop)",
+      "Secret Super Training (The Water Stone Cup Begins!, The Battle for the Best!)",
+      "Route 106 (rematch with Fisherman Elliot)",
+      "Secret Base (\"Pick up stones\" with Secret Pal)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -650,6 +865,33 @@
      ],
      "t": [
       "Celadon Department Store"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "colosseum"
+     ],
+     "t": [
+      "Trade"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "xd"
+     ],
+     "t": [
+      "Cipher Lab"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "xd"
+     ],
+     "t": [
+      "Trade"
      ],
      "k": "repeat"
     },
@@ -756,6 +998,54 @@
       "Transfer from Dream Radar"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Route 8",
+      "Laverre City"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Lumiose City (Stone Emporium)",
+      "Secret Super Training (The Leaf Stone Cup Begins!, The Battle for the Best: Version X!, and The Battle for the Best: Version Y!)",
+      "Route 18 (from Psychic Inver)",
+      "Spiky rocks"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Route 119"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Route 124 (trade for Green Shard with Treasure Hunter)",
+      "Mauville City (Inverse Battle Stop)",
+      "Secret Super Training (The Leaf Stone Cup Begins!, The Battle for the Best!)",
+      "Route 118 (rematch with Aroma Lady Rose)",
+      "Secret Base (\"Pick up stones\" with Secret Pal)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -849,6 +1139,16 @@
      ],
      "t": [
       "Held by wild Clefairy (5% chance)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "colosseum",
+      "xd"
+     ],
+     "t": [
+      "Trade"
      ],
      "k": "repeat"
     },
@@ -956,6 +1256,55 @@
       "Transfer from Dream Radar"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Reflection Cave",
+      "Terminus Cave"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Pickup (Lv. 41-100)",
+      "Secret Super Training (Drag Down Hydreigon!)",
+      "Route 18 (from Psychic Inver)",
+      "Held by wild Lunatone (5% chance)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Meteor Falls"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Pickup (Lv. 41-100)",
+      "Mauville City (Inverse Battle Stop)",
+      "Secret Super Training (Drag Down Hydreigon!)",
+      "Jagged Pass (rematch with Expert Shelby)",
+      "Secret Base (\"Pick up stones\" with Secret Pal)",
+      "Held by wild Clefairy and wild Lunatone (5% chance each)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1003,6 +1352,16 @@
       "Ruin Valley"
      ],
      "k": "once"
+    },
+    {
+     "g": [
+      "colosseum",
+      "xd"
+     ],
+     "t": [
+      "Trade"
+     ],
+     "k": "repeat"
     },
     {
      "g": [
@@ -1090,6 +1449,56 @@
       "Dust clouds (Chargestone Cave, Mistralton Cave, Clay Tunnel, Twist Mountain, Underground Ruins, Victory Road, Wellspring Cave, Seaside Cave, Giant Chasm)",
       "Hidden Grottoes (Routes 6 and 13; Abundant Shrine)",
       "Transfer from Dream Radar"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Route 13",
+      "Anistar City",
+      "Shalour City"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Pickup (Lv. 31-100)",
+      "Secret Super Training (Drag Down Hydreigon!)",
+      "Route 18 (from Psychic Inver)",
+      "Held by wild Solrock (5% chance)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Mossdeep Space Center"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Pickup (Lv. 31-100)",
+      "Mauville City (Inverse Battle Stop)",
+      "Secret Super Training (Drag Down Hydreigon!)",
+      "Route 115 (rematch with Expert Timothy)",
+      "Secret Base (\"Pick up stones\" with Secret Pal)",
+      "Held by wild Solrock (5% chance)"
      ],
      "k": "repeat"
     }
@@ -1180,6 +1589,26 @@
       "Trainer Tower (prize for defeating Mixed Mode)"
      ],
      "k": "once"
+    },
+    {
+     "g": [
+      "colosseum"
+     ],
+     "t": [
+      "Mt. Battle (10,000 Poké Coupons)",
+      "Pickup (any level)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "xd"
+     ],
+     "t": [
+      "Mt. Battle (8,000 Poké Coupons)",
+      "Pickup (Lv. 11-30)"
+     ],
+     "k": "repeat"
     },
     {
      "g": [
@@ -1276,6 +1705,52 @@
       "Transfer from Dream Radar"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Lumiose City (Lysandre Café)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Pickup (Lv. 11-30)",
+      "Held by wild Poliwhirl",
+      "wild Poliwrath",
+      "wild Politoed",
+      "wild Hariyama",
+      "and wild Hawlucha (5% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Mossdeep City"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Pickup (Lv. 11-30)",
+      "Held by wild Hariyama (5% chance)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1331,6 +1806,24 @@
      "t": [
       "Memorial Pillar",
       "Trainer Tower (prize for defeating Knockout Mode)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "colosseum"
+     ],
+     "t": [
+      "Held by Shadow Metagross"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "xd"
+     ],
+     "t": [
+      "Held by Shadow Magneton"
      ],
      "k": "once"
     },
@@ -1459,6 +1952,50 @@
       "and wild Magnezone (5% chance each)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Poké Ball Factory"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Held by wild Magneton",
+      "wild Metang",
+      "and wild Bronzong (5% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "New Mauville"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Held by wild Magnemite",
+      "wild Skarmory",
+      "and wild Bronzor (5% chance each)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1510,6 +2047,16 @@
       "Trainer Tower (prize for defeating Double Mode)"
      ],
      "k": "once"
+    },
+    {
+     "g": [
+      "colosseum",
+      "xd"
+     ],
+     "t": [
+      "Trade"
+     ],
+     "k": "repeat"
     },
     {
      "g": [
@@ -1600,6 +2147,49 @@
       "and wild Kingdra (5% chance each)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Terminus Cave"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Held by wild Horsea",
+      "wild Seadra",
+      "wild Dratini",
+      "and wild Dragonair (5% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Sky Pillar"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Held by wild Horsea and wild Seadra (5% chance each)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1637,6 +2227,16 @@
       "Trainer Tower (prize for defeating Single Mode)"
      ],
      "k": "once"
+    },
+    {
+     "g": [
+      "colosseum",
+      "xd"
+     ],
+     "t": [
+      "Trade"
+     ],
+     "k": "repeat"
     },
     {
      "g": [
@@ -1711,6 +2311,18 @@
       "Funfest Mission (Not-Found Lost Items!) W2"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y",
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Battle Maison (32 BP)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1731,6 +2343,16 @@
      "g": [
       "fire-red",
       "leaf-green"
+     ],
+     "t": [
+      "Trade"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "colosseum",
+      "xd"
      ],
      "t": [
       "Trade"
@@ -1797,6 +2419,42 @@
       "and wild Basculin (Red-Striped) (5% chance each)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Azure Bay"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Held by wild Carvanha",
+      "wild Sharpedo",
+      "wild Huntail",
+      "and wild Basculin (Red-Striped) (5% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Crescent Isle",
+      "Mirage Caves (south of Route 107, north of Fallarbor Town, west of Route 115, north of Fortree City, north of Route 124, southeast of Route 129, south of Route 131, north of Route 132)",
+      "Mauville Food Court",
+      "Held by wild Carvanha and wild Sharpedo (5% chance each)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -1817,6 +2475,16 @@
      "g": [
       "fire-red",
       "leaf-green"
+     ],
+     "t": [
+      "Trade"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "colosseum",
+      "xd"
      ],
      "t": [
       "Trade"
@@ -1897,6 +2565,44 @@
       "wild Gorebyss",
       "wild Relicanth",
       "and wild Basculin (Blue-Striped) (5% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Azure Bay"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Held by wild Chinchou",
+      "wild Lanturn",
+      "wild Gorebyss",
+      "wild Relicanth",
+      "and wild Basculin (Blue-Striped) (5% chance each)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Crescent Isle; Mirage Mountains (west of Route 104, north of Lilycove City, north of Route 125, northeast of Route 125, east of Route 125, southeast of Route 129, south of Route 129, south of Route 131)",
+      "Mauville Food Court",
+      "Held by wild Chinchou",
+      "wild Lanturn",
+      "and wild Relicanth (5% chance each)"
      ],
      "k": "repeat"
     }
@@ -2005,6 +2711,50 @@
       "Hidden Grottoes (Routes 6 and 13; Abundant Shrine)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Route 12"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Secret Super Training (An Opening of Lighting-Quick Attacks!)",
+      "Route 18 (from Psychic Inver)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Route 121"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Mauville City (Inverse Battle Stop)",
+      "Secret Super Training (An Opening of Lighting-Quick Attacks!)",
+      "Mt. Pyre (rematch with Fairy Tale Girl Momo)",
+      "Secret Base (\"Pick up stones\" with Secret Pal)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -2109,6 +2859,41 @@
       "Funfest Mission (Find Mysterious Ores!)B2",
       "Dust clouds (Chargestone Cave, Mistralton Cave, Clay Tunnel, Twist Mountain, Underground Ruins, Victory Road, Wellspring Cave, Seaside Cave, Giant Chasm)",
       "Hidden Grottoes (Routes 6 and 13; Abundant Shrine)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Laverre City",
+      "Terminus Cave"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Secret Super Training (Watch Out! That's One Tricky Second Half!)",
+      "Route 18 (from Psychic Inver)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Mauville City (Inverse Battle Stop)",
+      "Secret Super Training (Watch Out! That's One Tricky Second Half!)",
+      "Mt. Pyre (rematch with Hex Maniac Valerie)",
+      "Secret Base (\"Pick up stones\" with Secret Pal)"
      ],
      "k": "repeat"
     }
@@ -2217,6 +3002,50 @@
       "Transfer from Dream Radar"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Route 3"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Secret Super Training (Those Long Shots Are No Long Shot!)",
+      "Route 18 (from Psychic Inver)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Victory Road"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Mauville City (Inverse Battle Stop)",
+      "Secret Super Training (Those Long Shots Are No Long Shot!)",
+      "Sea Mauville (rematch with Mysterious Sisters Scall & Ion)",
+      "Secret Base (\"Pick up stones\" with Secret Pal)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -2297,6 +3126,26 @@
       "Dust clouds (Chargestone Cave, Mistralton Cave, Clay Tunnel, Twist Mountain, Underground Ruins, Victory Road, Wellspring Cave, Seaside Cave, Giant Chasm)",
       "White Forest (Store 4)",
       "Funfest Mission (Do a Great Trade-Up!)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Hidden recurring item (Unknown Dungeon)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Held by wild Happiny (50% chance)"
      ],
      "k": "repeat"
     }
@@ -2384,6 +3233,28 @@
      ],
      "t": [
       "Battle Subway/PWT (8 BP)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Battle Maison (48 BP)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Battle Maison (48 BP)",
+      "Crescent Isle",
+      "Mirage Forests (west of Route 105, south of Route 109, north of Route 111, west of Route 114, north of Lilycove City, north of Route 124, east of Mossdeep City, south of Route 132)"
      ],
      "k": "repeat"
     }
@@ -2479,6 +3350,28 @@
       "Battle Subway/PWT (8 BP)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Battle Maison (48 BP)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Battle Maison (48 BP)",
+      "Crescent Isle",
+      "Mirage Islands (west of Route 104, west of Dewford Town, north of Route 113, north of Route 124, north of Route 125, south of Pacifidlog Town, south of Route 132, south of Route 134)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -2552,6 +3445,36 @@
      "t": [
       "Join Avenue (Antique Shop)",
       "Black City (Store 1)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Lost Hotel"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Battle Maison (32 BP)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Battle Maison (32 BP)"
      ],
      "k": "repeat"
     }
@@ -2629,6 +3552,27 @@
       "Funfest Mission (Not-Found Lost Items!) W2"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Battle Maison (32 BP)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Battle Maison (32 BP)",
+      "Held by wild Elekid (5% chance)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -2692,6 +3636,27 @@
      "t": [
       "Join Avenue (Antique Shop)",
       "Funfest Mission (Forgotten Lost Items!) B2"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Battle Maison (32 BP)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Battle Maison (32 BP)",
+      "Held by wild Magby (5% chance)"
      ],
      "k": "repeat"
     }
@@ -2780,6 +3745,36 @@
       "Funfest Mission (Do a Great Trade-Up!)"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Terminus Cave"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Battle Maison (32 BP)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Battle Maison (32 BP)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -2856,6 +3851,18 @@
       "Funfest Mission (Forgotten Lost Items!) B2"
      ],
      "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y",
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Battle Maison (32 BP)"
+     ],
+     "k": "repeat"
     }
    ]
   },
@@ -2902,6 +3909,38 @@
       "Join Avenue (Antique Shop)",
       "Pickup (Lv. 51-100)",
       "Hidden recurring item (Route 18)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Lumiose City (North Boulevard)"
+     ],
+     "k": "once"
+    },
+    {
+     "g": [
+      "x",
+      "y"
+     ],
+     "t": [
+      "Hidden recurring item (Couriway Town)",
+      "Pokémon Village (shaking trash cans)Th",
+      "Pickup (Lv. 51-100)"
+     ],
+     "k": "repeat"
+    },
+    {
+     "g": [
+      "omega-ruby",
+      "alpha-sapphire"
+     ],
+     "t": [
+      "Trade"
      ],
      "k": "repeat"
     }
