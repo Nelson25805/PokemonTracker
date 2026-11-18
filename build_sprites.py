@@ -19,6 +19,10 @@ try:
 except ImportError:
     import gamesconfig
 
+import sys, urllib.error
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+
 RAW = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/"
 
 
@@ -42,17 +46,24 @@ def jobs(cfg, only, root):
 def fetch(job):
     dest, rel = job
     os.makedirs(os.path.dirname(dest), exist_ok=True)
-    for attempt in range(4):
+    for attempt in range(3):
         try:
             req = urllib.request.Request(RAW + rel, headers={"User-Agent": "pokedex-tracker-build/1.0"})
-            with urllib.request.urlopen(req, timeout=30) as r:
+            with urllib.request.urlopen(req, timeout=15) as r:
                 data = r.read()
-            with open(dest, "wb") as f:
+            tmp = dest + ".part"
+            with open(tmp, "wb") as f:
                 f.write(data)
+            os.replace(tmp, dest)          # no half-written files if interrupted
             return None
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return rel + " (404, not in repo)"   # don't retry, it will never exist
+            time.sleep(3 * (attempt + 1))            # 429 / 5xx: back off
         except Exception:
             time.sleep(2 ** attempt)
     return rel
+
 
 
 def main():
@@ -62,13 +73,26 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
     todo = jobs(gamesconfig.load(), a.only, a.assets)
-    print(f"{len(todo)} sprite file(s) missing")
+    print(f"{len(todo)} sprite file(s) missing", flush=True)
     if a.dry_run or not todo:
         return
+    failed, done = [], 0
     with ThreadPoolExecutor(8) as pool:
-        failed = [r for r in pool.map(fetch, todo) if r]
-    print(f"Done. {len(todo) - len(failed)} downloaded" + (f", {len(failed)} failed (run again):" if failed else "."))
-    for r in failed[:10]:
+        futs = [pool.submit(fetch, j) for j in todo]
+        try:
+            for f in as_completed(futs):
+                done += 1
+                r = f.result()
+                if r:
+                    failed.append(r)
+                if done % 25 == 0 or done == len(todo):
+                    print(f"\r{done}/{len(todo)}  ({len(failed)} failed)", end="", flush=True)
+        except KeyboardInterrupt:
+            pool.shutdown(wait=False, cancel_futures=True)
+            print("\nStopped. Run again to resume.")
+            sys.exit(1)
+    print(f"\nDone. {len(todo) - len(failed)} downloaded, {len(failed)} failed.")
+    for r in failed[:20]:
         print("  ", r)
 
 
