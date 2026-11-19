@@ -383,3 +383,16 @@ body.selecting .chip{display:none}
 
 .card.locked{opacity:.4;cursor:not-allowed}
 .card.locked::after{content:"🔒";position:absolute;top:2px;right:5px;font-size:12px}
+
+:root[data-theme=sun]{--bg:#fbe6c8;--panel:#f08a24;--ink:#2a1203;--mid:#9a4a0a;--hi:#ffd86b;--card:#fdf2e0;--line:#2a1203;--on-hi:#2a1203;color-scheme:light}
+:root[data-theme=sun][data-mode=dark]{--bg:#1f140b;--panel:#43290f;--ink:#f6e4cf;--mid:#e8a860;--hi:#e3b155;--card:#573a1c;--line:#c49a68;--on-hi:#26180a;color-scheme:dark}
+:root[data-theme=moon]{--bg:#dcdff7;--panel:#5a63c4;--ink:#0a0d2e;--mid:#2d3796;--hi:#c0c6ff;--card:#eef0fc;--line:#0a0d2e;--on-hi:#0a0d2e;color-scheme:light}
+:root[data-theme=moon][data-mode=dark]{--bg:#0f1020;--panel:#1e2145;--ink:#dfe1f7;--mid:#8f98e6;--hi:#8a93d9;--card:#2d3162;--line:#8d94c8;--on-hi:#0c0f2a;color-scheme:dark}
+:root[data-theme=ultra-sun]{--bg:#fcdcd0;--panel:#e8552a;--ink:#2a0a03;--mid:#a02c0c;--hi:#ffcf5a;--card:#feeee6;--line:#2a0a03;--on-hi:#2a0a03;color-scheme:light}
+:root[data-theme=ultra-sun][data-mode=dark]{--bg:#1f0f0b;--panel:#43211a;--ink:#f6dcd3;--mid:#e88a6a;--hi:#e5a85a;--card:#593026;--line:#c48a78;--on-hi:#28160a;color-scheme:dark}
+:root[data-theme=ultra-moon]{--bg:#e2d6f2;--panel:#9a5fd0;--ink:#1a0830;--mid:#5b2a9a;--hi:#f3c6ff;--card:#f2eafa;--line:#1a0830;--on-hi:#1a0830;color-scheme:light}
+:root[data-theme=ultra-moon][data-mode=dark]{--bg:#170f22;--panel:#33204a;--ink:#ebdff7;--mid:#bb8aea;--hi:#b98ae0;--card:#46305f;--line:#a98ac9;--on-hi:#1c0d2c;color-scheme:dark}
+:root[data-theme=lets-go-pikachu]{--bg:#fff2b0;--panel:#f9c80e;--ink:#2b1d00;--mid:#a2690a;--hi:#ffd25a;--card:#fffbe0;--line:#2b1d00;--on-hi:#2b1d00;color-scheme:light}
+:root[data-theme=lets-go-pikachu][data-mode=dark]{--bg:#1f1a0a;--panel:#453a10;--ink:#f7efcf;--mid:#e8c34f;--hi:#e6c04a;--card:#594b1a;--line:#c4ad62;--on-hi:#261d05;color-scheme:dark}
+:root[data-theme=lets-go-eevee]{--bg:#efe0cc;--panel:#b98250;--ink:#2a1708;--mid:#7a4a22;--hi:#f2d3a6;--card:#f7eddf;--line:#2a1708;--on-hi:#2a1708;color-scheme:light}
+:root[data-theme=lets-go-eevee][data-mode=dark]{--bg:#1e150e;--panel:#3c2a1c;--ink:#f1e3d3;--mid:#d6a574;--hi:#cf9d6a;--card:#4f3a29;--line:#b8926f;--on-hi:#22140a;color-scheme:dark}

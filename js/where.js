@@ -194,6 +194,7 @@ const Where = (() => {
     if (src.gen <= 2 && game.gen <= 2) return game.gen === 1 ? "Time Capsule (Gen 1 Pokémon with no Gen 2 moves)" : "Time Capsule";
     if (src.gen === 3 && game.gen === 4) return "Pal Park (one-way)";
     if (src.gen === 4 && game.gen === 5) return "Poké Transfer (one-way)";
+    if (src.gen === 6 && game.gen === 7) return "Pokémon Bank (one-way)";
     return "";
   }
 
