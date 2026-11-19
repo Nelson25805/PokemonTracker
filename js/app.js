@@ -109,7 +109,7 @@
     $("#grid").classList.toggle("pc", pc);
     const px = g.spriteSize || 80;
     $("#grid").style.setProperty("--sprite", px + "px"); $("#grid").classList.toggle("big", px > 80);
-    $("#grid").classList.toggle("smooth", !!g.spriteNative && px % g.spriteNative !== 0);   // sprite shown at a non-whole multiple of its real size: smooth instead of uneven pixels
+    $("#grid").classList.toggle("smooth", !!g.smooth || (!!g.spriteNative && px % g.spriteNative !== 0));   // sprite shown at a non-whole multiple of its real size: smooth instead of uneven pixels
     if (!pc) $("#grid").innerHTML = rows.map(cell).join("");
     else {
       const { box, boxes, cols } = g.pc, need = Math.ceil(rows.length / box);

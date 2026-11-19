@@ -167,6 +167,7 @@ body.selecting .chip{display:none}
 .frow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:6px 12px;margin:0 0 6px;border:2px solid var(--line);background:var(--card)}
 .frow .pair{display:flex;gap:2px}
 .frow img{width:var(--fs,80px);height:var(--fs,80px);image-rendering:pixelated;object-fit:contain}
+.flist.smooth img{image-rendering:auto}
 .frow .fname{flex:1 1 9ch;display:flex;flex-direction:column;font-weight:600;overflow-wrap:anywhere}
 .frow .fname small{font-weight:400;font-size:12px;opacity:.8}
 .ftogs{display:flex;gap:6px;flex:none;margin-left:auto}
