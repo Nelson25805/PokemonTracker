@@ -43,26 +43,48 @@ def jobs(cfg, only, root):
     return [(d, r) for d, r in out if not (os.path.exists(d) and os.path.getsize(d) > 0)]
 
 
+def to_png(data):
+    """GIF bytes -> PNG bytes (first frame, transparency kept). Needs Pillow."""
+    import io
+    from PIL import Image
+    im = Image.open(io.BytesIO(data))
+    im.seek(0)
+    out = io.BytesIO()
+    im.convert("RGBA").save(out, "PNG")
+    return out.getvalue()
+
+
 def fetch(job):
+    """Download one sprite as <n>.png. Some repo folders only have .gif files: those are converted to PNG
+    (first frame) so the tracker keeps loading plain .png files. Converting needs Pillow: pip install pillow"""
     dest, rel = job
     os.makedirs(os.path.dirname(dest), exist_ok=True)
-    for attempt in range(3):
-        try:
-            req = urllib.request.Request(RAW + rel, headers={"User-Agent": "pokedex-tracker-build/1.0"})
-            with urllib.request.urlopen(req, timeout=15) as r:
-                data = r.read()
-            tmp = dest + ".part"
-            with open(tmp, "wb") as f:
-                f.write(data)
-            os.replace(tmp, dest)          # no half-written files if interrupted
-            return None
-        except urllib.error.HTTPError as e:
-            if e.code == 404:
-                return rel + " (404, not in repo)"   # don't retry, it will never exist
-            time.sleep(3 * (attempt + 1))            # 429 / 5xx: back off
-        except Exception:
-            time.sleep(2 ** attempt)
-    return rel
+    for ext in (".png", ".gif"):
+        url_rel = rel[:-4] + ext
+        for attempt in range(3):
+            try:
+                req = urllib.request.Request(RAW + url_rel, headers={"User-Agent": "pokedex-tracker-build/1.0"})
+                with urllib.request.urlopen(req, timeout=15) as r:
+                    data = r.read()
+                if ext == ".gif":
+                    try:
+                        data = to_png(data)
+                    except ImportError:
+                        return "the repo has GIFs here and converting them needs Pillow: run  pip install pillow"
+                tmp = dest + ".part"
+                with open(tmp, "wb") as f:
+                    f.write(data)
+                os.replace(tmp, dest)          # no half-written files if interrupted
+                return None
+            except urllib.error.HTTPError as e:
+                if e.code == 404:
+                    break                       # not this extension: try the next one
+                time.sleep(3 * (attempt + 1))   # 429 / 5xx: back off
+            except Exception:
+                time.sleep(2 ** attempt)
+        else:
+            return RAW + url_rel + " (failed)"
+    return RAW + rel + " (404, not in repo as .png or .gif)"
 
 
 
@@ -75,6 +97,22 @@ def main():
     todo = jobs(gamesconfig.load(), a.only, a.assets)
     print(f"{len(todo)} sprite file(s) missing", flush=True)
     if a.dry_run or not todo:
+        return
+    # preflight: try the first file of every sprite folder, so a wrong repo path is reported once instead of thousands of times
+    top = lambda j: os.path.relpath(j[0], a.assets).split(os.sep)[0]
+    first, dead = {}, set()
+    for j in todo:
+        first.setdefault(top(j), j)
+    for folder, j in first.items():
+        err = fetch(j)
+        if err:
+            print(f"  {folder}: first file failed: {err}")
+            dead.add(folder)
+    todo = [j for j in todo if top(j) not in dead and not os.path.exists(j[0])]
+    if dead:
+        print(f"Skipping {len(dead)} folder(s) that failed the preflight: {', '.join(sorted(dead))}")
+    print(f"{len(todo)} file(s) to download", flush=True)
+    if not todo:
         return
     failed, done = [], 0
     with ThreadPoolExecutor(8) as pool:

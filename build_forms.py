@@ -10,6 +10,8 @@ Sprites come from the PokéAPI sprite repository (https://github.com/PokeAPI/spr
 "blobless" clone (file names only, a few MB) into .cache/sprites-repo to see which files exist, so a form is
 only listed for a game when its sprite really exists. Needs git, internet and the Python standard library.
 Delete .cache/sprites-repo to pick up new upstream files. Existing sprites are never re-downloaded.
+Some sprite folders (Generation 7) only have .gif files. Those are found automatically and converted to .png
+(first frame) when downloaded, so the tracker still loads plain .png files. Converting needs Pillow: pip install pillow
 
 What counts as a form (and the names shown) is the table ALT below. Edit it to add or drop forms; for a new
 game, add its sprite set to SETS. Infinite or cosmetic variations (Spinda spots), forms that only exist in
@@ -26,6 +28,7 @@ Sprites:  assets/sprites/<Folder>/forms/<id>.png   and   assets/sprites/<Folder>
 """
 import argparse
 import datetime
+import io
 import json
 import os
 import re
@@ -87,11 +90,40 @@ ALT = {
     649: ("Normal", forms(649, *[(d, d.capitalize() + " Drive", [f"649-{d}.png"]) for d in ("douse", "shock", "burn", "chill")])),   # Genesect
 }
 
+# Generation 7 forms that PokéAPI treats as separate Pokémon. Their sprite number (10091 ...) is looked up from the PokéAPI
+# by name when the script runs, so it never has to be typed in by hand. As above, a form is only listed when its sprite
+# exists in the sprite repo. Edit freely: national number -> (name of the base form, [(id suffix, display name, PokéAPI name)]).
+G7 = {
+    19: ("Kantonian", [("alola", "Alolan", "rattata-alola")]),
+    20: ("Kantonian", [("alola", "Alolan", "raticate-alola")]),
+    26: ("Kantonian", [("alola", "Alolan", "raichu-alola")]),
+    27: ("Kantonian", [("alola", "Alolan", "sandshrew-alola")]),
+    28: ("Kantonian", [("alola", "Alolan", "sandslash-alola")]),
+    37: ("Kantonian", [("alola", "Alolan", "vulpix-alola")]),
+    38: ("Kantonian", [("alola", "Alolan", "ninetales-alola")]),
+    50: ("Kantonian", [("alola", "Alolan", "diglett-alola")]),
+    51: ("Kantonian", [("alola", "Alolan", "dugtrio-alola")]),
+    52: ("Kantonian", [("alola", "Alolan", "meowth-alola")]),
+    53: ("Kantonian", [("alola", "Alolan", "persian-alola")]),
+    74: ("Kantonian", [("alola", "Alolan", "geodude-alola")]),
+    75: ("Kantonian", [("alola", "Alolan", "graveler-alola")]),
+    76: ("Kantonian", [("alola", "Alolan", "golem-alola")]),
+    88: ("Kantonian", [("alola", "Alolan", "grimer-alola")]),
+    89: ("Kantonian", [("alola", "Alolan", "muk-alola")]),
+    103: ("Kantonian", [("alola", "Alolan", "exeggutor-alola")]),
+    105: ("Kantonian", [("alola", "Alolan", "marowak-alola")]),
+    741: ("Baile", [("pom-pom", "Pom-Pom", "oricorio-pom-pom"), ("pau", "Pa'u", "oricorio-pau"), ("sensu", "Sensu", "oricorio-sensu")]),   # Oricorio
+    745: ("Midday", [("midnight", "Midnight", "lycanroc-midnight"), ("dusk", "Dusk", "lycanroc-dusk")]),                               # Lycanroc
+    800: ("Normal", [("dusk-mane", "Dusk Mane", "necrozma-dusk"), ("dawn-wings", "Dawn Wings", "necrozma-dawn")]),                    # Necrozma
+}
+
 # Forms that only exist in some of the games that share a sprite folder (Black / White / Black 2 / White 2 all use "Black-White").
 # form id -> the game keys that have it. A form not listed here is available in every game that has its sprite.
 B2W2 = ["black-2", "white-2"]
+ULTRA = ["ultra-sun", "ultra-moon"]            # Sun / Moon share their sprite folder with Ultra Sun / Ultra Moon
 ONLY = {"646-black": B2W2, "646-white": B2W2, "647-resolute": B2W2,
-        "649-douse": B2W2, "649-shock": B2W2, "649-burn": B2W2, "649-chill": B2W2}
+        "649-douse": B2W2, "649-shock": B2W2, "649-burn": B2W2, "649-chill": B2W2,
+        "745-dusk": ULTRA, "800-dusk-mane": ULTRA, "800-dawn-wings": ULTRA}
 
 
 # ---------------------------------------------------------------- the sprite repo's file list
@@ -108,10 +140,46 @@ def list_files(cache):
     return {l[len(prefix):] for l in out.splitlines() if l.startswith(prefix)}
 
 
+# ---------------------------------------------------------------- Gen 7 forms: PokéAPI name -> sprite number
+
+def with_gen7(cache=os.path.join(".cache", "form-ids.json")):
+    """ALT plus the G7 forms, with each form's sprite number looked up (and remembered in .cache/form-ids.json)."""
+    try:
+        with open(cache, encoding="utf-8") as f:
+            ids = json.load(f)
+    except Exception:
+        ids = {}
+    alt = {n: (base, list(items)) for n, (base, items) in ALT.items()}
+    for n, (base, items) in G7.items():
+        out = []
+        for suffix, name, slug in items:
+            if slug not in ids:
+                try:
+                    req = urllib.request.Request(f"https://pokeapi.co/api/v2/pokemon/{slug}", headers={"User-Agent": "pokedex-tracker-build/1.0"})
+                    with urllib.request.urlopen(req, timeout=30) as r:
+                        ids[slug] = json.load(r)["id"]
+                    time.sleep(0.1)
+                except Exception as e:
+                    print(f"  warning: could not look up {slug} in the PokéAPI ({e}); skipped")
+                    continue
+            out.append((f"{n}-{suffix}", name, [f"{ids[slug]}.png"]))
+        if out:
+            if n in alt:
+                alt[n][1].extend(out)
+            else:
+                alt[n] = (base, out)
+    os.makedirs(os.path.dirname(cache) or ".", exist_ok=True)
+    with open(cache, "w", encoding="utf-8") as f:
+        json.dump(ids, f)
+    return alt
+
+
 # ---------------------------------------------------------------- build
 
-def build(files):
-    """Pure: file set -> (forms.json dict, download jobs [(repo path, destination under assets/sprites)])."""
+def build(files, alt=None):
+    """Pure: file set -> (forms.json dict, download jobs [(repo path, destination under assets/sprites)]).
+    A sprite may exist in the repo as .png or as .gif; the download job keeps the real repo name."""
+    alt = alt or ALT
     species, jobs, warnings = {}, {}, []
 
     def add(n, base, fid, name, cat, games, folder, rel, srel):
@@ -125,25 +193,34 @@ def build(files):
             warnings.append(f"no shiny sprite for {fid} in {folder}")
 
     for path, folder, games in SETS:
-        has = lambda rel: f"{path}/{rel}" in files
-        for n, (base, items) in ALT.items():
+        def found(rel, path=path):
+            """the repo file for rel: rel itself, or the .gif twin of a .png name; None if neither exists"""
+            for r in (rel, re.sub(r"\.png$", ".gif", rel)):
+                if f"{path}/{r}" in files:
+                    return r
+            return None
+        for n, (base, items) in alt.items():
             for fid, name, cands in items:
-                rel = next((c for c in cands if has(c)), None)
+                rel = next((r for r in map(found, cands) if r), None)
                 if not rel:
                     continue
-                srel = f"shiny/{rel}" if has(f"shiny/{rel}") else None
+                srel = found(f"shiny/{rel}")
                 gm = [g for g in games if g in ONLY.get(fid, games)]            # see ONLY
                 if not gm:
                     continue
                 add(n, base, fid, name, "alt", gm, folder, f"{path}/{rel}", srel and f"{path}/{srel}")
         # gender differences: the repo keeps the female sprite in female/<n>.png when it looks different
+        seen = set()
         for rel in sorted(f[len(path) + 1:] for f in files if f.startswith(path + "/female/")):
-            m = re.fullmatch(r"female/(\d+)\.png", rel)
-            if not m or int(m.group(1)) > MAX_POKEMON:
+            m = re.fullmatch(r"female/(\d+)\.(png|gif)", rel)
+            if not m or int(m.group(1)) > MAX_POKEMON or m.group(1) in seen:
                 continue
+            seen.add(m.group(1))
             n = int(m.group(1))
-            srel = f"shiny/{rel}" if has(f"shiny/{rel}") else None
+            srel = found(f"shiny/{rel}")
             add(n, "Male", f"{n}-f", "Female", "gender", games, folder, f"{path}/{rel}", srel and f"{path}/{srel}")
+            if species[n]["base"] == "Kantonian":       # Alolan species that also have a gender difference: the base is the male
+                species[n]["base"] = "Male"
 
     out = {}
     for n in sorted(species):
@@ -171,9 +248,18 @@ def fetch(job):
             req = urllib.request.Request(RAW + rel, headers={"User-Agent": "pokedex-tracker-build/1.0"})
             with urllib.request.urlopen(req, timeout=30) as r:
                 data = r.read()
+            if rel.endswith(".gif"):                       # the file is saved as .png: first frame, transparency kept
+                from PIL import Image
+                im = Image.open(io.BytesIO(data))
+                im.seek(0)
+                out = io.BytesIO()
+                im.convert("RGBA").save(out, "PNG")
+                data = out.getvalue()
             with open(dest, "wb") as f:
                 f.write(data)
             return None
+        except ImportError:
+            return rel + " (this is a GIF and converting it needs Pillow: pip install pillow)"
         except Exception:
             time.sleep(2 ** attempt)
     return rel
@@ -187,7 +273,7 @@ def main():
     ap.add_argument("--no-download", action="store_true", help="only write forms.json")
     args = ap.parse_args()
 
-    data, jobs, warnings = build(list_files(args.cache))
+    data, jobs, warnings = build(list_files(args.cache), with_gen7())
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
