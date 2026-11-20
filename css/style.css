@@ -168,6 +168,8 @@ body.selecting .chip{display:none}
 .frow .pair{display:flex;gap:2px}
 .frow img{width:var(--fs,80px);height:var(--fs,80px);image-rendering:pixelated;object-fit:contain}
 .flist.smooth img{image-rendering:auto}
+/* sprites trimmed to the Pokémon (Gen 7): keep their own size, only shrink when too big for the box */
+.grid.cropped .card img,.flist.cropped img{object-fit:scale-down}
 .frow .fname{flex:1 1 9ch;display:flex;flex-direction:column;font-weight:600;overflow-wrap:anywhere}
 .frow .fname small{font-weight:400;font-size:12px;opacity:.8}
 .ftogs{display:flex;gap:6px;flex:none;margin-left:auto}

@@ -56,20 +56,13 @@ def jobs(cfg, only, root):
 
 
 def to_png(data):
-    """GIF bytes -> PNG bytes. Keeps the first frame and its transparency, then softens the edges: GIFs can only
-    cut transparency on or off, which leaves jagged outlines, so the image is enlarged 3x and the outline is
-    blurred a little (in premultiplied colour, so no halo). The art itself is not replaced or redrawn. Needs Pillow."""
+    """GIF bytes -> PNG bytes: the first frame, with its transparency. Needs Pillow."""
     import io
-    from PIL import Image, ImageFilter
+    from PIL import Image
     im = Image.open(io.BytesIO(data))
     im.seek(0)
-    im = im.convert("RGBA")
-    big = im.resize((im.width * 3, im.height * 3), Image.BICUBIC)
-    soft = big.convert("RGBa").filter(ImageFilter.GaussianBlur(0.9)).convert("RGBA")
-    r, g, b, a = soft.split()
-    a = a.point(lambda v: max(0, min(255, int((v - 60) * 255 / 140))))
     out = io.BytesIO()
-    Image.merge("RGBA", (r, g, b, a)).save(out, "PNG")
+    im.convert("RGBA").save(out, "PNG")
     return out.getvalue()
 
 

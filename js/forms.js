@@ -99,7 +99,7 @@ const Forms = (() => {
     const sp = forGame(g).get(n);
     if (!sp) return "";
     const dir = `assets/sprites/${g.sprites}`;
-    const ul = `<ul class="flist${g.smooth ? " smooth" : ""}" style="--fs:${g.spriteSize || 80}px">`;
+    const ul = `<ul class="flist${g.smooth ? " smooth" : ""}${g.spriteCropped ? " cropped" : ""}" style="--fs:${g.spriteSize || 80}px">`;
     const fc = have(state, "caught", g.key), fs = have(state, "shiny", g.key);
     const mc = new Set(state.caught[g.key] || []), ms = new Set(state.shiny[g.key] || []);
     const whereOf = fid => { const r = fa.filter(x => x.n === n && x.form === fid && x.g.includes(g.key)); const places = r.filter(x => x.area), other = r.filter(x => !x.area && x.label);
