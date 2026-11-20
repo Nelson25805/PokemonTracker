@@ -26,64 +26,86 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 RAW = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/"
 
 
+ROOT = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/"
+FALLBACK_USED = []
+
+
 def jobs(cfg, only, root):
+    """(destination, path under versions/, fallback URL or None) for every missing sprite file.
+    A game may list "spriteRanges": [[1, 151], [808, 809]] when it only needs some Pokémon (Let's Go), and
+    "spriteFallback": "default" to use the repo's default sprite (sprites/pokemon/<n>.png) when its own set lacks a number."""
     sets = {}
     for g in cfg["games"]:
         if not g.get("spriteRepo") or (only and g["sprites"] != only):
             continue
-        s = sets.setdefault(g["sprites"], {"repo": g["spriteRepo"], "count": 0, "shiny": False})
-        s["count"] = max(s["count"], g["count"])
+        s = sets.setdefault(g["sprites"], {"repo": g["spriteRepo"], "nums": set(), "shiny": False, "fallback": False})
+        if g.get("spriteRanges"):
+            for lo, hi in g["spriteRanges"]:
+                s["nums"].update(range(lo, hi + 1))
+        else:
+            s["nums"].update(range(1, g["count"] + 1))
         s["shiny"] = s["shiny"] or bool(g.get("shiny"))
+        s["fallback"] = s["fallback"] or g.get("spriteFallback") == "default"
     out = []
     for folder, s in sets.items():
-        for n in range(1, s["count"] + 1):
-            out.append((os.path.join(root, folder, f"{n}.png"), f"{s['repo']}/{n}.png"))
+        for n in sorted(s["nums"]):
+            out.append((os.path.join(root, folder, f"{n}.png"), f"{s['repo']}/{n}.png", ROOT + f"{n}.png" if s["fallback"] else None))
             if s["shiny"]:
-                out.append((os.path.join(root, folder, "shiny", f"{n}.png"), f"{s['repo']}/shiny/{n}.png"))
-    return [(d, r) for d, r in out if not (os.path.exists(d) and os.path.getsize(d) > 0)]
+                out.append((os.path.join(root, folder, "shiny", f"{n}.png"), f"{s['repo']}/shiny/{n}.png", ROOT + f"shiny/{n}.png" if s["fallback"] else None))
+    return [j for j in out if not (os.path.exists(j[0]) and os.path.getsize(j[0]) > 0)]
 
 
 def to_png(data):
-    """GIF bytes -> PNG bytes (first frame, transparency kept). Needs Pillow."""
+    """GIF bytes -> PNG bytes. Keeps the first frame and its transparency, then softens the edges: GIFs can only
+    cut transparency on or off, which leaves jagged outlines, so the image is enlarged 3x and the outline is
+    blurred a little (in premultiplied colour, so no halo). The art itself is not replaced or redrawn. Needs Pillow."""
     import io
-    from PIL import Image
+    from PIL import Image, ImageFilter
     im = Image.open(io.BytesIO(data))
     im.seek(0)
+    im = im.convert("RGBA")
+    big = im.resize((im.width * 3, im.height * 3), Image.BICUBIC)
+    soft = big.convert("RGBa").filter(ImageFilter.GaussianBlur(0.9)).convert("RGBA")
+    r, g, b, a = soft.split()
+    a = a.point(lambda v: max(0, min(255, int((v - 60) * 255 / 140))))
     out = io.BytesIO()
-    im.convert("RGBA").save(out, "PNG")
+    Image.merge("RGBA", (r, g, b, a)).save(out, "PNG")
     return out.getvalue()
 
 
 def fetch(job):
-    """Download one sprite as <n>.png. Some repo folders only have .gif files: those are converted to PNG
-    (first frame) so the tracker keeps loading plain .png files. Converting needs Pillow: pip install pillow"""
-    dest, rel = job
+    """Download one sprite as <n>.png. Tries the game's own repo path, then the fallback if there is one.
+    Folders that only have .gif files are converted to PNG (first frame); that needs Pillow: pip install pillow"""
+    dest, rel, alt = job
     os.makedirs(os.path.dirname(dest), exist_ok=True)
-    for ext in (".png", ".gif"):
-        url_rel = rel[:-4] + ext
-        for attempt in range(3):
-            try:
-                req = urllib.request.Request(RAW + url_rel, headers={"User-Agent": "pokedex-tracker-build/1.0"})
-                with urllib.request.urlopen(req, timeout=15) as r:
-                    data = r.read()
-                if ext == ".gif":
-                    try:
-                        data = to_png(data)
-                    except ImportError:
-                        return "the repo has GIFs here and converting them needs Pillow: run  pip install pillow"
-                tmp = dest + ".part"
-                with open(tmp, "wb") as f:
-                    f.write(data)
-                os.replace(tmp, dest)          # no half-written files if interrupted
-                return None
-            except urllib.error.HTTPError as e:
-                if e.code == 404:
-                    break                       # not this extension: try the next one
-                time.sleep(3 * (attempt + 1))   # 429 / 5xx: back off
-            except Exception:
-                time.sleep(2 ** attempt)
-        else:
-            return RAW + url_rel + " (failed)"
+    for url_png in [RAW + rel] + ([alt] if alt else []):
+        for ext in (".png", ".gif"):
+            url = url_png[:-4] + ext
+            for attempt in range(3):
+                try:
+                    req = urllib.request.Request(url, headers={"User-Agent": "pokedex-tracker-build/1.0"})
+                    with urllib.request.urlopen(req, timeout=15) as r:
+                        data = r.read()
+                    if ext == ".gif":
+                        try:
+                            data = to_png(data)
+                        except ImportError:
+                            return "the repo has GIFs here and converting them needs Pillow: run  pip install pillow"
+                    tmp = dest + ".part"
+                    with open(tmp, "wb") as f:
+                        f.write(data)
+                    os.replace(tmp, dest)          # no half-written files if interrupted
+                    if url_png == alt:
+                        FALLBACK_USED.append(dest)
+                    return None
+                except urllib.error.HTTPError as e:
+                    if e.code == 404:
+                        break                       # not this extension / not this place: try the next
+                    time.sleep(3 * (attempt + 1))   # 429 / 5xx: back off
+                except Exception:
+                    time.sleep(2 ** attempt)
+            else:
+                return url + " (failed)"
     return RAW + rel + " (404, not in repo as .png or .gif)"
 
 
@@ -130,6 +152,8 @@ def main():
             print("\nStopped. Run again to resume.")
             sys.exit(1)
     print(f"\nDone. {len(todo) - len(failed)} downloaded, {len(failed)} failed.")
+    if FALLBACK_USED:
+        print(f"{len(FALLBACK_USED)} file(s) came from the repo's default sprites (sprites/pokemon/), because the game's own set lacks them.")
     for r in failed[:20]:
         print("  ", r)
 

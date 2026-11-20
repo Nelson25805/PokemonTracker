@@ -46,7 +46,10 @@ MAX_POKEMON = gamesconfig.max_pokemon(_CFG)
 
 # (path in the sprite repo, sprite folder under assets/sprites, game keys that use that artwork)
 # Built from each game's "spriteRepo" in the config. Games without one (Red, Blue, Yellow) have no forms.
-SETS = gamesconfig.sprite_sets(_CFG)
+# Games with "noForms": true in the config (Colosseum, XD) are left out: no forms.json entries and no form sprites for them.
+NO_FORMS = {g["key"] for g in _CFG.get("games", []) if g.get("noForms")}
+SETS = [(path, folder, [k for k in keys if k not in NO_FORMS]) for path, folder, keys in gamesconfig.sprite_sets(_CFG)]
+SETS = [x for x in SETS if x[2]]
 # (The Gen 2 "spriteRepo" values point at the repo's "transparent" versions, because the plain ones come with a white box behind them.)
 
 CATS = {"gender": "Gender differences", "alt": "Alternate forms"}
@@ -238,6 +241,23 @@ def build(files, alt=None):
 
 # ---------------------------------------------------------------- download
 
+def to_png(data):
+    """GIF bytes -> PNG bytes. Keeps the first frame and its transparency, then softens the edges: GIFs can only
+    cut transparency on or off, which leaves jagged outlines, so the image is enlarged 3x and the outline is
+    blurred a little (in premultiplied colour, so no halo). The art itself is not replaced or redrawn. Needs Pillow."""
+    from PIL import Image, ImageFilter
+    im = Image.open(io.BytesIO(data))
+    im.seek(0)
+    im = im.convert("RGBA")
+    big = im.resize((im.width * 3, im.height * 3), Image.BICUBIC)
+    soft = big.convert("RGBa").filter(ImageFilter.GaussianBlur(0.9)).convert("RGBA")
+    r, g, b, a = soft.split()
+    a = a.point(lambda v: max(0, min(255, int((v - 60) * 255 / 140))))
+    out = io.BytesIO()
+    Image.merge("RGBA", (r, g, b, a)).save(out, "PNG")
+    return out.getvalue()
+
+
 def fetch(job):
     dest, rel = job
     if os.path.exists(dest) and os.path.getsize(dest) > 0:
@@ -248,13 +268,8 @@ def fetch(job):
             req = urllib.request.Request(RAW + rel, headers={"User-Agent": "pokedex-tracker-build/1.0"})
             with urllib.request.urlopen(req, timeout=30) as r:
                 data = r.read()
-            if rel.endswith(".gif"):                       # the file is saved as .png: first frame, transparency kept
-                from PIL import Image
-                im = Image.open(io.BytesIO(data))
-                im.seek(0)
-                out = io.BytesIO()
-                im.convert("RGBA").save(out, "PNG")
-                data = out.getvalue()
+            if rel.endswith(".gif"):                       # saved as .png: first frame, transparency kept, edges softened
+                data = to_png(data)
             with open(dest, "wb") as f:
                 f.write(data)
             return None
