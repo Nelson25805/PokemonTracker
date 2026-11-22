@@ -25,7 +25,7 @@ name them differently). Output marks each area:
 import argparse, json, os, re, sys
 
 try:
-    import build_items as B                       # tiny HTML tree + cached Bulbapedia fetch (same folder)
+    import tools.build_items as B                       # tiny HTML tree + cached Bulbapedia fetch (same folder)
 except ImportError:
     sys.exit("Run this from the project folder: it imports build_items.py.")
 

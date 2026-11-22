@@ -39,7 +39,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 REPO = "https://github.com/PokeAPI/sprites"
 RAW = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/"
-import gamesconfig as gamesconfig
+import tools.gamesconfig as gamesconfig
 
 _CFG = gamesconfig.load()                       # data/games.config.json: the single source of truth for games
 MAX_POKEMON = gamesconfig.max_pokemon(_CFG)

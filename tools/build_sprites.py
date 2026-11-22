@@ -15,9 +15,9 @@ Existing files are never re-downloaded. Needs internet and the Python standard l
 import argparse, os, time, urllib.request
 from concurrent.futures import ThreadPoolExecutor
 try:
-    import gamesconfig as gamesconfig
+    import tools.gamesconfig as gamesconfig
 except ImportError:
-    import gamesconfig
+    import tools.gamesconfig as gamesconfig
 
 import sys, urllib.error
 from concurrent.futures import ThreadPoolExecutor, as_completed

@@ -15,7 +15,7 @@ Rules it writes are marked "auto": true and replaced on every run; rules you add
 Needs internet (about 5 requests, cached in .cache/bulbapedia/) and run from the project folder.
 """
 import argparse, json, os, re
-import build_items as B            # reuses its tiny HTML tree, Bulbapedia fetch + cache and game-title table
+import tools.build_items as B            # reuses its tiny HTML tree, Bulbapedia fetch + cache and game-title table
 
 SPECIES = {422: "Shellos", 423: "Gastrodon", 479: "Rotom", 386: "Deoxys", 201: "Unown"}
 COMPASS = "north|south|east|west|northeast|northwest|southeast|southwest"
