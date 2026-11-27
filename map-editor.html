@@ -158,7 +158,6 @@ function areaEntries(id) {
   return out;
 }
 const map = () => db.maps[mapId];
-// ---- places inside other places (maps.json "inside": { mapId: { child: parent } }) ----
 const insideTbl = () => ((db.inside = db.inside || {})[mapId] = db.inside[mapId] || {});
 const parentOf = p => insideTbl()[p] || "";
 // The boxes a place is drawn with: its own, else its parent's, else the grandparent's ...
